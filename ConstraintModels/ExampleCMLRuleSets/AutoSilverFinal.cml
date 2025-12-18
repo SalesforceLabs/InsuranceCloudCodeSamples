@@ -1,0 +1,218 @@
+@(contextPath = "SalesTransaction.UserProfile", attributeSource = "ST")
+extern string UserProfile;
+
+type AutoSilver {
+    @(closeRelation = true, propagateUp = true, sequence = 1)
+    relation auto : Vehicle {
+        @(defaultValue = 0)
+        maxAutoValue = max(Auto_Value);
+        @(defaultValue = 0)
+        minAutoYear = min(Year);
+        @(defaultValue = 0)
+        aggDriverAccPoint = max(maxDriverAccPoint);
+        @(defaultValue = 0)
+        autoHasAntiTheft = count(Has_Anti_Theft > 0);
+    }
+
+    @(sequence = 2)
+    relation bodilyinjurypropertydamage : BodilyInjuryPropertyDamage[0..1];
+
+    @(sequence = 3)
+    relation medicalpayments : MedicalPayments[0..1] {
+        medicalLimit = Limit;
+        medicalDeductible = Deductible;
+    }
+
+    @(defaultValue = 0, tagName = "NetUnitPrice")
+    decimal(2) unitPrice;
+
+    boolean autoCondition = auto[Vehicle] > 0 &&  !auto.autoHasAntiTheft;
+
+    boolean driverCondition = auto.aggDriverAccPoint > 5;
+
+    boolean unitPriceCondition = unitPrice > 100;
+
+    boolean condition5 = autoCondition && driverCondition && unitPriceCondition;
+
+    // constraint #1
+
+    require(auto.maxAutoValue >= 50000 && auto.minAutoYear < 2020, medicalpayments[MedicalPayments], "Auto add Medical Payments");
+	constraint(auto.maxAutoValue >= 50000 && auto.minAutoYear < 2020 -> medicalpayments[MedicalPayments].Limit == 2000);
+    
+    // constraint #5
+    require(condition5, bodilyinjurypropertydamage[BodilyInjuryPropertyDamage], "BIPD is required when Auto IsElectricVehicle and Antitheft is false and Driver accident points > 5 and Collision is selected and MedicalPayments is NOT selected");
+
+    // constraint #6
+    require(medicalpayments[MedicalPayments] == 1 && medicalpayments.medicalDeductible == 500 && UserProfile == "Custom Standard User", bodilyinjurypropertydamage[BodilyInjuryPropertyDamage] { Bodily_Injury_Per_Person_Limit = 1000 }, "BIPD is required when MedicalPayments is selected at 1k limit");
+
+    
+}
+
+type Auto {
+    @(configurable = false)
+    int Auto_Value;
+
+    @(configurable = false)
+    int Year;
+
+    string Colour;
+
+    @(configurable = "false")
+    string Make;
+
+    string License_State;
+
+    @(configurable = "false")
+    string Model;
+    
+	@(configurable = false)
+    boolean Is_Electric_Vehicle;
+    
+	@(configurable = false)
+    boolean Has_Anti_Theft;
+
+    string AssetRecordName;
+
+
+}
+
+type Vehicle : Auto {
+    @(sequence = 1)
+    relation collision : Collision[0..1];
+
+    @(sequence = 2)
+    relation comprehensive : Comprehensive[0..1];
+
+    @(sequence = 3)
+    relation uninsuredMotorist : UninsuredMotorist[0..1];
+
+    @(closeRelation = true, propagateUp = true, sequence = 1)
+    relation driver : AutoDriver[0..5] {
+        @(defaultValue = 0)
+        maxDriverAccPoint = max(Driver_Accident_Points);
+    }
+
+    int maxDriverAccPoint = driver.maxDriverAccPoint;
+    
+    // constraint #2
+    require(Year > 2023, collision[Collision], "auto add collision coverage if year > 2023");
+    constraint(collision[Collision] > 0 && Year > 2023 -> collision[Collision].Limit == 5000);
+
+    // constraint #3
+    exclude(collision[Collision] > 0 && collision[Collision].Deductible == 200 && Year < 2020, uninsuredMotorist[UninsuredMotorist]);
+
+}
+
+type Driver {
+    @(configurable = false)
+    int Driver_Accident_Points = [0..10];
+
+    @(configurable = false)
+    int Driver_MVR_Points = [0..10];
+
+    string Driving_License;
+
+    @(configurable = false)
+    int Age_First_Licensed = [0..100];
+
+    @(configurable = false)
+    string E_Mail;
+
+    @(configurable = false)
+    string State;
+
+    @(configurable = false)
+    int Age = [0..100];
+
+    @(configurable = false)
+    string First_Name;
+
+    @(configurable = false)
+    string Last_Name;
+
+    // constraint #4
+    message(Age_First_Licensed != 0 && Age_First_Licensed < 16, "Warning: Age First License can't be lower than 16", "Warning");
+    message(Age != 0 && Age < 16, "Driver is underaged to be added to the quote", "Error");
+
+}
+
+type AutoDriver : Driver;
+
+@(split = false)
+type UninsuredMotorist {
+    int Deductible = [0, 50, 100, 200, 500];
+
+    int Property_Damage_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    int Bodily_Injury_Per_Person_Limit = [500, 1000, 1500, 2000];
+
+    int Bodily_Injury_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+
+}
+
+@(split = false)
+type Collision {
+    @(domainComputation = "false")
+    int Deductible = [0, 50, 100, 200, 500];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+
+}
+
+@(split = false)
+type BodilyInjuryPropertyDamage {
+    @(defaultValue = "100", domainComputation = "false")
+    int Deductible = [0, 50, 100, 200, 500];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Bodily_Injury_Per_Person_Limit = [500, 1000, 1500, 2000];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Property_Damage_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Bodily_Injury_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+
+    boolean rootCondition5 = parent(condition5);
+
+    rule(rootCondition5, "hide", "attribute", "Property_Damage_Per_Accident_Limit");
+
+    rule(rootCondition5, "hide", "attribute", "Bodily_Injury_Per_Accident_Limit", "value", 2000);
+
+}
+
+@(split = false)
+type MedicalPayments {
+    @(defaultValue = "100", domainComputation = "false")
+    int Deductible = [0, 50, 100, 200, 500];
+
+    int Property_Damage_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    int Bodily_Injury_Per_Person_Limit = [500, 1000, 1500, 2000];
+
+    int Bodily_Injury_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+
+}
+
+@(split = false)
+type Comprehensive {
+    @(defaultValue = "100", domainComputation = "false")
+    int Deductible = [0, 50, 100, 200, 500];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+}

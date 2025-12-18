@@ -1,0 +1,152 @@
+@(contextPath = "SalesTransaction.UserProfile", attributeSource = "ST")
+extern string UserProfile;
+
+type AutoSilver {
+    @(closeRelation = true, propagateUp = true)
+
+    relation auto : Vehicle;
+
+    relation bodilyinjurypropertydamage : BodilyInjuryPropertyDamage[0..1];
+
+    relation medicalpayments : MedicalPayments[0..1];
+    
+}
+
+type Auto {
+    @(configurable = false)
+    int Auto_Value;
+
+    @(configurable = false)
+    int Year;
+
+    string Colour;
+
+    @(configurable = "false")
+    string Make;
+
+    string License_State;
+
+    @(configurable = "false")
+    string Model;
+    
+	@(configurable = false)
+    boolean Is_Electric_Vehicle;
+    
+	@(configurable = false)
+    boolean Has_Anti_Theft;
+
+    string AssetRecordName;
+
+
+}
+
+type Vehicle : Auto {
+    relation collision : Collision[0..1];
+
+    relation comprehensive : Comprehensive[0..1];
+
+    relation uninsuredMotorist : UninsuredMotorist[0..1];
+
+    @(closeRelation = true, propagateUp = true)
+    relation driver : AutoDriver[0..5];
+
+}
+
+type Driver {
+    @(configurable = false)
+    int Driver_Accident_Points = [0..10];
+
+    @(configurable = false)
+    int Driver_MVR_Points = [0..10];
+
+    string Driving_License;
+
+    @(configurable = false)
+    int Age_First_Licensed = [0..100];
+
+    @(configurable = false)
+    string E_Mail;
+
+    @(configurable = false)
+    string State;
+
+    @(configurable = false)
+    int Age = [0..100];
+
+    @(configurable = false)
+    string First_Name;
+
+    @(configurable = false)
+    string Last_Name;
+}
+
+type AutoDriver : Driver;
+
+@(split = false)
+type UninsuredMotorist {
+    int Deductible = [0, 50, 100, 200, 500];
+
+    int Property_Damage_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    int Bodily_Injury_Per_Person_Limit = [500, 1000, 1500, 2000];
+
+    int Bodily_Injury_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+}
+
+@(split = false)
+type Collision {
+    @(domainComputation = "false")
+    int Deductible = [0, 50, 100, 200, 500];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+}
+
+@(split = false)
+type BodilyInjuryPropertyDamage {
+    @(defaultValue = "100", domainComputation = "false")
+    int Deductible = [0, 50, 100, 200, 500];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Bodily_Injury_Per_Person_Limit = [500, 1000, 1500, 2000];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Property_Damage_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Bodily_Injury_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+}
+
+@(split = false)
+type MedicalPayments {
+    @(defaultValue = "100", domainComputation = "false")
+    int Deductible = [0, 50, 100, 200, 500];
+
+    int Property_Damage_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    int Bodily_Injury_Per_Person_Limit = [500, 1000, 1500, 2000];
+
+    int Bodily_Injury_Per_Accident_Limit = [500, 1000, 1500, 2000];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+}
+
+@(split = false)
+type Comprehensive {
+    @(defaultValue = "100", domainComputation = "false")
+    int Deductible = [0, 50, 100, 200, 500];
+
+    @(defaultValue = "1000", domainComputation = "false")
+    int Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+}

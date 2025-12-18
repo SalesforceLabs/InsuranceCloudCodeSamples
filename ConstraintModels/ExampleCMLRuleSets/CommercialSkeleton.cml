@@ -1,0 +1,119 @@
+@(contextPath = "SalesTransaction.UserProfile", attributeSource = "ST")
+extern string UserProfile;
+
+type CommercialPropertyInsurance {
+    @(defaultValue = "ABCD1234")
+    string SIC_Code;
+
+    @(configurable=false)
+    int Agreed_Value = [0..1000000];
+
+    string Cause_Of_Loss = ["Broad", "Special", "Basic"];
+
+    @(closeRelation=true, propagateUp=true)
+    relation commerciallocationclass : CommercialLocationClass[0..10];
+
+    @(closeRelation=true)
+    relation generalliabilitycoverage : GeneralLiabilityCoverage[0..1];
+
+}
+
+type GeneralLiabilityCoverage {
+    @(domainComputation = "false", defaultValue = "100")
+    int General_Liability_Deductible = [0, 50, 100, 200, 500];
+
+    @(domainComputation = "false", defaultValue = "10000")
+    int General_Liability_Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+}
+
+type CommercialLocationClass {
+    @(defaultValue = "San Francisco")
+    string City;
+
+    @(defaultValue = "California")
+    string State;
+}
+
+type Location : CommercialLocationClass {
+    @(closeRelation=true, propagateUp=true)
+    relation commercialbuildingclass : CommercialBuildingClass[0..10];
+}
+
+type CommercialBuildingClass {
+    @(defaultValue = "5")
+    int Building_Age = [0..100];
+
+    @(defaultValue = "Standalone")
+    string Alarm_Type = ["Standalone", "Connected"];
+
+    @(defaultValue = "Yes")
+    string Sprinklers = ["Yes", "No"];
+}
+
+type Building : CommercialBuildingClass {
+    @(closeRelation = true, propagateUp=true)
+    relation commercialequipmentclass : CommercialEquipmentClass[0..20];
+
+	@(closeRelation=true, propagateUp=true)
+    relation burglarycoverage : BurglaryCoverage[1];
+
+	@(closeRelation=true)
+    relation vandalismcoverage : VandalismCoverage[0..1];
+}
+
+type Warehouse : CommercialBuildingClass {
+    @(closeRelation = true, propagateUp=true)
+    relation warehousecommercialequipmentclass : CommercialEquipmentClass[0..20];
+
+    @(closeRelation=true, propagateUp=true)
+    relation warehouseburglarycoverage : BurglaryCoverage[1];
+
+    @(closeRelation=true)
+    relation warehousevandalismcoverage : VandalismCoverage[0..1];
+}
+
+type CommercialEquipmentClass {
+    @(defaultValue = "Good")
+    string Equipment_Condition = ["Good", "Very Good", "New"];
+
+    @(defaultValue = "5")
+    int Equipment_Age = [0..100];
+
+    @(defaultValue = "TOFIO")
+    string Equipment_Make;
+
+    @(defaultValue = "Heating and Air Conditioners")
+    string Equipment_Type = ["CNC Machines", "Heating and Air Conditioners", "Manufacturing Equipments", "Refrigerators", "Electrical Systems", "Boilers and Pressure Equipments", "Elevators", "Motors and Engines"];
+
+    @(configurable=false)
+    int Equipment_Value = [0..500000];
+}
+
+type BurglaryCoverage {
+    @(domainComputation = "false", defaultValue = "10000")
+    int Burglary_Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+    @(domainComputation = "false", defaultValue = "100")
+    int Burglary_Deductible = [0, 50, 100, 200, 500];
+}
+
+type VandalismCoverage{
+    @(domainComputation = "false", defaultValue = "10000")
+    int Vandalism_Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+    @(domainComputation = "false", defaultValue = "100")
+    int Vandalism_Deductible = [0, 50, 100, 200, 500];
+}
+
+type Equipment : CommercialEquipmentClass {
+
+    relation equipmentcoverage : EquipmentCoverage[0..1];
+}
+
+type EquipmentCoverage {
+    @(domainComputation = "false", defaultValue = "10000")
+    int Equipment_Limit = [1000, 2000, 5000, 10000, 25000, 50000];
+
+    @(domainComputation = "false", defaultValue = "100")
+    int Equipment_Deductible = [0, 50, 100, 200, 500];
+}

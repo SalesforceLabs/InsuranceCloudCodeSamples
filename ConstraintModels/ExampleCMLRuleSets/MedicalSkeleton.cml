@@ -1,0 +1,259 @@
+@(contextPath = "SalesTransaction.UserProfile", attributeSource = "ST")
+extern string UserProfile;
+
+type FamilyHealthInsurance {
+    relation primarymember : PrimaryMember[1];
+}
+
+
+type Member {
+    @(configurable=false)
+    string First_Name;
+
+    @(configurable=false)
+    string Last_Name;
+
+    @(configurable=false, domainComputation=false)
+    int Age = [0..100];
+
+    string E_Mail;
+
+    string State;
+
+    @(configurable = false, domainComputation = false)
+    string Marital_Status = ["Unmarried", "Married", "Single", "None"];
+
+    @(configurable=false, defaultValue = "Male",domainComputation = false)
+    string Gender = ["Male", "Female", "Others"];
+}
+
+
+type PrimaryMember : Member {
+    
+    @(closeRelation=true, propagateUp=true)
+    relation dependentmember : Member[0..5];
+
+    relation preventivecarewellness : PreventiveCareWellness[0..1];
+    
+    relation outpatient : OutPatient[0..1];
+    
+    relation criticalillnesssurgery : CriticalIllnessSurgery[0..1];
+    
+    relation chronicdisease : ChronicDisease[0..1];
+}
+
+
+type DependentMember : Member {
+    
+    relation dependentoutpatient : OutPatient[0..1];
+
+    relation dependentpreventivecarewellness : PreventiveCareWellness[0..1];
+
+    relation dependentchronicdisease : ChronicDisease[0..1];
+
+    relation dependentcriticalillnesssurgery : CriticalIllnessSurgery[0..1];
+
+}
+
+
+@(split = false)
+type CriticalIllnessSurgery {
+    @(configurable=false)
+    int Out_Network_Diagnostic_lab_test_copay;
+
+    @(defaultValue="50", domainComputation=false)
+    int Out_Network_Deductible_Limit = [0, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+
+    @(defaultValue = "3000")
+    int Out_Network_Limit;
+
+    @(defaultValue = "0")
+    int Out_Network_coinsurance;
+
+    @(domainComputation=false)
+    int Out_Network_Annual_Out_of_Pocket_Limit = [0, 100, 500, 1000];
+
+    @(domainComputation=false)
+    int Out_Network_Doctor_visit_copay = [0, 10, 50, 100];
+
+    @(defaultValue="5", domainComputation=false)
+    int Deductible_Limit = [0, 5, 100, 200,5000];
+
+    @(domainComputation=false)
+    int Annual_Out_of_Pocket_Limit = [0, 5000, 10000, 20000];
+
+    string ICU_Fees;
+
+    string Room_Rent_limit;
+
+    @(domainComputation = false)
+    int Doctor_visit_copay = [0, 10, 25, 10000];
+
+    @(defaultValue = "60", domainComputation = false)
+    int Number_of_days_covered = [0, 30, 60];
+}
+
+@(split = false)
+type ChronicDisease {
+    @(configurable=false)
+    int Out_Network_Diagnostic_lab_test_copay;
+
+    @(defaultValue = "50", domainComputation = false)
+    int Out_Network_Deductible_Limit = [0, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+
+    @(defaultValue = "3000")
+    int Out_Network_Limit;
+
+    @(defaultValue = "0")
+    int Out_Network_coinsurance;
+
+    @(domainComputation = false)
+    int Out_Network_Annual_Out_of_Pocket_Limit = [0, 100, 500, 1000];
+
+    string Out_Network_Room_Rent_limit;
+
+    string Out_Network_ICU_Fees;
+    
+    @(defaultValue = "30")
+    int Out_Network_Number_of_days_covered;
+    
+    @(domainComputation = false)
+    int Out_Network_Doctor_visit_copay = [0, 10, 50, 100];
+
+    @(defaultValue = "5", domainComputation = false)
+    int Deductible_Limit = [0, 5, 100, 200,5000];
+
+    @(domainComputation = false)
+    int Annual_Out_of_Pocket_Limit = [0, 5000, 10000, 20000];
+
+    string ICU_Fees;
+
+    string Room_Rent_limit;
+
+    @(configurable=false)
+    int Diagnostic_lab_test_copay;
+    
+    @(defaultValue = "0")
+    int coinsurance;
+    
+    @(defaultValue = "5000")
+    int Medical_Limit;
+    
+    @(domainComputation = false)
+    int Doctor_visit_copay = [0, 10, 25, 10000];
+
+    @(defaultValue = "60", domainComputation = false)
+    int Number_of_days_covered = [0, 30, 60];
+}
+
+@(split = false)
+type PreventiveCareWellness {
+    @(configurable=false)
+    int Out_Network_Diagnostic_lab_test_copay;
+    
+    @(defaultValue = "50", domainComputation = false)
+    int Out_Network_Deductible_Limit = [0, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+
+    @(defaultValue = "3000")
+    int Out_Network_Limit;
+    
+    @(defaultValue = "0")
+    int Out_Network_coinsurance;
+    
+    @(domainComputation = false)
+    int Out_Network_Annual_Out_of_Pocket_Limit = [0, 100, 500, 1000];
+
+    string Out_Network_Room_Rent_limit;
+    
+    string Out_Network_ICU_Fees;
+    
+    @(defaultValue = "30", domainComputation = false)
+    int Out_Network_Number_of_days_covered;
+    
+    @(domainComputation = false)
+    int Out_Network_Doctor_visit_copay = [0, 10, 50, 100];
+    
+    @(configurable=false)
+    int Out_Network_Copay;
+    
+    @(defaultValue = "5", domainComputation = false)
+    int Deductible_Limit = [0, 5, 100, 200,5000];
+
+    @(domainComputation = false)
+    int Annual_Out_of_Pocket_Limit = [0, 5000, 10000, 20000];
+
+    string ICU_Fees;
+
+    string Room_Rent_limit;
+
+    @(defaultValue = 0)
+    int Diagnostic_lab_test_copay;
+    
+    @(defaultValue = "0")
+    int coinsurance;
+    
+    @(defaultValue = "5000")
+    int Medical_Limit;
+    
+    @(domainComputation = false)
+    int Doctor_visit_copay = [0, 10, 25, 10000];
+
+    @(defaultValue = "60", domainComputation = false)
+    int Number_of_days_covered = [0, 10, 30, 60];
+}
+
+@(split = false)
+type OutPatient {
+    @(configurable=false)
+    int Out_Network_Diagnostic_lab_test_copay;
+    
+    @(defaultValue = "50")
+    int Out_Network_Deductible_Limit = [0, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+
+    @(defaultValue = "3000")
+    int Out_Network_Limit;
+    
+    @(defaultValue = "0")
+    int Out_Network_coinsurance;
+    
+    @(domainComputation = false)
+    int Out_Network_Annual_Out_of_Pocket_Limit = [0, 100, 500, 1000];
+
+    string Out_Network_Room_Rent_limit;
+    
+    string Out_Network_ICU_Fees;
+    
+    @(defaultValue = "30")
+    int Out_Network_Number_of_days_covered;
+    
+    @(domainComputation = false)
+    int Out_Network_Doctor_visit_copay = [0, 10, 50, 100];
+    
+    @(configurable=false)
+    int Out_Network_Copay;
+    
+    @(defaultValue = "50", domainComputation = false)
+    int Deductible_Limit = [0, 5, 50, 100, 200,5000];
+
+    @(domainComputation = false)
+    int Annual_Out_of_Pocket_Limit = [0, 5000, 10000, 20000];
+
+    string ICU_Fees;
+
+    string Room_Rent_limit;
+
+    @(configurable = false)
+    int Diagnostic_lab_test_copay;
+    
+    @(defaultValue = "0")
+    int coinsurance;
+    
+    @(defaultValue = "5000")
+    int Medical_Limit;
+    
+    @(domainComputation = false)
+    int Doctor_visit_copay = [0, 10, 25, 10000];
+
+    @(defaultValue = "60")
+    int Number_of_days_covered = [0, 30, 60];
+}
