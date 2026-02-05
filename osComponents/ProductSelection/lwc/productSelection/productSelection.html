@@ -1,0 +1,119 @@
+<template>
+    <template if:true={isLoading}>
+        <lightning-spinner alternative-text={LABELS.Loading} variant="brand" size="medium"></lightning-spinner>
+    </template>
+    <template if:false={isLoading}>
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-grid_align-end slds-m-bottom_medium">
+                <div class="slds-col">
+                    <lightning-button 
+                        label={LABELS.CompareBtn}
+                        variant="brand"
+                        onclick={launchProdCompareModal}
+                        class="slds-float_right"
+                    ></lightning-button>
+                </div>
+            </div>
+            <div if:true={displayErrorMsg} class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium" role="alert">
+                    <span class="slds-icon_container slds-m-right_x-small">
+                        <lightning-icon icon-name="utility:warning" variant="inverse" size="x-small"></lightning-icon>
+                    </span>
+                <h2>{displayErrorMsg}</h2>
+            </div>
+            <div class="slds-container_center slds-container_large">
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <template for:each={ratedProducts} for:item="product">
+                        <div key={product.id} class="slds-col slds-no-flex slds-p-bottom_medium">
+                            <div class="slds-form-element__control">
+                                <div class="slds-visual-picker slds-visual-picker_large slds-m-bottom_medium">
+                                    <input
+                                            type={pickerType}
+                                            id={product.id}
+                                            value={product.id}
+                                            name="product-picker"
+                                            data-id={product.id}
+                                            data-instance-key={product.instanceKey}
+                                            checked={product.isSelected}
+                                            onchange={handlePickerSelection}
+                                    />
+                                    <label for={product.id}>
+                                    <span class="prod-card-body slds-visual-picker__figure slds-visual-picker__text">
+                                        <div class="slds-m-top_small slds-m-horizontal_xxx-small">
+                                            <lightning-card>
+                                                <div class="slds-card__header slds-var-m-bottom_x-large slds-var-m-left_xx-small">
+                                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-start">
+                                                        <div class="slds-col slds-p-right_medium" title={product.label}>
+                                                            <h2 class="product-title slds-text-heading_medium slds-text-align_left slds-var-m-bottom_none">{product.label}</h2>
+                                                        </div>
+                                                        <div class="slds-col slds-no-flex">
+                                                            <lightning-input
+                                                                    type="checkbox"
+                                                                    onchange={handleProductSelection}
+                                                                    label={LABELS.Checkbox}
+                                                                    variant="label-hidden"
+                                                                    data-id={product.id}
+                                                            ></lightning-input>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="slds-card__body slds-var-p-bottom_medium slds-var-p-left_x-large">
+                                                    <div class="slds-var-m-bottom_large">
+                                                        <div class="slds-var-m-bottom_x-small">
+                                                            <p class="slds-text-heading_small slds-text-color_weak slds-text-align_left">{LABELS.Premium}</p>
+                                                        </div>
+                                                        <div class="slds-var-m-bottom_x-small">
+                                                            <p class="slds-text-heading_medium premium-amount slds-text-align_left">
+                                                                <span if:true={product.hasEmptyPrice}>...</span>
+                                                                <span if:false={product.hasEmptyPrice}>
+                                                                    <lightning-formatted-number value={product.price} format-style="currency" currency-code={currencyIsoCode}></lightning-formatted-number>
+                                                                </span>
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <p class="slds-text-body_small slds-text-color_weak">{product.formattedMonthlyPremium}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div title={product.description}>
+                                                        <p class="card-description slds-text-body_regular slds-text-align_left slds-p-right_medium">{product.description}</p>
+                                                    </div>
+                                                </div>
+                                            </lightning-card>
+                                        </div>
+                                    </span>
+                                        <span class="slds-icon_container slds-visual-picker__text-check">
+                                        <svg class="slds-icon slds-icon-text-check slds-icon_x-small" aria-hidden="true">
+                                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+                                        </svg>
+                                    </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template lwc:if={showCustomNextPrevButtons}>
+        <div class="slds-grid slds-grid_align-end slds-m-bottom_none">
+            <div class="slds-col slds-size_1-of-8 slds-m-right_small">
+                <lightning-button
+                        label={LABELS.Previous}
+                        onclick={handleCustomPrevious}
+                        variant="neutral"
+                        stretch
+                        disabled={isLoading}>
+                </lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-8">
+                <lightning-button
+                        label={LABELS.Next}
+                        onclick={handleCustomNext}
+                        variant="brand"
+                        stretch
+                        disabled={isLoading}>
+                </lightning-button>
+            </div>
+        </div>
+    </template>
+</template>

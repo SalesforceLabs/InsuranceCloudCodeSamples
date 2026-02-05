@@ -1,0 +1,25 @@
+.prod-card-body {
+    height: var(--slds-g-sizing-15);
+    width: var(--slds-g-sizing-15);
+    box-shadow: var(--slds-g-shadow-3);
+}
+
+.product-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.card-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
+    word-break: break-word;
+}

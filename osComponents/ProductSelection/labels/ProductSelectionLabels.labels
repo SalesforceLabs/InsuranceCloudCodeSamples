@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+  <labels>
+    <fullName>ProdSelMinComparisonValidation</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Minimum products comparison validation</shortDescription>
+    <value>Select at least {0} products to compare</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelMaxComparisonValidation</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Maximum products comparison validation</shortDescription>
+    <value>Select up to {0} products to compare.</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelMaxMultiSelectValidation</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Maximum multi-select validation</shortDescription>
+    <value>Choose no more than {0} products.</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelMaxRootProductValidation</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Maximum root products validation</shortDescription>
+    <value>No more than {0} root products are allowed for input.</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelSelectionRequiredMsg</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Selection required message</shortDescription>
+    <value>Choose a product.</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelNoProductsMsg</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>No products available message</shortDescription>
+    <value>No products are available.</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelCompareBtn</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Compare button label</shortDescription>
+    <value>Compare</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelDetails</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Details column label</shortDescription>
+    <value>Details</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelNext</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Next button label</shortDescription>
+    <value>Next</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelPremium</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Premium label</shortDescription>
+    <value>Premium</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelPrevious</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Previous button label</shortDescription>
+    <value>Previous</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelProduct</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Product column label</shortDescription>
+    <value>Product</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelLoading</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Loading spinner alt text</shortDescription>
+    <value>Loading</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelCheckbox</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Checkbox accessibility label</shortDescription>
+    <value>checkbox</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelCompareProducts</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Compare Products modal header</shortDescription>
+    <value>Compare Products</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelCancel</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Cancel button label</shortDescription>
+    <value>Cancel</value>
+  </labels>
+</CustomLabels>
