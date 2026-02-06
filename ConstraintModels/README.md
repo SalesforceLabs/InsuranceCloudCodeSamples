@@ -67,15 +67,6 @@ THe CML Migration Tool is a command-line + UI utility that enables:
 - Import/export of CML rule sets
 - CML Deployment across orgs
 - Standard Configurator Rules to Constraint Engine Rules (WIP)
-
-### Product Hierarchy Migration Tool (Multi Cloud Data Migrator)
-
-The Product Hierarchy Migration Tool ensures that product model data remains consistent across orgs, enabling:
-
-- Reliable replication of Insurance product hierarchy
-- Automated or semi-automated org-to-org transfer
-- Dependency-aware sequencing of metadata and data
-
 ---
 
 ## Documentation & Guides
