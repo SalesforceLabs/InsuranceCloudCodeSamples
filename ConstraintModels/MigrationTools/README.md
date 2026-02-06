@@ -47,23 +47,6 @@ The **CML Migration Tool** enables seamless import, export, and deployment of Co
 - Python 3.9+
 - Salesforce CLI (sf)
 - Connected orgs with accessible metadata API
----
-
-### [Multi Cloud Data Migrator for Product Models](https://github.com/sf-mcdm/multi-cloud-data-migrator)
-
-The **Multi Cloud Data Migrator** is a comprehensive tool for migrating Insurance product hierarchy metadata and data across orgs. It ensures that all components of your product model remain consistent during transfer:
-
-- Product Definitions and hierarchies(Product Related Components)
-- Attribute Categories and Definitions
-- Picklist and Picklist Values
-- Pricebook Entries
-- [and more...](#sobject-keys-reference) 
-
-  **Key Features:**
-- Dependency-aware sequencing prevents broken references
-- Automated or semi-automated migration workflows
-- Support for complex product hierarchies
-- Validation to ensure data integrity post-migration
 
 ---
 
