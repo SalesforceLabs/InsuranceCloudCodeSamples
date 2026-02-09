@@ -1,0 +1,22 @@
+<template>
+    <lightning-modal-header label={labels.CompareProducts}></lightning-modal-header>
+    <lightning-modal-body>
+        <template lwc:if={hasGridData}>
+            <div class="prod-sel-grid-container" style="height: 600px;">
+                <c-product-selection-custom-tree-grid
+                        key-field="id"
+                        data={gridData}
+                        columns={gridColumns}
+                        hide-checkbox-column
+                ></c-product-selection-custom-tree-grid>
+            </div>
+        </template>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <div class="slds-grid slds-grid_align-end">
+            <div class="slds-col">
+                <lightning-button label={labels.Cancel} onclick={handleCancel}></lightning-button>
+            </div>
+        </div>
+    </lightning-modal-footer>
+</template>
