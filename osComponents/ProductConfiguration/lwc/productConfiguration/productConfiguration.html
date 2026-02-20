@@ -39,11 +39,6 @@
                 <template if:true={treeItems.length}>
                     <lightning-tree items={treeItems} selected-item={selectedNode.name} onselect={handleSelect}></lightning-tree>
                 </template>
-                <!-- <template if:false={treeItems.length}>
-                    <div class="slds-align_absolute-center slds-p-vertical_large">
-                        <lightning-spinner alternative-text={labels.LOADING} size="medium"></lightning-spinner>
-                    </div>
-                </template> -->
             </div>
 
             <!-- Right Panel: Details and Coverages -->

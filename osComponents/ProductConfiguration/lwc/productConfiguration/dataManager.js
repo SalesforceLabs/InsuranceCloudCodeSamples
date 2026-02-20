@@ -1,4 +1,4 @@
-import { CONSTANTS } from './productConfigurationConstantsAndLabels';
+import { CONSTANTS } from './labelsAndConstants';
 
 /**
  * Builds tree structure from contextJSON for lightning-tree component

@@ -69,8 +69,6 @@ export const LABELS = {
 export const CONSTANTS = {
     // Component constants
     REFERENCE_FIELD_ID: 'id',
-    // Instrumentation constants
-    PRODUCT_FEATURE_ID: 'aLUEE0000000Uue4AE',
     EVENT_NAMES: {
         VIEW: 'productConfiguration.view',
         ATTRIBUTE_CHANGE: 'productConfiguration.attributechange',

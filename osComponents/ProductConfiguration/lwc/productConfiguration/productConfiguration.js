@@ -5,7 +5,7 @@ import CURRENCY from '@salesforce/i18n/currency';
 import postRatingFromLwc from '@salesforce/apex/InsuranceRatingApexService.postRatingFromLwc';
 import patchRatingFromLwc from '@salesforce/apex/InsuranceRatingApexService.patchRatingFromLwc';
 import { OmniscriptBaseMixin } from 'c/omniscriptBaseMixin';
-import { LABELS } from './productConfigurationConstantsAndLabels';
+import { LABELS } from './labelsAndConstants';
 
 const DELIMITERS = ['/', '#'];
 
@@ -38,11 +38,6 @@ export default class ProdCfg extends OmniscriptBaseMixin(LightningElement) {
         super();
     }
 
-
-//  get isLookup() {
-//         return this.type === FIELD_TYPES.LOOKUP;
-//     }
-
     connectedCallback() {
         const stateData = this.omniGetSaveState();
         if (stateData && stateData.savedProduct) {
@@ -52,7 +47,7 @@ export default class ProdCfg extends OmniscriptBaseMixin(LightningElement) {
         }
     }
 
-/**
+    /**
      * OS - Set UI to previous saved state
      * @param {Object} stateData
      */
