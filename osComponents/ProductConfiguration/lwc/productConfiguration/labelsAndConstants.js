@@ -1,9 +1,3 @@
-/*
- * Copyright 2025 salesforce.com, inc.
- * All Rights Reserved
- * Company Confidential
- */
-
 // Import Custom Labels
 import MESSAGES from '@salesforce/label/c.PRODUCT_CONFIG_MESSAGES';
 import COVERAGES from '@salesforce/label/c.PRODUCT_CONFIG_COVERAGES';

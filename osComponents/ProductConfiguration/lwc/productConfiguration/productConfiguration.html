@@ -112,7 +112,7 @@
                                                         <div class="slds-form-element">
                                                             <span if:false={attribute.isLookup} class="slds-form-element__label slds-text-body_small">{attribute.label}</span>
                                                             <div class="slds-form-element__control">
-                                                                <!-- Display lookup attribute using force-lookup -->
+                                                                <!-- Display lookup attribute-->
                                                                 <template if:true={attribute.isLookup}>
                                                                     <template if:true={attribute.displayValue}>
                                                                         <lightning-record-edit-form record-id={attribute.value} object-api-name={attribute.lookupObjectApiName}>
@@ -288,17 +288,6 @@
                                                                                 <label class="slds-form-element__label slds-text-body_small">{attr.label}</label>
                                                                                 <div class="slds-form-element__control">
                                                                                     <template if:true={attr.displayValue}>
-                                                                                        <!-- <force-lookup class="attr-lookup-align"
-                                                                                                      object-api-name={attr.lookupObjectApiName}
-                                                                                                      record-id={attr.value}
-                                                                                                      value={attr.value}
-                                                                                                      display-value={attr.lookupDisplayName}
-                                                                                                      name-fields
-                                                                                                      should-calculate-display-name
-                                                                                                      data-coverage-key={coverage.key}
-                                                                                                      data-attr-id={attr.id}
-                                                                                                      onitemoutputchange={handleCoverageAttributeLookupChange}>
-                                                                                        </force-lookup> -->
                                                                                     </template>
                                                                                     <template if:false={attr.displayValue}>
                                                                                         <span class="slds-text-body_small">-</span>

@@ -27,7 +27,7 @@ The `productConfiguration` Lightning Web Component (LWC) is designed for Digital
 | File | Type | Description |
 | :---- | :---- | :---- |
 | `InsuranceRatingApexService.cls` | Apex Class | Service class that wraps the createInsuranceRating and repriceInsuranceProduct invocable action.|
-| `ProductSelectionLabels.labels` | Custom Labels | UI text labels for translation support |
+| `ProductConfigurationLabels.labels` | Custom Labels | UI text labels for translation support |
 
 ---
 
@@ -84,7 +84,7 @@ Embed the productConfiguration LWC in an Omniscript by using the Custom Lightnin
 3. Set the **LWC Component Name** to `c-product-configuration`  
 4. Configure the component properties (see [Public Properties](#public-properties-api))
 
-If you set `clearStateOnPrev` to `true`, hide the standard Previous and Next buttons in the step by reducing their width to 0\. The productSelection LWC shows Previous and Next buttons for navigation.
+If you set `clearStateOnPrev` to `true`, hide the standard Previous and Next buttons in the step by reducing their width to 0\. The productConfiguration LWC shows Previous and Next buttons for navigation.
 
 ### Data Output Structure
 
@@ -102,7 +102,7 @@ The component outputs data to OmniScript via `omniUpdateDataJson()`:
 
 | Issue | Possible Cause | Solution |
 | :---- | :---- | :---- |
-| "No products are available" | Rating API returned no products or ran into error | Verify `rootProductCodes` and `ratingInputs` are correct. |
+| "No products are available" | Rating API returned no products or ran into error | Verify `ratingInputs` are correct. |
 | OmniscriptBaseMixin not found on component deployment | Missing Omniscript customization package | Ensure `omniscriptBaseMixin` and utility modules are deployed by following the [Prerequisites](../../../README.md#prerequisites). |
 | Missing context or product details on rating call response | Wrong API version | Ensure that all components and supporting files use Salesforce API version **66.0** or later. |
 | State not persisting | clearStateOnPrev is not set to true | Hide step buttons by setting width to 0 and set `clearStateOnPrev` to true. |

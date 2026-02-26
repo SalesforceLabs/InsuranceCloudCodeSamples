@@ -1,9 +1,3 @@
-/*
- * Copyright 2025 salesforce.com, inc.
- * All Rights Reserved
- * Company Confidential
- */
-
 import { LightningElement, api } from 'lwc';
 import { publish, createMessageContext } from 'lightning/messageService';
 import MessageChannel from '@salesforce/messageChannel/lightning__productConfigurator_notification';
