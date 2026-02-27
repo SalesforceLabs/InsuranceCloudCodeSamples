@@ -36,7 +36,6 @@ The `productConfiguration` Lightning Web Component (LWC) is designed for Digital
 | Property | Type | Default | Description |
 | :---- | :---- | :---- | :---- |
 | `additionalFields` | `Object` | `{}` | Additional fields to include in the rating request payload.  |
-| `clearStateOnChange` | `String` | — | JSON stringified array of element names whose state should be cleared when selection changes. |
 | `clearStateOnPrev` | `Boolean/String` | — | When `true` or `'true'`, enables custom navigation buttons and clears state when navigating to the previous step. |
 | `ratingInputs` | `Array` | `[]` | Array of rating input objects containing product configuration data. Supports reusable and non-reusable inputs with `instanceKeys`. |
 | `ratingOptions` | `Object` | `{}` | Rating options passed to the API. Defaults `executePricing` and `executeConfigurationRules` to `true`. |
