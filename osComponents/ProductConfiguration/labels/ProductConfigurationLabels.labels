@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+  <labels>
+    <fullName>PRODUCT_CONFIG_MESSAGES</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Messages</shortDescription>
+    <value>Messages</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_COVERAGES</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Coverages</shortDescription>
+    <value>Coverages</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_LOADING</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Loading</shortDescription>
+    <value>Loading</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_PRODUCT_CONFIGURATION</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Product Configuration</shortDescription>
+    <value>Product Configuration</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_TOGGLE_MESSAGES</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Toggle Messages</shortDescription>
+    <value>Toggle Messages</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_ERROR</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Error</shortDescription>
+    <value>Error</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_DETAILS</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Details</shortDescription>
+    <value>Details</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_SELECT_ITEM_MESSAGE</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Select Item Message</shortDescription>
+    <value>Select an item from the tree to see its details.</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_PRICE_SUMMARY</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Price Summary</shortDescription>
+    <value>Price Summary</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_INSTANT_PRICING</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Instant Pricing</shortDescription>
+    <value>Instance Pricing</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_UPDATE_PRICES</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Update Prices</shortDescription>
+    <value>Update Prices</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_TOTAL_PREMIUM</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Total Premium</shortDescription>
+    <value>Total Premium</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_TAXES_FEES_SURCHARGE</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Taxes Fees Surcharge</shortDescription>
+    <value>Taxes, Fees and Surcharge</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_PREMIUM</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Premium</shortDescription>
+    <value>Premium</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_ERROR_OCCURRED</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Error Occurred</shortDescription>
+    <value>An error occurred</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_INVALID_DATA_RECEIVED</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Invalid Data Received</shortDescription>
+    <value>Invalid data received</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_SELECT_COVERAGE_FIRST</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Select Coverage First</shortDescription>
+    <value>Please select the coverage first.</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_DELETE</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Delete</shortDescription>
+    <value>Delete</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_CONFIRM_DELETE</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Confirm Delete</shortDescription>
+    <value>Confirm Delete</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_DELETE_CONFIRMATION_MESSAGE</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Delete Confirmation Message</shortDescription>
+    <value>Are you sure you want to delete?</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_CANCEL</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Cancel</shortDescription>
+    <value>Cancel</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_CONFIRM</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Confirm</shortDescription>
+    <value>Confirm</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_REQUIRED_ATTRIBUTES_MSG</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Required Attributes Message</shortDescription>
+    <value>Complete the required fields.</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_NO_ATTRIBUTES_MSG</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>No Attributes Message</shortDescription>
+    <value>No attributes to show.</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_MULTI_VALUE_DECODER_MESSAGE</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Multi Value Decoder Message</shortDescription>
+    <value>Shows the value in the format</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_NEXT</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Next</shortDescription>
+    <value>Next</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_PREVIOUS</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Previous</shortDescription>
+    <value>Previous</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_TAX_AMOUNT</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Tax Amount</shortDescription>
+    <value>Tax Amount</value>
+  </labels>
+</CustomLabels>
+

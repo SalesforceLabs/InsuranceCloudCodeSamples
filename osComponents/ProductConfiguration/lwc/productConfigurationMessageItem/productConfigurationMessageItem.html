@@ -1,0 +1,35 @@
+<template>
+    <div class="slds-is-relative">
+        <div class="slds-var-p-left_x-small">
+            <h2 class="slds-text-body_regular slds-truncate" title={title}>
+                <div class="slds-media slds-media_center">
+                    <div class="slds-media__figure slds-align_absolute-center">
+                        <template lwc:if={isErrorMessage}>
+                            <lightning-icon icon-name="utility:error" variant="error" alternative-text="Error" size="x-small" title="Error"></lightning-icon>
+                        </template>
+                        <template lwc:elseif={isWarningMessage}>
+                            <lightning-icon
+                                    icon-name="utility:warning"
+                                    variant="warning"
+                                    alternative-text="Warning"
+                                    size="x-small"
+                                    title="Warning">
+                            </lightning-icon>
+                        </template>
+                        <template lwc:else>
+                            <lightning-icon icon-name="utility:info" alternative-text="Info" size="x-small" title="Info"></lightning-icon>
+                        </template>
+                    </div>
+                    <div class="slds-media__body slds-truncate">
+                        {title}
+                    </div>
+                    <template lwc:if={hasNavigationPath}>
+                        <div class="slds-media__figure slds-media__figure_reverse">
+                            <button onclick={handleView} class="slds-button slds-button_reset slds-text-link">View</button>
+                        </div>
+                    </template>
+                </div>
+            </h2>
+        </div>
+    </div>
+</template>

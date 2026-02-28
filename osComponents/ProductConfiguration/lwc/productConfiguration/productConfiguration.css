@@ -1,0 +1,13 @@
+.detailHeader {
+    background-color: var(--slds-g-color-palette-neutral-95, #f3f3f3);
+    border-radius: var(--slds-c-button-radius-border, 0.25rem);
+}
+
+/* Sticky pricing summary footer */
+.sticky-footer {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--slds-g-color-neutral-base-100, #ffffff);
+    border-top: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+    z-index: var(--slds-c-modal-sizing-z-index, 100);
+}
