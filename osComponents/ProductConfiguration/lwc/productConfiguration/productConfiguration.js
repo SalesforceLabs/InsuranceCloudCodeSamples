@@ -293,12 +293,28 @@ export default class ProdCfg extends OmniscriptBaseMixin(LightningElement) {
                             ? 'slds-box slds-box_x-small slds-m-bottom_small slds-is-disabled'
                             : 'slds-box slds-box_x-small slds-m-bottom_small';
 
-                        // Pass raw price and formatted tax for coverage
+                        // Pass raw price and formatted tax and fee for coverage
                         const currency = this.getCurrencyForPriceSummary();
                         preparedCoverage.price = coverage.netUnitPrice;
-                        preparedCoverage.tax = (coverage.proratedQLITaxAmount !== null && coverage.proratedQLITaxAmount !== undefined)
+
+                        // Build tooltip content with tax and fee information
+                        const taxInfo = (coverage.proratedQLITaxAmount !== null && coverage.proratedQLITaxAmount !== undefined)
                             ?  `${LABELS.TAX_AMOUNT} ` + this.formatCurrency(coverage.proratedQLITaxAmount, currency)
                             : null;
+                        const feeInfo = (coverage.proratedQLIFeeAmount !== null && coverage.proratedQLIFeeAmount !== undefined)
+                            ?  `${LABELS.FEE_AMOUNT} ` + this.formatCurrency(coverage.proratedQLIFeeAmount, currency)
+                            : null;
+
+                        // Combine tax and fee info for tooltip
+                        if (taxInfo && feeInfo) {
+                            preparedCoverage.tax = `${taxInfo} | ${feeInfo}`;
+                        } else if (taxInfo) {
+                            preparedCoverage.tax = taxInfo;
+                        } else if (feeInfo) {
+                            preparedCoverage.tax = feeInfo;
+                        } else {
+                            preparedCoverage.tax = null;
+                        }
 
                         if (coverage.attributes) {
                             // Use coverage's stiId for attribute treatments (not parent node's id)
@@ -1038,12 +1054,28 @@ export default class ProdCfg extends OmniscriptBaseMixin(LightningElement) {
     }
 
     get selectedNodeTax() {
-        if (!this.selectedNode || this.selectedNode.proratedQLITaxAmount === null || this.selectedNode.proratedQLITaxAmount === undefined) {
+        if (!this.selectedNode) {
             return '';
         }
+
         const currency = this.getCurrencyForPriceSummary();
-        const formattedCurrency = this.formatCurrency(this.selectedNode.proratedQLITaxAmount, currency);
-        return `${LABELS.TAX_AMOUNT} ${formattedCurrency}`;
+        const hasTax = this.selectedNode.proratedQLITaxAmount !== null && this.selectedNode.proratedQLITaxAmount !== undefined;
+        const hasFee = this.selectedNode.proratedQLIFeeAmount !== null && this.selectedNode.proratedQLIFeeAmount !== undefined;
+
+        if (!hasTax && !hasFee) {
+            return '';
+        }
+
+        const taxInfo = hasTax ? `${LABELS.TAX_AMOUNT} ${this.formatCurrency(this.selectedNode.proratedQLITaxAmount, currency)}` : null;
+        const feeInfo = hasFee ? `${LABELS.FEE_AMOUNT} ${this.formatCurrency(this.selectedNode.proratedQLIFeeAmount, currency)}` : null;
+
+        if (taxInfo && feeInfo) {
+            return `${taxInfo} | ${feeInfo}`;
+        }
+        if (feeInfo) {
+            return feeInfo;
+        }
+        return taxInfo;
     }
 
     get currencyCode() {
@@ -1301,7 +1333,8 @@ export default class ProdCfg extends OmniscriptBaseMixin(LightningElement) {
         }
         return {
             premium: this.getPriceValue('NetUnitPrice'),
-            taxesFees: this.getPriceValue('ProratedQLITaxAmount'),
+            taxes: this.getPriceValue('ProratedQLITaxAmount'),
+            fees: this.getPriceValue('ProratedQLIFeeAmount__std'),
             totalPremium: this.getPriceValue('NetTotalPrice')
         };
     }

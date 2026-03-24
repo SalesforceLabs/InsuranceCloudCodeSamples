@@ -13,6 +13,8 @@ import ProdSelPrevious from '@salesforce/label/c.ProdSelPrevious';
 import ProdSelProduct from '@salesforce/label/c.ProdSelProduct';
 import ProdSelLoading from '@salesforce/label/c.ProdSelLoading';
 import ProdSelCheckbox from '@salesforce/label/c.ProdSelCheckbox';
+import ProdSelTaxAmount from '@salesforce/label/c.ProdSelTaxAmount';
+import ProdSelFeeAmount from '@salesforce/label/c.ProdSelFeeAmount';
 
 // Product Selection validation messages
 export const VALIDATION_MESSAGES = {
@@ -32,7 +34,9 @@ export const LABELS = {
     Previous: ProdSelPrevious,
     Product: ProdSelProduct,
     Loading: ProdSelLoading,
-    Checkbox: ProdSelCheckbox
+    Checkbox: ProdSelCheckbox,
+    TaxAmount: ProdSelTaxAmount,
+    FeeAmount: ProdSelFeeAmount
 };
 
 export const CONSTANTS = {

@@ -27,6 +27,7 @@ import MULTI_VALUE_DECODER_MESSAGE from '@salesforce/label/c.PRODUCT_CONFIG_MULT
 import NEXT from '@salesforce/label/c.PRODUCT_CONFIG_NEXT';
 import PREVIOUS from '@salesforce/label/c.PRODUCT_CONFIG_PREVIOUS';
 import TAX_AMOUNT from '@salesforce/label/c.PRODUCT_CONFIG_TAX_AMOUNT';
+import FEE_AMOUNT from '@salesforce/label/c.PRODUCT_CONFIG_FEE_AMOUNT';
 
 // Product Configuration Labels
 export const LABELS = {
@@ -42,7 +43,6 @@ export const LABELS = {
     INSTANT_PRICING,
     UPDATE_PRICES,
     TOTAL_PREMIUM,
-    TAXES_FEES_SURCHARGE,
     PREMIUM,
     ERROR_OCCURRED,
     INVALID_DATA_RECEIVED,
@@ -57,7 +57,8 @@ export const LABELS = {
     MULTI_VALUE_DECODER_MESSAGE,
     NEXT,
     PREVIOUS,
-    TAX_AMOUNT
+    TAX_AMOUNT,
+    FEE_AMOUNT
 };
 
 export const CONSTANTS = {

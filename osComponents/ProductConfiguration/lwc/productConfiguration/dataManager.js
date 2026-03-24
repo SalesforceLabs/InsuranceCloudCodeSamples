@@ -84,6 +84,7 @@ function buildTreeNode(salesTransactionItem, productDetailsMap, instanceKeysPath
                 attributes: getAttributesWithDetails(childNode, coverageProductDetail),
                 netUnitPrice: childData.NetUnitPrice,
                 proratedQLITaxAmount: childData.ProratedQLITaxAmount,
+                proratedQLIFeeAmount: childData.ProratedQLIFeeAmount__std,
                 instanceKeys: coverageInstanceKeys,
                 instanceKeysString: coverageInstanceKeys.join(',')
             });
@@ -106,7 +107,8 @@ function buildTreeNode(salesTransactionItem, productDetailsMap, instanceKeysPath
         attributes: getAttributesWithDetails(salesTransactionItem, productDetail),
         coverages,
         netUnitPrice: itemData.NetUnitPrice,
-        proratedQLITaxAmount: itemData.ProratedQLITaxAmount
+        proratedQLITaxAmount: itemData.ProratedQLITaxAmount,
+        proratedQLIFeeAmount: itemData.ProratedQLIFeeAmount__std
     };
 
     // Step 3: Add unselected coverages from product details
