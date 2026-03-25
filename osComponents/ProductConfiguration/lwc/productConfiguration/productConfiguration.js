@@ -1302,10 +1302,10 @@ export default class ProdCfg extends OmniscriptBaseMixin(LightningElement) {
 
     // Pricing getter methods
     getCurrencyForPriceSummary() {
-        if (!this.apiResponse?.contextJSON?.salesTransactions?.[0]?.salesTransactionItems) {
+        if (!this.apiResponse?.productRatingOutput?.contextJSON?.salesTransactions?.[0]?.salesTransactionItems) {
             return CURRENCY; // Fall back to org's default currency
         }
-        const firstItem = this.apiResponse.contextJSON.salesTransactions[0].salesTransactionItems[0];
+        const firstItem = this.apiResponse.productRatingOutput.contextJSON.salesTransactions[0].salesTransactionItems[0];
         const currency = firstItem?.fields?.STICurrencyIsoCode__std || CURRENCY;
         return currency;
     }
@@ -1320,10 +1320,10 @@ export default class ProdCfg extends OmniscriptBaseMixin(LightningElement) {
     }
 
     getPriceValue(fieldName) {
-        if (!this.apiResponse?.contextJSON?.salesTransactions?.[0]?.salesTransactionItems) {
+        if (!this.apiResponse?.productRatingOutput?.contextJSON?.salesTransactions?.[0]?.salesTransactionItems) {
             return 0;
         }
-        const firstItem = this.apiResponse.contextJSON.salesTransactions[0].salesTransactionItems[0];
+        const firstItem = this.apiResponse.productRatingOutput.contextJSON.salesTransactions[0].salesTransactionItems[0];
         return firstItem?.fields?.[fieldName] || 0;
     }
 
