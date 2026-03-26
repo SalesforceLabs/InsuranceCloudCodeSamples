@@ -371,9 +371,13 @@
                         <span class="slds-text-body_regular">{labels.PREMIUM}</span>
                         <lightning-formatted-number value={priceSummary.premium} format-style="currency" currency-code={currencyCode} class="slds-text-body_regular"></lightning-formatted-number>
                     </div>
+                    <div class="slds-grid slds-grid_align-spread slds-m-bottom_x-small">
+                        <span class="slds-text-body_small slds-text-color_weak">{labels.TAX_AMOUNT}</span>
+                        <lightning-formatted-number value={priceSummary.taxes} format-style="currency" currency-code={currencyCode} class="slds-text-body_small slds-text-color_weak"></lightning-formatted-number>
+                    </div>
                     <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
-                        <span class="slds-text-body_small slds-text-color_weak">{labels.TAXES_FEES_SURCHARGE}</span>
-                        <lightning-formatted-number value={priceSummary.taxesFees} format-style="currency" currency-code={currencyCode} class="slds-text-body_small slds-text-color_weak"></lightning-formatted-number>
+                        <span class="slds-text-body_small slds-text-color_weak">{labels.FEE_AMOUNT}</span>
+                        <lightning-formatted-number value={priceSummary.fees} format-style="currency" currency-code={currencyCode} class="slds-text-body_small slds-text-color_weak"></lightning-formatted-number>
                     </div>
                     <div class="slds-grid slds-grid_align-spread slds-border_top slds-p-top_small">
                         <span class="slds-text-heading_small">{labels.TOTAL_PREMIUM}</span>

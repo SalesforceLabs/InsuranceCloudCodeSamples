@@ -59,6 +59,8 @@ function buildTreeNode(item, itemKey, productDetails, treatments) {
                 productCode: childData.ProductCode,
                 isSelected: true,
                 price: childData.NetUnitPrice,
+                taxAmount: childData.ProratedQLITaxAmount,
+                feeAmount: childData.ProratedQLIFeeAmount__std,
                 attributes: getAttributesWithDetails(childNode, coverageProductDetail, treatments),
                 id: childData.id,
                 prcId
@@ -88,6 +90,8 @@ function buildTreeNode(item, itemKey, productDetails, treatments) {
         description: productDetail.description,
         customProductName: itemData.CustomProductName,
         price: itemData.NetUnitPrice,
+        taxAmount: itemData.ProratedQLITaxAmount,
+        feeAmount: itemData.ProratedQLIFeeAmount__std,
         hasEmptyPrice: itemData.NetUnitPrice === null || itemData.NetUnitPrice === undefined,
         name: itemKey,
         expanded: false,
@@ -340,12 +344,20 @@ function _processNode(node, planName, currentLevelMap) {
             label: nodeLabel,
             productCode: node.productCode,
             prices: new Map(),
+            taxAmounts: new Map(),
+            feeAmounts: new Map(),
             children: new Map(),
         };
         currentLevelMap.set(nodeKey, entry);
     }
     if (node.price !== undefined) {
         entry.prices.set(planName, node.price);
+    }
+    if (node.taxAmount !== undefined) {
+        entry.taxAmounts.set(planName, node.taxAmount);
+    }
+    if (node.feeAmount !== undefined) {
+        entry.feeAmounts.set(planName, node.feeAmount);
     }
 
     if (node.attributes && node.attributes.length > 0) {
@@ -400,14 +412,58 @@ function _buildGridRowsRecursive(map, parentId, planNames, currencyCode, parentV
                 }
             });
 
+            // Create tax and fee rows for products/coverages (not attributes)
+            const additionalRows = [];
+            if (value.type === 'product') {
+                // Create Tax Amount row
+                const taxRow = {
+                    id: `${id}-tax`,
+                    Product: '',
+                    Details: LABELS.TaxAmount,
+                };
+                planNames.forEach(planName => {
+                    const taxAmount = value.taxAmounts.get(planName);
+                    taxRow[planName] = {
+                        value: typeof taxAmount === 'number' ? taxAmount : '--',
+                        type: typeof taxAmount === 'number' ? 'currency' : 'text',
+                        currencyIsoCode: currencyCode,
+                    };
+                });
+                additionalRows.push(taxRow);
+
+                // Create Fee Amount row
+                const feeRow = {
+                    id: `${id}-fee`,
+                    Product: '',
+                    Details: LABELS.FeeAmount,
+                };
+                planNames.forEach(planName => {
+                    const feeAmount = value.feeAmounts.get(planName);
+                    feeRow[planName] = {
+                        value: typeof feeAmount === 'number' ? feeAmount : '--',
+                        type: typeof feeAmount === 'number' ? 'currency' : 'text',
+                        currencyIsoCode: currencyCode,
+                    };
+                });
+                additionalRows.push(feeRow);
+            }
+
             if (value.children && value.children.size > 0) {
                 row._children = _buildGridRowsRecursive(value.children, id, planNames, currencyCode, value);
+                // Add tax and fee rows to children
+                if (additionalRows.length > 0) {
+                    row._children = [...additionalRows, ...row._children];
+                }
                 if (row._children.length === 0 && value.type === 'product' && !_hasAnyPriceForPlans(value, planNames)) {
                 } else {
                     rows.push(row);
                     index++;
                 }
             } else {
+                // Add tax and fee rows as children even if no other children exist
+                if (additionalRows.length > 0) {
+                    row._children = additionalRows;
+                }
                 rows.push(row);
                 index++;
             }
@@ -485,9 +541,41 @@ export function transformTreeToGrid(enhancedTree, currencyIsoCode) {
         };
     });
 
+    // Create a row for tax amount of each plan
+    const totalTaxRow = {
+        id: '0-tax',
+        Product: '',
+        Details: LABELS.TaxAmount
+    };
+    planNames.forEach(planName => {
+        const rootProduct = enhancedTree.find(p => p.name === planName);
+        const taxAmount = rootProduct ? rootProduct.taxAmount : undefined;
+        totalTaxRow[planName] = {
+            value: typeof taxAmount === 'number' ? taxAmount : '--',
+            type: typeof taxAmount === 'number' ? 'currency' : 'text',
+            currencyIsoCode
+        };
+    });
+
+    // Create a row for fee amount of each plan
+    const totalFeeRow = {
+        id: '0-fee',
+        Product: '',
+        Details: LABELS.FeeAmount
+    };
+    planNames.forEach(planName => {
+        const rootProduct = enhancedTree.find(p => p.name === planName);
+        const feeAmount = rootProduct ? rootProduct.feeAmount : undefined;
+        totalFeeRow[planName] = {
+            value: typeof feeAmount === 'number' ? feeAmount : '--',
+            type: typeof feeAmount === 'number' ? 'currency' : 'text',
+            currencyIsoCode
+        };
+    });
+
     const rootAttributeRows = _buildGridRowsRecursive(rootAttributesMap, '0', planNames, currencyIsoCode, null);
 
-    const gridData = [totalPriceRow, ...rootAttributeRows, ...productRows];
+    const gridData = [totalPriceRow, totalTaxRow, totalFeeRow, ...rootAttributeRows, ...productRows];
 
     return { gridColumns, gridData };
 }

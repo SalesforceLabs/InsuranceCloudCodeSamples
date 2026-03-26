@@ -85,13 +85,6 @@
     <value>Total Premium</value>
   </labels>
   <labels>
-    <fullName>PRODUCT_CONFIG_TAXES_FEES_SURCHARGE</fullName>
-    <language>en_US</language>
-    <protected>false</protected>
-    <shortDescription>Taxes Fees Surcharge</shortDescription>
-    <value>Taxes, Fees and Surcharge</value>
-  </labels>
-  <labels>
     <fullName>PRODUCT_CONFIG_PREMIUM</fullName>
     <language>en_US</language>
     <protected>false</protected>
@@ -195,6 +188,13 @@
     <protected>false</protected>
     <shortDescription>Tax Amount</shortDescription>
     <value>Tax Amount</value>
+  </labels>
+  <labels>
+    <fullName>PRODUCT_CONFIG_FEE_AMOUNT</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Fee Amount</shortDescription>
+    <value>Fee Amount</value>
   </labels>
 </CustomLabels>
 

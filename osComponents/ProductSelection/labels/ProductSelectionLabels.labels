@@ -112,4 +112,18 @@
     <shortDescription>Cancel button label</shortDescription>
     <value>Cancel</value>
   </labels>
+  <labels>
+    <fullName>ProdSelTaxAmount</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Tax Amount</shortDescription>
+    <value>Tax Amount</value>
+  </labels>
+  <labels>
+    <fullName>ProdSelFeeAmount</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription>Fee Amount</shortDescription>
+    <value>Fee Amount</value>
+  </labels>
 </CustomLabels>
