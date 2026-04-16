@@ -23,6 +23,15 @@ The Product Selection components provide a complete solution for insurance produ
 - **Product Comparison** – Side-by-side comparison modal for up to 3 products  
 - **Custom Labels** – Fully translatable using Salesforce Custom Labels
 
+### Product Configuration
+
+The Product Configuration component provides a complete solution for insurance product rating and configuration within OmniScript flows. Key features include:
+
+- **Product Rating Integration** – Calls the Salesforce Industries `createInsuranceRating` and `repriceInsuranceRating` invocable actions  
+- **Configure Coverages and Attributes** – Support for configuring coverage attributes   
+- **Hierarchical View** – Tree navigation in the side panel to easily access products at different levels  
+- **Custom Labels** – Fully translatable using Salesforce Custom Labels
+
 ---
 
 ## Prerequisites
@@ -50,7 +59,7 @@ Copy the contents under the apex, labels, and lwc folders from the OS LWC exampl
 
 ### Step 3: Deploy the Components
 
-Deploy only the Product Selection components and their dependencies:
+Deploy only the relevant components and their dependencies (for example: Product Selection):
 
 ```shell
 sf project deploy start \
@@ -97,5 +106,5 @@ Follow the steps in [Prerequisites](#prerequisites) to retrieve and deploy the O
 
 For issues or questions related to these components:
 
-1. Review the component-specific README.  
-2. Contact your Salesforce administrator or implementation partner.
+1. Review the component-specific README (for example: `force-app/main/default/lwc/productSelection/README.md).`  
+2. Contact your Salesforce admin or implementation partner.
