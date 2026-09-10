@@ -1,0 +1,139 @@
+<template>
+  <section class="sf-activity-card">
+    <div
+      class="sf-activity-tabs"
+      role="tablist"
+      aria-label="Activity and Chatter"
+      onkeydown={handleActivityTabKeydown}
+    >
+      <template for:each={activityTabs} for:item="t">
+        <button
+          key={t.id}
+          class={t.className}
+          type="button"
+          role="tab"
+          id={t.tabId}
+          data-tab={t.id}
+          tabindex={t.tabIndex}
+          aria-selected={t.selected}
+          aria-controls={t.panelId}
+          onclick={handleActivityTabClick}
+        >{t.label}</button>
+      </template>
+    </div>
+
+    <template lwc:if={isActivityFeed}>
+      <div
+        class="sf-activity-panel"
+        role="tabpanel"
+        id={activePanelId}
+        aria-labelledby={activeTabDomId}
+      >
+        <div class="sf-activity-quick-actions">
+          <span class="sf-activity-action-group">
+            <button class="sf-activity-action sf-activity-action_call" type="button" aria-label="Log a Call" data-label="Log a Call" onclick={handleActivityAction}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="#fff" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.24 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.4 11.4 0 00.57 3.6 1 1 0 01-.25 1l-2.22 2.2z"/></svg>
+            </button>
+            <button class="sf-activity-action-caret" type="button" aria-label="More Log a Call options" data-label="Log a Call" onclick={handleActivityAction}>
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"/></svg>
+            </button>
+          </span>
+          <span class="sf-activity-action-group">
+            <button class="sf-activity-action sf-activity-action_task" type="button" aria-label="New Task" data-label="New Task" onclick={handleActivityAction}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="#fff" d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14l-5-5 1.4-1.4L10 14.2l7.6-7.6L19 8l-9 9z"/></svg>
+            </button>
+            <button class="sf-activity-action-caret" type="button" aria-label="More New Task options" data-label="New Task" onclick={handleActivityAction}>
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"/></svg>
+            </button>
+          </span>
+          <span class="sf-activity-action-group">
+            <button class="sf-activity-action sf-activity-action_email" type="button" aria-label="Email" data-label="Email" onclick={handleActivityAction}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="#fff" d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </button>
+            <button class="sf-activity-action-caret" type="button" aria-label="More Email options" data-label="Email" onclick={handleActivityAction}>
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"/></svg>
+            </button>
+          </span>
+          <span class="sf-activity-action-group">
+            <button class="sf-activity-action sf-activity-action_event" type="button" aria-label="New Event" data-label="New Event" onclick={handleActivityAction}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="#fff" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V9h14v11z"/></svg>
+            </button>
+            <button class="sf-activity-action-caret" type="button" aria-label="More New Event options" data-label="New Event" onclick={handleActivityAction}>
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"/></svg>
+            </button>
+          </span>
+          <button
+            class="sf-activity-gear"
+            type="button"
+            aria-label="Activity settings"
+            data-label="Activity settings"
+            onclick={handleActivityAction}
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M19.43 12.98a7.65 7.65 0 000-1.96l2.11-1.65a.5.5 0 00.12-.64l-2-3.46a.5.5 0 00-.6-.22l-2.49 1a7.32 7.32 0 00-1.69-.98l-.38-2.65A.5.5 0 0014 2h-4a.5.5 0 00-.5.42l-.38 2.65a7.32 7.32 0 00-1.69.98l-2.49-1a.5.5 0 00-.6.22l-2 3.46a.5.5 0 00.12.64l2.11 1.65a7.65 7.65 0 000 1.96L2.46 14.63a.5.5 0 00-.12.64l2 3.46a.5.5 0 00.6.22l2.49-1a7.32 7.32 0 001.69.98l.38 2.65a.5.5 0 00.5.42h4a.5.5 0 00.5-.42l.38-2.65a7.32 7.32 0 001.69-.98l2.49 1a.5.5 0 00.6-.22l2-3.46a.5.5 0 00-.12-.64l-2.11-1.65zM12 15.5A3.5 3.5 0 1112 8.5a3.5 3.5 0 010 7z"/></svg>
+          </button>
+        </div>
+
+        <div class="sf-activity-filter-row">
+          <p class="sf-activity-filters">
+            <span class="sf-activity-filter-label">Filters:</span>
+            All time · All activities · All types
+          </p>
+          <p class="sf-activity-actions-row">
+            <button class="sf-activity-link" type="button" onclick={handleActivityRefresh}>Refresh</button>
+            <span class="sf-activity-link-sep" aria-hidden="true">·</span>
+            <button class="sf-activity-link" type="button" onclick={handleActivityExpandAll}>Expand All</button>
+            <span class="sf-activity-link-sep" aria-hidden="true">·</span>
+            <button class="sf-activity-link" type="button" data-label="View All" onclick={handleActivityAction}>View All</button>
+          </p>
+        </div>
+
+        <button
+          class="sf-activity-section"
+          type="button"
+          aria-expanded={upcomingAriaExpanded}
+          onclick={handleActivityToggleUpcoming}
+        >
+          <svg class={upcomingCaretClass} viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"/></svg>
+          <span>Upcoming &amp; Overdue</span>
+        </button>
+
+        <template lwc:if={activityUpcomingOpen}>
+          <div class="sf-activity-empty">
+            <p class="sf-activity-empty-title">No activities to show.</p>
+            <p class="sf-activity-empty-sub">
+              Get started by sending an email, scheduling a task, and more.
+            </p>
+          </div>
+        </template>
+
+        <p class="sf-activity-info">
+          <svg class="sf-activity-info-icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M26 2C12.7 2 2 12.7 2 26s10.7 24 24 24 24-10.7 24-24S39.3 2 26 2zm0 12.1c1.7 0 3 1.3 3 3s-1.3 3-3 3-3-1.3-3-3 1.3-3 3-3zm5 21c0 .5-.4.9-1 .9h-8c-.5 0-1-.3-1-.9v-2c0-.5.4-1.1 1-1.1.5 0 1-.3 1-.9v-4c0-.5-.4-1.1-1-1.1-.5 0-1-.3-1-.9v-2c0-.5.4-1.1 1-1.1h6c.5 0 1 .5 1 1.1v8c0 .5.4.9 1 .9.5 0 1 .5 1 1.1v2z"/></svg>
+          <span>To change what's shown, try changing your filters.</span>
+        </p>
+
+        <div class="sf-activity-footer">
+          <button
+            class="sf-activity-show-all"
+            type="button"
+            data-label="Show All Activities"
+            onclick={handleActivityAction}
+          >Show All Activities</button>
+        </div>
+      </div>
+    </template>
+
+    <template lwc:else>
+      <div
+        class="sf-activity-panel"
+        role="tabpanel"
+        id={activePanelId}
+        aria-labelledby={activeTabDomId}
+      >
+        <div class="sf-activity-empty">
+          <p class="sf-activity-empty-title">No Chatter posts yet.</p>
+          <p class="sf-activity-empty-sub">{chatterEmptySub}</p>
+        </div>
+      </div>
+    </template>
+  </section>
+</template>

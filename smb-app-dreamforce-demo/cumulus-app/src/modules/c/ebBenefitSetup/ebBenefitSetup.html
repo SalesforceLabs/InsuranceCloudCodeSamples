@@ -1,0 +1,113 @@
+<template>
+  <div class="eb-bs">
+    <template lwc:if={hasTabs}>
+      <!-- Tablist of Benefit Categories. Tabs that don't fit roll
+           into the trailing "More" popover (see _adjustOverflow). -->
+      <div class="eb-bs__tabs" role="tablist" aria-label="Benefit Categories">
+        <template for:each={visibleTabs} for:item="t">
+          <button
+            key={t.key}
+            type="button"
+            role="tab"
+            class={t.cls}
+            aria-selected={t.ariaSelected}
+            tabindex={t.tabIndex}
+            data-key={t.key}
+            onclick={handleTabClick}
+          >
+            <span class="eb-bs__tab-label">{t.label}</span>
+          </button>
+        </template>
+
+        <template lwc:if={hasOverflow}>
+          <div class="eb-bs__more-wrap">
+            <button
+              type="button"
+              class={moreBtnCls}
+              aria-haspopup="menu"
+              aria-expanded={moreAriaExpanded}
+              aria-label="More benefit categories"
+              onclick={handleMoreToggle}
+            >
+              <span class="eb-bs__more-label">More</span>
+              <svg
+                class="eb-bs__more-chev"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  fill="currentColor"
+                  d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"
+                />
+              </svg>
+            </button>
+
+            <template lwc:if={isMoreOpen}>
+              <div class="eb-bs__more-scrim" onclick={handleMoreScrim}></div>
+              <ul
+                class="eb-bs__more-menu"
+                role="menu"
+                aria-label="More benefit categories"
+                style={moreMenuStyle}
+              >
+                <template for:each={moreMenuItems} for:item="m">
+                  <li key={m.key} role="presentation">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      class={m.cls}
+                      data-key={m.key}
+                      onclick={handleMoreSelect}
+                    >
+                      <span class="eb-bs__more-item-label">{m.label}</span>
+                    </button>
+                  </li>
+                </template>
+              </ul>
+            </template>
+          </div>
+        </template>
+      </div>
+
+      <div class="eb-bs__panel" role="tabpanel">
+        <ul class="eb-bs__rows">
+          <template for:each={activeCategoryRows} for:item="a">
+            <li key={a.id} class="eb-bs__row">
+              <span class="eb-bs__col eb-bs__col_include">
+                <label class="eb-bs__check">
+                  <input
+                    type="checkbox"
+                    data-attr={a.id}
+                    checked={a.includedInRfq}
+                    onchange={handleIncludeToggle}
+                    aria-label={a.label}
+                  />
+                  <span class="eb-bs__check-faux" aria-hidden="true"></span>
+                </label>
+              </span>
+              <span class="eb-bs__col eb-bs__col_name">
+                <span class="eb-bs__row-label">{a.label}</span>
+              </span>
+              <!-- Data Type column removed per spec - benefit rows are
+                   include-only now. The dataTypeOptions / handleDataTypeChange
+                   bindings stay in JS so the column can be reintroduced
+                   without further wiring. -->
+            </li>
+          </template>
+        </ul>
+      </div>
+    </template>
+
+    <template lwc:else>
+      <c-empty-state
+        illustration-name="success:new"
+        title="No EB Root Product selected"
+        size="small"
+      >
+        Select at least one EB Root Product above to configure its
+        benefit categories.
+      </c-empty-state>
+    </template>
+  </div>
+</template>

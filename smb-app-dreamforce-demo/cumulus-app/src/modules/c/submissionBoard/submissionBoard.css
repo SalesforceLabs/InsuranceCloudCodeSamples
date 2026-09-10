@@ -1,0 +1,1285 @@
+/* c-submission-board
+ * -----------------------------------------------------------------
+ * Multi-LOC bundle + carrier routing UI for the Account Record
+ * Page's Submission Board secondary tab. Styling hooks (SLDS 2)
+ * are used throughout so the surface respects density + theming.
+ */
+
+:host {
+  display: block;
+  font-family: var(--slds-g-font-family-base, inherit);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* ── Board container -------------------------------------------- */
+/* Rendered inside the parent Account Record Page card, so - like
+   c-account-rfq-list's .arl - the board has no background / border
+   / radius of its own. Prevents the card-in-card double-chrome look
+   and keeps the visual system in lock-step with the RFQs tab. */
+.sb-root {
+  position: relative;
+  padding: 0;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-family: var(--atlas-font);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  overflow: visible;
+}
+
+/* ── Header --------------------------------------------------
+   Sentence-case title + small subtext, tuned to match the RFQs
+   tab (.arl__title / .arl__count) so both surfaces feel the same. */
+.sb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: 0 0 var(--slds-g-spacing-var-3, 0.75rem);
+  flex-wrap: wrap;
+}
+.sb-head__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-line-height-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: 0;
+}
+.sb-head__sub {
+  margin: var(--slds-g-spacing-var-1, 0.25rem) 0 0;
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  flex-basis: 100%;
+}
+
+/* ── Table (unified single-container board) --------------------
+   ONE table for the whole board - bundle parent rows, indented
+   bundle child rows, and standalone rows share the same shell.
+   Anatomy deliberately mirrors c-account-rfq-list .arl__table so
+   the two tabs read as one system: separate borders with rounded
+   edge cells (no `overflow: hidden` so absolutely-positioned
+   dropdowns aren't clipped), sentence-case header typography,
+   surface-2 header strip, and border-1 hairline dividers. */
+.sb-table {
+  /* Where a bundle parent's label starts: the name cell's own left
+     padding, plus the disclosure caret and its flex gap, which live
+     inside that cell rather than in a column of their own. Declared
+     once here so the child indent below cannot drift out of step if
+     the caret is ever resized. */
+  --sb-label-inset: calc(
+    var(--slds-g-spacing-var-inline-3, 0.75rem) + 1.5rem +
+      var(--slds-g-spacing-var-2, 0.5rem)
+  );
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+}
+.sb-table thead th {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  padding: var(--slds-g-spacing-var-block-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  white-space: nowrap;
+}
+.sb-table thead th:first-child {
+  border-top-left-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.sb-table thead th:last-child {
+  border-top-right-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.sb-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.sb-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.sb-table tbody td {
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  vertical-align: middle;
+}
+.sb-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+/* Single checkbox column - kept tight so the affordance sits close
+   to the table edge, matching how the RFQs-tab table opens with
+   its content column. Bundle parent rows put an inline caret next
+   to the checkbox inside .sb-check-wrap. */
+.sb-table__check {
+  width: 1%;
+  white-space: nowrap;
+  padding-left: var(--slds-g-spacing-var-inline-3, 0.75rem);
+  padding-right: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.sb-table__check input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--slds-g-color-accent-1, #066afe);
+  cursor: pointer;
+  margin: 0;
+  display: block;
+}
+/* .sb-check-wrap is no longer used - the parent-row disclosure
+   caret moved out of the checkbox column and into the name cell
+   (see .sb-bundle-row below), so the checkbox stands alone as
+   the row's routing selector. Rule kept as a no-op class hook
+   in case any stray HTML still references it. */
+.sb-check-wrap {
+  display: contents;
+}
+
+/* Standalone + bundle-child rows: subtle SLDS 2 hover wash so the
+   table feels alive under a pointer, matching .arl__parent-row. */
+.sb-tr:hover td {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.sb-tr.is-selected td {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+/* Disabled = "not eligible for bundling selection" only. We do
+   NOT grey the whole row - Quotes Received / Sent to Carrier rows
+   still need to read as active broker-actionable rows (Compare
+   Quotes, Delete, etc). Only the routing checkbox itself is
+   dimmed + made non-interactive, and the ⋮ menu / status pill /
+   name link stay full-tone. */
+.sb-tr.is-disabled .sb-table__check input[type="checkbox"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Bundle parent row: subtle surface-2 wash so the caret + name
+   read as a "banner" over the children below. No accent stripe,
+   no chip - the child roster + status pills carry all context.
+   Kept a touch softer than the standalone header strip so the
+   rounded corners still read on the very first row. */
+/* Bundle parent row reads like any standard board row - no surface
+   wash. Parent-child relationship is conveyed by the caret + the
+   child indent alone. */
+.sb-tr_bundle > td {
+  background: transparent;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+.sb-tr_bundle:hover > td {
+  background: var(--slds-g-color-surface-container-1, #f9f9f9);
+}
+/* Bundle-name cell stays a plain table-cell so its `border-bottom`
+   paints the full column width. Vertical stack of caret + text is
+   handled by an inner .sb-bundle-row flex wrapper (see below). */
+.sb-cell-name_bundle {
+  vertical-align: middle;
+}
+/* Leading disclosure caret + bundle name/meta stack. The caret sits
+   directly to the LEFT of the name so the parent-row layout reads
+   as `[ checkbox ] | [ ▸ bundle title / meta ] · lob · date`. This
+   is the SLDS tree-grid affordance pattern - caret is anchored to
+   the row content column, not the selection column. */
+.sb-bundle-row {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.sb-bundle-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+  min-width: 0;
+}
+.sb-bundle-name {
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-bundle-meta {
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+
+/* Expander on bundle parent rows - SLDS 2 tree-grid pattern.
+   The button follows the shared slds-button + slds-button_icon +
+   slds-button_icon-x-small anatomy so the hit target, spacing, and
+   focus ring are consistent with every other icon button in the
+   app. The chevron itself is the SLDS `chevronright` utility icon
+   drawn inline (this shadow DOM doesn't inherit the utility sprite);
+   it rotates 90° clockwise via CSS when the parent row's
+   aria-expanded flips to "true", producing a chevrondown affordance
+   without swapping SVGs - identical rotation to lightning-tree-grid. */
+.sb-caret-btn.slds-button_icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.sb-caret-btn.slds-button_icon:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-caret-btn.slds-button_icon:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+.sb-caret-btn__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform 150ms ease;
+  transform: rotate(0deg);
+}
+.sb-caret-btn[aria-expanded="true"] .sb-caret-btn__icon {
+  transform: rotate(90deg);
+}
+/* SLDS assistive-text primitive (visually hidden, screen-reader
+   readable). Re-declared locally because SLDS base styles don't
+   cross the shadow DOM in this OSS build. */
+.slds-assistive-text {
+  position: absolute;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+/* Child row indent - one shared step to the right of where the parent's
+   own label starts, matching the Policy UI tree and the RFQs tab. The
+   selector carries `.sb-table tbody td` so it outranks that rule's
+   padding shorthand without needing `!important`; a bare
+   `.sb-cell-name_child` loses on specificity and previously had to
+   override the cell padding outright, which left children sitting to
+   the LEFT of the parent title. */
+.sb-table tbody td.sb-cell-name_child {
+  position: relative;
+  padding-left: calc(
+    var(--sb-label-inset) + var(--slds-g-spacing-6, 2rem)
+  );
+}
+.sb-cell-name {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+  min-width: 12rem;
+}
+.sb-rfq-name {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.sb-rfq-id {
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-family: inherit;
+}
+
+/* ── Status badge (SLDS 2 Badge anatomy) ─────────────────────
+   Mirrored with c/accountRfqList. Shadow DOM needs local anatomy
+   + `--slds-c-badge-*` hooks; soft feedback tones use status-badge_*.
+     - Draft                         → status-badge_neutral
+     - Ready for Submission /
+       Sent to Carrier               → status-badge_info
+     - Quotes Received               → status-badge_warning
+     - Closed / Bound (Won)          → status-badge_success */
+.slds-badge {
+  display: inline-flex;
+  align-items: center;
+  /* 2px block padding is below the SLDS spacing scale floor. */
+  padding: 0.125rem var(--slds-g-spacing-2, 0.5rem);
+  color: var(
+    --slds-c-badge-text-color,
+    var(--slds-g-color-on-surface-2, #2e2e2e)
+  );
+  font-size: var(
+    --slds-c-badge-font-size,
+    var(--slds-g-font-scale-neg-1, 0.75rem)
+  );
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(
+    --slds-c-badge-line-height,
+    var(--slds-g-font-lineheight-2, 1.25)
+  );
+  white-space: nowrap;
+  border-width: var(--slds-c-badge-sizing-border, 1px);
+  border-style: solid;
+  border-color: var(--slds-c-badge-color-border, transparent);
+  border-radius: var(
+    --slds-c-badge-radius-border,
+    var(--slds-g-radius-border-pill, 15rem)
+  );
+  background-color: var(
+    --slds-c-badge-color-background,
+    var(--slds-g-color-neutral-base-95, #f3f3f3)
+  );
+}
+
+/* Default/neutral tone - the org renders Draft with no semantic
+   colour, just the neutral surface wash and a border-1 outline. */
+.status-badge_neutral {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-neutral-base-95,
+    #f3f3f3
+  );
+  --slds-c-badge-color-border: var(--slds-g-color-border-1, #c9c9c9);
+  --slds-c-badge-text-color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Retained as the fallback tone for any status outside STATUS_BADGE_TONE. */
+.slds-badge_lightest {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-neutral-base-100,
+    #ffffff
+  );
+  --slds-c-badge-color-border: var(--slds-g-color-border-1, #e5e5e5);
+  --slds-c-badge-text-color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.status-badge_info {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-info-container-1,
+    #d8e6fe
+  );
+  --slds-c-badge-text-color: var(
+    --slds-g-color-on-info-1,
+    var(--slds-g-color-info-1, #0b5cab)
+  );
+  --slds-c-badge-color-border: transparent;
+}
+
+.status-badge_success {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-success-container-1,
+    #acf3e4
+  );
+  --slds-c-badge-text-color: var(--slds-g-color-on-success-1, #056764);
+  --slds-c-badge-color-border: transparent;
+}
+
+.status-badge_warning {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-warning-container-1,
+    #ffe9b3
+  );
+  --slds-c-badge-text-color: var(--slds-g-color-on-warning-1, #7c4a03);
+  --slds-c-badge-color-border: transparent;
+}
+
+/* ── Empty state ---------------------------------------------
+   Matches the flush, container-less style of the RFQs-tab empty
+   state (.arl__empty) - no dashed panel, just centred illustration
+   + copy inside the parent card.
+
+   Wrapper is a plain block, per the .pa-asset-tree__empty pattern:
+   c-empty-state already owns the centring, the text-align and its
+   own vertical padding, and the previous flex column + centred
+   align-items collapsed the host to zero width. */
+.sb-empty {
+  display: block;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.sb-empty c-empty-state {
+  display: block;
+  width: 100%;
+}
+.sb-empty__icon {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  margin-bottom: var(--slds-g-spacing-2, 0.5rem);
+}
+.sb-empty__icon svg {
+  width: 2rem;
+  height: 2rem;
+}
+.sb-empty__title {
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-empty__sub {
+  margin: 0 auto;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+
+/* ── Footer route CTA -----------------------------------------
+   Kept - the Route to Carriers CTA is the board's core action -
+   but the border-top / chrome is removed so it sits flush under
+   the table, matching the container-less RFQs-tab aesthetic. */
+/* Actions only, so they anchor right rather than being pushed there
+   by a sibling hint. */
+.sb-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0 0;
+  flex-wrap: wrap;
+}
+.sb-foot__actions {
+  display: inline-flex;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+
+/* Base button reset - SLDS 2 primary CTAs are pills. Padding uses
+   density-aware `--slds-g-spacing-var-*` so comfy vs compact both
+   read right without a media query. */
+.sb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-family: var(--slds-g-font-family-base, inherit);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  cursor: pointer;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease, box-shadow 120ms ease;
+}
+
+/* SLDS 2 primary / brand-solid CTA. Border + fill use the accent
+   container scale so hover / active step through the 1 -> 2 -> 3
+   ramp per the SLDS 2 spec. Disabled + focus-visible states are
+   hooked into the disabled + border-accent tokens so theming
+   flows through. */
+.sb-btn_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.sb-btn_brand:hover:not(:disabled) {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+  color: var(--slds-g-color-on-accent-2, #fff);
+}
+.sb-btn_brand:active:not(:disabled) {
+  background: var(--slds-g-color-accent-container-3, #022ac0);
+  border-color: var(--slds-g-color-border-accent-3, #022ac0);
+  color: var(--slds-g-color-on-accent-3, #fff);
+}
+.sb-btn_brand:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+.sb-btn_brand:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  cursor: not-allowed;
+}
+
+/* SLDS 2 neutral / ghost secondary CTA - transparent fill on
+   surface-container-1 with a neutral border, promoting to
+   surface-container-2 on hover. Paired with .sb-btn_brand inside
+   modal footers so Cancel + Submit share sizing + focus. */
+.sb-btn_neutral {
+  background: transparent;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+.sb-btn_neutral:hover:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+.sb-btn_neutral:active:not(:disabled) {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+.sb-btn_neutral:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+.sb-btn_neutral:disabled {
+  background: transparent;
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  cursor: not-allowed;
+}
+
+/* ── Carrier appetite matrix (modal shell + body) --------------- */
+/* The LWC shadow root doesn't inherit the global SLDS modal shell
+   styles, so the .slds-modal / .slds-backdrop classes in the template
+   render inline unless we recreate the positioning + chrome locally.
+   Mirrors what c-rfqIntakeModal.css does; class names match SLDS so
+   this is a one-line swap to the real stylesheet when SLDS is loaded
+   into the shadow root. All values go through SLDS 2 hooks. */
+.slds-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 9000;
+}
+.slds-backdrop_open {
+  opacity: 1;
+}
+
+.slds-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  z-index: 9001;
+}
+
+.slds-modal__container {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 3rem 5rem
+    rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - var(--slds-g-spacing-var-10, 4rem));
+  overflow: hidden;
+  animation: sb-modal-pop 160ms ease-out;
+}
+.slds-modal_large .slds-modal__container {
+  max-width: 60rem;
+}
+.slds-modal_medium .slds-modal__container {
+  max-width: 40rem;
+}
+
+@keyframes sb-modal-pop {
+  from { opacity: 0; transform: translateY(0.5rem) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.slds-modal__header {
+  position: relative;
+  padding: var(--slds-g-spacing-var-5, 1.5rem)
+    var(--slds-g-spacing-var-9, 3.5rem);
+  text-align: center;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.slds-modal__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.slds-modal__header .slds-modal__close {
+  position: absolute;
+  top: var(--slds-g-spacing-var-2, 0.5rem);
+  right: var(--slds-g-spacing-var-2, 0.5rem);
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.slds-modal__header .slds-modal__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.slds-modal__header .slds-modal__close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+.slds-modal__header .slds-modal__close svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.slds-modal__content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+/* Local matrix modal overrides (larger than default medium). */
+.sb-modal__container {
+  width: min(60rem, 100%);
+}
+.sb-modal__content {
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+}
+
+/* Modal footer gap + alignment - SLDS 2 modals right-align actions
+   with density-aware spacing so compact mode tightens naturally. */
+.sb-modal__footer,
+.slds-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+/* Small-screen: full-screen modal so the matrix stays legible. */
+@media (max-width: 48rem) {
+  .slds-modal {
+    padding: 0;
+  }
+  .slds-modal__container {
+    border-radius: 0;
+    max-width: 100%;
+    max-height: 100vh;
+    height: 100vh;
+  }
+  .slds-modal__header {
+    padding: var(--slds-g-spacing-var-4, 1rem)
+      var(--slds-g-spacing-var-8, 3rem);
+  }
+  .slds-modal__header .slds-modal__close {
+    top: var(--slds-g-spacing-var-1, 0.25rem);
+    right: var(--slds-g-spacing-var-1, 0.25rem);
+  }
+}
+
+/* Select-all bar above the carrier list. Mirrors the comparison
+   modal's own "Select all quotes" bar so the two multi-selects in this
+   journey read the same way. */
+.sb-select-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  margin-bottom: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.sb-select-bar__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  cursor: pointer;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-select-bar__toggle input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--slds-g-color-accent-1, #066afe);
+  cursor: pointer;
+}
+.sb-select-bar__count {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Carrier selection cards -------------------------------------
+   Replaces the former appetite-matrix table. That table columned the
+   bundled Lines of Coverage and ticked each carrier's appetite, but
+   appetite is already the filter that decides which carriers appear,
+   so every visible row ticked every column - and on a single-line
+   bundle it collapsed to one tick and "1 of 1" for everyone. Cards
+   carry the signals that do vary between markets instead. */
+/* A single stacked column rather than a card grid. Full-width rows put
+   every carrier's premium in one vertical line, so comparing markets
+   is a straight scan down the list instead of a zig-zag across a
+   grid. */
+.sb-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* SLDS 2 drops borders from cards, so the resting edge and the
+   selected ring are both inset shadows: they occupy no layout box, so
+   selecting a card cannot nudge the grid. */
+.sb-card {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  box-shadow: inset 0 0 0 var(--slds-g-sizing-border-1, 1px)
+    var(--slds-g-color-border-1, #c9c9c9);
+  cursor: pointer;
+  transition: background 120ms ease, box-shadow 120ms ease;
+}
+.sb-card:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.sb-card.is-selected {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  box-shadow: inset 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-border-accent-1, #066afe);
+}
+.sb-card.is-no-cover {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.sb-card.is-no-cover:hover {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+.sb-card:focus-within {
+  box-shadow: inset 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-border-accent-1, #066afe);
+}
+
+/* A plain checkbox tinted with the SLDS 2 accent, identical to the
+   board table's own row selectors (.sb-table__check input). This
+   control used to render an ordinal badge showing selection order
+   (1, 2, 3...), which read as a ranking the broker had chosen rather
+   than a multi-select; routing order carries no meaning here, so a
+   checkbox states the actual affordance. */
+.sb-card__pick {
+  flex: 0 0 auto;
+}
+.sb-card__pick input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--slds-g-color-accent-1, #066afe);
+  cursor: pointer;
+  margin: 0;
+  display: block;
+}
+.sb-card__pick input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Identity on the left, stats right-aligned. Wraps so the stats drop
+   below the carrier name on narrow viewports instead of crushing it. */
+.sb-card__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.sb-card__main {
+  flex: 1 1 14rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.sb-card__head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.sb-card__logo {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+.sb-card__name {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.sb-card__tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+/* Neutral by default: a tag labels the carrier, it doesn't recommend
+   it. "Lowest indication" is the one exception - it states a fact the
+   broker would otherwise derive by comparing every range by eye - so
+   it takes the success tone. */
+.sb-card__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  white-space: nowrap;
+}
+.sb-card__tag_best {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-2, #023434);
+}
+
+/* Stats sit in a row at the card's trailing edge. Each block is a
+   fixed width so the values stack into true columns down the list -
+   without that, "Same day" and "2 - 3 days" would shunt the premium
+   column sideways from row to row and defeat the scan. */
+.sb-card__stats {
+  flex: 0 0 auto;
+  margin: 0;
+  display: flex;
+  gap: var(--slds-g-spacing-var-6, 2rem);
+}
+.sb-card__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 8.5rem;
+}
+.sb-card__stat-term {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  white-space: nowrap;
+}
+.sb-card__stat-value {
+  margin: 0;
+  text-align: right;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  /* Every stat is a short, indivisible value (a premium band, a
+     turnaround, a coverage fraction). Wrapping one would break the
+     column its neighbours align to, so none of them wrap. */
+  white-space: nowrap;
+}
+/* The premium band is the number the broker scans across cards, so it
+   carries the title colour while the rest of the stats stay body-toned. */
+.sb-card__premium {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-card__stat-value.is-full {
+  color: var(--slds-g-color-success-1, #056764);
+}
+.sb-card__stat-value.is-partial {
+  color: var(--slds-g-color-warning-1, #8c4b02);
+}
+.sb-card__stat-value.is-none {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+
+/* Per-line breakdown, rendered only for multi-line bundles where
+   coverage actually differs between carriers. Every pill here is a line
+   the market writes - declined lines are omitted rather than struck
+   through, so there is no longer a second, greyed-out variant. */
+.sb-card__lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sb-card__line {
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-2, #023434);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+}
+
+/* ── Routed confirmation ---------------------------------------- */
+.sb-routed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--slds-g-spacing-var-6, 2rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.sb-routed__check {
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-success-1, #056764);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.sb-routed__check svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.sb-routed__eyebrow {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.08em;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  margin-bottom: var(--slds-g-spacing-1, 0.25rem);
+}
+.sb-routed__title {
+  margin: 0 0 var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-routed__sub {
+  margin: 0 auto var(--slds-g-spacing-var-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.sb-routed__when {
+  display: inline-block;
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  margin-bottom: var(--slds-g-spacing-var-4, 1rem);
+}
+
+.sb-routed__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  width: 100%;
+  max-width: 44rem;
+  text-align: left;
+  margin-bottom: var(--slds-g-spacing-var-4, 1rem);
+}
+.sb-routed__panel {
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.sb-routed__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.sb-routed__panel-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-routed__panel-count {
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.sb-routed__list,
+.sb-routed__carriers {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.sb-routed__list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.sb-routed__list-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.sb-routed__list-primary {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-routed__list-sub {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.sb-routed__carrier {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.sb-routed__carrier-order {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.sb-routed__carrier-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+}
+.sb-routed__carrier-name {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.sb-routed__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  margin-bottom: var(--slds-g-spacing-var-4, 1rem);
+}
+.sb-routed__meta-row {
+  display: inline-flex;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.sb-routed__meta-row strong {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.sb-routed__cta-row {
+  display: inline-flex;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── QuinStreet rating modal -------------------------------------
+   Design ref: QuinStreet Auto RC1/RC2 Rating GIF. Layered over the
+   board as a dialog. Each returned carrier is a hairline card with
+   a radio on the left, a name + price + payment-plan stack, and a
+   "Show details" toggle that expands an inline breakdown. Footer
+   buttons reuse the app's .sb-btn primitives so Cancel + Next share
+   sizing / focus / disabled treatment with every other pill CTA in
+   the app. The .slds-modal chrome this sits inside is re-declared
+   locally further up this file - SLDS base styles don't cross the
+   shadow boundary in this OSS build. */
+/* Scoped under .slds-modal so this beats the shared
+   .slds-modal_medium max-width declared with the modal chrome. */
+.slds-modal .sb-rating-modal__container {
+  width: min(48rem, 100%);
+  max-width: 48rem;
+}
+/* Reference puts the title on the left rather than the SLDS-default
+   centred header, so the close button keeps its own gutter. */
+.sb-rating-modal__header {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-9, 3.5rem)
+    var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+}
+.sb-rating-modal__content {
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+}
+/* Cancel sits bottom-left, Next bottom-right per the reference -
+   overrides the shared right-aligned modal footer above. */
+.sb-rating-modal__footer {
+  justify-content: space-between;
+}
+.sb-rating__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.sb-rating__row {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  /* Clips the expanded details panel's fill to the card radius. */
+  overflow: hidden;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+.sb-rating__row:hover {
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+.sb-rating__row.is-selected {
+  border-color: var(--slds-g-color-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-1, 1px)
+    var(--slds-g-color-accent-1, #066afe);
+}
+.sb-rating__row-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  cursor: pointer;
+}
+.sb-rating__radio {
+  flex: 0 0 auto;
+  accent-color: var(--slds-g-color-accent-1, #066afe);
+  cursor: pointer;
+}
+.sb-rating__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+  align-items: flex-start;
+  min-width: 0;
+}
+.sb-rating__name {
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-line-height-2, 1.25);
+}
+.sb-rating__price {
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-line-height-2, 1.25);
+}
+.sb-rating__plan {
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+}
+.sb-rating__details {
+  margin-top: var(--slds-g-spacing-var-1, 0.25rem);
+}
+
+/* Link-style CTA - transparent pill with accent border + accent
+   text. Used for the per-quote "Show details" affordance. Matches
+   the SLDS 2 outline-neutral CTA but paints in accent tones so it
+   reads as a link-triggered action next to the row's radio. */
+.sb-btn_link {
+  background: transparent;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  padding: var(--slds-g-spacing-var-1, 0.25rem)
+    var(--slds-g-spacing-var-4, 1rem);
+}
+.sb-btn_link:hover:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-accent-3, #022ac0);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.sb-btn_link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+
+/* Inline "Show details" breakdown - lives inside the card, below
+   the label, so expanding never shifts the radio out from under
+   the cursor. */
+.sb-rating__panel {
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.sb-rating__panel-list {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: var(--slds-g-spacing-var-1, 0.25rem)
+    var(--slds-g-spacing-var-4, 1rem);
+}
+.sb-rating__panel-item {
+  display: contents;
+}
+.sb-rating__panel-term {
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.sb-rating__panel-value {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sb-rating__panel-empty {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}

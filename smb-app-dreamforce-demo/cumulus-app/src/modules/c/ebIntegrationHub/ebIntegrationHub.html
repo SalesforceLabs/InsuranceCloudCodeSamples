@@ -1,0 +1,48 @@
+<template>
+  <section class="eih" aria-label="Provider and Carrier Catalog">
+    <header class="eih__head">
+      <span class="eih__eyebrow">Integration Hub</span>
+      <h2 class="eih__title">Provider &amp; Carrier Catalog</h2>
+      <p class="eih__sub">
+        Manage auth, endpoints, and environments for this Root Product's carriers.
+      </p>
+    </header>
+
+    <div class="eih__panel">
+      <c-empty-state
+        illustration-name="success:new"
+        title="Configuration coming soon"
+        size="medium"
+      >
+        Modular contract is live — the component receives the
+        selected Root Product through @api and reports saves through
+        the uniform configurationsave event. The OAuth credential
+        manager, sandbox/production toggle, and webhook editor land
+        in follow-ups.
+        <button
+          slot="cta"
+          type="button"
+          class="slds-button slds-button_neutral"
+          onclick={handlePlaceholderSave}
+          title="Fires the configurationsave event for QA"
+        >Save (placeholder)</button>
+      </c-empty-state>
+      <dl class="eih__meta">
+        <div class="eih__meta-row">
+          <dt class="eih__meta-dt">Active Root Product</dt>
+          <dd class="eih__meta-dd">
+            <template lwc:if={hasRootProduct}>{rootProductLabel}</template>
+            <template lwc:else>- none selected -</template>
+          </dd>
+        </div>
+        <div class="eih__meta-row">
+          <dt class="eih__meta-dt">Contract</dt>
+          <dd class="eih__meta-dd">
+            <code>@api rootProduct</code> · emits
+            <code>configurationsave</code>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+</template>

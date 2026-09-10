@@ -1,0 +1,2351 @@
+/* ─────────────────────────────────────────────────────────────────────
+   c-rfq-playbook-setup
+   Canvas-and-Config builder for the RFQ playbook wizard's Configure step.
+     • Inner-left  ("Canvas")  - clickable stage blocks.
+     • Inner-right ("Config")  - empty state OR PCM combobox + accordion.
+   Styling uses SLDS 2 tokens with literal fallbacks; cards use elevation
+   instead of decorative borders per SLDS 2 guidance.
+   ───────────────────────────────────────────────────────────────────── */
+
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  font-family: var(--atlas-font);
+}
+
+/* Canvas head eyebrow surfaces the resolved {LOB} - {Coverage} label so
+   the admin always sees the context the flow is scoped to. */
+.rps-canvas__eyebrow {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rps-grid {
+  display: flex;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+/* Embedded layout - stack the picker on top and let the hierarchy /
+   stage config fill the remaining vertical space below it. Avoids
+   the previous side-by-side layout where the config "covered" the
+   picker beside it on narrow workspace canvases. */
+.rps-grid_stacked {
+  flex-direction: column;
+}
+.rps-grid_stacked .rps-grid__left {
+  flex: 0 0 auto;
+}
+.rps-grid_stacked .rps-config {
+  /* `flex: 1` (basis 0) instead of `1 1 auto` so the config
+     panel's natural content height (mostly the tree DOM inside
+     the viewport) doesn't dictate the panel's size - it only
+     grows to fill the space the host actually grants. */
+  flex: 1;
+  min-height: 0;
+  /* Zero top padding - the host workspace's `.isw-canvas-detail`
+     gap already provides the gap between the crumb title and
+     this stage content, so adding more pushes the description
+     too far below the title. */
+  padding: 0;
+}
+
+/* ── Left column (Root Product picker stacked on top of canvas) ──
+   Both children share the column's width. The picker sits on row
+   one and the canvas fills the remaining height so the parent grid's
+   align-items: stretch propagates the same height to the right
+   config panel - that's what lets the Product Hierarchy blue
+   viewport extend up to the Root Product label. */
+.rps-grid__left {
+  flex: 1 1 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* ── Canvas (left column body) ──────────────────────────────── */
+.rps-canvas {
+  /* The Root Product label takes its natural height; the canvas
+     consumes the leftover vertical space so the parent's stretch
+     keeps the right panel the same height. */
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.rps-canvas__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-canvas__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: 0.01em;
+}
+.rps-canvas__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Root Product picker - scopes the canonical PCM root for the
+   entire Configure step. Sits at the very top of the panel above
+   the canvas + config grid so admins set the root first; until they
+   do, the stage tiles below stay disabled (.rps-block.is-disabled). */
+/* Flat label + select pair - no card chrome. Sits at the top of
+   the panel above the canvas grid and matches the canvas column
+   width so its right edge aligns with the grey "Stages to
+   Configure" card below. */
+.rps-root-product {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  /* Width + spacing are governed by .rps-grid__left now (full-
+     column width, parent gap supplies the row spacing between
+     the picker and the canvas card below). */
+  box-sizing: border-box;
+}
+/* No active outline either - the inline hint copy below the
+   select carries the "pick me first" signal on its own. */
+.rps-root-product_active {
+  /* intentionally empty - kept so the JS class hook is harmless */
+}
+.rps-root-product__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+/* LOB + LOC scoping grid - sits above the Root Product picker on
+   the Initialize stage. Two-column responsive grid so the pickers
+   stack on narrow viewports but sit side-by-side on wider ones.
+   Reuses the picker label typography (.rps-root-product__label). */
+.rps-scope-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  /* Parent `.rps-grid__left` already applies a 1rem flex gap between
+     this grid and the Root Product picker below, so no additional
+     margin-bottom is needed on top of that gap. */
+  box-sizing: border-box;
+}
+@media (max-width: 48em) {
+  .rps-scope-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.rps-scope-grid__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+
+/* Compact summary chip rendered in place of the LOB+LOC pickers
+   when those picks arrived from the workspace's pre-builder
+   modal. Keeps the scope visible on the Initialize panel without
+   re-prompting the broker. */
+.rps-scope-summary {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+           var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  /* Row spacing to the Root Product picker below is governed by
+     the parent `.rps-grid__left` flex `gap` alone - the extra
+     margin-bottom that used to sit here doubled up on that gap
+     and made the two rows read as separate sections. */
+}
+.rps-scope-summary__row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.rps-scope-summary__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.rps-scope-summary__value {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-scope-summary__sep {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.rps-root-product__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-root-product__hint {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+/* EB Root Product chip strip - sits directly below the standard Root
+   Product picker when the GROUP_BENEFITS::HEALTH blueprint is loaded.
+   Multi-select toggle chips that drive both EB Setup widgets. */
+.rps-eb-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-top: var(--slds-g-spacing-3, 0.75rem);
+}
+.rps-eb-root__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-eb-root__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.rps-eb-root__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.rps-eb-root__chip:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rps-eb-root__chip.is-selected {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.rps-eb-root__chip:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ── Stage blocks (canvas tiles) ────────────────────────────── */
+.rps-canvas__blocks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.rps-block {
+  position: relative;
+  display: grid;
+  /* icon · body - the kebab menu anchor is absolute-positioned in the
+     top-right corner so it floats over the body without claiming a
+     third grid track. The body reserves right padding for the kebab
+     so long titles don't collide with the button. */
+  grid-template-columns: 2.5rem 1fr;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  align-items: flex-start;
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    calc(var(--slds-g-spacing-var-5, 1.5rem) + var(--slds-g-sizing-9, 2rem))
+    var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 4px 12px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease,
+    box-shadow 150ms ease, transform 150ms ease;
+}
+.rps-block:hover {
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06),
+    0 8px 20px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
+}
+.rps-block:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-block.is-active {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+
+/* Disabled state - when no global product model is selected at the top.
+   Blocks become non-interactive and visually muted to reinforce the
+   "pick a model first" gating. */
+.rps-block.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  box-shadow: none;
+  pointer-events: none;
+  transform: none;
+}
+.rps-block.is-disabled:hover {
+  box-shadow: none;
+  transform: none;
+}
+.rps-block.is-disabled .rps-block__icon {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+
+/* ── Kebab menu affordance on widget tiles ───────────────────
+   Pinned to the top-right corner of the card. Anchor is
+   position:relative so the dropdown floats below the button
+   without escaping the tile's bounds on the horizontal axis.
+   Renders on every tile including mandatory bookends - the
+   individual menu items self-disable via the native `disabled`
+   attribute when the action isn't allowed (e.g. Delete on a
+   mandatory step, Move up at the top). */
+.rps-block__menu-anchor {
+  position: absolute;
+  top: var(--slds-g-spacing-2, 0.5rem);
+  right: var(--slds-g-spacing-2, 0.5rem);
+  /* Deliberately no z-index - a numeric z-index would create a new
+     stacking context and trap the floating menu under the scrim. The
+     menu itself carries the z-index (see .rps-block__menu below). */
+}
+.rps-block__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.rps-block__more svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.rps-block__more:hover,
+.rps-block__more.is-open {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-block__more:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+
+/* Dropdown - floats below the kebab, right-aligned so the panel
+   stays inside the canvas column. Sits above the scrim (z-index) so
+   clicks on menu items land on the button, not the scrim. */
+.rps-block__menu {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-1, 0.25rem));
+  right: 0;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 12rem;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 6px 18px rgba(3, 35, 77, 0.12);
+  z-index: 10;
+}
+.rps-block__menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-2, 0.5rem)
+    var(--slds-g-spacing-3, 0.75rem);
+  background: transparent;
+  border: none;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  text-align: left;
+  cursor: pointer;
+}
+.rps-block__menu-item:hover:not(:disabled),
+.rps-block__menu-item:focus-visible:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  outline: none;
+}
+.rps-block__menu-item:disabled {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.rps-block__menu-item_destructive {
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.rps-block__menu-item_destructive:hover:not(:disabled),
+.rps-block__menu-item_destructive:focus-visible:not(:disabled) {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-on-error-2, #8a033e);
+}
+.rps-block__menu-item_destructive:disabled {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.rps-block__menu-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: 0 0 auto;
+}
+.rps-block__menu-sep {
+  display: block;
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: var(--slds-g-spacing-1, 0.25rem) 0;
+  background: var(--slds-g-color-border-1, #c9c9c9);
+}
+.rps-block__menu-scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 4;
+}
+/* Menu-open tile stays visually "raised" (drops the transform
+   dip from :hover) so the dropdown reads as anchored while
+   floating. */
+.rps-block.is-menu-open {
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06),
+    0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.rps-block__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.rps-block__icon svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.rps-block.is-active .rps-block__icon {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+
+/* Numbered step marker - replaces the per-stage SVG icon with a
+   sequential index (1, 2, 3, …) inside a circle, matching the
+   substep numbering used across the workspace's section nav and the
+   reference Household Setup wizard. Active and disabled states
+   inherit the same accent/electric-blue/grey treatments the old
+   icon used so the active step still pops. */
+.rps-block__number {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  transition: background 150ms ease, color 150ms ease,
+    box-shadow 150ms ease;
+}
+.rps-block.is-active .rps-block__number {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  box-shadow: 0 0 0 var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+.rps-block.is-disabled .rps-block__number {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+
+.rps-block__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+.rps-block__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-block__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+/* No connector between tiles - these are pickable cards, not a
+   linear stepper. Gap between tiles via simple top margin. */
+.rps-block + .rps-block {
+  margin-top: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* ── "+ Add Widget" trigger + floating picker ────────────────
+   Quiet ghost tile that sits below the canvas blocks. Reads as a
+   placeholder, not a primary action - dashed border + accent text
+   on a neutral surface so it visually defers to the real tiles
+   above it. */
+/* Lives inside .rps-canvas as a normal flex child - the parent's
+   `gap: 1rem` provides spacing from the last step card, so no extra
+   margin here. Without this fix the wrap doubled the top spacing and
+   visually drifted past the grey card's bottom padding. */
+.rps-add-widget-wrap {
+  position: relative;
+}
+.rps-add-widget {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-5, 1.5rem);
+  background: transparent;
+  border: var(--slds-g-sizing-border-1, 1px) dashed
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.rps-add-widget:hover {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.rps-add-widget:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-add-widget_open {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+/* Disabled - surfaced when every catalog widget is already on the
+   canvas. CTA stays visible (the affordance is always discoverable)
+   but reads as inert: muted color, default cursor, no hover lift. */
+.rps-add-widget_disabled {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.rps-add-widget_disabled:hover {
+  background: transparent;
+  border-color: var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.rps-add-widget__plus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.rps-add-widget__plus svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* Scrim catches outside clicks so the picker behaves like a
+   typical SLDS menu - anywhere off the menu closes it. */
+.rps-add-widget__scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 19;
+}
+/* Floating picker - anchored beneath the trigger. Each row mirrors
+   a canvas tile (icon tile + title + sub) so the choice maps
+   visually to the result on the canvas. */
+.rps-add-widget__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  list-style: none;
+  margin: var(--slds-g-spacing-1, 0.25rem) 0 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+  max-height: 22rem;
+  overflow-y: auto;
+  animation: rps-add-widget-pop 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes rps-add-widget-pop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rps-add-widget__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  transition: background-color 120ms ease;
+}
+.rps-add-widget__item:hover,
+.rps-add-widget__item:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  outline: 0;
+}
+.rps-add-widget__item-icon {
+  flex: 0 0 auto;
+  width: var(--slds-g-sizing-10, 2rem);
+  height: var(--slds-g-sizing-10, 2rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rps-add-widget__item-icon svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.rps-add-widget__item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.rps-add-widget__item-title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-add-widget__item-desc {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Config panel (right, ~50%) ─────────────────────────────── */
+.rps-config {
+  flex: 1 1 50%;
+  min-width: 0;
+  /* Card chrome stripped - panel renders flat against the wizard
+     background so the canvas + config read as a single workspace. */
+  background: transparent;
+  padding: var(--slds-g-spacing-var-4, 1rem) 0 var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  overflow: auto;
+}
+
+/* ── Viewport mode (Stage 1 Hierarchy) ──────────────────────
+   When the tree viewport is active, the entire config panel becomes
+   the workspace surface - pale-blue with a subtle dotted grid (the
+   universal "infinite canvas" affordance, mirrors SLDS PCM Visualize).
+   No white card chrome, no shadow, no border-left, no rounded inner
+   region. Header + legend float as translucent overlay chips ON the
+   viewport. Other variants (sections, review) keep the original
+   white-panel card chrome. */
+.rps-config:has(.rps-tree-canvas) {
+  background-color: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  background-image: radial-gradient(
+    circle at center,
+    var(--slds-g-color-palette-electric-blue-90, #d6e6ff) 1px,
+    transparent 1.5px
+  );
+  background-size: 22px 22px;
+  border-left: 0;
+  box-shadow: none;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  overflow: hidden;
+}
+
+/* Floating title ON the viewport - frosted white chip so the dot-grid
+   peeks through subtly. align-self prevents stretching across the
+   full viewport width. */
+.rps-config:has(.rps-tree-canvas) .rps-config__head {
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  padding: var(--slds-g-spacing-var-2, 0.5rem) var(--slds-g-spacing-var-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-palette-electric-blue-90, #d6e6ff);
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+/* Empty state host - positioning only; anatomy lives in c-empty-state. */
+.rps-config__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.rps-config__empty c-empty-state {
+  width: 100%;
+}
+
+/* Active state */
+.rps-config__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  flex: 0 0 auto;
+}
+.rps-config__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-config__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rps-config__section-title {
+  margin: var(--slds-g-spacing-var-3, 0.75rem) 0 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* SLDS form element (Combobox) */
+.rps-form-element {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-form-element__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.rps-form-element__control {
+  position: relative;
+}
+.rps-form-element__control::after {
+  content: '';
+  position: absolute;
+  right: var(--slds-g-spacing-3, 0.75rem);
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-left: 0.3rem solid transparent;
+  border-right: 0.3rem solid transparent;
+  border-top: 0.3rem solid var(--slds-g-color-on-surface-1, #5c5c5c);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+/* Base picklist - matches the SLDS 2 standard size used by
+   c-agentforce-setup's .afs-field__select so picklists across the
+   wizard read at the same height + type scale. The _compact
+   modifier below shrinks it for genuinely tight inline contexts
+   (e.g., the Slack channel field inside a Stage 4 integration row). */
+.rps-select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-var-6, 2rem)
+    var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-var-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.rps-select:focus,
+.rps-select:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+
+/* ── Tabset (Stages 2 & 3) ──────────────────────────────────
+   Replaces the old accordion. One tab per SF-object section the
+   active stage maps to. The active tab carries an accent underline
+   so the boundary with the panel content reads as a single canvas. */
+.rps-tabs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  width: 100%;
+  min-width: 0;
+  /* `overflow: hidden` clips offstage tabs so the More overflow
+     detector (scrollWidth > clientWidth in _adjustTabsOverflow) can
+     actually fire. */
+  overflow: hidden;
+}
+/* Each <li> participates in flex sharing; the active tab keeps its
+   intrinsic size while inactive tabs share whatever room is left
+   and ellipsize. The "+ Add ⌄" trigger sits at the trailing edge
+   and never shrinks. */
+.rps-tabs__li {
+  margin: 0;
+  min-width: 0;
+}
+/* Active tab - sizes to its label so the focus context stays legible. */
+.rps-tabs__li_fit {
+  flex: 0 0 auto;
+}
+/* Inactive tabs - also hug their label width so two-tab strips with
+   short labels (e.g. Vehicles / Drivers) sit naturally side by side
+   instead of one tab growing to consume the whole row. They can
+   still shrink + truncate (via the ellipsis on `.rps-tab__label`)
+   when total tab width would otherwise exceed the strip. */
+.rps-tabs__li_shrink {
+  flex: 0 1 auto;
+}
+/* Trailing "+ Add" entry - auto-sized, never participates in shrink. */
+.rps-tabs__add-li {
+  margin: 0;
+  flex: 0 0 auto;
+  min-width: 0;
+  position: relative;
+  margin-left: auto;
+}
+.rps-tab {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  margin-bottom: calc(-1 * var(--slds-g-sizing-border-1, 1px));
+  text-align: left;
+  min-width: 0;
+  transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
+}
+/* Label truncates with ellipsis so long object names (e.g. "Insurance
+   Policy Participants") shrink instead of wrapping; the custom-tab ×
+   icon stays visible since it's a flex sibling, not part of the
+   overflow context. */
+.rps-tab__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rps-tab:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rps-tab:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.rps-tab.is-active {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+
+/* ── "+ Add ⌄" trigger ─────────────────────────────────────────
+   Sits at the trailing edge of the tab strip. Same baseline as a
+   tab (so the underline alignment is preserved) but uses a neutral
+   color and an icon-led layout to read as an action, not a tab. */
+.rps-tab-add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  margin-bottom: calc(-1 * var(--slds-g-sizing-border-1, 1px));
+  white-space: nowrap;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+.rps-tab-add:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rps-tab-add:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.rps-tab-add_open {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rps-tab-add__plus,
+.rps-tab-add__chev {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex: 0 0 auto;
+}
+.rps-tab-add__label {
+  line-height: var(--slds-g-font-line-height-1, 1);
+}
+
+/* ── "More ⌄" overflow trigger ─────────────────────────────────
+   Sits at the trailing edge of the tab strip, only when there are
+   tabs that don't fit. Same baseline as a tab so the underline
+   alignment stays seamless. */
+.rps-tabs__more-li {
+  margin: 0;
+  flex: 0 0 auto;
+  min-width: 0;
+  position: relative;
+  margin-left: auto;
+}
+.rps-tabs__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  margin-bottom: calc(-1 * var(--slds-g-sizing-border-1, 1px));
+  white-space: nowrap;
+  transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+.rps-tabs__more:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rps-tabs__more.is-open {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rps-tabs__more.is-active {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.rps-tabs__more:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.rps-tabs__more-chev {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex: 0 0 auto;
+  transition: transform 160ms ease;
+}
+.rps-tabs__more.is-open .rps-tabs__more-chev {
+  transform: rotate(180deg);
+}
+.rps-tabs__more-label {
+  line-height: var(--slds-g-font-line-height-1, 1);
+}
+
+/* Popover anchored to the trigger, with a viewport-fixed scrim
+   for outside-click closing. */
+.rps-tabs__more-wrap {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 30;
+  margin-top: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-tabs__more-scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 29;
+}
+.rps-tabs__more-menu {
+  position: relative;
+  z-index: 31;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 14rem;
+  max-height: var(--slds-g-sizing-15, 20rem);
+  overflow-y: auto;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+.rps-tabs__more-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.rps-tabs__more-item:hover {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-tabs__more-item.is-active {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.rps-tabs__more-item-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Menu wrap - anchored to the trigger, sits above the tab strip
+   on the z stack. The scrim catches outside clicks to close. */
+.rps-tab-add__menu-wrap {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 30;
+  margin-top: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-tab-add__scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 29;
+}
+.rps-tab-add__menu {
+  position: relative;
+  z-index: 31;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 12rem;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+.rps-tab-add__item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  text-align: left;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.rps-tab-add__item:hover,
+.rps-tab-add__item:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  outline: 0;
+}
+.rps-tab-add__item-icon {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex: 0 0 auto;
+}
+.rps-tab-add__item-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.rps-tabpanel {
+  padding-top: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* ── Instance-mode (per-vehicle / per-driver accordion stack) ─
+   Tab body for sections whose blueprint declares
+   renderMode:'instances'. A toolbar row hosts the Apply-to-All
+   affordance; below it, a vertical stack of collapsible cards
+   replicates the same shared attribute checklist once per
+   instance slot to convey the per-vehicle / per-driver shape of
+   the runtime view. Toggle state is template-level (shared
+   across every slot) - the slot dimension is purely a
+   visualisation pattern. */
+/* Apply-to-All footer - sits at the foot of the first instance's
+   expanded body, left-aligned under the checklist. */
+.rps-accordion__footer {
+  display: flex;
+  margin-top: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.rps-apply-all {
+  /* SLDS 2 link-style button: no border/background, brand-colored
+     label, underline on hover. */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  transition: color 120ms ease;
+}
+.rps-apply-all:hover {
+  background: transparent;
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+}
+.rps-apply-all:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+/* Disabled until at least one coverage is selected - muted, no hover
+   affordance, not clickable. */
+.rps-apply-all:disabled,
+.rps-apply-all[disabled] {
+  cursor: not-allowed;
+  color: var(--slds-g-color-on-disabled-1, #939393);
+  background: transparent;
+}
+.rps-apply-all:disabled:hover,
+.rps-apply-all[disabled]:hover {
+  background: transparent;
+  color: var(--slds-g-color-on-disabled-1, #939393);
+  text-decoration: none;
+}
+.rps-apply-all svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* Modelled on the SLDS 2 Accordion blueprint: a flat, divided list
+   (no per-section card chrome) where each summary row is a
+   full-width reset button with a left-aligned disclosure chevron
+   that rotates from ▶ (collapsed) to ▼ (expanded). Hover is a
+   neutral surface tint (not brand fill) and the expanded content is
+   indented to align under the summary heading text. */
+.rps-accordion-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Only divide BETWEEN sections - no leading line above the first
+   fold, no trailing line below the last. */
+.rps-accordion + .rps-accordion {
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.rps-accordion__header {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-2, 0.5rem);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  /* SLDS heading_small - semibold, darkest on-surface for titles. */
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+.rps-accordion__header:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.rps-accordion__header:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: calc(-1 * var(--slds-g-sizing-border-2, 2px));
+}
+.rps-accordion__chev {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  flex-shrink: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: transform 160ms ease;
+}
+.rps-accordion__chev.is-open {
+  transform: rotate(90deg);
+}
+.rps-accordion__label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+/* Indent the body so the checklist aligns under the heading text:
+   header inline padding (spacing-2) + chevron (sizing-4) + gap
+   (spacing-2). */
+.rps-accordion__body {
+  padding: 0
+    var(--slds-g-spacing-2, 0.5rem)
+    var(--slds-g-spacing-var-2, 0.5rem)
+    calc(
+      var(--slds-g-spacing-2, 0.5rem) +
+      var(--slds-g-sizing-4, 0.75rem) +
+      var(--slds-g-spacing-2, 0.5rem)
+    );
+}
+/* Empty-state when the active tab has no standard attributes and no
+   custom fields yet (e.g., a freshly-added custom-object tab). */
+.rps-attr-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  text-align: center;
+}
+.rps-attr-empty strong {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* Attribute rendering (checklist rows, checkboxes, Custom pill, eye
+   preview drawer, remove-custom button) used to live here. Row
+   rendering is now owned by c-attribute-picker; the only Playbook-
+   local surfaces left are the empty-state message above and the
+   Slack channel field styles below. */
+
+/* Generic select wrapper - adds the dropdown chevron to any
+   .rps-select sitting inside. Used by the Add-Field form and the
+   Stage 4 Slack channel select. */
+.rps-select-wrap {
+  position: relative;
+  min-width: 0;
+}
+.rps-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: var(--slds-g-spacing-3, 0.75rem);
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-left: 0.3rem solid transparent;
+  border-right: 0.3rem solid transparent;
+  border-top: 0.3rem solid var(--slds-g-color-on-surface-1, #5c5c5c);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.rps-select_compact {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--slds-g-sizing-8, 1.75rem);
+  padding-block: var(--slds-g-spacing-1, 0.25rem);
+  padding-inline: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-6, 2rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+}
+
+/* Stage 4 Slack channel field - inline label + select pair. Same
+   layout as the old inline-config field, scoped under the integration. */
+.rps-integration__field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.rps-integration__field-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.rps-integration__field .rps-select-wrap {
+  flex: 1;
+}
+
+/* Responsive: narrow viewports drop the integration field to
+   wrap so labels don't truncate. */
+@media (max-width: 48em) {
+  .rps-integration__field {
+    flex-wrap: wrap;
+  }
+}
+
+/* ── Standardized info / warning banner ─────────────────────────
+   Shared visual treatment used across the three Setup wizards
+   (afs / qcs / rps prefixes) so contextual messages read as one
+   design language. Two severity variants:
+     _info     - blue ramp, explanatory or status-only copy
+     _warning  - yellow ramp, admin action recommended
+   Single rounded pill mirroring the 429x42 reference SVG; the inline
+   link affordance (.rps-banner__link) is a real <button>/<a> so each
+   instance can carry contextual copy + a meaningful action. */
+.rps-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  /* No own margin - every parent that hosts a banner is a flex
+     column with its own `gap`, so adding margin-top here compounds
+     with the parent gap and produces a double-padded slab. */
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rps-banner__icon {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-banner__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.rps-banner__copy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.rps-banner__copy strong {
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.rps-banner__link {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin-left: var(--slds-g-spacing-1, 0.25rem);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  color: inherit;
+}
+.rps-banner__link:hover {
+  text-decoration: none;
+}
+.rps-banner__link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid currentColor;
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.rps-banner_info {
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+}
+.rps-banner_warning {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-on-warning-1, #8c4b02);
+}
+
+/* ── Helper text ────────────────────────────────────────────── */
+.rps-helper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin: var(--slds-g-spacing-var-3, 0.75rem) 0 0;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rps-helper svg {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  margin-top: 0.125rem;
+}
+
+/* ── Stage 1: Product Hierarchy mind-map tree ───────────────── */
+/* Pale-blue canvas, horizontal flow left → right, icon-tile nodes
+   connected by L-shaped electric-blue lines (Salesforce PCM Visualize
+   inspired). */
+
+/* Tree canvas - zoomable + pannable workspace. Centers the tree at
+   identity transform (zoom=1, pan=0,0); wheel scales (cursor-anchored
+   via JS), drag pans. overflow: hidden keeps zoomed/panned content
+   clipped to the viewport. user-select: none prevents text selection
+   during pan drags. */
+.rps-tree-canvas {
+  background: transparent;
+  border-radius: 0;
+  padding: var(--slds-g-spacing-var-6, 2rem);
+  overflow: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+.rps-tree-canvas.is-panning {
+  cursor: grabbing;
+}
+/* Embedded mode - the playbook is mounted inside a host workspace
+   whose right pane is already sized to the surrounding chrome.
+   Tighter internal padding than the standalone viewport (2rem)
+   so the actual tree drawing area stays usable inside the
+   compact host pane. The viewport keeps its default `flex: 1
+   1 auto` growth so it fills whatever vertical space the host
+   grants between the Root Product picker and the footer -
+   producing symmetric padding above and below the dot-grid
+   island. Panel growth is already prevented by the host card's
+   overall bounded height (the pipeline column caps it via the
+   parent grid's `align-items: stretch`), so the viewport
+   filling doesn't push anything. */
+.rps-grid_stacked .rps-tree-canvas {
+  /* `flex: 1` (basis 0) so the tree DOM inside doesn't push
+     the viewport past the size the host granted - the viewport
+     just fills whatever `.rps-config` gives it, and its own
+     `overflow: hidden` clips whatever the tree would have
+     rendered beyond that. min-height keeps the viewport usable
+     if the host pane ends up unusually short. */
+  flex: 1;
+  min-height: 12rem;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* Vertical indented tree (file-tree pattern) - always fits the
+   viewport horizontally regardless of depth. Hierarchy is conveyed
+   by left-indent + L-shaped connectors drawn from parent down to
+   each child. The trunk between siblings is a separate ::after on
+   non-last children, so we never need to know the last child's
+   height. Works recursively for any depth.
+
+   Also the live transform target for zoom + pan; will-change keeps
+   GPU compositing happy during continuous wheel/drag updates. */
+.rps-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: fit-content;
+  will-change: transform;
+}
+
+.rps-tree__group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.rps-tree__children {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-left: var(--slds-g-spacing-5, 1.5rem);
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+  position: relative;
+}
+
+/* Per-child L-corner: vertical drop from above + horizontal arm into
+   the child's left edge, rounded at the bottom-left for polish. */
+.rps-tree__children > .rps-tree__group {
+  position: relative;
+}
+.rps-tree__children > .rps-tree__group::before {
+  content: '';
+  position: absolute;
+  left: -0.75rem;
+  top: -0.5rem;
+  width: 0.625rem;
+  height: var(--slds-g-sizing-6, 1.25rem);
+  border-left: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-palette-electric-blue-60, #4992fe);
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-palette-electric-blue-60, #4992fe);
+  border-bottom-left-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+/* Non-last children extend the trunk downward into the gap so the
+   line continues to the next sibling's L-corner. */
+.rps-tree__children > .rps-tree__group:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: -0.75rem;
+  top: var(--slds-g-spacing-3, 0.75rem);
+  bottom: calc(-1 * var(--slds-g-spacing-2, 0.5rem));
+  border-left: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-palette-electric-blue-60, #4992fe);
+}
+
+/* Node card - compact white pill with icon swatch + label + kind chip. */
+.rps-tree__node {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-var-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  white-space: nowrap;
+  z-index: 1;
+}
+
+/* Icon tile - small colored square with a white glyph, per entity
+   kind. Mirrors the SLDS object icon style in the Visualize reference. */
+.rps-tree__icon {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  flex-shrink: 0;
+}
+.rps-tree__icon svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.rps-tree__icon_electric-blue { background: var(--slds-g-color-palette-electric-blue-50, #066afe); }
+.rps-tree__icon_cloud-blue    { background: var(--slds-g-color-palette-cloud-blue-50, #107cad); }
+.rps-tree__icon_teal          { background: var(--slds-g-color-palette-teal-50, #0b827c); }
+.rps-tree__icon_purple        { background: var(--slds-g-color-palette-purple-50, #9050e9); }
+.rps-tree__icon_orange        { background: var(--slds-g-color-palette-orange-60, #dd7a01); }
+.rps-tree__icon_yellow        { background: var(--slds-g-color-palette-yellow-70, #e4a201); }
+.rps-tree__icon_default       { background: var(--slds-g-color-palette-neutral-50, #747474); }
+
+.rps-tree__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-tree__kind {
+  display: inline-flex;
+  align-items: center;
+  height: var(--slds-g-sizing-5, 1rem);
+  padding: 0 var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: 0.5625rem;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Tone palette for the inline kind chips next to each node card. */
+.rps-tree__kind.rps-tone_electric-blue { background: var(--slds-g-color-palette-electric-blue-90, #d6e6ff); color: var(--slds-g-color-palette-electric-blue-30, #022ac0); }
+.rps-tree__kind.rps-tone_cloud-blue    { background: var(--slds-g-color-palette-cloud-blue-90, #cfe9fe);    color: var(--slds-g-color-palette-cloud-blue-30, #084968); }
+.rps-tree__kind.rps-tone_teal          { background: var(--slds-g-color-palette-teal-90, #acf3e4);          color: var(--slds-g-color-palette-teal-30, #024d4c); }
+.rps-tree__kind.rps-tone_purple        { background: var(--slds-g-color-palette-purple-90, #ece1f9);        color: var(--slds-g-color-palette-purple-30, #5a1ba9); }
+.rps-tree__kind.rps-tone_orange        { background: var(--slds-g-color-palette-orange-90, #fedfd0);        color: var(--slds-g-color-palette-orange-30, #5f3e02); }
+.rps-tree__kind.rps-tone_yellow        { background: var(--slds-g-color-palette-yellow-90, #f9e3b6);        color: var(--slds-g-color-palette-yellow-30, #6f3400); }
+
+@media (max-width: 48em) {
+  .rps-tree__children { margin-left: 1.25rem; }
+  .rps-tree__children > .rps-tree__group::before { left: -0.625rem; width: var(--slds-g-sizing-3, 0.5rem); }
+  .rps-tree__children > .rps-tree__group:not(:last-child)::after { left: -0.625rem; }
+}
+
+/* ── Viewport zoom + pan toolbar ─────────────────────────────
+   Floats bottom-right of the viewport (.rps-tree-canvas is the
+   positioning context). Frosted white chip so the dot-grid stays
+   visible underneath. Toolbar buttons short-circuit the canvas's
+   onmousedown pan handler via the .rps-tree-toolbar closest-check
+   in JS, so clicks here don't trigger a drag. */
+.rps-tree-toolbar {
+  position: absolute;
+  bottom: var(--slds-g-spacing-var-4, 1rem);
+  right: var(--slds-g-spacing-var-4, 1rem);
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-palette-electric-blue-90, #d6e6ff);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+  z-index: 5;
+  cursor: default;
+}
+.rps-tree-toolbar__btn {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.rps-tree-toolbar__btn:hover {
+  background: var(--slds-g-color-palette-electric-blue-90, #d6e6ff);
+  color: var(--slds-g-color-palette-electric-blue-30, #022ac0);
+}
+.rps-tree-toolbar__btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-tree-toolbar__btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.rps-tree-toolbar__btn:disabled:hover {
+  background: transparent;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.rps-tree-toolbar__btn svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.rps-tree-toolbar__pct {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  min-width: 2.75rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.rps-tree-toolbar__divider {
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-5, 1rem);
+  background: var(--slds-g-color-palette-electric-blue-90, #d6e6ff);
+  margin: 0 var(--slds-g-spacing-1, 0.25rem);
+}
+
+/* ── Modal chrome (Object Manager + Custom Field pickers) ──
+   Fixed-position card + scrim. z-index above the wizard so it
+   reads as a top-level dialog. */
+.rps-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rps-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+.rps-modal__container {
+  position: relative;
+  width: min(34rem, 92vw);
+  max-height: 80vh;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.30);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: rps-modal-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes rps-modal-pop {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.rps-modal__head {
+  position: relative;
+  padding: var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-var-5, 1.5rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.rps-modal__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-modal__sub {
+  margin: var(--slds-g-spacing-1, 0.25rem) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rps-modal__close {
+  position: absolute;
+  top: var(--slds-g-spacing-var-3, 0.75rem);
+  right: var(--slds-g-spacing-var-3, 0.75rem);
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.rps-modal__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-modal__close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-modal__close svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* Object Manager rows */
+.rps-obj-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+.rps-obj-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--atlas-font);
+  transition: background-color 120ms ease;
+}
+.rps-obj-row:hover {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+.rps-obj-row:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: calc(-1 * var(--slds-g-sizing-border-2, 2px));
+}
+.rps-obj-row__mark {
+  width: var(--slds-g-sizing-10, 3rem);
+  height: var(--slds-g-sizing-10, 3rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+}
+.rps-obj-row__meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-obj-row__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-obj-row__api {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-family: var(--atlas-mono, monospace);
+}
+.rps-obj-row__badge {
+  display: inline-flex;
+  align-items: center;
+  height: var(--slds-g-sizing-6, 1.25rem);
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.rps-obj-row__badge_standard {
+  background: var(--slds-g-color-palette-cloud-blue-90, #cfe9fe);
+  color: var(--slds-g-color-palette-cloud-blue-30, #084968);
+}
+.rps-obj-row__badge_custom {
+  background: var(--slds-g-color-palette-indigo-90, #e0e5f8);
+  color: var(--slds-g-color-palette-indigo-30, #2f2cb7);
+}
+
+/* Custom-object tab × - shows only on tabs added via the modal. */
+.rps-tab__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+  margin-left: var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.rps-tab__remove:hover {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.rps-tab__remove svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.rps-tab__label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* SLDS required-field marker (asterisk after label text). Convention
+   matches the rest of the app: red, bold, 2px left margin. */
+.slds-required {
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-decoration: none;
+  margin-left: 2px;
+}
+
+/* SLDS required-field marker (asterisk after label text). Convention
+   matches the rest of the app: red, bold, 2px left margin. */
+.slds-required {
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-decoration: none;
+  margin-left: 2px;
+}
+
+/* ── Stage 4: integration toggles ──────────────────────────── */
+/* ── Quote Comparison stage (Variant D, right panel) ───────────
+   Plain vertical field stack hosting the "Linked Comparison Template"
+   combobox. Matches the form-field shape used elsewhere in this
+   component (label on top, .rps-select beneath) - no card chrome, so
+   the right panel surface carries the only background. Width is
+   capped to the standard form column used by .afs-init-grid /
+   .qcs-init-grid so the select doesn't stretch across the full panel. */
+.rps-compare-card {
+  max-width: 28rem;
+}
+.rps-compare-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-compare-field__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-compare-field__hint {
+  margin-top: var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rps-compare-field__empty {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* Linked template preview - lo-fi schematic showing the broker-facing
+   comparison layout (4 fixed Highlights tiles + scrollable Body Fields
+   rows). Sits below the picker so the admin can sanity-check what the
+   linked template will render without opening Comparison Setup. */
+.rps-compare-preview {
+  margin-top: var(--slds-g-spacing-var-4, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  max-width: 36rem;
+}
+.rps-compare-preview__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-compare-preview__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-compare-preview__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rps-compare-preview__region {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.rps-compare-preview__region-label {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Highlights row - 4 fixed slots that never reflow as widgets toggle,
+   so the schematic stays stable when the admin swaps templates. */
+.rps-compare-preview__hl-row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.rps-compare-preview__hl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--slds-g-sizing-10, 3rem);
+  padding: var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  text-align: center;
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+}
+.rps-compare-preview__hl.is-filled {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-brand-base-80, #a8cbff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.rps-compare-preview__hl.is-empty {
+  background: transparent;
+  border: var(--slds-g-sizing-border-1, 1px) dashed
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.rps-compare-preview__hl-label {
+  display: block;
+}
+
+/* Body rows - one slot per ordered body field, ordering driven by
+   the saved template's `ordering` array. Bars on the right hint at
+   the carrier-by-carrier values rendered at quote presentation. */
+.rps-compare-preview__body {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rps-compare-preview__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6rem;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.rps-compare-preview__row-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.rps-compare-preview__row-bar {
+  display: block;
+  height: 0.375rem;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-border-1, #c9c9c9);
+}
+.rps-compare-preview__empty {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.rps-integration-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.rps-integration {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  /* Vertical stack so the description row can sit beneath the
+     checkbox/title/link row at the full card width - that's what
+     lets the desc copy run across and wrap naturally instead of
+     getting clipped inside the left column. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+/* Outer row hosts the toggle-label on the left and the deep-link
+   button on the right. The label is no longer the row itself so the
+   link button doesn't fall inside the label's click target. */
+.rps-integration__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.rps-integration__main {
+  display: grid;
+  grid-template-columns: var(--slds-g-sizing-5, 1rem) 1fr;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  align-items: flex-start;
+  cursor: pointer;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.rps-integration__main input[type="checkbox"] {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  accent-color: var(--slds-g-color-accent-1, #066afe);
+  margin: 0;
+  margin-top: 0.125rem;
+  cursor: pointer;
+}
+.rps-integration__main input[type="checkbox"]:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.rps-integration__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+
+/* Title row pairs the integration's brand icon with the bold title
+   so admins can identify the system at a glance (Agentforce sparkle
+   vs Slack pinwheel). Top-aligned so the icon stays beside the first
+   line of the title when the heading wraps to two lines (e.g. the
+   Agentforce Quote Summary row at narrower widths). */
+.rps-integration__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.rps-integration__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  flex-shrink: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.rps-integration__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+/* Agentforce sparkle on the brand-blue → indigo gradient that surfaces
+   the AI provenance mark across Salesforce surfaces. */
+.rps-integration__icon_agentforce {
+  background: linear-gradient(
+    135deg,
+    var(--slds-g-color-palette-electric-blue-50, #066afe),
+    var(--slds-g-color-palette-purple-50, #9050e9)
+  );
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+/* Slack icon stays full-color (matches Slack's brand mark); no
+   container background so the four colored quadrants speak for
+   themselves. Size matches the Agentforce sparkle (1rem) so both
+   integration brand marks read as the same visual weight in the
+   row. */
+.rps-integration__icon_slack {
+  background: transparent;
+}
+
+.rps-integration__title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rps-integration__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  /* Description sits on its own row beneath the checkbox/title/link
+     row. It runs the full card width and wraps naturally - no
+     ellipsis. The left indent (checkbox column 1rem + grid gap
+     0.75rem) keeps the copy left-aligned with the title above. */
+  padding-left: calc(var(--slds-g-sizing-5, 1rem) + var(--slds-g-spacing-var-3, 0.75rem));
+  min-width: 0;
+}
+
+/* Deep-link button - text-only with an arrow glyph, brand-blue
+   hover. Right-aligned so it can't be confused with the toggle
+   target. */
+.rps-integration__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  align-self: flex-start;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 120ms ease;
+}
+.rps-integration__link:hover {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+}
+.rps-integration__link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.rps-integration__link-icon {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.rps-integration__detail {
+  margin-top: var(--slds-g-spacing-var-3, 0.75rem);
+  padding-top: var(--slds-g-spacing-var-3, 0.75rem);
+  padding-left: var(--slds-g-spacing-var-6, 2rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) dashed
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+/* ── Empty-flow host (no LOB+Coverage flow) - SLDS 2 via c-empty-state ─ */
+.rps-empty-flow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.rps-empty-flow c-empty-state {
+  width: 100%;
+}
+
+/* ── Responsive: stack canvas above config ──────────────────── */
+@media (max-width: 64em) {
+  .rps-grid {
+    flex-direction: column;
+  }
+  .rps-canvas,
+  .rps-config {
+    flex: 1 1 auto;
+  }
+  .rps-config {
+    border-left: 0;
+  }
+  /* Banner snaps back to full width once the columns stack so it
+     keeps reading as a top-of-panel scope setter. */
+  .rps-root-product {
+    width: 100%;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Embedded mode - 3-column workspace pattern
+   When mounted inside c-insurance-setup-workspace and the active stage
+   uses the standard sections branch (.rps-tabs + .rps-tabpanel), flip
+   the right config panel into a 2-col grid: tabs as a vertical sub-nav
+   on the left, tab panel content on the right. Combined with the
+   workspace's stepper column to the left, this produces the
+   stepper | tabs | content 3-column SLDS Setup pattern.
+   Scoped via :has(.rps-tabs) so non-tabs variants (hierarchy,
+   eb-coverage, eb-benefit, review, quote-comparison) are unaffected.
+   ───────────────────────────────────────────────────────────────────── */
+:host([embedded]) .rps-config:has(.rps-tabs) {
+  display: grid;
+  /* Two equal halves - combined with the workspace's outer 1fr/2fr
+     split, this produces three equal-width columns
+     (stepper | tabs | panel) at the workspace level. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  column-gap: var(--slds-g-spacing-var-5, 1.5rem);
+  row-gap: var(--slds-g-spacing-var-4, 1rem);
+  align-items: start;
+  /* Reset the per-element padding from the original .rps-config rule
+     since the grid manages spacing now. */
+  padding: 0;
+}
+:host([embedded]) .rps-config:has(.rps-tabs) > .rps-config__head {
+  grid-column: 1 / -1;
+}
+:host([embedded]) .rps-config:has(.rps-tabs) > .rps-tabs {
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  border-bottom: 0;
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding-right: var(--slds-g-spacing-var-3, 0.75rem);
+  align-self: stretch;
+  width: auto;
+}
+/* Vertical tabs - full-row hit target, active state shifts from
+   bottom-underline to left-bar so the indicator orientation matches
+   the new layout. */
+:host([embedded]) .rps-config:has(.rps-tabs) .rps-tab {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  border-left: var(--slds-g-sizing-border-3, 3px) solid transparent;
+  border-bottom: 0;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  border-radius: 0;
+}
+:host([embedded]) .rps-config:has(.rps-tabs) .rps-tab.is-active {
+  border-left-color: var(--slds-g-color-border-accent-1, #066afe);
+  border-bottom-color: transparent;
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+:host([embedded]) .rps-config:has(.rps-tabs) .rps-tabpanel {
+  min-width: 0;
+}
+/* Hide the "+ Add" trigger in embedded mode - workspace admins add
+   custom objects from the dedicated workspace flow, not from the
+   tabs list. (Comment out this rule to bring the button back.) */
+:host([embedded]) .rps-config:has(.rps-tabs) .rps-tabs__add-li {
+  display: none;
+}
+/* Responsive - stack the tabs above the panel on narrow viewports so
+   they don't get squeezed too thin. */
+@media (max-width: 48rem) {
+  :host([embedded]) .rps-config:has(.rps-tabs) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :host([embedded]) .rps-config:has(.rps-tabs) > .rps-tabs {
+    flex-direction: row;
+    border-right: 0;
+    border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+      var(--slds-g-color-border-1, #c9c9c9);
+    padding-right: 0;
+    padding-bottom: var(--slds-g-spacing-var-2, 0.5rem);
+  }
+  :host([embedded]) .rps-config:has(.rps-tabs) .rps-tab {
+    border-left: 0;
+    border-bottom: var(--slds-g-sizing-border-3, 3px) solid transparent;
+  }
+  :host([embedded]) .rps-config:has(.rps-tabs) .rps-tab.is-active {
+    border-left-color: transparent;
+    border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+    background: transparent;
+  }
+}

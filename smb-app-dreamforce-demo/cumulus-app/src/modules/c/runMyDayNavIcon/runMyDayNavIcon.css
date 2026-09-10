@@ -1,0 +1,16 @@
+/* Nav-icon shim renders a 16px SLDS utility glyph (x-small). The parent
+   pill sizes the wrap and passes `currentColor` through so the glyph
+   inherits the pill's active/inactive text color. */
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+.rmd-nav-icon {
+  display: block;
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+  overflow: visible;
+  flex-shrink: 0;
+}

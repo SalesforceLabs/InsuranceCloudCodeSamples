@@ -1,0 +1,122 @@
+.picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.card {
+  position: relative;
+  background: var(--atlas-surface);
+  border: 2px solid var(--atlas-border);
+  border-radius: var(--atlas-radius-lg);
+  padding: var(--slds-g-spacing-5, 24px);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  font-family: var(--atlas-font);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--atlas-shadow-lift);
+  border-color: rgba(6, 106, 254, 0.25);
+}
+
+.card.is-selected {
+  border-color: var(--atlas-brand);
+  background: linear-gradient(180deg, #fff 0%, var(--atlas-brand-light) 100%);
+  box-shadow: 0 6px 24px rgba(6, 106, 254, 0.18);
+}
+
+.check {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--atlas-brand);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.card.is-selected .check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.check svg { width: var(--slds-g-sizing-4, 0.75rem); height: var(--slds-g-sizing-4, 0.75rem); }
+
+.icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--atlas-radius);
+  background: var(--accent, var(--atlas-brand));
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.icon svg { width: var(--slds-g-sizing-8, 1.75rem); height: var(--slds-g-sizing-8, 1.75rem); }
+
+.title {
+  font-size: 18px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: -0.01em;
+  color: var(--atlas-ink);
+}
+
+.desc {
+  font-size: var(--slds-g-font-scale-base, 13px);
+  color: var(--atlas-muted);
+  line-height: 1.5;
+}
+
+.radio {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid var(--atlas-muted);
+  display: inline-block;
+  position: relative;
+}
+
+.dot.is-on {
+  border-color: var(--atlas-brand);
+}
+
+.dot.is-on::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: var(--atlas-brand);
+  border-radius: 999px;
+}
+
+.card.is-selected .radio {
+  color: var(--atlas-brand);
+}
+
+@media (max-width: 720px) {
+  .picker { grid-template-columns: 1fr; }
+}

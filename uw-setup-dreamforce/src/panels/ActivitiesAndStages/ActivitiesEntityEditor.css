@@ -1,0 +1,262 @@
+/* Activities entity-scoped editor — overlays on top of PlaybookWizard.css. */
+
+/* Two-column default: Entity (240px) + Activities (flex).
+ * When the right-hand editor opens we switch to a 20 / 30 / 50 ratio
+ * across the three columns. */
+.act-entity-editor {
+  display: flex;
+  gap: var(--slds-g-spacing-3);
+  align-items: flex-start;
+}
+.act-entity-editor > .act-entity-col {
+  flex: 0 0 240px;
+}
+.act-entity-editor > .act-activities-col {
+  flex: 1;
+  min-width: 0;
+}
+.act-entity-editor > .rmdw-config-panel {
+  position: relative;
+}
+
+.act-entity-editor--with-panel > .act-entity-col,
+.act-entity-editor--with-panel > .act-activities-col,
+.act-entity-editor--with-panel > .rmdw-config-panel {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+.act-entity-editor--with-panel > .act-entity-col {
+  /* 20% of the row, minus its share of the two flex gaps. */
+  flex-basis: calc(20% - (2 * var(--slds-g-spacing-3) / 3));
+}
+.act-entity-editor--with-panel > .act-activities-col {
+  flex-basis: calc(40% - (2 * var(--slds-g-spacing-3) / 3));
+}
+.act-entity-editor--with-panel > .rmdw-config-panel {
+  flex-basis: calc(40% - (2 * var(--slds-g-spacing-3) / 3));
+}
+
+/* Activity editor panel — split into a scrollable body and a sticky footer
+ * with Delete (left) and Save (right) buttons. */
+.act-editor-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Cap to viewport so the footer can dock at the bottom. */
+  max-height: calc(100vh - 160px);
+  padding: 0;
+}
+.act-editor-panel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+}
+.act-editor-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  padding: var(--slds-g-spacing-3) var(--slds-g-spacing-4);
+  border-top: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  background: var(--slds-g-color-surface-container-1);
+  border-radius: 0 0 var(--slds-g-radius-border-3) var(--slds-g-radius-border-3);
+}
+
+/* Embedded in a Modal — the modal supplies border/background/radius, so
+ * strip the panel chrome and let the modal cap the height. */
+.act-editor-panel--embedded {
+  max-height: none;
+}
+.act-editor-panel--embedded .act-editor-panel__body {
+  padding: 0;
+  overflow: visible;
+}
+.act-editor-panel--embedded .act-editor-panel__footer {
+  padding-inline: 0;
+  padding-bottom: 0;
+  background: transparent;
+  border-radius: 0;
+  margin-top: var(--slds-g-spacing-4);
+}
+
+/* Section heading inside the Entity column — non-clickable, label only. */
+.act-entity-heading {
+  margin: var(--slds-g-spacing-3) 0 var(--slds-g-spacing-1);
+  padding: 0 4px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+  user-select: none;
+}
+
+/* Activities column — fixed height so the tiles scroll locally. The cap
+ * matches the editor panel's max-height so all three columns end at the
+ * same y-coordinate. The header + search stay pinned; only the tile list
+ * scrolls. */
+.act-activities-col {
+  max-height: calc(100vh - 160px);
+  /* Override the base .rmdw-prev-col gap so the search row hugs the header. */
+  gap: var(--slds-g-spacing-2);
+}
+.act-activities-col__search {
+  flex: 0 0 auto;
+}
+.act-activities-col__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+  /* Reserve a bit of room so the focus ring on the last tile isn't clipped. */
+  padding-right: 2px;
+}
+
+/* Shared column header — used by Entity, Activities, and the right editor.
+ * Title on top, subtitle below. Same vertical rhythm so the three columns
+ * line up across the row. */
+.act-col-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--slds-g-spacing-3);
+  min-height: 36px;
+}
+.act-col-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.25;
+}
+.act-col-sub {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.25;
+}
+
+/* Activity tile — adapts the card style from ActivitiesGrid into the wizard column. */
+.act-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--slds-g-color-surface-container-1);
+  border: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+.act-tile:hover {
+  border-color: var(--slds-g-color-border-2);
+}
+.act-tile:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 2px var(--slds-g-color-surface-1),
+              0 0 0 4px var(--slds-g-color-brand-base-15);
+}
+.act-tile--selected {
+  border: var(--slds-g-sizing-border-2) solid var(--slds-g-color-accent-1);
+  background: var(--slds-g-color-brand-base-95);
+  padding: 9px 11px;
+}
+
+/* Compact tile — used by the LOB Activities and Stage Management
+ * sections. Rounded corners always; resting state shows only a bottom
+ * rule between rows. Hover fills the row (no border) and focus / selected
+ * states draw the accent ring for keyboard users. */
+.act-tile--compact {
+  border-color: transparent;
+  border-bottom-color: var(--slds-g-color-border-1);
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-2);
+}
+.act-tile--compact:hover {
+  background: var(--slds-g-color-surface-container-2);
+  border-color: transparent;
+  border-bottom-color: transparent;
+}
+.act-tile--compact:focus-visible {
+  border-color: var(--slds-g-color-accent-1);
+}
+.act-tile--compact.act-tile--selected {
+  border-color: var(--slds-g-color-accent-1);
+}
+
+.act-tile__actions {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+}
+
+.act-tile__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: var(--slds-g-radius-border-pill);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  white-space: nowrap;
+}
+.act-tile__chip svg {
+  width: 12px;
+  height: 12px;
+}
+
+.act-tile__name {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  word-break: break-word;
+}
+/* Compact tile: lay the title and the target on the same line. */
+.act-tile--compact .act-tile__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--slds-g-spacing-2);
+  min-width: 0;
+}
+.act-tile__name-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.act-tile__desc {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.act-tile__target {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.act-tile__target code {
+  background: var(--slds-g-color-surface-container-2);
+  padding: 1px 6px;
+  border-radius: var(--slds-g-radius-border-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.act-tile__target--empty {
+  font-style: italic;
+  opacity: 0.7;
+}

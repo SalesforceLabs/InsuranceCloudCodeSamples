@@ -1,0 +1,88 @@
+/* Integrations → Connections. Compact-tile cards. */
+
+.cn-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+
+.cn-table-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+.cn-table-head__count {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+.cn-mono {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  word-break: break-all;
+}
+.cn-empty {
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+
+/* Connection tile — compact-tile shape with provider tag, name, and a
+ * label/value meta stack for API URL + Last Used. The status badge +
+ * chevron live in the absolutely-positioned actions slot in the corner. */
+.cn-tile {
+  padding: 12px 14px;
+}
+.cn-tile__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 200px; /* clear the corner status badge + chevron */
+}
+.cn-tile__name {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  word-break: break-word;
+}
+.cn-tile__url {
+  margin-top: 6px;
+  margin-right: 200px; /* clear the corner status stack + chevron */
+}
+
+/* Status badge + Last Used stack in the corner. Last Used uses the same
+ * font-size as a Badge so the two read as a tight pair. */
+.cn-tile__status-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.cn-tile__last-used {
+  font-size: var(--slds-c-badge-font-size, var(--slds-g-font-scale-neg-1));
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+}
+.cn-tile__cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-1);
+  margin-top: var(--slds-g-spacing-2);
+}
+
+.cn-provider-tag {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--slds-g-radius-border-1);
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-accent-1);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+}

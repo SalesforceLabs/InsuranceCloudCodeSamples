@@ -1,0 +1,103 @@
+/* Integrations → Health. KPI strip + Connection Health table. */
+
+.ih-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+
+.ih-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--slds-g-spacing-2);
+}
+@media (max-width: 720px) {
+  .ih-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ih-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-2);
+  text-align: center;
+  background: var(--slds-g-color-surface-container-2);
+}
+.ih-kpi--neutral {
+  background: var(--slds-g-color-surface-container-2);
+}
+.ih-kpi--success {
+  background: var(--slds-g-color-success-container-1);
+}
+.ih-kpi--warning {
+  background: var(--slds-g-color-warning-container-1);
+}
+.ih-kpi--error {
+  background: var(--slds-g-color-error-container-1);
+}
+.ih-kpi__value {
+  font-size: var(--slds-g-font-scale-3);
+  font-weight: var(--slds-g-font-weight-6);
+  line-height: 1;
+}
+.ih-kpi__value--neutral {
+  color: var(--slds-g-color-on-surface-3);
+}
+.ih-kpi__value--success {
+  color: var(--slds-g-color-success-1);
+}
+.ih-kpi__value--warning {
+  color: var(--slds-g-color-warning-1);
+}
+.ih-kpi__value--error {
+  color: var(--slds-g-color-error-1);
+}
+.ih-kpi__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-2);
+}
+
+.ih-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.ih-link {
+  color: var(--slds-g-color-accent-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-decoration: none;
+}
+.ih-link:hover {
+  text-decoration: underline;
+}
+.ih-empty {
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+
+.ih-provider-tag {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--slds-g-radius-border-1);
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-accent-1);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+}
+
+.ih-spark {
+  width: 140px;
+  height: 36px;
+  display: block;
+}

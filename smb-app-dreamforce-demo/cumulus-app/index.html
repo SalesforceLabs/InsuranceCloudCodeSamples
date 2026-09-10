@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The published preview is a single ~2.5MB index.html served from
+         GitHub Pages, which sets no cache headers of its own. Without
+         these the browser reuses a stale bundle per URL (and the query
+         string makes each deep-link its own cache entry), so republished
+         builds appear to land only on some URLs. -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Atlas</title>
+
+    <!-- Declared as a data URI rather than a public/favicon.ico so it
+         survives vite-plugin-singlefile and scripts/package-preview.mjs,
+         both of which emit one self-contained index.html with no
+         sibling files to fetch. Without any icon declaration the browser
+         issues its default GET /favicon.ico, which 404s. Glyph is the
+         same Salesforce cloud used by .slds-global-header__logo. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%2300a1e0' d='M40.6 25.4c2.9-3 7-4.9 11.5-4.9 6 0 11.2 3.4 14 8.3 2.4-1.1 5.1-1.7 8-1.7 11 0 19.9 9 19.9 20.1S85.1 67.3 74.1 67.3c-1.3 0-2.7-.1-3.9-.4-2.5 4.5-7.3 7.5-12.8 7.5-2.3 0-4.5-.5-6.5-1.5-2.5 5.9-8.3 10-15.1 10-7.1 0-13.2-4.5-15.5-10.8-1 .2-2 .3-3.1.3C8.4 72.4 1 64.9 1 55.7c0-6.2 3.4-11.6 8.3-14.5-1-2.3-1.6-4.8-1.6-7.5 0-10.4 8.5-18.8 18.9-18.8 6.1 0 11.6 2.9 15 7.5z'/></svg>"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.21.1/styles/salesforce-lightning-design-system.min.css"
+    />
+
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.js"></script>
+  </body>
+</html>

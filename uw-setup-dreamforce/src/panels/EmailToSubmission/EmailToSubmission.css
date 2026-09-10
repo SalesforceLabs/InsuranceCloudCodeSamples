@@ -1,0 +1,238 @@
+/* Email-to-Submission panel chrome. */
+
+/* Stack the three cards (Email Ingestion / General / Routing Addresses) with gutter. */
+.ets-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4);
+}
+/* Default SLDS cards are borderless on a same-colored surface, so the gutter
+ * alone is invisible. Give each tile a border so the three read as separate. */
+.ets-stack > .slds2-card {
+  --slds-s-container-color-border: var(--slds-g-color-border-1);
+  --slds-s-container-sizing-border: var(--slds-g-sizing-border-1);
+}
+
+.ets-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  cursor: pointer;
+}
+.ets-section-title__chevron {
+  display: inline-flex;
+  transition: transform 120ms ease;
+  color: var(--slds-g-color-on-surface-1);
+}
+
+.ets-subsection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+  padding: var(--slds-g-spacing-3) 0;
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+.ets-subsection:first-child {
+  padding-top: 0;
+}
+.ets-subsection:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.ets-subsection__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+/* Top of the General section: enable toggle row, no bounding box. */
+.ets-enable-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+  padding: 0 0 var(--slds-g-spacing-2);
+}
+.ets-enable-row__label {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+/* Inline notice (yellow tone) used at the top of the General section. */
+.ets-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--slds-g-color-warning-container-1);
+  color: var(--slds-g-color-warning-1);
+  border-radius: var(--slds-g-radius-border-2);
+  font-size: var(--slds-g-font-scale-base);
+  margin-bottom: var(--slds-g-spacing-2);
+}
+
+.ets-help {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.5;
+}
+
+/* Settings table — label on the left, control aligned right. */
+.ets-settings {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ets-settings tr {
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+.ets-settings tr:last-child {
+  border-bottom: 0;
+}
+.ets-settings__label {
+  padding: 10px 4px;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+}
+.ets-settings__control {
+  padding: 10px 4px;
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
+}
+
+/* Disabled New button (routing addresses, when Email-to-Submission is off). */
+.ets-stack .lob-activities__new-btn:disabled {
+  color: var(--slds-g-color-on-surface-1);
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* Routing addresses table — let the row-action menu escape the table's scroll box. */
+.ets-routing-table .slds2-table__wrap {
+  overflow: visible;
+}
+
+/* Preferences — stacked checkboxes, box on the left of each label. */
+.ets-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 2px 4px;
+}
+
+/* Inline field — label / radios on one line, optional control to the right. */
+.ets-inline-field {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 6px 4px;
+}
+.ets-field__label {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+}
+.ets-radio-inline {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.ets-radio--inline {
+  align-items: center;
+}
+.ets-inline-field .slds2-field {
+  flex: 1 1 220px;
+  min-width: 220px;
+  max-width: 360px;
+}
+
+/* Radio group with stacked option / control rows. */
+.ets-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ets-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+}
+.ets-radio__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Modal record form — single column, label on the left of each field. */
+.ets-record-form {
+  display: flex;
+  flex-direction: column;
+}
+.ets-fs {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+.ets-fs:first-child {
+  padding-top: 0;
+}
+.ets-fs:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.ets-fs__title {
+  margin: 0 0 12px;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ets-fs__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ets-fr {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.ets-fr__label {
+  padding-top: 8px;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  line-height: 1.4;
+}
+.ets-fr__required {
+  color: var(--slds-g-color-error-1);
+}
+.ets-fr__control {
+  min-width: 0;
+}
+.ets-fr__hint {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+@media (max-width: 640px) {
+  .ets-fr {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .ets-fr__label {
+    padding-top: 0;
+  }
+}

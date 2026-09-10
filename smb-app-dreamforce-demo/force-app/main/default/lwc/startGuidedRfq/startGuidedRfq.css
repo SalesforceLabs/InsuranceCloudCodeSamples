@@ -1,0 +1,20 @@
+.rfq-launch {
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+  border: 1px solid #dddbda;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.rfq-dl.slds-dl_horizontal {
+  font-size: 13px;
+}
+
+.rfq-dl .slds-dl_horizontal__label {
+  width: 42%;
+  color: #706e6b;
+  font-weight: 600;
+}
+
+.rfq-dl .slds-dl_horizontal__detail {
+  width: 58%;
+  color: #181818;
+}

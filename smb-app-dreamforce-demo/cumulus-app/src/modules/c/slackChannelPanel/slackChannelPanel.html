@@ -1,0 +1,155 @@
+<template>
+  <!-- Copied from runtime_slack:slackRecordChannel on the Meeting Playbook
+       record page (disconnected). Class names match the org component. -->
+  <template lwc:if={showDisconnected}>
+    <article class="slds-card slds-grid slds-grid_vertical slk-card" role="region" aria-label="Slack Channel">
+      <div class="slack-conversation-header-height slds-grid slds-border_bottom slds-var-p-horizontal_medium">
+        <div class="slds-col slds-var-p-vertical_small">
+          <span class="headerText slds-grid slds-grid_vertical-align-center">
+            <img class="slackIcon slds-var-m-right_small" src={slackLogoSrc} alt="" width="24" height="24" />
+            <h2 class="slk-card__title">Slack Channel</h2>
+          </span>
+        </div>
+      </div>
+      <div class="slds-card slds-grow slk-card__body">
+        <div class="slds-grid slds-grid_vertical slds-text-align_center">
+          <div class="slds-illustration slds-illustration_small emptyStateContainer slds-m-bottom_xx-large">
+            <div class="slds-align_absolute-center slds-m-horizontal_medium slds-m-top_xx-large slds-m-bottom_medium">
+              <div class="slds-text-align_center">
+                <img
+                  class="slds-illustration__svg slds-m-bottom_large"
+                  src={illustrationSrc}
+                  alt=""
+                />
+                <h3 class="empty-state-headline slds-text-heading_medium">Slack isn't connected</h3>
+                <div class="slds-text-body_regular slds-m-top_medium">
+                  There's an issue with the connection between Salesforce and Slack. Contact your admin for more information.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <template lwc:else>
+    <section class="slk" aria-label={regionLabel}>
+      <header class="slk__head">
+        <span class="slk__mark" aria-hidden="true">
+          <svg viewBox="0 0 122.8 122.8" focusable="false">
+            <path
+              d="M25.8 77.6a12.9 12.9 0 1 1-12.9-12.9h12.9zm6.5 0a12.9 12.9 0 0 1 25.8 0v32.3a12.9 12.9 0 0 1-25.8 0z"
+              fill="#e01e5a"
+            />
+            <path
+              d="M45.2 25.8a12.9 12.9 0 1 1 12.9-12.9v12.9zm0 6.5a12.9 12.9 0 0 1 0 25.8H12.9a12.9 12.9 0 0 1 0-25.8z"
+              fill="#36c5f0"
+            />
+            <path
+              d="M97 45.2a12.9 12.9 0 1 1 12.9 12.9H97zm-6.5 0a12.9 12.9 0 0 1-25.8 0V12.9a12.9 12.9 0 0 1 25.8 0z"
+              fill="#2eb67d"
+            />
+            <path
+              d="M77.6 97a12.9 12.9 0 1 1-12.9 12.9V97zm0-6.5a12.9 12.9 0 0 1 0-25.8h32.3a12.9 12.9 0 0 1 0 25.8z"
+              fill="#ecb22e"
+            />
+          </svg>
+        </span>
+
+        <h2 class="slk__title">
+          <span class="slk__hash" aria-hidden="true">#</span>{channelLabel}
+        </h2>
+
+        <span class="slk__members" title={memberLabel}>
+          <span class="slk__sr">{memberLabel}</span>
+          <svg class="slk__members-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              fill="currentColor"
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+            />
+          </svg>
+          <span aria-hidden="true">{memberCount}</span>
+        </span>
+      </header>
+
+      <div
+        class="slk__stream"
+        role="log"
+        tabindex="0"
+        aria-label={streamLabel}
+      >
+        <div class="slk__day">
+          <span class="slk__day-rule"></span>
+          <span class="slk__day-pill">Today</span>
+          <span class="slk__day-rule"></span>
+        </div>
+
+        <ul class="slk__list">
+          <template for:each={displayMessages} for:item="msg">
+            <li key={msg.id} class="slk__msg">
+              <span class={msg.avatarClass} style={msg.avatarStyle} aria-hidden="true">
+                <template lwc:if={msg.avatarSrc}>
+                  <img class="slk__avatar-img" src={msg.avatarSrc} alt="" />
+                </template>
+                <template lwc:else>{msg.initials}</template>
+              </span>
+
+              <div class="slk__body">
+                <p class="slk__meta">
+                  <span class="slk__author">{msg.author}</span>
+                  <template lwc:if={msg.isApp}>
+                    <span class="slk__app-tag">APP</span>
+                  </template>
+                  <span class="slk__time">{msg.timestamp}</span>
+                </p>
+
+                <p class="slk__text">
+                  <template for:each={msg.segments} for:item="seg">
+                    <span key={seg.id} class={seg.className}>{seg.text}</span>
+                  </template>
+                </p>
+
+                <template lwc:if={msg.hasAction}>
+                  <div class="slk__block">
+                    <button
+                      class="slk__cta"
+                      type="button"
+                      data-action-id={msg.actionId}
+                      data-message-id={msg.id}
+                      data-application-id={msg.applicationId}
+                      onclick={handleAction}
+                    >
+                      {msg.actionLabel}
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </li>
+          </template>
+        </ul>
+      </div>
+
+      <footer class="slk__foot">
+        <div class="slk__composer">
+          <p class="slk__composer-input">{composerPlaceholder}</p>
+          <div class="slk__composer-bar">
+            <span class="slk__composer-tools" aria-hidden="true">
+              <span class="slk__tool">
+                <svg viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg>
+              </span>
+              <span class="slk__tool slk__tool_text">Aa</span>
+              <span class="slk__tool">
+                <svg viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>
+              </span>
+              <span class="slk__tool slk__tool_text">@</span>
+            </span>
+            <span class="slk__send" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </span>
+          </div>
+        </div>
+      </footer>
+    </section>
+  </template>
+</template>

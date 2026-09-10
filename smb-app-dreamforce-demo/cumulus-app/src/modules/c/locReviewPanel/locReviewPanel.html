@@ -1,0 +1,395 @@
+<template>
+  <template lwc:if={isEmpty}>
+    <c-empty-state
+      illustration-name="success:new"
+      title={emptyLocTitle}
+      size="medium"
+    >
+      Open the tab in the strip above to fill in policy details,
+      assets, and coverage ranges.
+    </c-empty-state>
+  </template>
+
+  <template lwc:else>
+    <div class="review-accordion">
+      <!-- Application Details (always open) -->
+      <details class="review-acc" open>
+        <summary class="review-acc__head">
+          <svg
+            class="review-acc__caret"
+            viewBox="0 0 52 52"
+            fill="currentColor"
+            aria-hidden="true"
+            focusable="false"
+          ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+          <span class="review-acc__title">Application Details</span>
+          <span class="review-acc__meta">{policyDetailsSummary}</span>
+        </summary>
+        <div class="review-acc__body">
+          <dl class="lrp-highlights">
+            <template for:each={highlights} for:item="h">
+              <div key={h.key} class="lrp-highlights__item">
+                <dt class="lrp-highlights__term">{h.label}</dt>
+                <dd class="lrp-highlights__value">
+                  <span>{h.value}</span>
+                </dd>
+              </div>
+            </template>
+          </dl>
+        </div>
+      </details>
+
+      <!-- Auto: Vehicles + Drivers -->
+      <template lwc:if={isAuto}>
+        <details class="review-acc" open>
+          <summary class="review-acc__head">
+            <svg
+              class="review-acc__caret"
+              viewBox="0 0 52 52"
+              fill="currentColor"
+              aria-hidden="true"
+              focusable="false"
+            ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+            <span class="review-acc__title">Schedule of Vehicles</span>
+            <span class="review-acc__meta">{vehicleCountLabel}</span>
+          </summary>
+          <div class="review-acc__body">
+            <table class="lrp-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Make</th>
+                  <th>Model</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={vehicles} for:item="v">
+                  <tr key={v.id}>
+                    <td>{v.year}</td>
+                    <td>{v.make}</td>
+                    <td>{v.model}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </details>
+
+        <details class="review-acc" open>
+          <summary class="review-acc__head">
+            <svg
+              class="review-acc__caret"
+              viewBox="0 0 52 52"
+              fill="currentColor"
+              aria-hidden="true"
+              focusable="false"
+            ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+            <span class="review-acc__title">Schedule of Drivers</span>
+            <span class="review-acc__meta">{driverCountLabel}</span>
+          </summary>
+          <div class="review-acc__body">
+            <table class="lrp-table">
+              <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>DOB</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={drivers} for:item="d">
+                  <tr key={d.id}>
+                    <td>{d.firstName}</td>
+                    <td>{d.lastName}</td>
+                    <td>{d.dobDisplay}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </template>
+
+      <!-- Home: Dwellings + Homeowners + Scheduled Items -->
+      <template lwc:if={isHome}>
+        <details class="review-acc" open>
+          <summary class="review-acc__head">
+            <svg
+              class="review-acc__caret"
+              viewBox="0 0 52 52"
+              fill="currentColor"
+              aria-hidden="true"
+              focusable="false"
+            ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+            <span class="review-acc__title">Schedule of Dwellings</span>
+            <span class="review-acc__meta">{dwellingCountLabel}</span>
+          </summary>
+          <div class="review-acc__body">
+            <table class="lrp-table">
+              <thead>
+                <tr>
+                  <th>Address</th>
+                  <th>Year Built</th>
+                  <th>Construction</th>
+                  <th>Replacement Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={dwellings} for:item="d">
+                  <tr key={d.id}>
+                    <td>{d.address}</td>
+                    <td>{d.yearBuilt}</td>
+                    <td>{d.construction}</td>
+                    <td>{d.replacementCostDisplay}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </details>
+
+        <template lwc:if={hasHomeowners}>
+          <details class="review-acc" open>
+            <summary class="review-acc__head">
+              <svg
+                class="review-acc__caret"
+                viewBox="0 0 52 52"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+              <span class="review-acc__title">Schedule of Homeowners</span>
+              <span class="review-acc__meta">{homeownerCountLabel}</span>
+            </summary>
+            <div class="review-acc__body">
+              <table class="lrp-table">
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>DOB</th>
+                    <th>Marital Status</th>
+                    <th>Prior Carrier</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template for:each={homeowners} for:item="h">
+                    <tr key={h.id}>
+                      <td>{h.firstName}</td>
+                      <td>{h.lastName}</td>
+                      <td>{h.dobDisplay}</td>
+                      <td>{h.maritalStatus}</td>
+                      <td>{h.priorCarrier}</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </template>
+
+        <template lwc:if={hasScheduledItems}>
+          <details class="review-acc" open>
+            <summary class="review-acc__head">
+              <svg
+                class="review-acc__caret"
+                viewBox="0 0 52 52"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+              <span class="review-acc__title">Scheduled Personal Property</span>
+              <span class="review-acc__meta">{scheduledItemsCountLabel}</span>
+            </summary>
+            <div class="review-acc__body">
+              <table class="lrp-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Appraised Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template for:each={scheduledItems} for:item="s">
+                    <tr key={s.id}>
+                      <td>{s.name}</td>
+                      <td>{s.category}</td>
+                      <td>{s.appraisedDisplay}</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </template>
+      </template>
+
+      <!-- EB: Enrollment Headcount + Rate Plans + Core Plan Coverages
+           + Benefits & Copays. Each section renders only when its
+           source array has at least one row; the workspace publishes
+           empty arrays for steps the broker hasn't reached yet so
+           we don't paint empty cards. -->
+      <template lwc:if={isEb}>
+        <template lwc:if={hasHeadcount}>
+          <details class="review-acc" open>
+            <summary class="review-acc__head">
+              <svg
+                class="review-acc__caret"
+                viewBox="0 0 52 52"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+              <span class="review-acc__title">Enrollment Headcount</span>
+              <span class="review-acc__meta">{headcountCountLabel}</span>
+            </summary>
+            <div class="review-acc__body">
+              <table class="lrp-table">
+                <thead>
+                  <tr>
+                    <th>Tier</th>
+                    <th>FTE Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template for:each={headcount} for:item="h">
+                    <tr key={h.id}>
+                      <td>{h.label}</td>
+                      <td>{h.value}</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </template>
+
+        <template lwc:if={hasRatePlans}>
+          <details class="review-acc" open>
+            <summary class="review-acc__head">
+              <svg
+                class="review-acc__caret"
+                viewBox="0 0 52 52"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+              <span class="review-acc__title">Rate Plans</span>
+              <span class="review-acc__meta">{ratePlansCountLabel}</span>
+            </summary>
+            <div class="review-acc__body">
+              <table class="lrp-table">
+                <thead>
+                  <tr>
+                    <th>Plan Type</th>
+                    <th>Frequency</th>
+                    <th>Tier</th>
+                    <th>Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template for:each={ratePlans} for:item="r">
+                    <tr key={r.id}>
+                      <td>{r.planType}</td>
+                      <td>{r.frequency}</td>
+                      <td>{r.tier}</td>
+                      <td>{r.count}</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </template>
+
+        <template lwc:if={hasEbCoverages}>
+          <details class="review-acc" open>
+            <summary class="review-acc__head">
+              <svg
+                class="review-acc__caret"
+                viewBox="0 0 52 52"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+              <span class="review-acc__title">Core Plan Coverages</span>
+              <span class="review-acc__meta">{ebCoveragesCountLabel}</span>
+            </summary>
+            <div class="review-acc__body">
+              <dl class="lrp-highlights">
+                <template for:each={ebCoverages} for:item="c">
+                  <div key={c.id} class="lrp-highlights__item">
+                    <dt class="lrp-highlights__term">{c.label}</dt>
+                    <dd class="lrp-highlights__value">
+                      <span>{c.value}</span>
+                    </dd>
+                  </div>
+                </template>
+              </dl>
+            </div>
+          </details>
+        </template>
+
+        <template lwc:if={hasEbBenefits}>
+          <details class="review-acc" open>
+            <summary class="review-acc__head">
+              <svg
+                class="review-acc__caret"
+                viewBox="0 0 52 52"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+              <span class="review-acc__title">Benefits &amp; Copays</span>
+              <span class="review-acc__meta">{ebBenefitsCountLabel}</span>
+            </summary>
+            <div class="review-acc__body">
+              <dl class="lrp-highlights">
+                <template for:each={ebBenefits} for:item="b">
+                  <div key={b.id} class="lrp-highlights__item">
+                    <dt class="lrp-highlights__term">{b.label}</dt>
+                    <dd class="lrp-highlights__value">
+                      <span>{b.value}</span>
+                    </dd>
+                  </div>
+                </template>
+              </dl>
+            </div>
+          </details>
+        </template>
+      </template>
+
+      <!-- Policy Coverages (Auto + Home only - EB has its own
+           Coverages + Benefits sections above with a different shape) -->
+      <template lwc:if={showLegacyCoverages}>
+      <details class="review-acc" open>
+        <summary class="review-acc__head">
+          <svg
+            class="review-acc__caret"
+            viewBox="0 0 52 52"
+            fill="currentColor"
+            aria-hidden="true"
+            focusable="false"
+          ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+          <span class="review-acc__title">Policy Coverages</span>
+          <span class="review-acc__meta">{coverageSectionSummary}</span>
+        </summary>
+        <div class="review-acc__body">
+          <ul class="review-cov-list">
+            <template for:each={coverages} for:item="c">
+              <li key={c.key} class={c.rowClass}>
+                <span class="review-cov__name">{c.label}</span>
+                <span class="review-cov__status">{c.statusLabel}</span>
+                <template lwc:if={c.detailLine}>
+                  <span class="review-cov__detail">{c.detailLine}</span>
+                </template>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </details>
+      </template>
+    </div>
+  </template>
+</template>

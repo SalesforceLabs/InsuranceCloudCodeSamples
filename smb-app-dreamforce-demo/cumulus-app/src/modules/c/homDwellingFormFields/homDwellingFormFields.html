@@ -1,0 +1,280 @@
+<template>
+  <div class="hom-dwl-modal">
+    <template lwc:if={showLookup}>
+      <div class="hom-lookup">
+        <span class="hom-lookup__label">Search existing dwellings</span>
+        <button
+          class={lookupTriggerClass}
+          type="button"
+          aria-haspopup="dialog"
+          aria-expanded={searchOpen}
+          onclick={handleSearchToggle}
+        >
+          <svg class="hom-lookup__trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="M21 21l-4.35-4.35"></path>
+          </svg>
+          <span class="hom-lookup__trigger-label">{lookupTriggerLabel}</span>
+          <template lwc:if={hasLookupSelection}>
+            <span
+              class="hom-lookup__clear"
+              role="button"
+              tabindex="0"
+              aria-label="Clear selection"
+              onclick={handleClearLookup}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path d="M18.3 5.71L12 12.01l6.3 6.29-1.42 1.42L10.59 13.43 4.29 19.72 2.88 18.3l6.3-6.29-6.3-6.29L4.29 4.3l6.3 6.29 6.3-6.29z"/>
+              </svg>
+            </span>
+          </template>
+        </button>
+
+        <template lwc:if={searchOpen}>
+          <div class="hom-lookup__scrim" onclick={handleSearchScrim}></div>
+          <div class="hom-lookup__panel" role="dialog" aria-label="Dwelling lookup">
+            <div class="hom-lookup__input-wrap">
+              <svg class="hom-lookup__input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+              </svg>
+              <input
+                class="hom-lookup__input"
+                type="search"
+                placeholder="Search by address, city, ZIP, or occupancy..."
+                value={searchQuery}
+                oninput={handleSearchInput}
+                onkeydown={handleSearchKey}
+                aria-label="Search existing dwellings"
+              />
+            </div>
+            <template lwc:if={hasLookupResults}>
+              <ul class="hom-lookup__results" role="listbox">
+                <template for:each={lookupResults} for:item="r">
+                  <li
+                    key={r.id}
+                    class={r.cls}
+                    role="option"
+                    aria-selected={r.ariaSelected}
+                    data-id={r.id}
+                    tabindex="0"
+                    onclick={handleLookupSelection}
+                    onkeydown={handleSearchKey}
+                  >
+                    <span class="hom-lookup__result-name">{r.displayName}</span>
+                    <span class="hom-lookup__result-meta">{r.metaLabel}</span>
+                  </li>
+                </template>
+              </ul>
+            </template>
+            <template lwc:else>
+              <p class="hom-lookup__empty" role="status">{lookupEmptyCopy}</p>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <p class="required-legend">
+      <abbr class="slds-required" title="required">*</abbr> = Required
+    </p>
+
+    <template lwc:if={hasLookupSelection}>
+      <div class="hom-dwl-modal__selected">
+        <label class="slds-form-element__label" for="hom-dwl-selected-name">
+          Dwelling
+        </label>
+        <input
+          id="hom-dwl-selected-name"
+          class="slds-input hom-dwl-modal__selected-input"
+          type="text"
+          value={selectedDwellingName}
+          disabled
+          aria-readonly="true"
+        />
+      </div>
+    </template>
+
+    <div class="hom-dwl-modal__grid">
+      <div class={addressClass} data-col="wide">
+        <label class="slds-form-element__label" for="hom-dwl-address">
+          Street Address <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="hom-dwl-address"
+          class="slds-input"
+          type="text"
+          placeholder="Enter street address"
+          data-field="addressLine"
+          value={addressLine}
+          oninput={handleInput}
+        />
+        <template lwc:if={addressError}>
+          <span class="hom-dwl-modal__error">Enter a street address.</span>
+        </template>
+      </div>
+
+      <div class={cityClass}>
+        <label class="slds-form-element__label" for="hom-dwl-city">
+          City <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="hom-dwl-city"
+          class="slds-input"
+          type="text"
+          placeholder="Enter city"
+          data-field="city"
+          value={city}
+          oninput={handleInput}
+        />
+        <template lwc:if={cityError}>
+          <span class="hom-dwl-modal__error">Enter a city.</span>
+        </template>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="hom-dwl-state">State</label>
+        <input
+          id="hom-dwl-state"
+          class="slds-input"
+          type="text"
+          maxlength="2"
+          placeholder="State"
+          data-field="state"
+          value={state}
+          oninput={handleInput}
+        />
+      </div>
+
+      <div class={zipClass}>
+        <label class="slds-form-element__label" for="hom-dwl-zip">
+          ZIP <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="hom-dwl-zip"
+          class="slds-input"
+          type="text"
+          inputmode="numeric"
+          maxlength="5"
+          pattern="[0-9]{5}"
+          placeholder="Enter ZIP"
+          data-field="zip"
+          value={zip}
+          oninput={handleInput}
+        />
+        <template lwc:if={zipError}>
+          <span class="hom-dwl-modal__error">Enter a ZIP.</span>
+        </template>
+      </div>
+
+      <div class={yearBuiltClass}>
+        <label class="slds-form-element__label" for="hom-dwl-year">
+          Year Built <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="hom-dwl-year"
+          class="slds-input"
+          type="number"
+          inputmode="numeric"
+          placeholder="Year built"
+          data-field="yearBuilt"
+          value={yearBuilt}
+          oninput={handleInput}
+        />
+        <template lwc:if={yearBuiltError}>
+          <span class="hom-dwl-modal__error">Enter a year.</span>
+        </template>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="hom-dwl-sqft">Square Footage</label>
+        <input
+          id="hom-dwl-sqft"
+          class="slds-input"
+          type="number"
+          inputmode="numeric"
+          placeholder="Enter sq ft"
+          data-field="sqFt"
+          value={sqFt}
+          oninput={handleInput}
+        />
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label">Construction</label>
+        <c-picklist
+          options={constructionOptions}
+          value={construction}
+          placeholder="Select..."
+          accessible-label="Construction"
+          data-field="construction"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label">Roof Type</label>
+        <c-picklist
+          options={roofOptions}
+          value={roofType}
+          placeholder="Select..."
+          accessible-label="Roof Type"
+          data-field="roofType"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="hom-dwl-roofyear">Roof Year</label>
+        <input
+          id="hom-dwl-roofyear"
+          class="slds-input"
+          type="number"
+          inputmode="numeric"
+          placeholder="Year"
+          data-field="roofYear"
+          value={roofYear}
+          oninput={handleInput}
+        />
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label">Occupancy</label>
+        <c-picklist
+          options={occupancyOptions}
+          value={occupancy}
+          placeholder="Select..."
+          accessible-label="Occupancy"
+          data-field="occupancy"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="hom-dwl-cost">Replacement Cost</label>
+        <input
+          id="hom-dwl-cost"
+          class="slds-input"
+          type="number"
+          inputmode="numeric"
+          placeholder="Enter USD"
+          data-field="replacementCost"
+          value={replacementCost}
+          oninput={handleInput}
+        />
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label">Protection Class</label>
+        <c-picklist
+          options={protectionClassOptions}
+          value={protectionClass}
+          placeholder="Select..."
+          accessible-label="Protection Class"
+          data-field="protectionClass"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+    </div>
+  </div>
+</template>

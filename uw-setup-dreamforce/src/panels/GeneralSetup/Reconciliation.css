@@ -1,0 +1,120 @@
+/* Reconciliation and Normalization — Entity → Attributes. Same row
+ * layout as Document Classification, but the right column hosts the
+ * rich Attributes pane and uses a 30:70 split so attributes breathe. */
+.rn-taxonomy {
+  grid-template-columns: 30% 70%;
+}
+.dc-col.rn-fields-col {
+  padding: var(--slds-g-spacing-4);
+}
+
+/* Canonical-name badge row on each compact attribute tile. Wrap onto
+ * additional lines if there are many; the parent tile has padding so
+ * we just need a small inter-badge gap. */
+.rn-tile__canonical {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-right: 80px; /* clear the absolute Type badge + kebab in the corner */
+}
+
+.rn-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+.rn-fields__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+.rn-fields__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.25;
+}
+.rn-fields__sub {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* ── Chip input ─────────────────────────────────────────────────── */
+.rn-chip-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rn-chip-field__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+.rn-chip-field__box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  min-height: 36px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: text;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+.rn-chip-field__box:focus-within {
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 1px var(--slds-g-color-accent-1);
+}
+.rn-chip-field__input {
+  flex: 1 1 120px;
+  min-width: 80px;
+  padding: 2px 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+.rn-chip-field__hint {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+}
+
+.rn-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 2px 8px;
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-brand-base-30);
+  border: 1px solid var(--slds-g-color-brand-base-90, var(--slds-g-color-border-1));
+  border-radius: var(--slds-g-radius-border-pill);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  white-space: nowrap;
+}
+.rn-chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle);
+  color: inherit;
+  cursor: pointer;
+}
+.rn-chip__remove:hover {
+  background: rgba(0, 0, 0, 0.06);
+}

@@ -1,0 +1,33 @@
+<template>
+  <nav class="path">
+    <div class="path-head">RFQ Progress</div>
+    <ol class="path-steps">
+      <template for:each={steps} for:item="step" for:index="idx">
+        <li key={step.id} class={step.className}>
+          <button
+            type="button"
+            class="step-trigger"
+            data-step-id={step.id}
+            disabled={step.disabled}
+            aria-current={step.ariaCurrent}
+            title={step.triggerTitle}
+            onclick={handleStepClick}
+          >
+            <span class="bullet">
+              <template lwc:if={step.done}>
+                <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+              </template>
+              <template lwc:else>
+                <span>{step.num}</span>
+              </template>
+            </span>
+            <span class="step-text">
+              <span class="step-label">{step.label}</span>
+              <span class="step-meta">{step.meta}</span>
+            </span>
+          </button>
+        </li>
+      </template>
+    </ol>
+  </nav>
+</template>

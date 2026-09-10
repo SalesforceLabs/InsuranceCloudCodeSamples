@@ -1,0 +1,100 @@
+<template>
+  <div class="eb-plan">
+    <!-- ── Insurance Rate Plans ──────────────────────────────────── -->
+    <article class="eb-plan__card slds-card" role="region" aria-label={ratePlanTitle}>
+      <header class="eb-plan__card-head">
+        <div class="eb-plan__card-title-group">
+          <span class="eb-plan__card-icon" aria-hidden="true">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path
+                fill="#fff"
+                d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm2 4v2h12V8H6zm0 4v2h12v-2H6zm0 4v2h8v-2H6z"
+              />
+            </svg>
+          </span>
+          <h2 class="eb-plan__card-title">{ratePlanTitle}</h2>
+        </div>
+        <button
+          class="slds-button slds-button_neutral eb-plan__new-btn"
+          type="button"
+          onclick={handleNewRatePlan}
+        >
+          New
+        </button>
+      </header>
+
+      <div class="eb-plan__card-body">
+        <template lwc:if={hasRatePlans}>
+          <table class="eb-plan__table" role="grid" aria-label="Insurance Rate Plans">
+            <thead>
+              <tr>
+                <th scope="col"><div class="slds-truncate">Rate Plan</div></th>
+                <th scope="col"><div class="slds-truncate">Type</div></th>
+                <th scope="col"><div class="slds-truncate">Frequency</div></th>
+                <th scope="col"><div class="slds-truncate">Total Premium</div></th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={ratePlanRows} for:item="r">
+                <tr key={r.id}>
+                  <td><a href="#rate-plan" class="eb-plan__link">{r.name}</a></td>
+                  <td class="eb-plan__cell-muted">{r.type}</td>
+                  <td class="eb-plan__cell-muted">{r.frequency}</td>
+                  <td class="eb-plan__cell-amount">{r.premium}</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+        <template lwc:else>
+          <c-empty-state
+            illustration-name="success:new"
+            title="No rate plans yet"
+            size="small"
+          >
+            Add an Insurance Rate Plan to start structuring premium
+            tiers and enrollment mixes for this policy.
+          </c-empty-state>
+        </template>
+      </div>
+    </article>
+
+    <!-- ── Insurance Contribution Plans ──────────────────────────── -->
+    <article class="eb-plan__card slds-card" role="region" aria-label={contributionTitle}>
+      <header class="eb-plan__card-head">
+        <div class="eb-plan__card-title-group">
+          <span class="eb-plan__card-icon eb-plan__card-icon_alt" aria-hidden="true">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path
+                fill="#fff"
+                d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.88 15.76v1.04h-1.6v-1.01c-1.27-.18-2.4-.78-2.86-1.86l1.42-.83c.32.62.93 1.06 1.86 1.06.86 0 1.32-.34 1.32-.86 0-.6-.46-.82-1.66-1.18-1.34-.4-2.64-.98-2.64-2.62 0-1.3.99-2.12 2.16-2.36V8.1h1.6v1.05c1.06.22 1.84.86 2.22 1.74l-1.4.81c-.26-.55-.7-.9-1.46-.9-.7 0-1.12.31-1.12.78 0 .53.42.74 1.62 1.1 1.36.4 2.68.96 2.68 2.7 0 1.34-1.02 2.12-2.26 2.38z"
+              />
+            </svg>
+          </span>
+          <h2 class="eb-plan__card-title">{contributionTitle}</h2>
+        </div>
+        <button class="slds-button slds-button_neutral eb-plan__new-btn" type="button">
+          New
+        </button>
+      </header>
+
+      <div class="eb-plan__card-body">
+        <c-empty-state
+          illustration-name="success:new"
+          title="No contribution plans yet"
+          size="small"
+        >
+          Add a contribution plan to define how employer and employee
+          premium share is calculated for this policy.
+        </c-empty-state>
+      </div>
+    </article>
+  </div>
+
+  <!-- New Insurance Rate Plan modal -->
+  <c-eb-new-rate-plan-modal
+    open={showRateModal}
+    oncancel={handleModalCancel}
+    oncreate={handleModalCreate}
+  ></c-eb-new-rate-plan-modal>
+</template>

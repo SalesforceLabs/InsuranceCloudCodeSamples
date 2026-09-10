@@ -1,0 +1,102 @@
+.card {
+  flex: 1 1 0;
+  min-width: 220px;
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius-lg);
+  padding: 18px;
+  box-shadow: var(--atlas-shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  outline: none;
+}
+
+.card:hover,
+.card:focus {
+  transform: translateY(-2px);
+  box-shadow: var(--atlas-shadow-lift);
+  border-color: rgba(6, 106, 254, 0.25);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pill {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  padding: var(--slds-g-spacing-1, 4px) 10px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.pill.ready {
+  background: var(--atlas-success-light);
+  color: var(--atlas-success);
+}
+
+.pill.progress {
+  background: var(--atlas-warning-light);
+  color: var(--atlas-warning);
+}
+
+.time {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+  font-weight: var(--slds-g-font-weight-5, 500);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.account {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--atlas-muted);
+}
+
+.foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--atlas-divider);
+  padding-top: 10px;
+}
+
+.type {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.type-icon {
+  color: var(--atlas-brand);
+}
+
+.action {
+  border: 0;
+  background: transparent;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-brand);
+  cursor: pointer;
+  padding: var(--slds-g-spacing-1, 4px) 6px;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+.action:hover {
+  background: var(--atlas-brand-light);
+}

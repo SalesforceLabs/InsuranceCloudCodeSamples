@@ -1,0 +1,752 @@
+/* c-eb-benefits-copays - runtime Step 3 (Benefits & Copays).
+   Two-level disclosure: outer accordion per root product, inner
+   collapsible SLDS section per Benefit Category. Inputs are
+   data-type-driven (Currency / Percentage / Picklist / CurrencyRange). */
+
+:host {
+  display: block;
+}
+.ebc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  font-family: var(--atlas-font);
+}
+/* Force border-box on every descendant so full-width accordion
+   headers (padding + width:100%) don't spill past their parent's
+   right edge. Shadow DOM doesn't inherit a page-level reset, so it
+   has to be scoped inside :host. */
+.ebc,
+.ebc *,
+.ebc *::before,
+.ebc *::after {
+  box-sizing: border-box;
+}
+
+.ebc-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  text-align: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* ── Segment accordion (Medical / Dental / Vision) - flat rows,
+   mirrors the Personal Auto tree (no per-segment card chrome). ─── */
+.ebc-seg {
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: 0;
+}
+.ebc-seg:last-child {
+  border-bottom: 0;
+}
+.ebc-seg__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.ebc-seg__head:hover .ebc-seg__title {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.ebc-seg__head:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.ebc-seg__chev-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.ebc-seg__chev {
+  width: 0.625rem;
+  height: 0.625rem;
+  transition: transform 160ms ease;
+}
+.ebc-seg__chev.is-open {
+  transform: rotate(90deg);
+}
+.ebc-seg__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.ebc-seg__icon svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.ebc-seg__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.ebc-seg__body {
+  display: flex;
+  flex-direction: column;
+  /* Indent the category sections under the chevron + title. */
+  padding-left: var(--slds-g-sizing-9, 2rem);
+  padding-bottom: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+/* ── Category accordion (single-open) ─────────────────────────
+   Sits inside the segment body. Grey SLDS 2 subsection band as the
+   header; body renders the include checkbox, benefit tab strip, and
+   the active benefit's attribute rows. Single-open per app-wide
+   rule so no two categories are expanded at once. */
+.ebc-cat-acc {
+  display: flex;
+  flex-direction: column;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.ebc-cat-acc:last-child {
+  border-bottom: 0;
+}
+.ebc-cat-acc__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-inline-3, 0.75rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.ebc-cat-acc__head:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+.ebc-cat-acc__head:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.ebc-cat-acc__chev {
+  width: 0.625rem;
+  height: 0.625rem;
+  flex-shrink: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: transform 160ms ease;
+}
+.ebc-cat-acc__chev.is-open {
+  transform: rotate(90deg);
+}
+.ebc-cat-acc__title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+/* Chevron sits flush-right; title's flex:1 above already pushes it
+   there but be explicit so future tweaks don't regress. */
+.ebc-cat-acc__head .ebc-cat-acc__chev {
+  margin-left: auto;
+}
+.ebc-cat-acc__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* ── Benefit tabs (SLDS 2 tabset pattern) ─────────────────────
+   Horizontal strip inside the open category's accordion body; one
+   tab per L3 Benefit. Same underline-style tabset the rest of the
+   app uses (see .rps-tab in rfqPlaybookSetup.css) - inactive tabs
+   are on-surface-1 grey, hover swaps to accent-2 blue, active tab
+   is accent-2 blue + bold + brand-accent underline. Strip scrolls
+   horizontally on narrow viewports. */
+.ebc-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  overflow-x: auto;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  scrollbar-width: thin;
+}
+.ebc-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  margin-bottom: calc(-1 * var(--slds-g-sizing-border-1, 1px));
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.ebc-tab:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.ebc-tab:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.ebc-tab.is-active {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+
+/* Tabpanel: hosts the active benefit's attribute rows. Sits inside
+   the open category accordion body, below the benefit tab strip. */
+.ebc-tabpanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding-top: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+/* Category-level include gate (checkbox row above the benefit
+   accordion list). SLDS 2 faux-checkbox pattern to match the tier
+   chip styling family used elsewhere in this component. */
+.ebc-cat-include {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-inline-2, 0.5rem);
+  cursor: pointer;
+  align-self: flex-start;
+}
+.ebc-cat-include input {
+  position: absolute;
+  opacity: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+}
+.ebc-cat-include__faux {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  position: relative;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+}
+.ebc-cat-include input:checked + .ebc-cat-include__faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.ebc-cat-include input:checked + .ebc-cat-include__faux::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid var(--slds-g-color-on-accent-1, #fff);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+.ebc-cat-include input:focus-visible + .ebc-cat-include__faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.ebc-cat-include__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* ── Rows ────────────────────────────────────────────────────── */
+.ebc-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--slds-g-spacing-var-inline-4, 1rem);
+  align-items: center;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.ebc-row:last-child {
+  border-bottom: 0;
+}
+
+/* Tier Details accordion sits between the segment header and the
+   category tab strip. Grey SLDS 2 subsection band as the header;
+   collapsible body reveals a stacked list of tier rows (ordinal
+   heading + labeled name input + inline remove). */
+.ebc-tier-acc {
+  display: flex;
+  flex-direction: column;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.ebc-tier-acc__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-inline-3, 0.75rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.ebc-tier-acc__head:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+.ebc-tier-acc__head:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.ebc-tier-acc__chev {
+  width: 0.625rem;
+  height: 0.625rem;
+  flex-shrink: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: transform 160ms ease;
+}
+.ebc-tier-acc__chev.is-open {
+  transform: rotate(90deg);
+}
+.ebc-tier-acc__title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.ebc-tier-acc__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* One stacked row per tier. "Tier Name" label sits above an inline-
+   editable input that seeds "Tier N" so brokers see a named tier
+   from the start. */
+.ebc-tier-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.ebc-tier-row__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.ebc-tier-row__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.ebc-tier-row__input-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  max-width: 22rem;
+}
+/* SLDS 2 form input spec: 2rem tall, 8px radius, 1px border-2
+   default, regular (400) font weight for the value, on-surface-2
+   text color. Matches the shape used across the app for consistency
+   with c-picklist triggers, tier chip inputs, and other form
+   controls. */
+.ebc-tier-row__input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-sizing-9, 2rem)
+    var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  box-sizing: border-box;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.ebc-tier-row__input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+.ebc-tier-row__input:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.ebc-tier-row__input:focus,
+.ebc-tier-row__input:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+/* Absolute-positioned remove button sits inside the input's right
+   edge so it stays aligned with the input regardless of value. */
+.ebc-tier-row__remove {
+  position: absolute;
+  top: 50%;
+  right: var(--slds-g-spacing-1, 0.25rem);
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.ebc-tier-row__remove svg {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+.ebc-tier-row__remove:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.ebc-tier-row__remove:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* Row that hosts the "+ Add tier" CTA above the tier list. Button
+   is flush-left so it reads as the "add" affordance for the list
+   below (aligned to the same left edge as the Tier Name inputs). */
+.ebc-tier-add-row {
+  display: flex;
+  justify-content: flex-start;
+}
+/* "+ Add tier" - matches the app-wide .brand primary CTA (see
+   accountRecordPage.css for the canonical rule + note on why shadow
+   DOM forces each component to keep its own copy). Pill radius,
+   10px/20px padding, transparent border so hover/focus swap only
+   background/border-color. */
+.ebc-tier-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  padding: 10px 20px;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.ebc-tier-add:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.ebc-tier-add:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.ebc-tier-add:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.ebc-tier-add__plus {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  line-height: 1;
+}
+
+/* Multi-tier sub-block: appears once per tier under a Benefit. */
+.ebc-tier-block-inline {
+  padding: 0 0 var(--slds-g-spacing-var-4, 1rem);
+}
+.ebc-tier-block-inline + .ebc-tier-block-inline {
+  padding-top: var(--slds-g-spacing-var-3, 0.75rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.ebc-tier-block-inline__head {
+  padding: 0 0 var(--slds-g-spacing-var-2, 0.5rem);
+}
+.ebc-tier-block-inline__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* ── Attribute rows (Step 2 pattern: label LEFT, control RIGHT) ──
+   Each benefit accordion body stacks attribute rows vertically.
+   Rows use the same 1fr auto grid as Core Coverages (Step 2) so the
+   two steps read as the same visual family. Divider between rows;
+   controls right-aligned so the input columns line up down the
+   list. */
+.ebc-attr-list {
+  display: flex;
+  flex-direction: column;
+}
+.ebc-attr-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--slds-g-spacing-var-inline-4, 1rem);
+  align-items: center;
+  padding: var(--slds-g-spacing-var-2, 0.5rem) 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.ebc-attr-row:last-child {
+  border-bottom: 0;
+}
+.ebc-attr-row__label-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.125rem);
+  min-width: 0;
+}
+.ebc-attr-row__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.ebc-attr-row__control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+/* Cost slot rows put the Copay/Coinsurance Select in the LEFT
+   column (aligned with the other rows' bold labels like Deductible /
+   Deductible Waiver / Limit) and the $ / % Value input in the RIGHT
+   column (aligned with the other rows' inputs). The default row
+   `grid-template-columns: 1fr auto` already handles placement, so no
+   grid override is needed. */
+.ebc-attr-row__cost-select {
+  min-width: 0;
+  justify-self: start;
+}
+.ebc-attr-row__cost-select c-picklist {
+  display: inline-block;
+  min-width: 10rem;
+}
+/* Muted body when the parent category is unchecked (include gate
+   off). Cascades from the .ebc-cat-acc container since the include
+   state lives on the category, not the individual attribute row. */
+.ebc-cat-acc.is-excluded .ebc-attr-row__label,
+.ebc-cat-acc.is-excluded .ebc-tier-block-inline__label {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+/* Selectable-accordion "preview + disable" state: when the header
+   checkbox is unchecked, the accordion still opens (broker peeks
+   at the fields) but the benefit tabs go muted + non-interactive.
+   Inputs inside .ebc-attr-row already disable via their own
+   `disabled` binding (valueDisabled from the category's included
+   flag), so only the tab strip needs a CSS-side hint here. */
+.ebc-cat-acc.is-excluded .ebc-tab {
+  color: var(--slds-g-color-on-disabled-2, #757575);
+  cursor: not-allowed;
+}
+.ebc-cat-acc.is-excluded .ebc-tab:hover {
+  color: var(--slds-g-color-on-disabled-2, #757575);
+}
+.ebc-cat-acc.is-excluded .ebc-tab.is-active {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  border-bottom-color: var(--slds-g-color-border-disabled-1, #757575);
+}
+
+/* Empty state when the broker unticks every tier chip. */
+.ebc-tier-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-5, 1.5rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  text-align: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.ebc-row__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+/* Mandatory benefits are marked with a subtle SLDS-red asterisk. */
+.ebc-row__label.is-required::after {
+  content: ' *';
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+/* Muted body when parent coverage is off. */
+.ebc-row.is-excluded .ebc-row__label {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.ebc-row__control {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Input affix layouts ─────────────────────────────────────── */
+/* SLDS 2 input-group pattern: the affix character ($ / %) sits
+   INSIDE the input's border (position:absolute over a relative
+   wrapper) and the input picks up extra padding on the affixed
+   side so the digits don't run under the symbol. Range pairs wrap
+   each input in its own affix wrapper so both sides match. */
+.ebc-row__pair {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.ebc-row__dash {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.ebc-row__affix-input {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.ebc-row__affix {
+  position: absolute;
+  top: 50%;
+  left: var(--slds-g-spacing-var-inline-3, 0.75rem);
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-line-height-1, 1);
+}
+.ebc-row__affix_suffix {
+  left: auto;
+  right: var(--slds-g-spacing-var-inline-3, 0.75rem);
+}
+/* When the input lives inside an affix wrapper, reserve room for
+   the absolute-positioned symbol on the affixed side. */
+.ebc-row__affix-input .ebc-input {
+  padding-left: var(--slds-g-spacing-var-inline-5, 1.5rem);
+}
+.ebc-row__affix-input_suffix .ebc-input {
+  padding-left: var(--slds-g-spacing-var-inline-3, 0.75rem);
+  padding-right: var(--slds-g-spacing-var-inline-5, 1.5rem);
+}
+
+/* ── Inputs ──────────────────────────────────────────────────── */
+.ebc-input {
+  width: 7rem;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  box-sizing: border-box;
+  text-align: right;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+/* Text-type input - wider since free text needs room, left-aligned. */
+.ebc-input.ebc-input_text {
+  width: 14rem;
+  text-align: left;
+}
+.ebc-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+.ebc-input:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.ebc-input:focus,
+.ebc-input:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.ebc-input:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-2, #757575);
+  cursor: not-allowed;
+}
+.ebc-row__select-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.ebc-select {
+  min-width: 12rem;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 calc(var(--slds-g-spacing-var-inline-3, 0.75rem) + 1.25rem)
+    0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background-color: var(--slds-g-color-surface-container-1, #fff);
+  /* SLDS chevron baked in so the trigger never falls back to the
+     OS-native (Apple/Windows) select appearance. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235c5c5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.625rem center;
+  background-size: 16px 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.ebc-select:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.ebc-select:focus,
+.ebc-select:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.ebc-select:disabled {
+  background-color: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-2, #757575);
+  cursor: not-allowed;
+}

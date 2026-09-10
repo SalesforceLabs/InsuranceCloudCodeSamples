@@ -1,0 +1,116 @@
+/* SLDS 2 Modal — same container family as Card, with header/content/footer
+ * sub-namespaced hooks. Real SLDS 2 modals are 20px corner radius, no border,
+ * heavy shadow.
+ */
+.slds2-modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--slds-g-z-index-modal);
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-4);
+  animation: slds2-modal-fade 200ms ease;
+}
+@keyframes slds2-modal-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.slds2-modal {
+  --slds-c-modal-color-background: var(--slds-g-color-surface-container-1);
+  --slds-c-modal-color-border: transparent;
+  --slds-c-modal-radius-border: var(--slds-s-container-radius-border, var(--slds-g-radius-border-4));
+  --slds-c-modal-sizing-border: 0;
+  --slds-c-modal-text-color: var(--slds-g-color-on-surface-1);
+  /* SLDS 2 modal heading: 20px / weight 400 */
+  --slds-c-modal-heading-font-size: var(--slds-s-container-heading-font-size, var(--slds-g-font-scale-3));
+  --slds-c-modal-heading-font-weight: var(--slds-s-container-heading-font-weight, var(--slds-g-font-weight-4));
+  --slds-c-modal-header-color-background: var(--slds-c-modal-color-background);
+  --slds-c-modal-header-text-color: var(--slds-g-color-on-surface-3);
+  --slds-c-modal-header-spacing-block-start: var(--slds-g-spacing-4);
+  --slds-c-modal-header-spacing-block-end: var(--slds-g-spacing-4);
+  --slds-c-modal-header-spacing-inline-start: var(--slds-g-spacing-5);
+  --slds-c-modal-header-spacing-inline-end: var(--slds-g-spacing-5);
+  --slds-c-modal-content-color-background: var(--slds-c-modal-color-background);
+  --slds-c-modal-content-text-color: var(--slds-c-modal-text-color);
+  --slds-c-modal-footer-color-background: var(--slds-g-color-surface-container-1);
+  --slds-c-modal-footer-text-color: var(--slds-c-modal-text-color);
+  --slds-c-modal-footer-spacing-block-start: var(--slds-g-spacing-3);
+  --slds-c-modal-footer-spacing-block-end: var(--slds-g-spacing-3);
+  --slds-c-modal-footer-spacing-inline-start: var(--slds-g-spacing-5);
+  --slds-c-modal-footer-spacing-inline-end: var(--slds-g-spacing-5);
+
+  background: var(--slds-c-modal-color-background);
+  color: var(--slds-c-modal-text-color);
+  border: var(--slds-c-modal-sizing-border) solid var(--slds-c-modal-color-border);
+  border-radius: var(--slds-c-modal-radius-border);
+  box-shadow: var(--slds-g-shadow-4);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  max-width: 640px;
+  width: 100%;
+  animation: slds2-modal-pop 200ms ease;
+}
+@keyframes slds2-modal-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.slds2-modal--sm { max-width: 420px; }
+.slds2-modal--md { max-width: 640px; }
+.slds2-modal--lg { max-width: 960px; }
+.slds2-modal--xl { max-width: 1200px; }
+
+.slds2-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--slds-c-modal-header-color-background);
+  color: var(--slds-c-modal-header-text-color);
+  padding-block-start: var(--slds-c-modal-header-spacing-block-start);
+  padding-block-end: var(--slds-c-modal-header-spacing-block-end);
+  padding-inline-start: var(--slds-c-modal-header-spacing-inline-start);
+  padding-inline-end: var(--slds-c-modal-header-spacing-inline-end);
+  border-bottom: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+}
+.slds2-modal__title {
+  margin: 0;
+  font-size: var(--slds-c-modal-heading-font-size);
+  font-weight: var(--slds-c-modal-heading-font-weight);
+  color: inherit;
+}
+.slds2-modal__close {
+  background: transparent;
+  border: none;
+  padding: var(--slds-g-spacing-1);
+  border-radius: var(--slds-g-radius-border-circle);
+  color: var(--slds-g-color-on-surface-1);
+  cursor: pointer;
+}
+.slds2-modal__close:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+.slds2-modal__body {
+  background: var(--slds-c-modal-content-color-background);
+  color: var(--slds-c-modal-content-text-color);
+  padding-block: var(--slds-g-spacing-4);
+  padding-inline: var(--slds-g-spacing-5);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.slds2-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-2);
+  background: var(--slds-c-modal-footer-color-background);
+  color: var(--slds-c-modal-footer-text-color);
+  padding-block-start: var(--slds-c-modal-footer-spacing-block-start);
+  padding-block-end: var(--slds-c-modal-footer-spacing-block-end);
+  padding-inline-start: var(--slds-c-modal-footer-spacing-inline-start);
+  padding-inline-end: var(--slds-c-modal-footer-spacing-inline-end);
+  border-top: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  border-radius: 0 0 var(--slds-c-modal-radius-border) var(--slds-c-modal-radius-border);
+}

@@ -1,0 +1,304 @@
+/* =============================================================
+   c-agentic-card - SLDS 2 Agentic Card pattern
+   Modeled directly on the SLDS 2 "Agentforce Summary" reference:
+     • Inline header (title + overflow menu)
+     • AI-generated pill + freshness timestamp
+     • Body slot (caller-owned prose + CTAs)
+     • Feedback row (thumbs / more)
+     • Sources block (toggle header + expanded citation list)
+   All chrome uses SLDS 2 styling hooks; hardcoded values are
+   restricted to fine typography constants where no hook exists.
+   ============================================================= */
+
+:host { display: block; }
+
+/* SLDS 2 Agentic surface - the AI-provenance mark shows as a gradient
+   border painted via the dual-background trick. Gradient stops are the
+   Figma-canonical violet-50 → blue-60 (linear 90°) sourced from
+   --atlas-agentic-gradient in tokens.css, so every AI-marked surface
+   (this card, .af-agent-card in the retention drawer, sparkle tiles,
+   etc.) shares one AI signature. Interior stays neutral
+   surface-container-1 so on-surface text meets WCAG contrast. */
+.ac {
+  display: block;
+  background:
+    linear-gradient(
+      var(--slds-g-color-surface-container-1, #ffffff),
+      var(--slds-g-color-surface-container-1, #ffffff)
+    ) padding-box,
+    var(--atlas-agentic-gradient) border-box;
+  border: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  box-shadow: var(--atlas-shadow-card);
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  padding: var(--slds-g-spacing-5, 1.5rem);
+  overflow: hidden;
+}
+
+/* ── Nested variant - flush inside another card ──────────────── */
+.ac.ac-nested {
+  background:
+    linear-gradient(
+      var(--slds-g-color-surface-container-1, #ffffff),
+      var(--slds-g-color-surface-container-1, #ffffff)
+    ) padding-box,
+    var(--atlas-agentic-gradient) border-box;
+  box-shadow: none;
+  padding: var(--slds-g-spacing-4, 1rem);
+}
+
+/* ── Banner variant - full-bleed top-of-page ─────────────────── */
+.ac.ac-banner {
+  background:
+    linear-gradient(
+      var(--slds-g-color-surface-container-1, #ffffff),
+      var(--slds-g-color-surface-container-1, #ffffff)
+    ) padding-box,
+    var(--atlas-agentic-gradient) border-box;
+}
+
+/* ── Header row: title + overflow menu ──────────────────────── */
+.ac-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.ac-title {
+  margin: 0;
+  font-size: var(--atlas-type-section-size);
+  font-weight: var(--atlas-type-section-weight);
+  color: var(--atlas-type-section-color);
+  line-height: var(--atlas-type-section-lh);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Shared icon-button chrome (menu, refresh, feedback more).
+   Styled via the custom .ac-icon-btn class only - the button still
+   carries `slds-button slds-button_icon slds-button_icon-x-small`
+   in the markup for SLDS button reset and a11y, we just override
+   its paint without compounding class selectors. */
+.ac .ac-icon-btn {
+  background: transparent;
+  border: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  width: var(--slds-g-sizing-8, 1.75rem);
+  height: var(--slds-g-sizing-8, 1.75rem);
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.ac .ac-icon-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.ac .ac-icon-btn svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* ── AI provenance row: pill + timestamp ─────────────────────── */
+.ac-meta-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-top: var(--slds-g-spacing-4, 1rem);
+}
+
+/* AI-generated pill - SLDS 2 agentic provenance mark. Soft lavender
+   rounded-rectangle tag matching the app's c-agentforce-summary tag
+   (purple-90 fill, on-surface-3 label) so the AI signature reads
+   consistently across every agentic surface. The sparkle + info glyphs
+   carry the accent-blue AI mark; the interior text stays neutral for
+   WCAG contrast. */
+.ac-ai-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-palette-purple-90, #ece1f9);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  white-space: nowrap;
+}
+
+.ac-spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+.ac-spark svg { width: 100%; height: 100%; }
+
+.ac-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  color: var(--slds-g-color-accent-1, #066afe);
+  cursor: help;
+}
+.ac-info svg { width: 100%; height: 100%; }
+
+.ac-time {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+}
+
+/* ── Body slot ───────────────────────────────────────────────── */
+.ac-body {
+  margin-top: var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* ── Feedback row (thumbs up / down / more) ─────────────────── */
+.ac-feedback-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  margin-top: var(--slds-g-spacing-4, 1rem);
+}
+
+.ac .ac-thumb {
+  background: transparent;
+  border: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  width: var(--slds-g-sizing-8, 1.75rem);
+  height: var(--slds-g-sizing-8, 1.75rem);
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.ac .ac-thumb:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.ac .ac-thumb svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.ac .ac-thumb.is-active {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.ac .ac-thumb.is-active:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+
+/* ── Sources block: toggle header + expandable list ─────────── */
+.ac-sources-block {
+  margin-top: var(--slds-g-spacing-4, 1rem);
+  padding-top: var(--slds-g-spacing-3, 0.75rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.ac-sources-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+}
+.ac-sources-toggle:hover .ac-sources-toggle__label { text-decoration: underline; }
+
+.ac-sources-toggle__chev {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: transform 150ms ease;
+}
+.ac-sources-toggle__chev.is-open { transform: rotate(90deg); }
+
+.ac-sources-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--slds-g-spacing-3, 0.75rem) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.ac-sources-item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.ac-sources-item__index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  font-variant-numeric: tabular-nums;
+}
+
+.ac-sources-item__link {
+  color: var(--slds-g-color-accent-1, #066afe);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.ac-sources-item__link:hover { text-decoration: underline; }
+.ac-sources-item__extlink {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+
+.ac-sources-item__name {
+  color: var(--slds-g-color-accent-1, #066afe);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+.ac-sources-item__sep {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+
+.ac-sources-item__type {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .ac { padding: var(--slds-g-spacing-4, 1rem); }
+  .ac-title { font-size: var(--slds-g-font-scale-2, 1rem); }
+}

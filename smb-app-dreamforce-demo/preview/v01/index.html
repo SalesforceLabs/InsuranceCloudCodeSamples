@@ -1,0 +1,1865 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atlas (SLDS 2)</title>
+
+  <!--
+    Version 01 — hand-authored, SLDS 2 compliant rebuild of the latest Atlas
+    broker-portal app (byte-identical source: cumulus-app/dist/atlas-risk-app.html).
+    Reproduces every screen: Account Record Page (Salesforce console shell, default),
+    Run My Day, Meeting Center, Guided RFQ Intake, RFQ Workspace (Personal Auto + Employee
+    Benefits), Quote Comparison, Bind, EB Policy Record Page, Agentforce panel/pill, Slack
+    drawer, and toasts. Built only from verified SLDS blueprints, styling hooks, utility
+    classes and icons. All data is fictitious.
+  -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/styles/salesforce-lightning-design-system.min.css"
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       Atlas design language — ported from cumulus-app
+       (tokens.css + overrides.css) so this preview matches the real
+       app's "Apple-like" SLDS 2 look. Custom --cumulus-* tokens and a
+       few .slds-* refinements mirror the shipped overrides.css exactly.
+       ============================================================ */
+    :root {
+      --cumulus-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --cumulus-shadow-card: 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px rgba(15,23,42,0.05);
+      --cumulus-shadow-soft: 0 1px 2px rgba(15,23,42,0.05), 0 12px 32px rgba(15,23,42,0.06);
+      --cumulus-shadow-lift: 0 12px 36px rgba(15,23,42,0.12);
+      --cumulus-shadow-nav: 0 1px 0 rgba(15,23,42,0.06);
+      --cumulus-glow-purple: 0 0 32px rgba(117,38,227,0.22), 0 8px 28px rgba(15,23,42,0.08);
+      --cumulus-af-gradient: linear-gradient(135deg, #7c3aed 0%, #066afe 60%, #00a1e0 100%);
+    }
+    html { font-size: 16px; }
+    body {
+      font-family: var(--cumulus-font);
+      font-size: var(--slds-g-font-size-base, 0.8125rem);
+      color: var(--slds-g-color-on-surface-3, #03234d);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .slds-scope, .slds-scope input, .slds-scope textarea, .slds-scope select, .slds-scope button { font-family: var(--cumulus-font); }
+
+    /* SLDS 2 card / button / badge refinements (mirrors overrides.css) */
+    .slds-scope .slds-card {
+      border-radius: var(--slds-g-radius-border-4, 1.25rem);
+      border: 0;
+      background: var(--slds-g-color-surface-container-1, #ffffff);
+      box-shadow: var(--cumulus-shadow-card);
+    }
+    .slds-scope .slds-button { font-weight: var(--slds-g-font-weight-6, 600); border-radius: var(--slds-g-radius-border-pill, 9999px); letter-spacing: 0; }
+    .slds-scope .slds-badge { border-radius: var(--slds-g-radius-border-pill, 15rem); font-weight: var(--slds-g-font-weight-6, 600); }
+    .slds-scope .slds-box { border-radius: var(--slds-g-radius-border-4, 1.25rem); box-shadow: var(--cumulus-shadow-card); border: 0; }
+    .slds-scope .slds-modal__container { border-radius: var(--slds-g-radius-border-4, 1.25rem); }
+    .slds-scope .slds-page-header { border-radius: var(--slds-g-radius-border-4, 1.25rem); border: 0; box-shadow: var(--cumulus-shadow-card); }
+
+    /* Custom values use SLDS global styling hooks with fallbacks and an app-specific
+       `ar-` prefix so no .slds-* class is ever overridden. */
+    html, body { margin: 0; background: var(--slds-g-color-surface-2, #f3f3f3); }
+
+    .ar-app { max-width: 90rem; margin: 0 auto; }
+
+    /* ---- Density toggle: custom var consumed by ar- spacing only ---- */
+    .ar-density { --ar-gap: var(--slds-g-spacing-4, 1rem); }
+    .ar-density.ar-density_compact { --ar-gap: var(--slds-g-spacing-2, 0.5rem); }
+    .ar-gap { gap: var(--ar-gap); }
+
+    /* ---- Atlas top nav ---- */
+    .ar-topnav {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: saturate(150%) blur(14px);
+      -webkit-backdrop-filter: saturate(150%) blur(14px);
+      border-bottom: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #e5e5e5);
+      box-shadow: var(--cumulus-shadow-nav);
+    }
+    .ar-brandlogo { width: 2rem; height: 2rem; display: inline-flex; }
+    .ar-brandlogo svg { width: 100%; height: 100%; display: block; }
+    .ar-brandname { font-weight: var(--slds-g-font-weight-7, 700); letter-spacing: -0.01em; }
+    .ar-avatar-grad .slds-avatar__initials { background: linear-gradient(135deg, #066afe, #7c3aed); color: #fff; }
+
+    /* ---- Generic AI / Agentforce accent ---- */
+    .ar-ai {
+      border-left: var(--slds-g-sizing-border-3, 3px) solid var(--slds-g-color-accent-1, #066afe);
+      background: var(--slds-g-color-surface-container-1, #ffffff);
+      border-radius: var(--slds-g-radius-border-2, 0.5rem);
+    }
+    .ar-hero {
+      background: var(--slds-g-color-surface-container-1, #ffffff);
+      border-radius: var(--slds-g-radius-border-4, 1.25rem);
+      box-shadow: var(--cumulus-shadow-card);
+    }
+    .ar-banner {
+      background: linear-gradient(135deg, #00396b 0%, #032d60 100%);
+      color: var(--slds-g-color-on-surface-inverse-1, #ffffff);
+      border-radius: var(--slds-g-radius-border-4, 1.25rem);
+      box-shadow: var(--cumulus-shadow-soft);
+    }
+    .ar-banner .ar-stat__num { color: var(--slds-g-color-on-surface-inverse-1, #ffffff); }
+    .ar-banner .ar-stat__label { color: var(--slds-g-color-on-surface-inverse-2, #a8cbff); }
+
+    .ar-stat__num {
+      display: block;
+      font-size: var(--slds-g-font-scale-6, 2rem);
+      font-weight: var(--slds-g-font-weight-7, 700);
+      line-height: var(--slds-g-font-lineheight-1, 1);
+      color: var(--slds-g-color-on-surface-3, #03234d);
+    }
+    .ar-stat__label {
+      display: block;
+      font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+      color: var(--slds-g-color-on-surface-1, #5c5c5c);
+    }
+
+    .ar-accent-card { border-left: var(--slds-g-sizing-border-3, 3px) solid var(--slds-g-color-accent-1, #066afe); }
+    .ar-accent-card_warning { border-left-color: var(--slds-g-color-warning-1, #8c4b02); }
+
+    .ar-dropzone {
+      border: var(--slds-g-sizing-border-1, 1px) dashed var(--slds-g-color-border-2, #5c5c5c);
+      border-radius: var(--slds-g-radius-border-2, 0.5rem);
+      background: var(--slds-g-color-surface-container-2, #f3f3f3);
+    }
+
+    .ar-best {
+      border: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+      box-shadow: var(--slds-g-shadow-3, 0 4px 8px 0 rgba(0, 0, 0, 0.16));
+    }
+    .ar-premium {
+      font-size: var(--slds-g-font-scale-5, 1.75rem);
+      font-weight: var(--slds-g-font-weight-7, 700);
+      color: var(--slds-g-color-on-surface-3, #03234d);
+    }
+
+    /* market / visual selection cards */
+    .ar-market { cursor: pointer; }
+    .ar-market.ar-is-selected {
+      border: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+    }
+
+    /* Slack drawer */
+    .ar-slack {
+      position: fixed; top: 0; right: 0; height: 100%; width: 25rem; max-width: 92vw;
+      background: var(--slds-g-color-surface-container-1, #ffffff);
+      box-shadow: var(--slds-g-shadow-3, -4px 0 8px 0 rgba(0, 0, 0, 0.16));
+      z-index: 9001; display: flex; flex-direction: column;
+    }
+    .ar-slack[hidden] { display: none; }
+    .ar-slack-scrim {
+      position: fixed; inset: 0; background: var(--slds-g-color-surface-inverse-1, #032d60);
+      opacity: 0.24; z-index: 9000;
+    }
+    .ar-slack-scrim[hidden] { display: none; }
+    .ar-slack__stream { flex: 1; overflow-y: auto; }
+
+    /* Agentforce fixed pill */
+    .ar-pill-dock {
+      position: fixed; left: 50%; transform: translateX(-50%); bottom: var(--slds-g-spacing-4, 1rem);
+      z-index: 8000; width: min(44rem, 92vw);
+    }
+    .ar-pill {
+      background: linear-gradient(#fff, #fff) padding-box, var(--cumulus-af-gradient) border-box;
+      border: var(--slds-g-sizing-border-2, 2px) solid transparent;
+      border-radius: var(--slds-g-radius-border-pill, 15rem);
+      box-shadow: var(--cumulus-glow-purple);
+    }
+    .ar-pill .slds-input { background: transparent; }
+    .ar-pill .slds-button_icon-brand { background: linear-gradient(135deg, #7c3aed, #066afe); border: 0; }
+
+    .ar-screen[hidden] { display: none; }
+    .ar-subview[hidden] { display: none; }
+
+    /* console tab underline for active account tab */
+    .ar-console-tab.ar-is-active {
+      box-shadow: inset 0 calc(-1 * var(--slds-g-sizing-border-3, 3px)) 0 0 var(--slds-g-color-accent-1, #066afe);
+      font-weight: var(--slds-g-font-weight-7, 700);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slds-scope ar-density" id="ar-root">
+
+    <!-- ===================== ATLAS TOP NAV ===================== -->
+    <header class="ar-topnav" role="banner">
+      <div class="ar-app slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-vertical_x-small slds-p-horizontal_medium">
+        <button class="slds-button slds-grid slds-grid_vertical-align-center" id="go-home" type="button">
+          <span class="ar-brandlogo slds-m-right_x-small">
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <defs><linearGradient id="atlas-grad" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#7c3aed" /><stop offset="100%" stop-color="#066afe" /></linearGradient></defs>
+              <circle cx="16" cy="16" r="12" fill="url(#atlas-grad)" />
+              <line x1="4" y1="16" x2="28" y2="16" stroke="#fff" stroke-width="1.4" stroke-opacity="0.92" stroke-linecap="round" />
+              <ellipse cx="16" cy="16" rx="4.5" ry="12" fill="none" stroke="#fff" stroke-width="1.4" stroke-opacity="0.92" />
+              <line x1="6.5" y1="10.5" x2="25.5" y2="10.5" stroke="#fff" stroke-width="1" stroke-opacity="0.55" stroke-linecap="round" />
+              <line x1="6.5" y1="21.5" x2="25.5" y2="21.5" stroke="#fff" stroke-width="1" stroke-opacity="0.55" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="ar-brandname slds-text-heading_small slds-text-color_default">Atlas&nbsp;Risk</span>
+        </button>
+
+        <ul class="slds-grid slds-grid_vertical-align-center">
+          <li class="slds-p-horizontal_xx-small">
+            <button class="slds-button slds-button_neutral slds-button_small" id="density-toggle" type="button" aria-pressed="false">
+              <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#side_list"></use>
+              </svg>
+              <span id="density-label">Comfy</span>
+            </button>
+          </li>
+          <li class="slds-p-horizontal_xx-small">
+            <button class="slds-button slds-button_icon slds-button_icon-container" title="Search" type="button">
+              <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+              </svg>
+              <span class="slds-assistive-text">Search</span>
+            </button>
+          </li>
+          <li class="slds-p-horizontal_xx-small">
+            <button class="slds-button slds-button_icon slds-button_icon-container slds-has-notification" title="Notifications" type="button" id="open-slack">
+              <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#notification"></use>
+              </svg>
+              <span class="slds-assistive-text">Notifications</span>
+            </button>
+          </li>
+          <li class="slds-p-horizontal_xx-small">
+            <button class="slds-button slds-button_icon slds-button_icon-container" title="Menu" type="button">
+              <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#rows"></use>
+              </svg>
+              <span class="slds-assistive-text">Menu</span>
+            </button>
+          </li>
+          <li class="slds-p-left_x-small">
+            <span class="slds-avatar slds-avatar_circle slds-avatar_medium ar-avatar-grad" title="James Field">
+              <abbr class="slds-avatar__initials" title="James Field">JF</abbr>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- ===================== SCREEN ROUTER ===================== -->
+    <div class="ar-app slds-p-horizontal_medium slds-p-top_small">
+      <div class="slds-tabs_default" id="screen-tabs">
+        <ul class="slds-tabs_default__nav" role="tablist" aria-label="Atlas screens">
+          <li class="slds-tabs_default__item slds-is-active" title="Account (Salesforce)" role="presentation">
+            <a class="slds-tabs_default__link" href="#screen-account" role="tab" tabindex="0" aria-selected="true" aria-controls="screen-account" id="tab-account" data-screen="screen-account">Account Record</a>
+          </li>
+          <li class="slds-tabs_default__item" title="Run My Day" role="presentation">
+            <a class="slds-tabs_default__link" href="#screen-day" role="tab" tabindex="-1" aria-selected="false" aria-controls="screen-day" id="tab-day" data-screen="screen-day">Run My Day</a>
+          </li>
+          <li class="slds-tabs_default__item" title="Meeting Center" role="presentation">
+            <a class="slds-tabs_default__link" href="#screen-meeting" role="tab" tabindex="-1" aria-selected="false" aria-controls="screen-meeting" id="tab-meeting" data-screen="screen-meeting">Meeting Center</a>
+          </li>
+          <li class="slds-tabs_default__item" title="RFQ Workspace — Personal Auto" role="presentation">
+            <a class="slds-tabs_default__link" href="#screen-rfq-pa" role="tab" tabindex="-1" aria-selected="false" aria-controls="screen-rfq-pa" id="tab-rfq-pa" data-screen="screen-rfq-pa">RFQ · Personal Auto</a>
+          </li>
+          <li class="slds-tabs_default__item" title="RFQ Workspace — Employee Benefits" role="presentation">
+            <a class="slds-tabs_default__link" href="#screen-rfq-eb" role="tab" tabindex="-1" aria-selected="false" aria-controls="screen-rfq-eb" id="tab-rfq-eb" data-screen="screen-rfq-eb">RFQ · Group Medical</a>
+          </li>
+          <li class="slds-tabs_default__item" title="EB Policy Record Page" role="presentation">
+            <a class="slds-tabs_default__link" href="#screen-eb-policy" role="tab" tabindex="-1" aria-selected="false" aria-controls="screen-eb-policy" id="tab-eb-policy" data-screen="screen-eb-policy">EB Policy</a>
+          </li>
+          <li class="slds-tabs_default__item" title="RFQ Playbook Setup" role="presentation">
+            <a class="slds-tabs_default__link" href="#screen-setup" role="tab" tabindex="-1" aria-selected="false" aria-controls="screen-setup" id="tab-setup" data-screen="screen-setup">Setup</a>
+          </li>
+        </ul>
+
+        <!-- ============================================================= -->
+        <!-- SCREEN: ACCOUNT RECORD PAGE (Salesforce console, default)     -->
+        <!-- ============================================================= -->
+        <div id="screen-account" class="slds-tabs_default__content slds-show ar-screen" role="tabpanel" aria-labelledby="tab-account">
+          <!-- Console workspace tab strip -->
+          <div class="slds-grid slds-grid_vertical-align-center slds-p-vertical_xx-small slds-m-bottom_small slds-wrap" role="tablist" aria-label="Open workspace tabs">
+            <button class="slds-button slds-button_icon slds-button_icon-container slds-m-right_x-small" title="App Launcher" type="button">
+              <svg class="slds-button__icon" aria-hidden="true">
+                <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#apps"></use>
+              </svg>
+              <span class="slds-assistive-text">App Launcher</span>
+            </button>
+            <span class="slds-text-body_small slds-text-color_weak slds-p-horizontal_x-small">Digital Experiences Home</span>
+            <span class="slds-text-body_small slds-text-color_weak slds-p-horizontal_x-small">Recently Viewed</span>
+            <button class="slds-button ar-console-tab ar-is-active slds-p-horizontal_x-small" type="button" data-acct-tab="mavericks">Mavericks Household</button>
+            <button class="slds-button ar-console-tab slds-p-horizontal_x-small" type="button" data-acct-tab="acme">Acme Manufacturing</button>
+          </div>
+
+          <!-- ===== Account body: MAVERICKS HOUSEHOLD (default) ===== -->
+          <div data-acct-body="mavericks">
+
+            <!-- Highlights / page header -->
+            <div class="slds-page-header slds-page-header_record-home slds-m-bottom_small">
+              <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <span class="slds-icon_container slds-icon-standard-account">
+                        <svg class="slds-icon" aria-hidden="true">
+                          <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/standard-sprite/svg/symbols.svg#account"></use>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="slds-media__body">
+                      <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                          <h1>
+                            <span class="slds-page-header__name-meta">Account</span>
+                            <span class="slds-page-header__title slds-truncate" title="Mavericks Household">Mavericks Household</span>
+                          </h1>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                  <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+                      <ul class="slds-button-group-list">
+                        <li><button class="slds-button slds-button_neutral">Follow</button></li>
+                        <li><button class="slds-button slds-button_neutral">Edit</button></li>
+                        <li><button class="slds-button slds-button_neutral">New Contact</button></li>
+                        <li><button class="slds-button slds-button_neutral">New Case</button></li>
+                        <li>
+                          <button class="slds-button slds-button_brand" data-open-modal="modal-intake" title="Create Renewal Quote">Create Renewal Quote</button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-page-header__row slds-page-header__row_gutters">
+                <div class="slds-page-header__col-details">
+                  <ul class="slds-page-header__detail-row">
+                    <li class="slds-page-header__detail-block">
+                      <p class="slds-text-title slds-truncate" title="Type">Type</p>
+                      <p class="slds-truncate" title="Customer - Direct">Customer - Direct</p>
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                      <p class="slds-text-title slds-truncate" title="Phone">Phone</p>
+                      <p class="slds-truncate" title="(512) 555-0198">(512) 555-0198</p>
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                      <p class="slds-text-title slds-truncate" title="Account Owner">Account Owner</p>
+                      <p class="slds-truncate" title="James Field">James Field</p>
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                      <p class="slds-text-title slds-truncate" title="Account Site">Account Site</p>
+                      <p class="slds-truncate" title="Austin Residence">Austin Residence</p>
+                    </li>
+                    <li class="slds-page-header__detail-block">
+                      <p class="slds-text-title slds-truncate" title="Industry">Industry</p>
+                      <p class="slds-truncate" title="Personal Lines">Personal Lines</p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Today's meetings (empty) -->
+            <article class="slds-card slds-m-bottom_small">
+              <div class="slds-card__header slds-media slds-media_center">
+                <div class="slds-media__figure">
+                  <span class="slds-icon_container slds-icon-standard-event">
+                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                      <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/standard-sprite/svg/symbols.svg#event"></use>
+                    </svg>
+                  </span>
+                </div>
+                <div class="slds-media__body"><h2 class="slds-card__header-title">Today's Meetings</h2></div>
+              </div>
+              <div class="slds-card__body slds-card__body_inner">
+                <p class="slds-text-color_weak">No meetings today</p>
+              </div>
+            </article>
+
+            <div class="slds-grid slds-wrap slds-gutters">
+              <!-- Left: record sub-tabs -->
+              <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3 slds-m-bottom_medium">
+                <div class="slds-tabs_default">
+                  <ul class="slds-tabs_default__nav" role="tablist" aria-label="Account related">
+                    <li class="slds-tabs_default__item slds-is-active" role="presentation"><a class="slds-tabs_default__link" href="#mav-related" role="tab" tabindex="0" aria-selected="true" data-subtab="mav-related" data-subtab-group="mav">Related</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#mav-details" role="tab" tabindex="-1" aria-selected="false" data-subtab="mav-details" data-subtab-group="mav">Details</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#mav-rfqs" role="tab" tabindex="-1" aria-selected="false" data-subtab="mav-rfqs" data-subtab-group="mav">RFQs</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#mav-policies" role="tab" tabindex="-1" aria-selected="false" data-subtab="mav-policies" data-subtab-group="mav">Policies</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#mav-arc" role="tab" tabindex="-1" aria-selected="false" data-subtab="mav-arc" data-subtab-group="mav">ARC 2.0</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#mav-goals" role="tab" tabindex="-1" aria-selected="false" data-subtab="mav-goals" data-subtab-group="mav">Goals</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#mav-plans" role="tab" tabindex="-1" aria-selected="false" data-subtab="mav-plans" data-subtab-group="mav">Action Plans</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#mav-fin" role="tab" tabindex="-1" aria-selected="false" data-subtab="mav-fin" data-subtab-group="mav">Financial Accounts</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#mav-upm" role="tab" tabindex="-1" aria-selected="false" data-subtab="mav-upm" data-subtab-group="mav">Upcoming Meetings</a></li>
+                  </ul>
+
+                  <!-- Related -->
+                  <div class="slds-tabs_default__content slds-show" role="tabpanel" data-subpanel="mav-related" data-subpanel-group="mav">
+                    <div class="slds-box slds-box_x-small slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_x-small">
+                      <span class="slds-media slds-media_center"><span class="slds-media__figure"><span class="slds-icon_container slds-icon-standard-contact"><svg class="slds-icon slds-icon_small" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/standard-sprite/svg/symbols.svg#contact"></use></svg></span></span><span class="slds-media__body slds-text-heading_small">Contacts (0)</span></span>
+                      <button class="slds-button slds-button_neutral slds-button_x-small">New</button>
+                    </div>
+                    <div class="slds-box slds-box_x-small slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_x-small">
+                      <span class="slds-media slds-media_center"><span class="slds-media__figure"><span class="slds-icon_container slds-icon-standard-opportunity"><svg class="slds-icon slds-icon_small" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/standard-sprite/svg/symbols.svg#opportunity"></use></svg></span></span><span class="slds-media__body slds-text-heading_small">Opportunities (0)</span></span>
+                      <button class="slds-button slds-button_neutral slds-button_x-small">New</button>
+                    </div>
+                    <div class="slds-box slds-box_x-small slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_x-small">
+                      <span class="slds-media slds-media_center"><span class="slds-media__figure"><span class="slds-icon_container slds-icon-standard-case"><svg class="slds-icon slds-icon_small" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/standard-sprite/svg/symbols.svg#case"></use></svg></span></span><span class="slds-media__body slds-text-heading_small">Cases (0)</span></span>
+                      <button class="slds-button slds-button_neutral slds-button_x-small">New</button>
+                    </div>
+
+                    <article class="slds-card slds-m-top_small">
+                      <div class="slds-card__header slds-grid slds-grid_align-spread"><h3 class="slds-card__header-title">Notes &amp; Attachments (0)</h3><button class="slds-button slds-button_neutral slds-button_x-small">Upload Files</button></div>
+                      <div class="slds-card__body slds-card__body_inner">
+                        <div class="ar-dropzone slds-p-around_large slds-text-align_center">
+                          <button class="slds-button slds-button_neutral"><svg class="slds-button__icon slds-button__icon_left" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#upload"></use></svg>Upload Files</button>
+                          <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">Or drop files</p>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="slds-card slds-m-top_small">
+                      <div class="slds-card__header slds-grid slds-grid_align-spread">
+                        <h3 class="slds-card__header-title">Related Contacts (2)</h3>
+                        <button class="slds-button slds-button_neutral slds-button_x-small">New Contact</button>
+                      </div>
+                      <div class="slds-card__body slds-card__body_inner slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-2 slds-media slds-media_center"><span class="slds-media__figure"><span class="slds-avatar slds-avatar_circle slds-avatar_small"><abbr class="slds-avatar__initials slds-icon-standard-account" title="Peter Mavericks">PM</abbr></span></span><span class="slds-media__body"><a href="#contact">Peter Mavericks</a><p class="slds-text-body_small slds-text-color_weak">peter.mavericks@example.com</p></span></div>
+                        <div class="slds-col slds-size_1-of-2 slds-media slds-media_center"><span class="slds-media__figure"><span class="slds-avatar slds-avatar_circle slds-avatar_small"><abbr class="slds-avatar__initials slds-icon-standard-account" title="Sally Mavericks">SM</abbr></span></span><span class="slds-media__body"><a href="#contact">Sally Mavericks</a><p class="slds-text-body_small slds-text-color_weak">sally.mavericks@example.com</p></span></div>
+                      </div>
+                    </article>
+                  </div>
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="mav-arc" data-subpanel-group="mav"><p class="slds-p-around_medium slds-text-color_weak">ARC 2.0 content would appear here.</p></div>
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="mav-goals" data-subpanel-group="mav"><p class="slds-p-around_medium slds-text-color_weak">Goals would appear here.</p></div>
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="mav-plans" data-subpanel-group="mav"><p class="slds-p-around_medium slds-text-color_weak">Action Plans would appear here.</p></div>
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="mav-fin" data-subpanel-group="mav"><p class="slds-p-around_medium slds-text-color_weak">Financial Accounts would appear here.</p></div>
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="mav-upm" data-subpanel-group="mav"><p class="slds-p-around_medium slds-text-color_weak">Upcoming Meetings would appear here.</p></div>
+
+                  <!-- Details -->
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="mav-details" data-subpanel-group="mav">
+                    <p class="slds-p-around_medium slds-text-color_weak">Account detail fields would appear here.</p>
+                  </div>
+
+                  <!-- RFQs related list -->
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="mav-rfqs" data-subpanel-group="mav">
+                    <article class="slds-card">
+                      <div class="slds-card__header slds-grid slds-grid_align-spread">
+                        <h2 class="slds-card__header-title">RFQs</h2>
+                        <span class="slds-text-body_small slds-text-color_weak">1 item</span>
+                      </div>
+                      <div class="slds-card__body">
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer" aria-label="RFQs">
+                          <thead>
+                            <tr class="slds-line-height_reset">
+                              <th scope="col"><span class="slds-assistive-text">Expand</span></th>
+                              <th class="slds-text-title_caps" scope="col"><div class="slds-truncate" title="RFQ name">RFQ name</div></th>
+                              <th class="slds-text-title_caps" scope="col"><div class="slds-truncate" title="Quotes received">Quotes received</div></th>
+                              <th class="slds-text-title_caps" scope="col"><div class="slds-truncate" title="Status">Status</div></th>
+                              <th scope="col"><span class="slds-assistive-text">Actions</span></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="slds-hint-parent">
+                              <td>
+                                <button class="slds-button slds-button_icon slds-button_icon-x-small" data-expand="mav-q" aria-expanded="false" title="Expand quotes">
+                                  <svg class="slds-button__icon" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#chevronright"></use></svg>
+                                  <span class="slds-assistive-text">Expand quotes</span>
+                                </button>
+                              </td>
+                              <td data-label="RFQ name"><div><a href="#rfq">2025 Home &amp; Auto</a><p class="slds-text-body_small slds-text-color_weak">P&amp;C · 10/12/2024</p></div></td>
+                              <td data-label="Quotes received"><a href="#quotes">7 Quotes</a></td>
+                              <td data-label="Status"><span class="slds-badge slds-theme_success">Closed/Bound</span></td>
+                              <td data-label="Actions"><button class="slds-button slds-button_neutral slds-button_x-small" data-open-modal="modal-compare">Compare Quotes (7)</button></td>
+                            </tr>
+                            <tr class="slds-hint-parent" data-expand-rows="mav-q" hidden><td></td><td data-label="Quote name">Apex Mutual · Standard Auto</td><td data-label="Carrier">Apex Mutual</td><td data-label="Premium">$14,850 · No change</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="mav-q" hidden><td></td><td data-label="Quote name">Apex Mutual · Premier Auto</td><td data-label="Carrier">Apex Mutual</td><td data-label="Premium" class="slds-text-color_error">$16,200 · +$1,350 ▲</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="mav-q" hidden><td></td><td data-label="Quote name">Lighthouse Casualty · Choice</td><td data-label="Carrier">Lighthouse Casualty</td><td data-label="Premium" class="slds-text-color_success">$13,200 · −$1,650 ▼</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="mav-q" hidden><td></td><td data-label="Quote name">Lighthouse Casualty · Choice+</td><td data-label="Carrier">Lighthouse Casualty</td><td data-label="Premium" class="slds-text-color_success">$14,400 · −$450 ▼</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="mav-q" hidden><td></td><td data-label="Quote name">Meridian Auto &amp; Home · Value Auto</td><td data-label="Carrier">Meridian Auto &amp; Home</td><td data-label="Premium" class="slds-text-color_success">$12,950 · −$1,900 ▼</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="mav-q" hidden><td></td><td data-label="Quote name">Pinnacle Standard · Standard</td><td data-label="Carrier">Pinnacle Standard</td><td data-label="Premium" class="slds-text-color_error">$15,100 · +$250 ▲</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="mav-q" hidden><td></td><td data-label="Quote name">Pinnacle Standard · Signature</td><td data-label="Carrier">Pinnacle Standard</td><td data-label="Premium" class="slds-text-color_error">$16,800 · +$1,950 ▲</td><td></td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </article>
+                  </div>
+
+                  <!-- Policies -->
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="mav-policies" data-subpanel-group="mav">
+                    <article class="slds-card">
+                      <div class="slds-card__header slds-grid slds-grid_align-spread">
+                        <h2 class="slds-card__header-title">Insurance Policies</h2>
+                        <span class="slds-text-body_small slds-text-color_weak">1 item</span>
+                      </div>
+                      <div class="slds-card__body">
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer" aria-label="Insurance Policies">
+                          <thead>
+                            <tr class="slds-line-height_reset">
+                              <th class="slds-text-title_caps" scope="col"><div class="slds-truncate" title="Policy Name">Policy Name</div></th>
+                              <th class="slds-text-title_caps" scope="col"><div class="slds-truncate" title="Policy Number">Policy Number</div></th>
+                              <th class="slds-text-title_caps" scope="col"><div class="slds-truncate" title="Line of Business">Line of Business</div></th>
+                              <th class="slds-text-title_caps" scope="col"><div class="slds-truncate" title="Status">Status</div></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="slds-hint-parent">
+                              <td data-label="Policy Name"><a href="#policy">Mavericks Household - 2026 Personal Auto Policy</a></td>
+                              <td data-label="Policy Number"><div class="slds-truncate" title="POL-MAV-AUTO-2026">POL-MAV-AUTO-2026</div></td>
+                              <td data-label="Line of Business"><div class="slds-truncate" title="Personal Auto">Personal Auto</div></td>
+                              <td data-label="Status"><span class="slds-badge slds-theme_success">Active</span></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right sidebar -->
+              <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                <article class="ar-ai slds-p-around_medium slds-m-bottom_small">
+                  <div class="slds-media slds-media_center slds-m-bottom_x-small">
+                    <div class="slds-media__figure">
+                      <span class="slds-icon_container">
+                        <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#einstein"></use></svg>
+                      </span>
+                    </div>
+                    <div class="slds-media__body"><h3 class="slds-text-heading_small">Client Pulse</h3></div>
+                  </div>
+                  <p class="slds-text-body_small slds-text-color_weak">This tool uses generative AI. Review responses to ensure they're accurate, valid, and harmless before you use them.</p>
+                  <button class="slds-button slds-button_neutral slds-m-top_small">Pers Account Client Demo</button>
+                </article>
+
+                <article class="slds-card slds-m-bottom_small">
+                  <div class="slds-card__header"><h3 class="slds-card__header-title">Slack Channel</h3></div>
+                  <div class="slds-card__body slds-card__body_inner">
+                    <p class="slds-text-heading_small">Slack isn't connected</p>
+                    <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">There's an issue with the connection between Salesforce and Slack. Contact your admin for more information.</p>
+                    <button class="slds-button slds-button_neutral slds-m-top_small" id="open-slack-2">Open Slack drawer</button>
+                  </div>
+                </article>
+
+                <article class="slds-card">
+                  <div class="slds-card__header"><h3 class="slds-card__header-title">Activity</h3></div>
+                  <div class="slds-card__body slds-card__body_inner">
+                    <p class="slds-text-body_small slds-text-color_weak">Filters: Within 2 months · All activities · All types</p>
+                    <p class="slds-text-body_small slds-m-top_x-small">Upcoming &amp; Overdue</p>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== Account body: ACME MANUFACTURING ===== -->
+          <div data-acct-body="acme" hidden>
+            <div class="slds-page-header slds-page-header_record-home slds-m-bottom_small">
+              <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <span class="slds-icon_container slds-icon-standard-account">
+                        <svg class="slds-icon" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/standard-sprite/svg/symbols.svg#account"></use></svg>
+                      </span>
+                    </div>
+                    <div class="slds-media__body">
+                      <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                          <h1><span class="slds-page-header__name-meta">Account</span><span class="slds-page-header__title slds-truncate" title="Acme Manufacturing">Acme Manufacturing</span></h1>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                  <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+                      <ul class="slds-button-group-list">
+                        <li><button class="slds-button slds-button_neutral">Follow</button></li>
+                        <li><button class="slds-button slds-button_neutral">Edit</button></li>
+                        <li><button class="slds-button slds-button_brand" data-open-modal="modal-intake">Create Renewal Quote</button></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-page-header__row slds-page-header__row_gutters">
+                <div class="slds-page-header__col-details">
+                  <ul class="slds-page-header__detail-row">
+                    <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Type">Type</p><p class="slds-truncate">Customer - Direct</p></li>
+                    <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Phone">Phone</p><p class="slds-truncate">(312) 555-8821</p></li>
+                    <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Website">Website</p><p class="slds-truncate">www.acmecorp.com</p></li>
+                    <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Account Owner">Account Owner</p><p class="slds-truncate">James Field</p></li>
+                    <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Account Site">Account Site</p><p class="slds-truncate">HQ - Chicago</p></li>
+                    <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Industry">Industry</p><p class="slds-truncate">Manufacturing</p></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="slds-grid slds-wrap slds-gutters">
+              <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3 slds-m-bottom_medium">
+                <div class="slds-tabs_default">
+                  <ul class="slds-tabs_default__nav" role="tablist" aria-label="Acme related">
+                    <li class="slds-tabs_default__item slds-is-active" role="presentation"><a class="slds-tabs_default__link" href="#acme-rfqs" role="tab" tabindex="0" aria-selected="true" data-subtab="acme-rfqs" data-subtab-group="acme">RFQs</a></li>
+                    <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#acme-policies" role="tab" tabindex="-1" aria-selected="false" data-subtab="acme-policies" data-subtab-group="acme">Policies</a></li>
+                  </ul>
+                  <div class="slds-tabs_default__content slds-show" role="tabpanel" data-subpanel="acme-rfqs" data-subpanel-group="acme">
+                    <article class="slds-card">
+                      <div class="slds-card__header slds-grid slds-grid_align-spread"><h2 class="slds-card__header-title">RFQs</h2><span class="slds-text-body_small slds-text-color_weak">1 item</span></div>
+                      <div class="slds-card__body">
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer" aria-label="Acme RFQs">
+                          <thead><tr class="slds-line-height_reset"><th scope="col"><span class="slds-assistive-text">Expand</span></th><th class="slds-text-title_caps" scope="col">RFQ name</th><th class="slds-text-title_caps" scope="col">Quotes received</th><th class="slds-text-title_caps" scope="col">Status</th><th scope="col"><span class="slds-assistive-text">Actions</span></th></tr></thead>
+                          <tbody>
+                            <tr class="slds-hint-parent">
+                              <td><button class="slds-button slds-button_icon slds-button_icon-x-small" data-expand="acme-q" aria-expanded="false" title="Expand quotes"><svg class="slds-button__icon" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#chevronright"></use></svg><span class="slds-assistive-text">Expand quotes</span></button></td>
+                              <td data-label="RFQ name"><div><a href="#rfq">2025 Dental &amp; Vision</a><p class="slds-text-body_small slds-text-color_weak">Employee Benefits · 09/01/2024</p></div></td>
+                              <td data-label="Quotes received"><a href="#quotes">8 Quotes</a></td>
+                              <td data-label="Status"><span class="slds-badge slds-theme_success">Closed/Bound</span></td>
+                              <td data-label="Actions"><button class="slds-button slds-button_neutral slds-button_x-small" data-open-modal="modal-compare">Compare Quotes (8)</button></td>
+                            </tr>
+                            <tr class="slds-hint-parent" data-expand-rows="acme-q" hidden><td></td><td>BlueCross BlueShield · Blue PPO Buy-Up $500</td><td>BlueCross BlueShield</td><td class="slds-text-color_error">$648,000 · +$36,000 ▲</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="acme-q" hidden><td></td><td>BlueCross BlueShield · Blue PPO Base $1,500</td><td>BlueCross BlueShield</td><td>$612,000 · No change</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="acme-q" hidden><td></td><td>BlueCross BlueShield · Blue HSA $2,500</td><td>BlueCross BlueShield</td><td class="slds-text-color_success">$561,000 · −$51,000 ▼</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="acme-q" hidden><td></td><td>UnitedHealthcare · Choice Plus PPO $1,000</td><td>UnitedHealthcare</td><td class="slds-text-color_error">$638,400 · +$26,400 ▲</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="acme-q" hidden><td></td><td>UnitedHealthcare · Choice HSA $2,500</td><td>UnitedHealthcare</td><td class="slds-text-color_success">$588,000 · −$24,000 ▼</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="acme-q" hidden><td></td><td>Cigna · OAP $1,500</td><td>Cigna</td><td class="slds-text-color_error">$654,600 · +$42,600 ▲</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="acme-q" hidden><td></td><td>Cigna · OAP HRA $2,000</td><td>Cigna</td><td class="slds-text-color_error">$624,000 · +$12,000 ▲</td><td></td></tr>
+                            <tr class="slds-hint-parent" data-expand-rows="acme-q" hidden><td></td><td>Cigna · OAP HSA $3,000</td><td>Cigna</td><td class="slds-text-color_success">$543,000 · −$69,000 ▼</td><td></td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </article>
+                  </div>
+                  <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="acme-policies" data-subpanel-group="acme">
+                    <article class="slds-card">
+                      <div class="slds-card__header slds-grid slds-grid_align-spread"><h2 class="slds-card__header-title">Insurance Policies</h2><span class="slds-text-body_small slds-text-color_weak">1 item</span></div>
+                      <div class="slds-card__body">
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer" aria-label="Acme Policies">
+                          <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Policy Name</th><th class="slds-text-title_caps" scope="col">Policy Number</th><th class="slds-text-title_caps" scope="col">Line of Business</th><th class="slds-text-title_caps" scope="col">Status</th></tr></thead>
+                          <tbody>
+                            <tr class="slds-hint-parent">
+                              <td data-label="Policy Name"><a href="#screen-eb-policy" data-screen-link="screen-eb-policy">Acme Manufacturing - 2026 EB Policy</a></td>
+                              <td data-label="Policy Number">POL-ACME-EB-2026</td>
+                              <td data-label="Line of Business">Employee Benefits</td>
+                              <td data-label="Status"><span class="slds-badge slds-theme_success">Active</span></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                <article class="ar-ai slds-p-around_medium">
+                  <h3 class="slds-text-heading_small">Client Pulse</h3>
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">Generative AI insights for Acme Manufacturing.</p>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- SCREEN: RUN MY DAY                                            -->
+        <!-- ============================================================= -->
+        <div id="screen-day" class="slds-tabs_default__content slds-hide ar-screen" role="tabpanel" aria-labelledby="tab-day">
+          <div class="ar-hero slds-p-around_large slds-m-bottom_medium">
+            <p class="slds-text-title_caps slds-text-color_weak">Run my day</p>
+            <h1 class="slds-text-heading_large slds-m-top_xx-small">Good morning, James</h1>
+            <p class="slds-text-body_regular slds-text-color_weak slds-m-top_xx-small">Monday, June 15 · 4 meetings · 15 actions in queue</p>
+            <span class="slds-badge slds-badge_lightest slds-m-top_small">You're at 72% of weekly goal</span>
+          </div>
+
+          <!-- Meeting cards -->
+          <h2 class="slds-text-heading_small slds-m-bottom_small">Today's Meetings</h2>
+          <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-m-bottom_small">
+              <article class="slds-card ar-accent-card slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-spread"><span class="slds-badge slds-theme_warning">Prep In Progress</span><span class="slds-text-body_small slds-text-color_weak">10:00 AM</span></div>
+                <h3 class="slds-text-heading_small slds-m-top_x-small">Sunrise Insurance Agency Visit</h3>
+                <p class="slds-text-body_small slds-text-color_weak">Sunrise Agency</p>
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-top_small"><span class="slds-text-body_small">◉ In-Person</span><button class="slds-button slds-button_neutral slds-button_x-small" data-screen-link="screen-meeting">Open Prep →</button></div>
+              </article>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-m-bottom_small">
+              <article class="slds-card ar-accent-card slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-spread"><span class="slds-badge slds-theme_success">Prep Ready</span><span class="slds-text-body_small slds-text-color_weak">12:30 PM</span></div>
+                <h3 class="slds-text-heading_small slds-m-top_x-small">Quarterly Business Review</h3>
+                <p class="slds-text-body_small slds-text-color_weak">Meridian Fleet Logistics</p>
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-top_small"><span class="slds-text-body_small">▶ Video</span><button class="slds-button slds-button_neutral slds-button_x-small" data-screen-link="screen-meeting">Open Prep →</button></div>
+              </article>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-m-bottom_small">
+              <article class="slds-card ar-accent-card slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-spread"><span class="slds-badge slds-theme_success">Prep Ready</span><span class="slds-text-body_small slds-text-color_weak">2:00 PM</span></div>
+                <h3 class="slds-text-heading_small slds-m-top_x-small">Renewal Strategy — Acme Mfg</h3>
+                <p class="slds-text-body_small slds-text-color_weak">Acme Manufacturing</p>
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-top_small"><span class="slds-text-body_small">☎ Phone</span><button class="slds-button slds-button_neutral slds-button_x-small" data-screen-link="screen-meeting">Open Prep →</button></div>
+              </article>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4 slds-m-bottom_small">
+              <article class="slds-card ar-accent-card slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-spread"><span class="slds-badge slds-theme_warning">Prep In Progress</span><span class="slds-text-body_small slds-text-color_weak">4:00 PM</span></div>
+                <h3 class="slds-text-heading_small slds-m-top_x-small">New Carrier Onboarding — Chubb</h3>
+                <p class="slds-text-body_small slds-text-color_weak">Chubb</p>
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-top_small"><span class="slds-text-body_small">▶ Video</span><button class="slds-button slds-button_neutral slds-button_x-small" data-screen-link="screen-meeting">Open Prep →</button></div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Action items banner -->
+          <div class="ar-banner slds-p-around_large slds-m-bottom_large">
+            <p class="slds-text-title_caps">ACTION ITEMS — TODAY</p>
+            <h2 class="slds-text-heading_medium slds-m-bottom_medium">Agentforce is moving 14 tasks through your queue</h2>
+            <div class="slds-grid slds-wrap slds-gutters">
+              <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-6 slds-text-align_center slds-m-bottom_small"><span class="ar-stat__num">0</span><span class="ar-stat__label">Fully Ready</span></div>
+              <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-6 slds-text-align_center slds-m-bottom_small"><span class="ar-stat__num">3</span><span class="ar-stat__label">Checked</span></div>
+              <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-6 slds-text-align_center slds-m-bottom_small"><span class="ar-stat__num">2</span><span class="ar-stat__label">Completed</span></div>
+              <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-6 slds-text-align_center slds-m-bottom_small"><span class="ar-stat__num">4</span><span class="ar-stat__label">Approved</span></div>
+              <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-6 slds-text-align_center slds-m-bottom_small"><span class="ar-stat__num">5</span><span class="ar-stat__label">Pending Review</span></div>
+              <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-6 slds-text-align_center slds-m-bottom_small"><span class="ar-stat__num">1</span><span class="ar-stat__label">Needs Attention</span></div>
+            </div>
+          </div>
+
+          <!-- Renewal alerts -->
+          <h2 class="slds-text-heading_small slds-m-bottom_small">Renewal Alerts</h2>
+          <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+              <article class="slds-card ar-accent-card_warning ar-accent-card slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-spread"><p class="slds-text-title_caps slds-text-color_weak">Renewal Alert</p><span class="slds-badge slds-theme_warning">42 days</span></div>
+                <h3 class="slds-text-heading_small slds-m-top_xx-small"><a href="#account" data-screen-link="screen-account">Mavericks Household</a></h3>
+                <span class="slds-badge slds-m-top_xx-small">Personal Auto</span>
+                <dl class="slds-list_horizontal slds-wrap slds-m-top_small">
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Annual Premium</dt><dd class="slds-item_detail slds-size_1-of-2">$2,360</dd>
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Prior Policy</dt><dd class="slds-item_detail slds-size_1-of-2">2025 Mavericks Auto — Apex Mutual</dd>
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Suggested Application</dt><dd class="slds-item_detail slds-size_1-of-2">Mavericks Household — 2026 Personal Auto Renewal</dd>
+                </dl>
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-top_small">
+                  <span class="slds-badge slds-badge_lightest">✨ Pre-loaded by Agentforce</span>
+                  <button class="slds-button slds-button_brand slds-button_x-small" data-open-modal="modal-intake">Start Renewal RFQ →</button>
+                </div>
+              </article>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+              <article class="slds-card ar-accent-card_warning ar-accent-card slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-spread"><p class="slds-text-title_caps slds-text-color_weak">Renewal Alert</p><span class="slds-badge slds-theme_warning">60 days</span></div>
+                <h3 class="slds-text-heading_small slds-m-top_xx-small"><a href="#account" data-screen-link="screen-account">Acme Manufacturing</a></h3>
+                <span class="slds-badge slds-m-top_xx-small">Group Medical</span>
+                <dl class="slds-list_horizontal slds-wrap slds-m-top_small">
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Annual Premium</dt><dd class="slds-item_detail slds-size_1-of-2">$612,000</dd>
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Prior Policy</dt><dd class="slds-item_detail slds-size_1-of-2">50-employee group medical · BlueCross PPO</dd>
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Suggested Application</dt><dd class="slds-item_detail slds-size_1-of-2">Acme Manufacturing — 2026 Group Medical Renewal</dd>
+                </dl>
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-top_small">
+                  <span class="slds-badge slds-badge_lightest">✨ Pre-loaded by Agentforce</span>
+                  <button class="slds-button slds-button_brand slds-button_x-small" data-open-modal="modal-intake">Start Renewal RFQ →</button>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Categories + insights -->
+          <div class="slds-grid slds-wrap slds-gutters">
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-5 slds-m-bottom_medium">
+              <nav aria-label="Action Categories" class="slds-nav-vertical slds-p-around_medium slds-card">
+                <h2 class="slds-nav-vertical__title">Action Categories</h2>
+                <ul>
+                  <li class="slds-nav-vertical__item slds-is-active"><a href="#retain" class="slds-nav-vertical__action" aria-current="page">◐ Retain <span class="slds-badge slds-col_bump-left">6</span></a></li>
+                  <li class="slds-nav-vertical__item"><a href="#grow" class="slds-nav-vertical__action">↑ Grow <span class="slds-badge slds-col_bump-left">4</span></a></li>
+                  <li class="slds-nav-vertical__item"><a href="#service" class="slds-nav-vertical__action">◇ Service &amp; C <span class="slds-badge slds-col_bump-left">9</span></a></li>
+                  <li class="slds-nav-vertical__item"><a href="#ai" class="slds-nav-vertical__action">✨ AI-Powered <span class="slds-badge slds-col_bump-left">3</span></a></li>
+                </ul>
+              </nav>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-5">
+              <article class="slds-card slds-m-bottom_medium">
+                <div class="slds-card__header slds-grid">
+                  <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure"><span class="slds-icon_container"><svg class="slds-icon slds-icon_small slds-icon-text-error" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#trending"></use></svg></span></div>
+                    <div class="slds-media__body"><h2 class="slds-card__header-title">Production Drop-Off</h2></div>
+                    <div class="slds-no-flex"><span class="slds-badge slds-theme_error">High</span></div>
+                  </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner">
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">3 agencies down YoY across Property &amp; Auto books.</p>
+                  <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Agency</th><th class="slds-text-title_caps" scope="col">Book Size</th><th class="slds-text-title_caps" scope="col">YoY / LR</th><th class="slds-text-title_caps" scope="col">Top Lines</th><th class="slds-text-title_caps" scope="col">Last Touch</th></tr></thead>
+                    <tbody>
+                      <tr class="slds-hint-parent"><td data-label="Agency"><strong>Sunrise Agency</strong></td><td data-label="Book Size">$2.4M</td><td data-label="YoY / LR" class="slds-text-color_error">-22%</td><td data-label="Top Lines">Auto, BOP</td><td data-label="Last Touch">38d ago</td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Agency"><strong>Heritage Brokers</strong></td><td data-label="Book Size">$1.1M</td><td data-label="YoY / LR" class="slds-text-color_error">-14%</td><td data-label="Top Lines">Property</td><td data-label="Last Touch">21d ago</td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Agency"><strong>Anchor &amp; Co.</strong></td><td data-label="Book Size">$760K</td><td data-label="YoY / LR" class="slds-text-color_error">-9%</td><td data-label="Top Lines">WC, GL</td><td data-label="Last Touch">54d ago</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <footer class="slds-card__footer slds-grid slds-grid_align-end">
+                  <button class="slds-button slds-button_neutral">Schedule Call</button>
+                  <button class="slds-button slds-button_brand slds-m-left_x-small">✨ Send AI Email</button>
+                </footer>
+              </article>
+
+              <article class="slds-card">
+                <div class="slds-card__header slds-grid">
+                  <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure"><span class="slds-icon_container"><svg class="slds-icon slds-icon_small slds-icon-text-warning" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#warning"></use></svg></span></div>
+                    <div class="slds-media__body"><h2 class="slds-card__header-title">Loss Ratio Spikes</h2></div>
+                    <div class="slds-no-flex"><span class="slds-badge slds-theme_warning">Medium</span></div>
+                  </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner">
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">2 accounts crossed 75% loss ratio in the last quarter.</p>
+                  <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Account</th><th class="slds-text-title_caps" scope="col">Book Size</th><th class="slds-text-title_caps" scope="col">YoY / LR</th><th class="slds-text-title_caps" scope="col">Top Lines</th><th class="slds-text-title_caps" scope="col">Last Touch</th></tr></thead>
+                    <tbody>
+                      <tr class="slds-hint-parent"><td data-label="Account"><strong>Coastal Restaurants</strong></td><td data-label="Book Size">$880K</td><td data-label="YoY / LR" class="slds-text-color_error">78% LR</td><td data-label="Top Lines">Property</td><td data-label="Last Touch">12d ago</td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Account"><strong>Bluebird Logistics</strong></td><td data-label="Book Size">$1.6M</td><td data-label="YoY / LR" class="slds-text-color_error">83% LR</td><td data-label="Top Lines">Commercial Auto</td><td data-label="Last Touch">8d ago</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <footer class="slds-card__footer slds-grid slds-grid_align-end">
+                  <button class="slds-button slds-button_neutral">Schedule Call</button>
+                  <button class="slds-button slds-button_brand slds-m-left_x-small">✨ Send AI Email</button>
+                </footer>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- SCREEN: MEETING CENTER                                        -->
+        <!-- ============================================================= -->
+        <div id="screen-meeting" class="slds-tabs_default__content slds-hide ar-screen" role="tabpanel" aria-labelledby="tab-meeting">
+          <div class="slds-page-header slds-m-bottom_medium">
+            <div class="slds-page-header__row">
+              <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                  <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-event"><svg class="slds-icon slds-icon_medium" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/standard-sprite/svg/symbols.svg#event"></use></svg></span>
+                  </div>
+                  <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                      <div class="slds-page-header__name-title"><h1><span class="slds-page-header__name-meta">Meeting center</span><span class="slds-page-header__title slds-truncate" title="Sunrise Agency — Renewal Prep">Sunrise Agency — Renewal Prep</span></h1></div>
+                      <p class="slds-page-header__name-meta">Today · 10:00 AM · In-Person at Sunrise HQ</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls"><div class="slds-page-header__control">
+                  <ul class="slds-button-group-list">
+                    <li><button class="slds-button slds-button_neutral">Add to Calendar</button></li>
+                    <li><button class="slds-button slds-button_neutral">Share</button></li>
+                    <li><button class="slds-button slds-button_brand">Start Meeting</button></li>
+                  </ul>
+                </div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slds-tabs_scoped">
+            <ul class="slds-tabs_scoped__nav" role="tablist" aria-label="Meeting stages">
+              <li class="slds-tabs_scoped__item slds-is-active" role="presentation"><a class="slds-tabs_scoped__link" href="#mc-prep" role="tab" tabindex="0" aria-selected="true" id="mc-prep__item" data-mc="mc-prep">Meeting Prep</a></li>
+              <li class="slds-tabs_scoped__item" role="presentation"><a class="slds-tabs_scoped__link" href="#mc-session" role="tab" tabindex="-1" aria-selected="false" id="mc-session__item" data-mc="mc-session">Meeting Session</a></li>
+              <li class="slds-tabs_scoped__item" role="presentation"><a class="slds-tabs_scoped__link" href="#mc-follow" role="tab" tabindex="-1" aria-selected="false" id="mc-follow__item" data-mc="mc-follow">Meeting Follow-Up</a></li>
+            </ul>
+
+            <div id="mc-prep" class="slds-tabs_scoped__content slds-show" role="tabpanel" aria-labelledby="mc-prep__item">
+              <!-- Agentic draft banner -->
+              <div class="ar-ai slds-p-around_medium slds-m-bottom_medium">
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap">
+                  <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure"><span class="slds-icon_container"><svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#einstein"></use></svg></span></div>
+                    <div class="slds-media__body">
+                      <p class="slds-text-title_caps slds-text-color_weak">Draft Meeting Prep · This content is AI generated · Today at 8:14 AM</p>
+                      <p class="slds-text-body_regular"><strong>Agentforce created a draft summary.</strong> Save to add to record or discard.</p>
+                    </div>
+                  </div>
+                  <div class="slds-no-flex slds-m-top_x-small">
+                    <button class="slds-button slds-button_neutral">Discard</button>
+                    <button class="slds-button slds-button_brand slds-m-left_x-small">Save to Record</button>
+                  </div>
+                </div>
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">Sources (4)</p>
+              </div>
+
+              <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3 slds-m-bottom_medium">
+                  <article class="slds-card slds-m-bottom_medium">
+                    <div class="slds-card__header slds-grid slds-grid_align-spread">
+                      <h2 class="slds-card__header-title">Account Performance Summary <span class="slds-badge slds-badge_lightest slds-m-left_x-small">✨ AI summary</span></h2>
+                      <span class="slds-badge">Last 4 quarters</span>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                      <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_medium">
+                        <div class="slds-col slds-size_1-of-3 slds-text-align_center"><span class="ar-stat__num slds-text-color_error">78%</span><span class="ar-stat__label">Loss Ratio · +6 pts QoQ</span></div>
+                        <div class="slds-col slds-size_1-of-3 slds-text-align_center"><span class="ar-stat__num">+12%</span><span class="ar-stat__label">Submission Volume YoY</span></div>
+                        <div class="slds-col slds-size_1-of-3 slds-text-align_center"><span class="ar-stat__num">41%</span><span class="ar-stat__label">Bind Rate · -6 pts</span></div>
+                      </div>
+                      <h3 class="slds-text-heading_small slds-m-bottom_x-small">Key Concerns</h3>
+                      <ul class="slds-list_dotted slds-m-bottom_medium">
+                        <li>Submission volume up 12% YoY but bind rate down 6pts.</li>
+                        <li>Loss ratio in Property has crossed 78% — driven by 2 large fire claims in Q1.</li>
+                        <li>Producer Shelly last visited 38 days ago — relationship cadence slipping.</li>
+                      </ul>
+                      <h3 class="slds-text-heading_small slds-m-bottom_x-small">Recommended Talking Points</h3>
+                      <ul class="slds-list_dotted">
+                        <li>✓ Position joint book review for Q3 to rebalance Property exposure.</li>
+                        <li>✓ Walk through new Chubb appetite for restaurant occupancies.</li>
+                        <li>✓ Re-confirm AOP deductible expectations on renewal book.</li>
+                      </ul>
+                    </div>
+                  </article>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3 slds-m-bottom_medium">
+                  <article class="slds-card">
+                    <div class="slds-card__header slds-grid slds-grid_align-spread">
+                      <h2 class="slds-card__header-title">✨ Agentforce Actions</h2><span class="slds-badge slds-badge_lightest">3 suggested</span>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                      <fieldset class="slds-form-element">
+                        <legend class="slds-assistive-text">Agentforce suggested actions</legend>
+                        <div class="slds-form-element__control slds-m-bottom_small">
+                          <div class="slds-checkbox"><input type="checkbox" id="mc-a1" checked /><label class="slds-checkbox__label" for="mc-a1"><span class="slds-checkbox_faux"></span><span class="slds-form-element__label">Propose a joint book review</span></label></div>
+                          <p class="slds-text-body_small slds-text-color_weak slds-p-left_large">Drafts calendar invite + agenda from last 4 quarters of book trends.</p>
+                        </div>
+                        <div class="slds-form-element__control slds-m-bottom_small">
+                          <div class="slds-checkbox"><input type="checkbox" id="mc-a2" /><label class="slds-checkbox__label" for="mc-a2"><span class="slds-checkbox_faux"></span><span class="slds-form-element__label">Schedule loss-control walkthrough</span></label></div>
+                          <p class="slds-text-body_small slds-text-color_weak slds-p-left_large">Identifies 6 buildings flagged for sprinkler maintenance review.</p>
+                        </div>
+                        <div class="slds-form-element__control">
+                          <div class="slds-checkbox"><input type="checkbox" id="mc-a3" /><label class="slds-checkbox__label" for="mc-a3"><span class="slds-checkbox_faux"></span><span class="slds-form-element__label">Draft renewal pre-read deck</span></label></div>
+                          <p class="slds-text-body_small slds-text-color_weak slds-p-left_large">14-slide deck pre-populated with loss runs, premium history, and exposure deltas.</p>
+                        </div>
+                      </fieldset>
+                      <button class="slds-button slds-button_brand slds-button_stretch slds-m-top_small">✨ Apply Selected (1)</button>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <article class="slds-card">
+                <div class="slds-card__header slds-grid slds-grid_align-spread"><h2 class="slds-card__header-title">Meeting Prep Tasks</h2><span class="slds-badge">5 items</span></div>
+                <div class="slds-card__body">
+                  <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Task</th><th class="slds-text-title_caps" scope="col">Owner</th><th class="slds-text-title_caps" scope="col">Role</th><th class="slds-text-title_caps" scope="col">Status</th></tr></thead>
+                    <tbody>
+                      <tr class="slds-hint-parent"><td data-label="Task">Pull last 5 years of loss runs</td><td data-label="Owner">Marco Diaz</td><td data-label="Role">Account Manager</td><td data-label="Status"><span class="slds-badge slds-theme_success">Completed</span></td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Task">Confirm AOP deductible appetite</td><td data-label="Owner">James Field</td><td data-label="Role">Producer</td><td data-label="Status"><span class="slds-badge slds-theme_warning">In Progress</span></td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Task">Prepare Chubb appetite one-pager</td><td data-label="Owner">Agentforce</td><td data-label="Role">AI Assistant</td><td data-label="Status"><span class="slds-badge slds-badge_inverse">Ready for Review</span></td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Task">Calendar invite — joint book review</td><td data-label="Owner">Sunrise Agency</td><td data-label="Role">Customer</td><td data-label="Status"><span class="slds-badge">Pending</span></td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Task">Validate building schedule against COPE data</td><td data-label="Owner">Underwriting</td><td data-label="Role">Carrier</td><td data-label="Status"><span class="slds-badge slds-theme_error">Blocked</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+            </div>
+
+            <div id="mc-session" class="slds-tabs_scoped__content slds-hide" role="tabpanel" aria-labelledby="mc-session__item">
+              <div class="slds-p-around_large slds-text-align_center"><h2 class="slds-text-heading_medium">Meeting Session — Coming Next</h2><p class="slds-text-body_regular slds-text-color_weak">Live transcription, Agentforce note capture, and inline talking-point guidance render here once the meeting starts.</p></div>
+            </div>
+            <div id="mc-follow" class="slds-tabs_scoped__content slds-hide" role="tabpanel" aria-labelledby="mc-follow__item">
+              <div class="slds-p-around_large slds-text-align_center"><h2 class="slds-text-heading_medium">Meeting Follow-Up — Coming Next</h2><p class="slds-text-body_regular slds-text-color_weak">Auto-generated recap email, next-step task assignments, and book-review calendar invite go here.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- SCREEN: RFQ WORKSPACE — PERSONAL AUTO                         -->
+        <!-- ============================================================= -->
+        <div id="screen-rfq-pa" class="slds-tabs_default__content slds-hide ar-screen" role="tabpanel" aria-labelledby="tab-rfq-pa">
+          <div class="slds-page-header slds-m-bottom_medium">
+            <div class="slds-page-header__row">
+              <div class="slds-page-header__col-title">
+                <div class="slds-page-header__name"><div class="slds-page-header__name-title"><h1><span class="slds-page-header__title slds-truncate" title="Mavericks Household — 2026 Personal Auto Renewal">Mavericks Household — 2026 Personal Auto Renewal</span></h1></div></div>
+                <p class="slds-page-header__name-meta">Mavericks Household · Effective Jul 01, 2026 · Response by Jun 20, 2026</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress path -->
+          <div class="slds-path slds-m-bottom_medium">
+            <div class="slds-path__track"><div class="slds-grid slds-path__scroller-container"><div class="slds-path__scroller" role="application"><div class="slds-path__scroller_inner">
+              <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal" aria-label="RFQ progress">
+                <li class="slds-path__item slds-is-current slds-is-active" role="presentation"><a aria-selected="true" class="slds-path__link" href="#pa-1" role="option" tabindex="0"><span class="slds-path__stage"><span class="slds-assistive-text">Current Stage:</span></span><span class="slds-path__title">Schedule of Vehicles</span></a></li>
+                <li class="slds-path__item slds-is-incomplete" role="presentation"><a aria-selected="false" class="slds-path__link" href="#pa-2" role="option" tabindex="-1"><span class="slds-path__stage"><span class="slds-assistive-text">Stage</span></span><span class="slds-path__title">Policy Coverages</span></a></li>
+                <li class="slds-path__item slds-is-incomplete" role="presentation"><a aria-selected="false" class="slds-path__link" href="#pa-3" role="option" tabindex="-1"><span class="slds-path__stage"><span class="slds-assistive-text">Stage</span></span><span class="slds-path__title">Market Routing</span></a></li>
+              </ul>
+            </div></div></div></div>
+          </div>
+
+          <div class="slds-button-group slds-m-bottom_medium" role="group" aria-label="RFQ step">
+            <button class="slds-button slds-button_brand" data-subview="pa-1" data-group="rfqpa" aria-pressed="true">1 · Schedule of Vehicles</button>
+            <button class="slds-button slds-button_neutral" data-subview="pa-2" data-group="rfqpa" aria-pressed="false">2 · Policy Coverages</button>
+            <button class="slds-button slds-button_neutral" data-subview="pa-3" data-group="rfqpa" aria-pressed="false">3 · Review &amp; Submit</button>
+          </div>
+
+          <!-- Step 1: Schedule of Vehicles -->
+          <div id="pa-1" class="ar-subview" data-subview-group="rfqpa">
+            <article class="slds-card">
+              <div class="slds-card__header slds-grid slds-grid_align-spread slds-wrap">
+                <div><h2 class="slds-card__header-title">Schedule of Vehicles (10)</h2><p class="slds-text-body_small slds-text-color_weak">Imported from 2025 Mavericks Auto — Apex Mutual.</p></div>
+                <div class="slds-no-flex"><button class="slds-button slds-button_neutral">Upload CSV</button><button class="slds-button slds-button_brand slds-m-left_x-small" data-open-modal="modal-vehicle">Add Asset</button></div>
+              </div>
+              <div class="slds-card__body">
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                  <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Vehicle</th><th class="slds-text-title_caps" scope="col">VIN</th><th class="slds-text-title_caps" scope="col">Use</th><th class="slds-text-title_caps" scope="col">Annual Mileage</th><th class="slds-text-title_caps" scope="col">Stated Value</th><th class="slds-text-title_caps" scope="col">Assigned Driver</th></tr></thead>
+                  <tbody>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2024 Honda CR-V EX-L</td><td data-label="VIN">1HGRM4H51RA012876</td><td data-label="Use">Commute</td><td data-label="Annual Mileage">12,000 mi/yr</td><td data-label="Stated Value">$36,500</td><td data-label="Assigned Driver">James Mavericks</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2021 Toyota Camry SE</td><td data-label="VIN">4T1G11AK7MU456321</td><td data-label="Use">Commute</td><td data-label="Annual Mileage">14,500 mi/yr</td><td data-label="Stated Value">$22,800</td><td data-label="Assigned Driver">Emily Mavericks <span class="slds-badge slds-theme_warning">1 Incident</span></td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2023 Tesla Model Y Long Range</td><td data-label="VIN">7SAYGDEE8PF983412</td><td data-label="Use">Commute</td><td data-label="Annual Mileage">15,000 mi/yr</td><td data-label="Stated Value">$52,000</td><td data-label="Assigned Driver">James Mavericks</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2020 Subaru Outback Premium</td><td data-label="VIN">4S4BSANC6L3332190</td><td data-label="Use">Pleasure</td><td data-label="Annual Mileage">8,000 mi/yr</td><td data-label="Stated Value">$24,000</td><td data-label="Assigned Driver">Sarah Mavericks</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2018 Honda Civic LX</td><td data-label="VIN">19XFC2F58JE554321</td><td data-label="Use">School</td><td data-label="Annual Mileage">10,000 mi/yr</td><td data-label="Stated Value">$16,000</td><td data-label="Assigned Driver">Michael Mavericks <span class="slds-badge slds-theme_warning">1 Incident</span></td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2024 Porsche 911 Carrera</td><td data-label="VIN">WP0AB2A99RS778901</td><td data-label="Use">Pleasure</td><td data-label="Annual Mileage">3,000 mi/yr</td><td data-label="Stated Value">$135,000</td><td data-label="Assigned Driver">James Mavericks</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2023 Ford F-150 XLT</td><td data-label="VIN">1FTFW1ET5PF103112</td><td data-label="Use">Commute</td><td data-label="Annual Mileage">10,500 mi/yr</td><td data-label="Stated Value">$41,000</td><td data-label="Assigned Driver">David Chen</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2022 Lexus RX 350</td><td data-label="VIN">2T2BZMCA4NC445566</td><td data-label="Use">Pleasure</td><td data-label="Annual Mileage">6,000 mi/yr</td><td data-label="Stated Value">$48,000</td><td data-label="Assigned Driver">Emily Mavericks</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2019 Jeep Wrangler Sport</td><td data-label="VIN">1C4HJXDG8KW889900</td><td data-label="Use">Pleasure</td><td data-label="Annual Mileage">4,000 mi/yr</td><td data-label="Stated Value">$33,000</td><td data-label="Assigned Driver">Sarah Mavericks</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Vehicle">2015 Chevy Colorado</td><td data-label="VIN">1GCGTBE38F1112233</td><td data-label="Use">Utility / Spare</td><td data-label="Annual Mileage">2,500 mi/yr</td><td data-label="Stated Value">$19,000</td><td data-label="Assigned Driver"><span class="slds-text-color_weak">No drivers assigned</span></td></tr>
+                  </tbody>
+                </table>
+                <h3 class="slds-text-heading_small slds-m-vertical_small">Household Drivers (5)</h3>
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                  <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Driver</th><th class="slds-text-title_caps" scope="col">Age</th><th class="slds-text-title_caps" scope="col">License</th><th class="slds-text-title_caps" scope="col">MVR</th><th class="slds-text-title_caps" scope="col">Years Exp.</th></tr></thead>
+                  <tbody>
+                    <tr class="slds-hint-parent"><td data-label="Driver">James Mavericks</td><td data-label="Age">52</td><td data-label="License">FL-J412-MVK</td><td data-label="MVR"><span class="slds-badge slds-theme_success">Clean Record</span></td><td data-label="Years Exp.">34</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Driver">Emily Mavericks</td><td data-label="Age">49</td><td data-label="License">FL-E908-MVK</td><td data-label="MVR"><span class="slds-badge slds-theme_warning">1 Incident · Speeding · 2024</span></td><td data-label="Years Exp.">31</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Driver">Sarah Mavericks</td><td data-label="Age">21</td><td data-label="License">FL-S204-MVK</td><td data-label="MVR"><span class="slds-badge slds-theme_success">Clean Record</span></td><td data-label="Years Exp.">4</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Driver">Michael Mavericks</td><td data-label="Age">19</td><td data-label="License">FL-M207-MVK</td><td data-label="MVR"><span class="slds-badge slds-theme_warning">1 Incident · Minor At-Fault · 2025</span></td><td data-label="Years Exp.">2</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Driver">David Chen <span class="slds-text-color_weak">(Nanny)</span></td><td data-label="Age">37</td><td data-label="License">FL-D930-MVK</td><td data-label="MVR"><span class="slds-badge slds-theme_success">Clean Record</span></td><td data-label="Years Exp.">18</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <footer class="slds-card__footer slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap">
+                <span class="slds-text-body_small slds-text-color_weak">10 vehicles + 5 drivers matched</span>
+                <div><button class="slds-button slds-button_neutral">Save Draft &amp; Close</button><button class="slds-button slds-button_brand slds-m-left_x-small" data-subview="pa-2" data-group="rfqpa">Proceed</button></div>
+              </footer>
+            </article>
+          </div>
+
+          <!-- Step 2: Policy Coverages -->
+          <div id="pa-2" class="ar-subview" data-subview-group="rfqpa" hidden>
+            <article class="slds-card">
+              <div class="slds-card__header"><h2 class="slds-card__header-title">Configure Coverages</h2><p class="slds-text-body_small slds-text-color_weak">Policy-wide limits at the top, then per-vehicle and per-driver coverages — the markets see the full Policy → Vehicle → Driver hierarchy.</p></div>
+              <div class="slds-card__body">
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">🛡 Policy-Level Coverages</h3>
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                  <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Include</th><th class="slds-text-title_caps" scope="col">Coverage</th><th class="slds-text-title_caps" scope="col">Limit Range</th><th class="slds-text-title_caps" scope="col">Deductible Range</th></tr></thead>
+                  <tbody>
+                    <tr class="slds-hint-parent"><td data-label="Include"><span class="slds-badge slds-theme_success">Included</span></td><td data-label="Coverage">Bodily Injury</td><td data-label="Limit Range">100/300 – 250/500</td><td data-label="Deductible Range">—</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Include"><span class="slds-badge slds-theme_success">Included</span></td><td data-label="Coverage">Property Damage</td><td data-label="Limit Range">$50,000 – $100,000</td><td data-label="Deductible Range">—</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Include"><span class="slds-badge slds-theme_success">Included</span></td><td data-label="Coverage">Uninsured Motorist</td><td data-label="Limit Range">100/300 – 150/350</td><td data-label="Deductible Range">$100 – $500</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Include"><span class="slds-badge slds-theme_success">Included</span></td><td data-label="Coverage">Collision</td><td data-label="Limit Range">—</td><td data-label="Deductible Range">$550 – $700</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Include"><span class="slds-badge slds-theme_success">Included</span></td><td data-label="Coverage">Comprehensive</td><td data-label="Limit Range">—</td><td data-label="Deductible Range">$250 – $400</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Include"><span class="slds-badge">Mandatory</span></td><td data-label="Coverage">Personal Umbrella Liability</td><td data-label="Limit Range">$1,000,000</td><td data-label="Deductible Range">—</td></tr>
+                  </tbody>
+                </table>
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">Per-vehicle (Comp/Collision deductible, rental) and per-driver (AD&amp;D, Medical Payments, Crisis Response) coverages expand under each vehicle in the asset hierarchy.</p>
+              </div>
+              <footer class="slds-card__footer slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap">
+                <span class="slds-text-body_small slds-text-color_weak">Asset hierarchy mapped · ready for review</span>
+                <div><button class="slds-button slds-button_neutral" data-subview="pa-1" data-group="rfqpa">Back</button><button class="slds-button slds-button_brand slds-m-left_x-small" data-subview="pa-3" data-group="rfqpa">Proceed</button></div>
+              </footer>
+            </article>
+          </div>
+
+          <!-- Step 3: Review & Submit -->
+          <div id="pa-3" class="ar-subview" data-subview-group="rfqpa" hidden>
+            <article class="slds-card slds-m-bottom_medium">
+              <div class="slds-card__header slds-grid slds-grid_align-spread"><h2 class="slds-card__header-title">Review &amp; Submit</h2><span class="slds-badge slds-theme_success">Ready</span></div>
+              <div class="slds-card__body slds-card__body_inner">
+                <div class="ar-ai slds-p-around_medium slds-m-bottom_medium">
+                  <p class="slds-text-title_caps slds-text-color_weak">✨ Agentforce Summary · AI generated</p>
+                  <p class="slds-text-body_regular slds-m-top_xx-small">This is a <strong>Personal Auto</strong> renewal for Mavericks Household, covering 10 vehicles + 5 drivers. The schedule carries 5 coverages with quoting ranges · Umbrella $1,000,000. Everything's validated and ready to route to the markets you select below.</p>
+                </div>
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">Prior Policy Details</h3>
+                <dl class="slds-list_horizontal slds-wrap slds-m-bottom_medium">
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Prior Carrier</dt><dd class="slds-item_detail slds-size_1-of-2">Apex Mutual</dd>
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Annual Premium</dt><dd class="slds-item_detail slds-size_1-of-2">$14,850</dd>
+                </dl>
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">Select target markets</h3>
+                <div class="slds-grid slds-wrap slds-gutters">
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market ar-is-selected"><span class="slds-badge slds-badge_lightest">1</span> Regency <p class="slds-text-body_small slds-text-color_weak">Best match · luxury auto</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market ar-is-selected"><span class="slds-badge slds-badge_lightest">2</span> Summit Insurance <p class="slds-text-body_small slds-text-color_weak">Fast national P&amp;C quotes</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market ar-is-selected"><span class="slds-badge slds-badge_lightest">3</span> Capitol Insurance <p class="slds-text-body_small slds-text-color_weak">Regional property specialist</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Accord Insurance <p class="slds-text-body_small slds-text-color_weak">Commercial fleet expert</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Vanguard Insurance <p class="slds-text-body_small slds-text-color_weak">Last quoted 12 days ago</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Apex Insurance <p class="slds-text-body_small slds-text-color_weak">Incumbent · renews on time</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Fortress Group <p class="slds-text-body_small slds-text-color_weak">Strong home + auto bundles</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Forrest Partners <p class="slds-text-body_small slds-text-color_weak">Non-standard auto niche</p></div></div>
+                </div>
+                <div class="slds-form-element slds-m-top_small">
+                  <label class="slds-form-element__label" for="pa-routing">✨ Agentforce Routing — Describe your routing strategy</label>
+                  <div class="slds-form-element__control"><input type="text" id="pa-routing" class="slds-input" placeholder='e.g. "Keep Apex Mutual for continuity and prioritize Lighthouse Casualty for the young drivers"' /></div>
+                </div>
+              </div>
+              <footer class="slds-card__footer slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap">
+                <span class="slds-text-body_small slds-text-color_weak">Submission package ready · Agentforce will route to the target market set</span>
+                <div><button class="slds-button slds-button_neutral" data-subview="pa-2" data-group="rfqpa">Back</button><button class="slds-button slds-button_brand slds-m-left_x-small" data-open-modal="modal-compare">Submit to Markets</button></div>
+              </footer>
+            </article>
+          </div>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- SCREEN: RFQ WORKSPACE — EMPLOYEE BENEFITS                     -->
+        <!-- ============================================================= -->
+        <div id="screen-rfq-eb" class="slds-tabs_default__content slds-hide ar-screen" role="tabpanel" aria-labelledby="tab-rfq-eb">
+          <div class="slds-page-header slds-m-bottom_medium">
+            <div class="slds-page-header__row"><div class="slds-page-header__col-title">
+              <div class="slds-page-header__name"><div class="slds-page-header__name-title"><h1><span class="slds-page-header__title slds-truncate" title="Acme Manufacturing — 2026 Group Medical Renewal">Acme Manufacturing — 2026 Group Medical Renewal</span></h1></div></div>
+              <p class="slds-page-header__name-meta">Acme Manufacturing · Effective Jan 01, 2026 · Response by Nov 15, 2025</p>
+            </div></div>
+          </div>
+
+          <div class="slds-path slds-m-bottom_medium">
+            <div class="slds-path__track"><div class="slds-grid slds-path__scroller-container"><div class="slds-path__scroller" role="application"><div class="slds-path__scroller_inner">
+              <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal" aria-label="EB RFQ progress">
+                <li class="slds-path__item slds-is-current slds-is-active" role="presentation"><a aria-selected="true" class="slds-path__link" href="#eb-1" role="option" tabindex="0"><span class="slds-path__stage"><span class="slds-assistive-text">Current Stage:</span></span><span class="slds-path__title">Enrollment Headcount</span></a></li>
+                <li class="slds-path__item slds-is-incomplete" role="presentation"><a aria-selected="false" class="slds-path__link" href="#eb-2" role="option" tabindex="-1"><span class="slds-path__stage"><span class="slds-assistive-text">Stage</span></span><span class="slds-path__title">Core Plan Coverages</span></a></li>
+                <li class="slds-path__item slds-is-incomplete" role="presentation"><a aria-selected="false" class="slds-path__link" href="#eb-3" role="option" tabindex="-1"><span class="slds-path__stage"><span class="slds-assistive-text">Stage</span></span><span class="slds-path__title">Benefits &amp; Copays</span></a></li>
+                <li class="slds-path__item slds-is-incomplete" role="presentation"><a aria-selected="false" class="slds-path__link" href="#eb-4" role="option" tabindex="-1"><span class="slds-path__stage"><span class="slds-assistive-text">Stage</span></span><span class="slds-path__title">Review &amp; Publish</span></a></li>
+              </ul>
+            </div></div></div></div>
+          </div>
+
+          <div class="slds-button-group slds-m-bottom_medium slds-wrap" role="group" aria-label="EB RFQ step">
+            <button class="slds-button slds-button_brand" data-subview="eb-1" data-group="rfqeb" aria-pressed="true">1 · Headcount</button>
+            <button class="slds-button slds-button_neutral" data-subview="eb-2" data-group="rfqeb" aria-pressed="false">2 · Coverages</button>
+            <button class="slds-button slds-button_neutral" data-subview="eb-3" data-group="rfqeb" aria-pressed="false">3 · Benefits</button>
+            <button class="slds-button slds-button_neutral" data-subview="eb-4" data-group="rfqeb" aria-pressed="false">4 · Review</button>
+          </div>
+
+          <!-- Step 1: Enrollment Headcount + census -->
+          <div id="eb-1" class="ar-subview" data-subview-group="rfqeb">
+            <article class="slds-card">
+              <div class="slds-card__header slds-grid slds-grid_align-spread slds-wrap">
+                <div><h2 class="slds-card__header-title">Enrollment Headcount</h2><p class="slds-text-body_small slds-text-color_weak">Enter the FTE (Full Time Equivalent) headcount for each tier, or upload a census CSV to auto-fill these values.</p></div>
+                <div class="slds-no-flex"><span class="slds-badge slds-theme_success slds-m-right_x-small">50 enrolled · 4 tiers</span><button class="slds-button slds-button_neutral" data-census-load="eb">Upload Census</button></div>
+              </div>
+              <div class="slds-card__body slds-card__body_inner">
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-m-bottom_medium">
+                  <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Category Tier</th><th class="slds-text-title_caps" scope="col">FTE</th></tr></thead>
+                  <tbody>
+                    <tr class="slds-hint-parent"><td data-label="Category Tier">Employee</td><td data-label="FTE">25</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Category Tier">Employee + Spouse</td><td data-label="FTE">10</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Category Tier">Employee + Family</td><td data-label="FTE">10</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Category Tier">Employee + Children</td><td data-label="FTE">5</td></tr>
+                    <tr class="slds-hint-parent"><td data-label="Category Tier"><strong>Total Enrolled</strong></td><td data-label="FTE"><strong>50</strong></td></tr>
+                  </tbody>
+                </table>
+
+                <div data-census-empty="eb">
+                  <div class="ar-dropzone slds-p-around_large slds-text-align_center">
+                    <p class="slds-text-body_regular">Upload a census CSV to validate and parse the 50-employee roster.</p>
+                    <button class="slds-button slds-button_brand slds-m-top_small" data-census-load="eb">Upload Census CSV</button>
+                  </div>
+                </div>
+                <div data-census-loaded="eb" hidden>
+                  <div class="slds-scoped-notification slds-media slds-media_center slds-theme_warning slds-m-bottom_small" role="status">
+                    <div class="slds-media__figure"><svg class="slds-icon slds-icon_small" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#warning"></use></svg></div>
+                    <div class="slds-media__body"><p>✨ Agentforce parsed the census. 48 Rows Validated. 2 Rows Require Attention.</p></div>
+                  </div>
+                  <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Employee ID</th><th class="slds-text-title_caps" scope="col">Name</th><th class="slds-text-title_caps" scope="col">DOB</th><th class="slds-text-title_caps" scope="col">Tier</th><th class="slds-text-title_caps" scope="col">Role</th></tr></thead>
+                    <tbody>
+                      <tr class="slds-hint-parent"><td data-label="Employee ID">EMP-02000</td><td data-label="Name">Aaron Patel</td><td data-label="DOB">1985-01-01</td><td data-label="Tier">EE Only</td><td data-label="Role">CNC Operator</td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Employee ID">EMP-02001</td><td data-label="Name">Brianna Cho</td><td data-label="DOB">1996-02-02</td><td data-label="Tier">EE + Spouse</td><td data-label="Role">Assembler</td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Employee ID">EMP-02002</td><td data-label="Name">Carlos Mendes</td><td data-label="DOB">2007-03-03</td><td data-label="Tier">EE + Child(ren)</td><td data-label="Role">Quality Inspector</td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Employee ID">EMP-02012</td><td data-label="Name">John Doe</td><td data-label="DOB"><span class="slds-badge slds-theme_error">Require Attention</span></td><td data-label="Tier">EE Only</td><td data-label="Role">Safety Officer</td></tr>
+                      <tr class="slds-hint-parent"><td data-label="Employee ID">EMP-02037</td><td data-label="Name">Jane Smith</td><td data-label="DOB"><span class="slds-badge slds-theme_error">Require Attention</span></td><td data-label="Tier">EE + Spouse</td><td data-label="Role">Materials Handler</td></tr>
+                    </tbody>
+                  </table>
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">Showing 5 of 50 employees.</p>
+                </div>
+              </div>
+              <footer class="slds-card__footer slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap">
+                <span class="slds-text-body_small slds-text-color_weak">50 enrolled · 4 tiers · ready</span>
+                <div><button class="slds-button slds-button_neutral">Save Draft &amp; Close</button><button class="slds-button slds-button_brand slds-m-left_x-small" data-subview="eb-2" data-group="rfqeb">Proceed</button></div>
+              </footer>
+            </article>
+          </div>
+
+          <!-- Step 2: Core Plan Coverages -->
+          <div id="eb-2" class="ar-subview" data-subview-group="rfqeb" hidden>
+            <article class="slds-card">
+              <div class="slds-card__header"><h2 class="slds-card__header-title">Core Plan Coverages</h2><p class="slds-text-body_small slds-text-color_weak">Set the macro-level financial caps for each segment — deductibles, out-of-pocket maximums, and plan totals. Per-encounter copays come next.</p></div>
+              <div class="slds-card__body slds-card__body_inner">
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">Medical · Deductibles &amp; Out-of-Pocket</h3>
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                  <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Include</th><th class="slds-text-title_caps" scope="col">Benefit</th><th class="slds-text-title_caps" scope="col">Range</th></tr></thead>
+                  <tbody>
+                    <tr class="slds-hint-parent"><td><span class="slds-badge slds-theme_success">Included</span></td><td>Annual Deductible: Individual</td><td>$500 – $2,500</td></tr>
+                    <tr class="slds-hint-parent"><td><span class="slds-badge slds-theme_success">Included</span></td><td>Annual Deductible: Family</td><td>$1,000 – $5,000</td></tr>
+                    <tr class="slds-hint-parent"><td><span class="slds-badge slds-theme_success">Included</span></td><td>Annual Out-of-Pocket Limit: Individual</td><td>$3,000 – $6,000</td></tr>
+                    <tr class="slds-hint-parent"><td><span class="slds-badge slds-theme_success">Included</span></td><td>Annual Out-of-Pocket Limit: Family</td><td>$6,000 – $12,000</td></tr>
+                  </tbody>
+                </table>
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">Dental and Vision segments expand below when included in the Line of Coverage.</p>
+              </div>
+              <footer class="slds-card__footer slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap">
+                <span class="slds-text-body_small slds-text-color_weak">4 Selected</span>
+                <div><button class="slds-button slds-button_neutral" data-subview="eb-1" data-group="rfqeb">Back</button><button class="slds-button slds-button_brand slds-m-left_x-small" data-subview="eb-3" data-group="rfqeb">Proceed</button></div>
+              </footer>
+            </article>
+          </div>
+
+          <!-- Step 3: Benefits & Copays -->
+          <div id="eb-3" class="ar-subview" data-subview-group="rfqeb" hidden>
+            <article class="slds-card">
+              <div class="slds-card__header"><h2 class="slds-card__header-title">Benefits &amp; Copays</h2><p class="slds-text-body_small slds-text-color_weak">Configure per-encounter copays — Office Visits, Virtual Care, Outpatient services, and Rx tiers. This milestone is optional; brokers can publish without it.</p></div>
+              <div class="slds-card__body slds-card__body_inner">
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">Medical · Office Visits &amp; Prescription Drugs</h3>
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                  <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Benefit</th><th class="slds-text-title_caps" scope="col">Cost Share</th></tr></thead>
+                  <tbody>
+                    <tr class="slds-hint-parent"><td>Office Visit: PCP</td><td>$25 copay</td></tr>
+                    <tr class="slds-hint-parent"><td>Office Visit: Specialist</td><td>$50 copay</td></tr>
+                    <tr class="slds-hint-parent"><td>Emergency Room</td><td>$350 copay + 20%</td></tr>
+                    <tr class="slds-hint-parent"><td>Rx Tiers (Generic / Preferred / Non-Pref / Specialty)</td><td>$15 / $45 / $75 / 30%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <footer class="slds-card__footer slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap">
+                <span class="slds-text-body_small slds-text-color_weak">4 Selected</span>
+                <div><button class="slds-button slds-button_neutral" data-subview="eb-2" data-group="rfqeb">Back</button><button class="slds-button slds-button_brand slds-m-left_x-small" data-subview="eb-4" data-group="rfqeb">Proceed</button></div>
+              </footer>
+            </article>
+          </div>
+
+          <!-- Step 4: Review & Publish -->
+          <div id="eb-4" class="ar-subview" data-subview-group="rfqeb" hidden>
+            <article class="slds-card">
+              <div class="slds-card__header slds-grid slds-grid_align-spread"><h2 class="slds-card__header-title">Review &amp; Submit</h2><span class="slds-badge slds-theme_success">Ready</span></div>
+              <div class="slds-card__body slds-card__body_inner">
+                <div class="ar-ai slds-p-around_medium slds-m-bottom_medium">
+                  <p class="slds-text-title_caps slds-text-color_weak">✨ Agentforce Summary · AI generated</p>
+                  <p class="slds-text-body_regular slds-m-top_xx-small">This is an Employee Benefits renewal for Acme Manufacturing (Group Medical), covering 50 employees across 4 rating tiers. Medical: 4 · Dental: 0 · Vision: 0. Everything's validated and ready to route to the markets you select below.</p>
+                </div>
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">Prior Policy Details</h3>
+                <dl class="slds-list_horizontal slds-wrap slds-m-bottom_medium">
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Prior Carrier</dt><dd class="slds-item_detail slds-size_1-of-2">BlueCross</dd>
+                  <dt class="slds-item_label slds-text-color_weak slds-size_1-of-2">Annual Premium</dt><dd class="slds-item_detail slds-size_1-of-2">$612,000</dd>
+                </dl>
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">Select target markets</h3>
+                <div class="slds-grid slds-wrap slds-gutters">
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market ar-is-selected"><span class="slds-badge slds-badge_lightest">1</span> BlueCross BlueShield <p class="slds-text-body_small slds-text-color_weak">Incumbent · renews on time</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market ar-is-selected"><span class="slds-badge slds-badge_lightest">2</span> UnitedHealthcare <p class="slds-text-body_small slds-text-color_weak">Largest national network</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market ar-is-selected"><span class="slds-badge slds-badge_lightest">3</span> Cigna <p class="slds-text-body_small slds-text-color_weak">Strong PPO + dental bundles</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Aetna <p class="slds-text-body_small slds-text-color_weak">Competitive HMO pricing</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Kaiser Permanente <p class="slds-text-body_small slds-text-color_weak">Integrated care · West</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Humana <p class="slds-text-body_small slds-text-color_weak">Best for wellness programs</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">Anthem <p class="slds-text-body_small slds-text-color_weak">Fast group quotes</p></div></div>
+                  <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_small"><div class="slds-box ar-market">MetLife <p class="slds-text-body_small slds-text-color_weak">Ancillary + life specialist</p></div></div>
+                </div>
+              </div>
+              <footer class="slds-card__footer slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-wrap">
+                <span class="slds-text-body_small slds-text-color_weak">Submission package ready · Agentforce will route to the target market set</span>
+                <div><button class="slds-button slds-button_neutral" data-subview="eb-3" data-group="rfqeb">Back</button><button class="slds-button slds-button_brand slds-m-left_x-small" data-open-modal="modal-compare">Submit to Markets</button></div>
+              </footer>
+            </article>
+          </div>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- SCREEN: EB POLICY RECORD PAGE                                 -->
+        <!-- ============================================================= -->
+        <div id="screen-eb-policy" class="slds-tabs_default__content slds-hide ar-screen" role="tabpanel" aria-labelledby="tab-eb-policy">
+          <div class="slds-page-header slds-page-header_record-home slds-m-bottom_medium">
+            <div class="slds-page-header__row">
+              <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                  <div class="slds-media__figure"><span class="slds-icon_container slds-icon-standard-document"><svg class="slds-icon" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/standard-sprite/svg/symbols.svg#document"></use></svg></span></div>
+                  <div class="slds-media__body"><div class="slds-page-header__name"><div class="slds-page-header__name-title"><h1><span class="slds-page-header__name-meta">Insurance Policy</span><span class="slds-page-header__title slds-truncate" title="Acme Manufacturing - 2026 EB Policy">Acme Manufacturing - 2026 EB Policy</span></h1></div></div></div>
+                </div>
+              </div>
+              <div class="slds-page-header__col-actions"><div class="slds-page-header__controls"><div class="slds-page-header__control">
+                <ul class="slds-button-group-list">
+                  <li><button class="slds-button slds-button_neutral">Follow</button></li>
+                  <li><button class="slds-button slds-button_neutral">Edit</button></li>
+                  <li><button class="slds-button slds-button_brand" data-open-modal="modal-intake">Renew Policy</button></li>
+                </ul>
+              </div></div></div>
+            </div>
+            <div class="slds-page-header__row slds-page-header__row_gutters">
+              <div class="slds-page-header__col-details"><ul class="slds-page-header__detail-row">
+                <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Policy Number">Policy Number</p><p class="slds-truncate">POL-ACME-EB-2026</p></li>
+                <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Line of Business">Line of Business</p><p class="slds-truncate">Employee Benefits</p></li>
+                <li class="slds-page-header__detail-block"><p class="slds-text-title slds-truncate" title="Status">Status</p><p><span class="slds-badge slds-theme_success">Active</span></p></li>
+              </ul></div>
+            </div>
+          </div>
+
+          <div class="slds-tabs_default">
+            <ul class="slds-tabs_default__nav" role="tablist" aria-label="Policy tabs">
+              <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#ebp-details" role="tab" tabindex="-1" aria-selected="false" data-subtab="ebp-details" data-subtab-group="ebp">Details</a></li>
+              <li class="slds-tabs_default__item" role="presentation"><a class="slds-tabs_default__link" href="#ebp-related" role="tab" tabindex="-1" aria-selected="false" data-subtab="ebp-related" data-subtab-group="ebp">Related</a></li>
+              <li class="slds-tabs_default__item slds-is-active" role="presentation"><a class="slds-tabs_default__link" href="#ebp-plan" role="tab" tabindex="0" aria-selected="true" data-subtab="ebp-plan" data-subtab-group="ebp">Plan</a></li>
+            </ul>
+            <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="ebp-details" data-subpanel-group="ebp"><p class="slds-p-around_medium slds-text-color_weak">Policy detail fields would appear here.</p></div>
+            <div class="slds-tabs_default__content slds-hide" role="tabpanel" data-subpanel="ebp-related" data-subpanel-group="ebp"><p class="slds-p-around_medium slds-text-color_weak">Related lists would appear here.</p></div>
+            <div class="slds-tabs_default__content slds-show" role="tabpanel" data-subpanel="ebp-plan" data-subpanel-group="ebp">
+              <article class="slds-card slds-m-bottom_medium">
+                <div class="slds-card__header slds-grid slds-grid_align-spread"><h2 class="slds-card__header-title">Insurance Rate Plans (0)</h2><button class="slds-button slds-button_neutral slds-button_x-small" data-open-modal="modal-rateplan">New</button></div>
+                <div class="slds-card__body slds-card__body_inner"><p class="slds-text-color_weak">No items to display.</p></div>
+              </article>
+              <article class="slds-card">
+                <div class="slds-card__header slds-grid slds-grid_align-spread"><h2 class="slds-card__header-title">Insurance Contribution Plans (0)</h2><button class="slds-button slds-button_neutral slds-button_x-small">New</button></div>
+                <div class="slds-card__body slds-card__body_inner"><p class="slds-text-color_weak">No items to display.</p></div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- SCREEN: SETUP (RFQ Playbook / Agentforce)                     -->
+        <!-- ============================================================= -->
+        <div id="screen-setup" class="slds-tabs_default__content slds-hide ar-screen" role="tabpanel" aria-labelledby="tab-setup">
+          <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_medium slds-wrap">
+            <div>
+              <p class="slds-text-title_caps slds-text-color_weak">⚙ Setup</p>
+              <h1 class="slds-text-heading_large">RFQ Setup</h1>
+            </div>
+            <button class="slds-button slds-button_brand" data-open-modal="modal-newtemplate">+ New Template</button>
+          </div>
+          <p class="slds-text-body_regular slds-text-color_weak slds-m-bottom_medium">Configure the RFQ templates brokers run when quoting new business or renewals. Each template wires a sequence of stages to the Insurance Product Model Catalog so the broker UI auto-populates with the right attributes, deductibles, and contribution splits.</p>
+
+          <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_large">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+              <article class="slds-card slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-spread"><h2 class="slds-text-heading_small">Personal Auto Renewal</h2><span class="slds-badge slds-theme_success">Active</span></div>
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">Root Product: Personal Auto · v2.1 · Live since Jan 2026</p>
+              </article>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+              <article class="slds-card slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-spread"><h2 class="slds-text-heading_small">Group Medical Renewal</h2><span class="slds-badge">Draft</span></div>
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">Root Product: Group Medical · v1.0 · Draft</p>
+              </article>
+            </div>
+          </div>
+
+          <div class="slds-grid slds-wrap slds-gutters">
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-bottom_medium">
+              <article class="slds-card">
+                <div class="slds-card__header"><h2 class="slds-card__header-title">Steps to Configure</h2><p class="slds-text-body_small slds-text-color_weak">Pick any step to configure its data requirements. Steps can be edited in any order.</p></div>
+                <div class="slds-card__body slds-card__body_inner">
+                  <ul class="slds-has-dividers_bottom-space">
+                    <li class="slds-item">Enrollment / Schedule — groups &amp; participants</li>
+                    <li class="slds-item">Core Coverages — limits &amp; deductibles</li>
+                    <li class="slds-item">Benefits &amp; Copays — per-encounter cost shares</li>
+                    <li class="slds-item">Quote Comparison — presentation template</li>
+                    <li class="slds-item">Review &amp; Integrations — publishing &amp; hand-offs</li>
+                  </ul>
+                  <button class="slds-button slds-button_neutral slds-m-top_small">+ Add Widget</button>
+                </div>
+              </article>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-bottom_medium">
+              <article class="slds-card">
+                <div class="slds-card__header"><h2 class="slds-card__header-title">Stage 4 Integrations</h2><p class="slds-text-body_small slds-text-color_weak">Wire publishing integrations and post-bind broker hand-offs for this RFQ template.</p></div>
+                <div class="slds-card__body slds-card__body_inner">
+                  <div class="slds-form-element slds-m-bottom_medium">
+                    <label class="slds-checkbox_toggle slds-grid">
+                      <span class="slds-form-element__label slds-m-bottom_none">Enable Agentforce Quote Summary</span>
+                      <input type="checkbox" checked aria-describedby="af-toggle-desc" />
+                      <span class="slds-checkbox_faux_container" aria-live="assertive"><span class="slds-checkbox_faux"></span><span class="slds-checkbox_on">Enabled</span><span class="slds-checkbox_off">Disabled</span></span>
+                    </label>
+                    <p id="af-toggle-desc" class="slds-text-body_small slds-text-color_weak">Generate a natural-language quote summary the broker can present to the client at hand-off.</p>
+                  </div>
+                  <div class="slds-form-element">
+                    <label class="slds-checkbox_toggle slds-grid">
+                      <span class="slds-form-element__label slds-m-bottom_none">Enable Slack Integration</span>
+                      <input type="checkbox" aria-describedby="slack-toggle-desc" />
+                      <span class="slds-checkbox_faux_container" aria-live="assertive"><span class="slds-checkbox_faux"></span><span class="slds-checkbox_on">Enabled</span><span class="slds-checkbox_off">Disabled</span></span>
+                    </label>
+                    <p id="slack-toggle-desc" class="slds-text-body_small slds-text-color_weak">Post bind events and broker hand-offs into a Slack channel scoped to the chosen Salesforce object.</p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer class="ar-app slds-p-around_medium slds-text-align_center slds-text-body_small slds-text-color_weak">
+      Atlas · Version 01 · SLDS 2 compliant preview · All data is fictitious.
+    </footer>
+
+    <!-- ===================== GLOBAL: MODALS / DRAWER / PILL / TOAST ===================== -->
+    <!-- ===== Modal: RFQ Intake ===== -->
+    <div class="ar-modal" id="modal-intake" hidden>
+      <section class="slds-modal slds-fade-in-open slds-modal_medium" role="dialog" aria-modal="true" aria-labelledby="intake-h">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+            <button class="slds-button slds-button_icon slds-modal__close" data-close-modal title="Close"><svg class="slds-button__icon slds-button__icon_large" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#close"></use></svg><span class="slds-assistive-text">Close</span></button>
+            <h1 class="slds-modal__title slds-hyphenate" id="intake-h">Start Guided RFQ</h1>
+          </header>
+          <div class="slds-modal__content slds-p-around_medium">
+            <div class="slds-form-element slds-m-bottom_medium">
+              <label class="slds-form-element__label" for="intake-lob">Line of Business</label>
+              <div class="slds-form-element__control">
+                <div class="slds-select_container"><select class="slds-select" id="intake-lob">
+                  <option selected>Personal Lines</option>
+                  <option>Commercial Lines</option>
+                  <option>Employee Benefits</option>
+                  <option>Life &amp; Health</option>
+                </select></div>
+              </div>
+            </div>
+
+            <div class="slds-form-element slds-m-bottom_medium">
+              <label class="slds-form-element__label" for="intake-loc">Line of Coverage</label>
+              <div class="slds-form-element__control">
+                <div class="slds-select_container"><select class="slds-select" id="intake-loc">
+                  <option>Commercial Auto (Fleet) — Fleet · drivers · physical damage</option>
+                  <option>Homeowners — Dwelling · contents · liability</option>
+                  <option selected>Personal Auto — Personal auto · single driver</option>
+                </select></div>
+              </div>
+            </div>
+
+            <div class="slds-form-element slds-m-bottom_medium">
+              <label class="slds-form-element__label" for="intake-prior">Replicate from prior policy</label>
+              <div class="slds-form-element__control">
+                <div class="slds-select_container"><select class="slds-select" id="intake-prior">
+                  <option>2025 Apex Logistics Fleet — Travelers ($18,200)</option>
+                  <option>2025 Sunrise HQ Homeowners — Chubb ($3,840)</option>
+                  <option selected>2025 Coastal — Standalone Auto — Nationwide ($1,420)</option>
+                  <option>2025 Acme Corp Group Medical — BlueCross ($612,000)</option>
+                  <option>None — start blank</option>
+                </select></div>
+              </div>
+            </div>
+
+            <fieldset class="slds-form-element">
+              <legend class="slds-form-element__legend slds-form-element__label">Renewal mode</legend>
+              <div class="slds-form-element__control">
+                <span class="slds-radio"><input type="radio" id="mode-shop" name="mode" checked /><label class="slds-radio__label" for="mode-shop"><span class="slds-radio_faux"></span><span class="slds-form-element__label">Shop the market</span></label></span>
+                <span class="slds-radio"><input type="radio" id="mode-straight" name="mode" /><label class="slds-radio__label" for="mode-straight"><span class="slds-radio_faux"></span><span class="slds-form-element__label">Straight-through renewal (incumbent)</span></label></span>
+              </div>
+            </fieldset>
+          </div>
+          <footer class="slds-modal__footer">
+            <button class="slds-button slds-button_neutral" data-close-modal>Cancel</button>
+            <button class="slds-button slds-button_brand" data-close-modal data-screen-link="screen-rfq-pa">Save &amp; Continue</button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" data-close-modal></div>
+    </div>
+
+    <!-- ===== Modal: Add Vehicle ===== -->
+    <div class="ar-modal" id="modal-vehicle" hidden>
+      <section class="slds-modal slds-fade-in-open" role="dialog" aria-modal="true" aria-labelledby="veh-h">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header"><button class="slds-button slds-button_icon slds-modal__close" data-close-modal title="Close"><svg class="slds-button__icon slds-button__icon_large" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#close"></use></svg><span class="slds-assistive-text">Close</span></button><h1 class="slds-modal__title" id="veh-h">Add Vehicle</h1></header>
+          <div class="slds-modal__content slds-p-around_medium">
+            <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">* = Required</p>
+            <div class="slds-grid slds-wrap slds-gutters">
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="v-year"><abbr class="slds-required" title="required">* </abbr>Year</label><div class="slds-form-element__control"><input type="number" id="v-year" class="slds-input" placeholder="2024" /></div></div></div>
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="v-make"><abbr class="slds-required" title="required">* </abbr>Make</label><div class="slds-form-element__control"><input type="text" id="v-make" class="slds-input" placeholder="Honda" /></div></div></div>
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="v-model"><abbr class="slds-required" title="required">* </abbr>Model</label><div class="slds-form-element__control"><input type="text" id="v-model" class="slds-input" placeholder="CR-V EX-L" /></div></div></div>
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="v-vin">VIN</label><div class="slds-form-element__control"><input type="text" id="v-vin" class="slds-input" placeholder="Optional" /></div></div></div>
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="v-use">Primary Use</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="v-use"><option>Commute</option><option>Pleasure</option><option>Business</option></select></div></div></div></div>
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="v-class">Body Class</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="v-class"><option>Sedan</option><option>SUV</option><option>Truck</option><option>Wagon</option><option>Sports Car</option><option>Minivan</option></select></div></div></div></div>
+            </div>
+          </div>
+          <footer class="slds-modal__footer"><button class="slds-button slds-button_neutral" data-close-modal>Cancel</button><button class="slds-button slds-button_brand" data-close-modal>Save Vehicle</button></footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" data-close-modal></div>
+    </div>
+
+    <!-- ===== Modal: Quote Comparison ===== -->
+    <div class="ar-modal" id="modal-compare" hidden>
+      <section class="slds-modal slds-fade-in-open slds-modal_large" role="dialog" aria-modal="true" aria-labelledby="cmp-h">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header"><button class="slds-button slds-button_icon slds-modal__close" data-close-modal title="Close"><svg class="slds-button__icon slds-button__icon_large" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#close"></use></svg><span class="slds-assistive-text">Close</span></button><h1 class="slds-modal__title" id="cmp-h">Quote Comparison</h1></header>
+          <div class="slds-modal__content slds-p-around_medium">
+            <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_medium">
+              <div class="slds-col slds-size_1-of-3"><div class="slds-box slds-text-align_center"><span class="ar-stat__num">9</span><span class="ar-stat__label">Markets Approached</span></div></div>
+              <div class="slds-col slds-size_1-of-3"><div class="slds-box slds-text-align_center"><span class="ar-stat__num">9</span><span class="ar-stat__label">Quotes Received</span></div></div>
+              <div class="slds-col slds-size_1-of-3"><div class="slds-box slds-text-align_center"><span class="ar-stat__num">3</span><span class="ar-stat__label">Shortlisted</span></div></div>
+            </div>
+
+            <div class="slds-button-group slds-m-bottom_medium" role="group" aria-label="Quote set">
+              <button class="slds-button slds-button_brand" data-subview="cmp-pa" data-group="cmp" aria-pressed="true">Personal Auto</button>
+              <button class="slds-button slds-button_neutral" data-subview="cmp-eb" data-group="cmp" aria-pressed="false">Group Medical</button>
+            </div>
+
+            <!-- PA -->
+            <div id="cmp-pa" class="ar-subview" data-subview-group="cmp">
+              <div class="ar-ai slds-p-around_medium slds-m-bottom_medium"><p class="slds-text-title_caps slds-text-color_weak">✨ Agentforce Recommendation · 93% confidence</p><p class="slds-text-body_regular slds-m-top_xx-small"><strong>Lighthouse Casualty — Choice</strong> is the best value. It matches the incumbent liability limits while lowering deductibles on the luxury vehicles and includes OEM parts on every vehicle — roughly 11% below the expiring premium.</p></div>
+              <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Carrier · Plan</th><th class="slds-text-title_caps" scope="col">AM Best</th><th class="slds-text-title_caps" scope="col">Annual Premium</th><th class="slds-text-title_caps" scope="col">BI / PD</th><th class="slds-text-title_caps" scope="col">Status</th><th class="slds-text-title_caps" scope="col">Action</th></tr></thead>
+                <tbody>
+                  <tr class="slds-hint-parent"><td>Apex Mutual · Standard Auto</td><td>A</td><td>$14,850</td><td>$250K/$500K · $100K</td><td><span class="slds-badge">Incumbent</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>Apex Mutual · Premier Auto</td><td>A</td><td>$16,200</td><td>$300K/$500K · $100K</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent ar-best"><td><strong>Lighthouse Casualty · Choice</strong> <span class="slds-badge slds-theme_success">★ Best Value</span></td><td>A+</td><td class="slds-text-color_success"><strong>$13,200</strong></td><td>$250K/$500K · $100K</td><td><span class="slds-badge slds-theme_success">Recommended</span></td><td><button class="slds-button slds-button_brand slds-button_x-small" data-open-modal="modal-bind">Bind</button></td></tr>
+                  <tr class="slds-hint-parent"><td>Lighthouse Casualty · Choice+</td><td>A+</td><td>$14,400</td><td>$500K/$1M · $250K</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>Meridian Auto &amp; Home · Value Auto</td><td>A-</td><td>$12,950</td><td>$100K/$300K · $100K</td><td><span class="slds-badge slds-theme_error">Not recommended</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>Pinnacle Standard · Standard</td><td>A++</td><td>$15,100</td><td>$250K/$500K · $100K</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>Pinnacle Standard · Signature</td><td>A++</td><td>$16,800</td><td>$500K/$1M · $250K</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- EB -->
+            <div id="cmp-eb" class="ar-subview" data-subview-group="cmp" hidden>
+              <div class="ar-ai slds-p-around_medium slds-m-bottom_medium"><p class="slds-text-title_caps slds-text-color_weak">✨ Agentforce Recommendation · 91% confidence</p><p class="slds-text-body_regular slds-m-top_xx-small"><strong>BlueCross BlueShield — Blue PPO Base $1,500</strong> is the incumbent with the strongest network match for Acme's footprint. Their 4% renewal beats the straight-through 12% indication, and the BlueCard PPO covers every ZIP in the census.</p></div>
+              <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                <thead><tr class="slds-line-height_reset"><th class="slds-text-title_caps" scope="col">Carrier · Plan</th><th class="slds-text-title_caps" scope="col">Type</th><th class="slds-text-title_caps" scope="col">Annual Premium</th><th class="slds-text-title_caps" scope="col">Deductible</th><th class="slds-text-title_caps" scope="col">Status</th><th class="slds-text-title_caps" scope="col">Action</th></tr></thead>
+                <tbody>
+                  <tr class="slds-hint-parent"><td>BlueCross · Blue PPO Buy-Up $500</td><td>PPO</td><td>$648,000</td><td>$500</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent ar-best"><td><strong>BlueCross · Blue PPO Base $1,500</strong> <span class="slds-badge slds-theme_success">★ Best Value</span></td><td>PPO</td><td class="slds-text-color_success"><strong>$612,000</strong></td><td>$1,500</td><td><span class="slds-badge slds-theme_success">Incumbent · Recommended</span></td><td><button class="slds-button slds-button_brand slds-button_x-small" data-open-modal="modal-bind">Bind</button></td></tr>
+                  <tr class="slds-hint-parent"><td>BlueCross · Blue HSA $2,500</td><td>HSA</td><td>$561,000</td><td>$2,500</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>UnitedHealthcare · Choice Plus PPO $1,000</td><td>PPO</td><td>$638,400</td><td>$1,000</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>UnitedHealthcare · Choice HSA $2,500</td><td>HSA</td><td>$588,000</td><td>$2,500</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>Cigna · OAP $1,500</td><td>OAP</td><td>$654,600</td><td>$1,500</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>Cigna · OAP HRA $2,000</td><td>HRA</td><td>$624,000</td><td>$2,000</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                  <tr class="slds-hint-parent"><td>Cigna · OAP HSA $3,000</td><td>HSA</td><td>$543,000</td><td>$3,000</td><td><span class="slds-badge slds-badge_lightest">Received</span></td><td><button class="slds-button slds-button_neutral slds-button_x-small">Select</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <footer class="slds-modal__footer"><button class="slds-button slds-button_neutral" data-close-modal>Close</button><button class="slds-button slds-button_brand" data-open-modal="modal-bind">Bind Selected</button></footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" data-close-modal></div>
+    </div>
+
+    <!-- ===== Modal: Bind Checklist ===== -->
+    <div class="ar-modal" id="modal-bind" hidden>
+      <section class="slds-modal slds-fade-in-open slds-modal_medium" role="dialog" aria-modal="true" aria-labelledby="bind-h">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header"><button class="slds-button slds-button_icon slds-modal__close" data-close-modal title="Close"><svg class="slds-button__icon slds-button__icon_large" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#close"></use></svg><span class="slds-assistive-text">Close</span></button><h1 class="slds-modal__title" id="bind-h">Bind Policy</h1></header>
+          <div class="slds-modal__content slds-p-around_medium">
+            <h2 class="slds-text-heading_small slds-m-bottom_x-small">Subjectivities</h2>
+            <fieldset class="slds-form-element slds-m-bottom_medium">
+              <legend class="slds-assistive-text">Bind subjectivities</legend>
+              <div class="slds-form-element__control">
+                <div class="slds-checkbox"><input type="checkbox" id="subj-1" /><label class="slds-checkbox__label" for="subj-1"><span class="slds-checkbox_faux"></span><span class="slds-form-element__label">Sign Application (ACORD 90)</span></label></div>
+                <div class="slds-checkbox"><input type="checkbox" id="subj-2" /><label class="slds-checkbox__label" for="subj-2"><span class="slds-checkbox_faux"></span><span class="slds-form-element__label">Set up EFT / Recurring Payment</span></label></div>
+                <div class="slds-checkbox"><input type="checkbox" id="subj-3" /><label class="slds-checkbox__label" for="subj-3"><span class="slds-checkbox_faux"></span><span class="slds-form-element__label">Acknowledge Emily Mavericks MVR incident</span></label></div>
+                <div class="slds-checkbox"><input type="checkbox" id="subj-4" /><label class="slds-checkbox__label" for="subj-4"><span class="slds-checkbox_faux"></span><span class="slds-form-element__label">Acknowledge UM/UIM + Stacking Disclosures</span></label></div>
+              </div>
+            </fieldset>
+            <div class="slds-grid slds-wrap slds-gutters">
+              <div class="slds-col slds-size_1-of-2"><div class="slds-form-element"><label class="slds-form-element__label" for="pay-freq">Payment Frequency</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="pay-freq"><option>Annual · 0% surcharge</option><option>Semi-Annual · 1% surcharge</option><option>Quarterly · 1.5% surcharge</option><option>Monthly · 2.5% surcharge</option></select></div></div></div></div>
+              <div class="slds-col slds-size_1-of-2"><div class="slds-form-element"><label class="slds-form-element__label" for="pay-method">Payment Method</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="pay-method"><option>ACH Bank Transfer</option><option>Credit Card</option><option>Check</option></select></div></div></div></div>
+            </div>
+          </div>
+          <footer class="slds-modal__footer"><button class="slds-button slds-button_neutral" data-close-modal>Cancel</button><button class="slds-button slds-button_brand" data-close-modal data-toast="Policy bound with carrier.">Bind Policy</button></footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" data-close-modal></div>
+    </div>
+
+    <!-- ===== Modal: New Insurance Rate Plan ===== -->
+    <div class="ar-modal" id="modal-rateplan" hidden>
+      <section class="slds-modal slds-fade-in-open slds-modal_medium" role="dialog" aria-modal="true" aria-labelledby="rp-h">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header"><button class="slds-button slds-button_icon slds-modal__close" data-close-modal title="Close"><svg class="slds-button__icon slds-button__icon_large" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#close"></use></svg><span class="slds-assistive-text">Close</span></button><h1 class="slds-modal__title" id="rp-h">New Insurance Rate Plan</h1></header>
+          <div class="slds-modal__content slds-p-around_medium">
+            <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">* = Required Information</p>
+            <div class="slds-grid slds-wrap slds-gutters">
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="rp-freq"><abbr class="slds-required" title="required">* </abbr>Frequency</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="rp-freq"><option>--None--</option><option>Monthly</option><option>Quarterly</option><option>Semi-Annual</option><option>Annual</option></select></div></div></div></div>
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="rp-type"><abbr class="slds-required" title="required">* </abbr>Type</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="rp-type"><option>--None--</option><option>Fully Insured Health</option><option>Per Employee Per Month</option><option>Per Member Per Month</option><option>Flat</option></select></div></div></div></div>
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="rp-prem">Total Premium Amount</label><div class="slds-form-element__control"><input type="text" id="rp-prem" class="slds-input" placeholder="0.00" /></div></div></div>
+              <div class="slds-col slds-size_1-of-2 slds-m-bottom_small"><div class="slds-form-element"><label class="slds-form-element__label" for="rp-tier">Tier Structure</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="rp-tier"><option>--None--</option><option>Employee Only</option><option>Employee &amp; Spouse</option><option>Employee &amp; Children</option><option>Employee &amp; Family</option></select></div></div></div></div>
+            </div>
+          </div>
+          <footer class="slds-modal__footer"><button class="slds-button slds-button_neutral" data-close-modal>Cancel</button><button class="slds-button slds-button_brand" data-close-modal data-toast="Insurance Rate Plan created.">Save</button></footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" data-close-modal></div>
+    </div>
+
+    <!-- ===== Modal: New Template (setup) ===== -->
+    <div class="ar-modal" id="modal-newtemplate" hidden>
+      <section class="slds-modal slds-fade-in-open slds-modal_medium" role="dialog" aria-modal="true" aria-labelledby="nt-h">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header"><button class="slds-button slds-button_icon slds-modal__close" data-close-modal title="Close"><svg class="slds-button__icon slds-button__icon_large" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#close"></use></svg><span class="slds-assistive-text">Close</span></button><h1 class="slds-modal__title" id="nt-h">New RFQ Template</h1></header>
+          <div class="slds-modal__content slds-p-around_medium">
+            <h2 class="slds-text-heading_small slds-m-bottom_x-small">Initialize Template</h2>
+            <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_medium">Choose the Line of Business and Line of Coverage. These two selections scope the template and drive every downstream stage on the canvas.</p>
+            <div class="slds-form-element slds-m-bottom_small"><label class="slds-form-element__label" for="nt-lob"><abbr class="slds-required" title="required">* </abbr>Line of Business</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="nt-lob"><option>Choose a Line of Business…</option><option>Property &amp; Casualty</option><option>Employee Benefits</option></select></div></div></div>
+            <div class="slds-form-element"><label class="slds-form-element__label" for="nt-loc"><abbr class="slds-required" title="required">* </abbr>Line of Coverage</label><div class="slds-form-element__control"><div class="slds-select_container"><select class="slds-select" id="nt-loc"><option>Choose a Line of Coverage…</option></select></div></div></div>
+          </div>
+          <footer class="slds-modal__footer"><button class="slds-button slds-button_neutral" data-close-modal>Cancel</button><button class="slds-button slds-button_brand" data-close-modal>Next</button></footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" data-close-modal></div>
+    </div>
+
+
+    <!-- Slack drawer -->
+    <div class="ar-slack-scrim" id="slack-scrim" hidden></div>
+    <aside class="ar-slack" id="slack-drawer" role="dialog" aria-label="Slack — #acct-broker-team" hidden>
+      <header class="slds-p-around_small slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-border_bottom">
+        <div>
+          <p class="slds-text-heading_small"># acct-broker-team</p>
+          <p class="slds-text-body_small slds-text-color_weak">5 members</p>
+        </div>
+        <button class="slds-button slds-button_icon slds-button_icon-container" data-slack-close title="Close">
+          <svg class="slds-button__icon" aria-hidden="true"><use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#close"></use></svg>
+          <span class="slds-assistive-text">Close Slack</span>
+        </button>
+      </header>
+      <div class="ar-slack__stream slds-p-around_small">
+        <div class="slds-text-align_center slds-m-bottom_small"><span class="slds-badge slds-badge_lightest">Today</span></div>
+
+        <div class="slds-media slds-m-bottom_medium"><div class="slds-media__figure"><span class="slds-avatar slds-avatar_circle slds-avatar_small"><abbr class="slds-avatar__initials slds-icon-standard-account" title="James Field">JF</abbr></span></div><div class="slds-media__body"><p><strong>James Field</strong> <span class="slds-badge slds-badge_lightest">Producer</span> <span class="slds-text-body_small slds-text-color_weak">9:42 AM</span></p><p class="slds-text-body_small">📋 Mavericks Household auto renewal is up in 42 days. Daughter just got her license — Emily is on the policy now as a 19yo with 1 incident. Apex Mutual wants a 9% increase. Worth shopping.</p></div></div>
+
+        <div class="slds-media slds-m-bottom_medium"><div class="slds-media__figure"><span class="slds-avatar slds-avatar_circle slds-avatar_small"><abbr class="slds-avatar__initials slds-icon-standard-account" title="Elena Rostova">ER</abbr></span></div><div class="slds-media__body"><p><strong>Elena Rostova</strong> <span class="slds-badge slds-badge_lightest">Account Manager</span> <span class="slds-text-body_small slds-text-color_weak">9:46 AM</span></p><p class="slds-text-body_small">💻 On it. I'll launch the Guided RFQ from the Mavericks Account and route to Lighthouse Casualty and Meridian Auto &amp; Home alongside Apex Mutual. Pre-fill from the 2025 dec page should carry both vehicles + drivers forward.</p></div></div>
+
+        <div class="slds-media slds-m-bottom_medium"><div class="slds-media__figure"><span class="slds-avatar slds-avatar_circle slds-avatar_small"><abbr class="slds-avatar__initials slds-icon-standard-bot" title="Agentforce">AI</abbr></span></div><div class="slds-media__body"><p><strong>Agentforce</strong> <span class="slds-badge slds-badge_lightest">AI Assistant</span> <span class="slds-text-body_small slds-text-color_weak">9:51 AM</span></p><p class="slds-text-body_small"><strong>⚡ [Automated System Notification]: Mavericks Personal Auto RFQ submitted to 3 markets.</strong> Recommended carrier set: Apex Mutual (incumbent), Lighthouse Casualty, Meridian Auto &amp; Home. Expected response window: 4–24 hours.</p></div></div>
+
+        <div class="ar-ai slds-p-around_x-small slds-m-bottom_medium"><p class="slds-text-body_small"><strong>⚡ 3 Markets have responded to the Mavericks RFQ.</strong></p><button class="slds-button slds-button_brand slds-button_x-small slds-m-top_x-small" data-open-modal="modal-compare">Compare Quotes</button></div>
+
+        <div class="slds-media slds-m-bottom_medium"><div class="slds-media__figure"><span class="slds-avatar slds-avatar_circle slds-avatar_small"><abbr class="slds-avatar__initials slds-icon-standard-account" title="James Field">JF</abbr></span></div><div class="slds-media__body"><p><strong>James Field</strong> <span class="slds-badge slds-badge_lightest">Producer</span> <span class="slds-text-body_small slds-text-color_weak">11:08 AM</span></p><p class="slds-text-body_small">📋 Acme Manufacturing's group medical is up 1/1. BlueCross sent a 12% renewal indication — way above the 4–6% trend the loss ratio supports. I'm going to shop the market against UHC and Cigna and bring back a 3-way bake-off for the broker meeting.</p></div></div>
+
+        <div class="slds-media slds-m-bottom_medium"><div class="slds-media__figure"><span class="slds-avatar slds-avatar_circle slds-avatar_small"><abbr class="slds-avatar__initials slds-icon-standard-bot" title="Agentforce">AI</abbr></span></div><div class="slds-media__body"><p><strong>Agentforce</strong> <span class="slds-badge slds-badge_lightest">AI Assistant</span> <span class="slds-text-body_small slds-text-color_weak">11:14 AM</span></p><p class="slds-text-body_small"><strong>⚡ [Automated System Notification]: Acme Manufacturing Group Medical RFQ submitted to 3 markets.</strong> 50-employee census validated. Plan designs: Base HMO, Buy-up PPO, HDHP. Expected response window: 24–48 hours.</p></div></div>
+
+        <div class="ar-ai slds-p-around_x-small"><p class="slds-text-body_small"><strong>⚡ 3 Markets have responded to the Acme Manufacturing Medical RFQ.</strong></p><button class="slds-button slds-button_brand slds-button_x-small slds-m-top_x-small" data-open-modal="modal-compare">Compare Quotes</button></div>
+      </div>
+      <footer class="slds-p-around_small slds-border_top">
+        <div class="slds-form-element"><label class="slds-assistive-text" for="slack-compose">Message #acct-broker-team</label><input type="text" id="slack-compose" class="slds-input" placeholder="Message #acct-broker-team" /></div>
+      </footer>
+    </aside>
+
+    <!-- Agentforce pill -->
+    <div class="ar-pill-dock">
+      <form class="ar-pill slds-grid slds-grid_vertical-align-center slds-p-horizontal_small slds-p-vertical_xx-small" id="af-pill-form">
+        <span class="slds-icon_container slds-m-right_x-small" title="Agentforce">
+          <svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+            <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#einstein"></use>
+          </svg>
+          <span class="slds-assistive-text">Agentforce</span>
+        </span>
+        <input type="text" id="af-pill-input" class="slds-input slds-border_none"
+          aria-label="Ask Agentforce"
+          placeholder="Agentforce is an AI Agent that can answer your support questions and complete tasks for you" />
+        <button class="slds-button slds-button_icon slds-button_icon-brand slds-m-left_x-small" type="submit" title="Send to Agentforce">
+          <svg class="slds-button__icon" aria-hidden="true">
+            <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#send"></use>
+          </svg>
+          <span class="slds-assistive-text">Send to Agentforce</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Toast -->
+    <div class="slds-notify_container slds-is-relative" id="toast" hidden>
+      <div class="slds-notify slds-notify_toast slds-theme_success" role="status">
+        <span class="slds-assistive-text">success</span>
+        <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top">
+          <svg class="slds-icon slds-icon_small" aria-hidden="true">
+            <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#success"></use>
+          </svg>
+        </span>
+        <div class="slds-notify__content">
+          <h2 class="slds-text-heading_small" id="toast-message">Done.</h2>
+        </div>
+        <div class="slds-notify__close">
+          <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close" id="toast-close" type="button">
+            <svg class="slds-button__icon" aria-hidden="true">
+              <use xlink:href="https://unpkg.com/@salesforce-ux/design-system@2.27.2/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+            </svg>
+            <span class="slds-assistive-text">Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      // ---- helpers ----
+      function show(el, on) {
+        if (!el) return;
+        el.classList.toggle('slds-show', on);
+        el.classList.toggle('slds-hide', !on);
+      }
+
+      // ---- screen router ----
+      var screenIds = ['screen-account','screen-day','screen-meeting','screen-rfq-pa','screen-rfq-eb','screen-eb-policy','screen-setup'];
+      var tabLinks = document.querySelectorAll('#screen-tabs > .slds-tabs_default__nav .slds-tabs_default__link');
+      function activateScreen(target) {
+        tabLinks.forEach(function (t) {
+          var match = t.getAttribute('data-screen') === target;
+          t.closest('.slds-tabs_default__item').classList.toggle('slds-is-active', match);
+          t.setAttribute('aria-selected', match ? 'true' : 'false');
+          t.setAttribute('tabindex', match ? '0' : '-1');
+        });
+        screenIds.forEach(function (id) { show(document.getElementById(id), id === target); });
+      }
+      tabLinks.forEach(function (t) {
+        t.addEventListener('click', function (e) { e.preventDefault(); activateScreen(t.getAttribute('data-screen')); });
+      });
+      var goHome = document.getElementById('go-home');
+      if (goHome) goHome.addEventListener('click', function () { activateScreen('screen-account'); });
+
+      // cross-screen links
+      document.addEventListener('click', function (e) {
+        var link = e.target.closest && e.target.closest('[data-screen-link]');
+        if (!link) return;
+        e.preventDefault();
+        activateScreen(link.getAttribute('data-screen-link'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // data-toast buttons
+      document.addEventListener('click', function (e) {
+        var t = e.target.closest && e.target.closest('[data-toast]');
+        if (t && window.arToast) window.arToast(t.getAttribute('data-toast'));
+      });
+
+      // secondary slack opener (account sidebar)
+      var openSlack2 = document.getElementById('open-slack-2');
+
+      // ---- density toggle ----
+      var root = document.getElementById('ar-root');
+      var dBtn = document.getElementById('density-toggle');
+      var dLabel = document.getElementById('density-label');
+      if (dBtn) dBtn.addEventListener('click', function () {
+        var compact = root.classList.toggle('ar-density_compact');
+        dBtn.setAttribute('aria-pressed', compact ? 'true' : 'false');
+        dLabel.textContent = compact ? 'Compact' : 'Comfy';
+      });
+
+      // ---- slack drawer ----
+      var slack = document.getElementById('slack-drawer');
+      var scrim = document.getElementById('slack-scrim');
+      function setSlack(on) { if (slack){ slack.hidden = !on; } if (scrim){ scrim.hidden = !on; } }
+      var openSlack = document.getElementById('open-slack');
+      if (openSlack) openSlack.addEventListener('click', function () { setSlack(true); });
+      if (openSlack2) openSlack2.addEventListener('click', function () { setSlack(true); });
+      if (scrim) scrim.addEventListener('click', function () { setSlack(false); });
+      document.addEventListener('click', function (e) {
+        if (e.target && e.target.closest && e.target.closest('[data-slack-close]')) setSlack(false);
+      });
+
+      // ---- toast ----
+      var toast = document.getElementById('toast');
+      var toastMsg = document.getElementById('toast-message');
+      var toastTimer = null;
+      window.arToast = function (msg) {
+        if (!toast) return;
+        if (msg && toastMsg) toastMsg.textContent = msg;
+        toast.hidden = false;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.hidden = true; }, 4500);
+      };
+      var toastClose = document.getElementById('toast-close');
+      if (toastClose) toastClose.addEventListener('click', function () { toast.hidden = true; });
+
+      // ---- agentforce pill -> opens slack with a message ----
+      var pillForm = document.getElementById('af-pill-form');
+      if (pillForm) pillForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var input = document.getElementById('af-pill-input');
+        if (input && input.value.trim()) { setSlack(true); window.arToast('Sent to Agentforce.'); input.value = ''; }
+      });
+
+      // ---- generic modal open/close via data-attrs ----
+      document.addEventListener('click', function (e) {
+        var opener = e.target.closest && e.target.closest('[data-open-modal]');
+        if (opener) { var m = document.getElementById(opener.getAttribute('data-open-modal')); if (m) m.hidden = false; }
+        var closer = e.target.closest && e.target.closest('[data-close-modal]');
+        if (closer) { var c = closer.closest('.ar-modal'); if (c) c.hidden = true; }
+      });
+
+      // ---- generic subview toggles (button-group with data-subview/data-group) ----
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest && e.target.closest('[data-subview]');
+        if (!btn) return;
+        var group = btn.getAttribute('data-group');
+        var target = btn.getAttribute('data-subview');
+        document.querySelectorAll('[data-subview-group="' + group + '"]').forEach(function (panel) {
+          panel.hidden = panel.id !== target;
+        });
+        document.querySelectorAll('[data-group="' + group + '"]').forEach(function (b) {
+          var on = b === btn;
+          b.classList.toggle('slds-button_brand', on);
+          b.classList.toggle('slds-button_neutral', !on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      });
+
+      // ---- account console tab switch (Mavericks / Acme) ----
+      document.addEventListener('click', function (e) {
+        var tab = e.target.closest && e.target.closest('[data-acct-tab]');
+        if (!tab) return;
+        var id = tab.getAttribute('data-acct-tab');
+        document.querySelectorAll('[data-acct-tab]').forEach(function (t) {
+          t.classList.toggle('ar-is-active', t === tab);
+        });
+        document.querySelectorAll('[data-acct-body]').forEach(function (b) {
+          b.hidden = b.getAttribute('data-acct-body') !== id;
+        });
+      });
+
+      // ---- account record sub-tabs (Related / Details / RFQs / Policies) ----
+      document.addEventListener('click', function (e) {
+        var link = e.target.closest && e.target.closest('[data-subtab]');
+        if (!link) return;
+        e.preventDefault();
+        var grp = link.getAttribute('data-subtab-group');
+        var id = link.getAttribute('data-subtab');
+        document.querySelectorAll('[data-subtab-group="' + grp + '"]').forEach(function (l) {
+          var on = l === link;
+          l.closest('li').classList.toggle('slds-is-active', on);
+          l.setAttribute('aria-selected', on ? 'true' : 'false');
+          l.setAttribute('tabindex', on ? '0' : '-1');
+        });
+        document.querySelectorAll('[data-subpanel-group="' + grp + '"]').forEach(function (p) {
+          show(p, p.getAttribute('data-subpanel') === id);
+        });
+      });
+
+      // ---- expandable rows (RFQ related list nested quotes) ----
+      document.addEventListener('click', function (e) {
+        var t = e.target.closest && e.target.closest('[data-expand]');
+        if (!t) return;
+        var rowsId = t.getAttribute('data-expand');
+        document.querySelectorAll('[data-expand-rows="' + rowsId + '"]').forEach(function (r) { r.hidden = !r.hidden; });
+        var expanded = t.getAttribute('aria-expanded') === 'true';
+        t.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      });
+
+      // ---- census import reveal ----
+      document.addEventListener('click', function (e) {
+        var b = e.target.closest && e.target.closest('[data-census-load]');
+        if (!b) return;
+        var grp = b.getAttribute('data-census-load');
+        var empty = document.querySelector('[data-census-empty="' + grp + '"]');
+        var loaded = document.querySelector('[data-census-loaded="' + grp + '"]');
+        if (empty) empty.hidden = true;
+        if (loaded) loaded.hidden = false;
+      });
+
+      // ---- meeting center scoped tabs ----
+      document.querySelectorAll('.slds-tabs_scoped__link').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          var target = link.getAttribute('data-mc');
+          if (!target) return;
+          document.querySelectorAll('.slds-tabs_scoped__link').forEach(function (l) {
+            var on = l === link;
+            l.closest('.slds-tabs_scoped__item').classList.toggle('slds-is-active', on);
+            l.setAttribute('aria-selected', on ? 'true' : 'false');
+            l.setAttribute('tabindex', on ? '0' : '-1');
+          });
+          ['mc-prep','mc-session','mc-follow'].forEach(function (id) { show(document.getElementById(id), id === target); });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

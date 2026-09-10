@@ -1,0 +1,143 @@
+<template>
+  <div class="hom-cov">
+    <!-- ── Property coverages - A through D ──────────────────────── -->
+    <article class="hom-cov__card">
+      <header class="hom-cov__card-head">
+        <span class="hom-cov__card-icon" aria-hidden="true">
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path fill="currentColor" d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
+          </svg>
+        </span>
+        <h3 class="hom-cov__card-title">Property Coverages</h3>
+      </header>
+
+      <div class="hom-cov__rows">
+        <template for:each={propertyCoverageRows} for:item="cov">
+          <div class={cov.rowClass} key={cov.key}>
+            <label class="hom-cov__include">
+              <input
+                type="checkbox"
+                data-key={cov.key}
+                checked={cov.included}
+                disabled={cov.mandatory}
+                onchange={handleCoverageInclude}
+              />
+              <span class="hom-cov__faux" aria-hidden="true"></span>
+              <span class="hom-cov__include-label">{cov.label}</span>
+            </label>
+
+            <!-- Field labels carry the SLDS required asterisk whenever
+                 the coverage row is mandatory, since a mandatory
+                 coverage can't be submitted without a value. Other
+                 Structures renders the Limit group only. -->
+            <div class="hom-cov__range-fields">
+              <div class="hom-cov__range-group">
+                <span class="hom-cov__range-label">
+                  Limit
+                  <template lwc:if={cov.mandatory}><abbr class="slds-required" title="required">*</abbr></template>
+                </span>
+                <c-picklist
+                  options={cov.limitOptions}
+                  value={cov.limit}
+                  placeholder="Select..."
+                  accessible-label="Limit"
+                  required={cov.mandatory}
+                  data-coverage={cov.key}
+                  data-field="limit"
+                  onchange={handleCoverageRange}
+                ></c-picklist>
+              </div>
+
+              <template lwc:if={cov.hasDed}>
+                <div class="hom-cov__range-group">
+                  <span class="hom-cov__range-label">
+                    Deductible
+                    <template lwc:if={cov.mandatory}><abbr class="slds-required" title="required">*</abbr></template>
+                  </span>
+                  <c-picklist
+                    options={cov.dedOptions}
+                    value={cov.ded}
+                    placeholder="Select..."
+                    accessible-label="Deductible"
+                    required={cov.mandatory}
+                    data-coverage={cov.key}
+                    data-field="ded"
+                    onchange={handleCoverageRange}
+                  ></c-picklist>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+    </article>
+
+    <!-- ── Policy coverages - E and F ────────────────────────────── -->
+    <article class="hom-cov__card">
+      <header class="hom-cov__card-head">
+        <span class="hom-cov__card-icon" aria-hidden="true">
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path fill="currentColor" d="M12 2L4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3z"/>
+          </svg>
+        </span>
+        <h3 class="hom-cov__card-title">Policy Coverages</h3>
+      </header>
+
+      <div class="hom-cov__rows">
+        <template for:each={policyCoverageRows} for:item="cov">
+          <div class={cov.rowClass} key={cov.key}>
+            <label class="hom-cov__include">
+              <input
+                type="checkbox"
+                data-key={cov.key}
+                checked={cov.included}
+                disabled={cov.mandatory}
+                onchange={handleCoverageInclude}
+              />
+              <span class="hom-cov__faux" aria-hidden="true"></span>
+              <span class="hom-cov__include-label">{cov.label}</span>
+            </label>
+
+            <div class="hom-cov__range-fields">
+              <div class="hom-cov__range-group">
+                <span class="hom-cov__range-label">
+                  Limit
+                  <template lwc:if={cov.mandatory}><abbr class="slds-required" title="required">*</abbr></template>
+                </span>
+                <c-picklist
+                  options={cov.limitOptions}
+                  value={cov.limit}
+                  placeholder="Select..."
+                  accessible-label="Limit"
+                  required={cov.mandatory}
+                  data-coverage={cov.key}
+                  data-field="limit"
+                  onchange={handleCoverageRange}
+                ></c-picklist>
+              </div>
+
+              <template lwc:if={cov.hasDed}>
+                <div class="hom-cov__range-group">
+                  <span class="hom-cov__range-label">
+                    Deductible
+                    <template lwc:if={cov.mandatory}><abbr class="slds-required" title="required">*</abbr></template>
+                  </span>
+                  <c-picklist
+                    options={cov.dedOptions}
+                    value={cov.ded}
+                    placeholder="Select..."
+                    accessible-label="Deductible"
+                    required={cov.mandatory}
+                    data-coverage={cov.key}
+                    data-field="ded"
+                    onchange={handleCoverageRange}
+                  ></c-picklist>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+    </article>
+  </div>
+</template>

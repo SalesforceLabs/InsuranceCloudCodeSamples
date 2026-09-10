@@ -1,0 +1,1015 @@
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import {
+  Button,
+  ButtonGroup,
+  Icon,
+  IconSettings
+} from '@salesforce/design-system-react';
+import GlobalHeader from '@/components/Navigation/GlobalHeader';
+import { mockSubmissionLines } from '@/data/mockSubmissionLines';
+import { mockSubmissions } from '@/data/mockSubmissions';
+import PendingTask from '@/components/Tasks/PendingTask';
+import ActivityLog from '@/components/Activity/ActivityLog';
+import { ActivityItemProps } from '@/components/Activity/ActivityItem';
+
+export default function SubmissionLineDetail() {
+  const router = useRouter();
+  const { id } = router.query;
+  const [selectedTab, setSelectedTab] = useState('overview');
+  const [selectedCommTab, setSelectedCommTab] = useState<'email' | 'slack'>('email');
+  const [selectedEmailId, setSelectedEmailId] = useState('email-1');
+  const [selectedDocumentId, setSelectedDocumentId] = useState('doc-1');
+
+  // Editable line state
+  const [editableLine, setEditableLine] = useState<typeof mockSubmissionLines[0] | null>(null);
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [isSummaryExpanded, setIsSummaryExpanded] = useState(true);
+  const [isHeaderCompact, setIsHeaderCompact] = useState(false);
+
+  // Helper function to load submission data with localStorage edits
+  const getSubmissionData = (submissionId: string) => {
+    const originalSubmission = mockSubmissions.find((s) => s.id === submissionId);
+    if (!originalSubmission) return null;
+
+    // Check if there are saved edits in localStorage
+    if (typeof window !== 'undefined') {
+      const savedEdits = localStorage.getItem(`submission_${submissionId}`);
+      if (savedEdits) {
+        try {
+          const edits = JSON.parse(savedEdits);
+          return { ...originalSubmission, ...edits };
+        } catch (e) {
+          console.error('Error loading saved submission edits:', e);
+        }
+      }
+    }
+    return originalSubmission;
+  };
+
+  // TODO: Extract to shared data file - these are identical across submissions and submission-lines
+  // Mock data for Communication and Documents tabs (shared with submissions page)
+  const emailThreads: any[] = [];
+  const slackMessages: any[] = [];
+  const documents: any[] = [];
+
+  // Update editableLine when router query is ready
+  useEffect(() => {
+    if (id) {
+      const foundLine = mockSubmissionLines.find(l => l.id === id);
+      if (foundLine) {
+        setEditableLine(foundLine);
+      }
+    }
+  }, [id]);
+
+  const line = editableLine;
+  const parentLine = line?.parentLineId
+    ? mockSubmissionLines.find(l => l.id === line.parentLineId)
+    : null;
+  const childLines = line ? mockSubmissionLines.filter(l => l.parentLineId === line.id) : [];
+  const submission = line ? getSubmissionData(line.insuranceSubmissionId) : null;
+
+  // Mock activity data for submission line
+  const activities: ActivityItemProps[] = [
+    {
+      id: 'act-1',
+      title: 'Line Created',
+      description: `${line?.name || 'Submission Line'} · System Task`,
+      completedBy: 'System',
+      timestamp: '9:30 PM · May 12',
+      status: 'completed',
+      details: 'Submission line successfully created from incoming data',
+      detailsList: [
+        'Line of business: Commercial Property',
+        'Coverage limits extracted',
+        'Premium calculation initialized'
+      ]
+    },
+    {
+      id: 'act-2',
+      title: 'Coverage Review',
+      description: `${line?.name || 'Submission Line'} · Manual Task`,
+      completedBy: 'Underwriter',
+      timestamp: '10:15 AM · May 13',
+      status: 'completed',
+      errorMessage: 'Missing required documentation for final approval',
+      details: 'Coverage review completed with exceptions',
+      detailsList: [
+        'Property valuation verified',
+        'Risk factors assessed',
+        'Additional underwriting documents required'
+      ]
+    },
+    {
+      id: 'act-3',
+      title: 'Risk Assessment',
+      description: `${line?.name || 'Submission Line'} · System Task`,
+      completedBy: 'System',
+      timestamp: '2:45 PM · May 13',
+      status: 'in-progress'
+    }
+  ];
+
+  const handleFieldEdit = (fieldName: string, value: any) => {
+    if (line) {
+      setEditableLine({
+        ...line,
+        [fieldName]: value
+      });
+    }
+  };
+
+  const handleFieldClick = (fieldName: string) => {
+    setEditingField(fieldName);
+  };
+
+  const handleFieldBlur = () => {
+    setEditingField(null);
+  };
+
+  if (!line) {
+    return (
+      <>
+        <GlobalHeader />
+        <div className="record-page-container">
+          <div className="slds-text-align_center slds-m-vertical_xx-large">
+            <h1 className="slds-text-heading_large">Submission Line not found</h1>
+            <button
+              className="slds-button slds-button_brand slds-m-top_medium"
+              onClick={() => router.back()}
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  const formatCurrency = (amount: number | null | undefined) => {
+    if (!amount) return 'N/A';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  return (
+    <IconSettings iconPath="/assets/salesforce-lightning-design-system/icons">
+      <div style={{ backgroundColor: '#f3f3f3', minHeight: '100vh' }}>
+        <GlobalHeader />
+
+        {/* Global Navigation Bar */}
+        <div style={{
+          backgroundColor: 'white',
+          borderBottom: '1px solid #c9c9c9',
+          boxShadow: '0px 0px 1px rgba(0,0,0,0.18), 0px 2px 1px rgba(0,0,0,0.18), 0px -1px 1px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '4px 32px 4px 0'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', height: '32px', paddingLeft: '16px' }}>
+              <Icon
+                assistiveText={{ label: 'Waffle' }}
+                category="utility"
+                name="waffle"
+                size="small"
+              />
+              <span style={{ fontSize: '20px', fontWeight: 400, color: '#001e5b' }}>Nexus</span>
+            </div>
+            <Button
+              assistiveText={{ icon: 'Edit' }}
+              iconCategory="utility"
+              iconName="edit"
+              iconSize="small"
+              iconVariant="container"
+            />
+          </div>
+        </div>
+
+        <div style={{ padding: '16px' }}>
+          {/* Page Header - White background */}
+          <div style={{ backgroundColor: 'white', marginBottom: '0', position: 'relative' }}>
+            {!isHeaderCompact ? (
+              /* Expanded Header */
+              <div style={{ padding: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                {/* Icon */}
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#5867E8',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <svg style={{ width: '20px', height: '20px', fill: 'white' }} viewBox="0 0 52 52">
+                    <path d="M39.5 6h-27C10.6 6 9 7.6 9 9.5v33c0 1.9 1.6 3.5 3.5 3.5h27c1.9 0 3.5-1.6 3.5-3.5v-33C43 7.6 41.4 6 39.5 6zM35 40H17c-.8 0-1.5-.7-1.5-1.5v-25c0-.8.7-1.5 1.5-1.5h18c.8 0 1.5.7 1.5 1.5v25c0 .8-.7 1.5-1.5 1.5z"/>
+                  </svg>
+                </div>
+
+                {/* Content */}
+                <div style={{ flex: 1 }}>
+                  {/* Label */}
+                  <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Submission Line</div>
+
+                  {/* Title */}
+                  <h1 style={{ fontSize: '28px', fontWeight: 400, color: '#001e5b', margin: 0, lineHeight: '35px', marginBottom: '16px' }}>
+                    {line.name}
+                  </h1>
+
+                  {/* Details row */}
+                  <div style={{ display: 'flex', gap: '80px', flexWrap: 'wrap' }}>
+                    <div>
+                      <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '2px', lineHeight: '16px' }}>Submission</div>
+                      <a
+                        href={`/submissions/${line.insuranceSubmissionId}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          router.push(`/submissions/${line.insuranceSubmissionId}`);
+                        }}
+                        style={{ fontSize: '13px', color: '#0250d9', textDecoration: 'underline', lineHeight: '18px', cursor: 'pointer' }}
+                      >
+                        {submission?.name || line.insuranceSubmissionId}
+                      </a>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '2px', lineHeight: '16px' }}>Line Type</div>
+                      <div style={{ fontSize: '13px', color: '#001e5b', lineHeight: '18px' }}>{line.lineType}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '2px', lineHeight: '16px' }}>LOB</div>
+                      <div style={{ fontSize: '13px', color: '#001e5b', lineHeight: '18px' }}>{line.lineOfBusiness}</div>
+                    </div>
+                    {parentLine && (
+                      <div>
+                        <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '2px', lineHeight: '16px' }}>Parent Line</div>
+                        <a
+                          href={`/submission-lines/${parentLine.id}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            router.push(`/submission-lines/${parentLine.id}`);
+                          }}
+                          style={{ fontSize: '13px', color: '#0250d9', textDecoration: 'underline', lineHeight: '18px', cursor: 'pointer' }}
+                        >
+                          {parentLine.name}
+                        </a>
+                      </div>
+                    )}
+                    <div>
+                      <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '2px', lineHeight: '16px' }}>Status</div>
+                      <span style={{
+                        backgroundColor: line.status === 'Active' ? '#2E844A' : '#C9C9C9',
+                        color: 'white',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontSize: '11px',
+                        fontWeight: 600
+                      }}>
+                        {line.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ flexShrink: 0, display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <Button
+                    label="Ask"
+                    variant="brand"
+                    iconCategory="utility"
+                    iconName="agent_astro"
+                    iconPosition="left"
+                    iconSize="medium"
+                  />
+                  <ButtonGroup id="page-header-actions">
+                    <Button label="Edit" />
+                    <Button label="Delete" />
+                    <Button label="Clone" />
+                  </ButtonGroup>
+                </div>
+              </div>
+            ) : (
+              /* Compact Header */
+              <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {/* Icon */}
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  backgroundColor: '#5867E8',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <svg style={{ width: '16px', height: '16px', fill: 'white' }} viewBox="0 0 52 52">
+                    <path d="M39.5 6h-27C10.6 6 9 7.6 9 9.5v33c0 1.9 1.6 3.5 3.5 3.5h27c1.9 0 3.5-1.6 3.5-3.5v-33C43 7.6 41.4 6 39.5 6zM35 40H17c-.8 0-1.5-.7-1.5-1.5v-25c0-.8.7-1.5 1.5-1.5h18c.8 0 1.5.7 1.5 1.5v25c0 .8-.7 1.5-1.5 1.5z"/>
+                  </svg>
+                </div>
+
+                {/* Title */}
+                <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#001e5b', margin: 0, lineHeight: '24px', flex: 1 }}>
+                  {line.name}
+                </h1>
+
+                {/* Badges */}
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div style={{
+                    backgroundColor: '#e5e5e5',
+                    color: '#2e2e2e',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '11px',
+                    fontWeight: 500
+                  }}>
+                    {line.lineType}
+                  </div>
+                  <div style={{
+                    backgroundColor: '#e5e5e5',
+                    color: '#2e2e2e',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '11px',
+                    fontWeight: 500
+                  }}>
+                    {line.lineOfBusiness}
+                  </div>
+                </div>
+
+                {/* Stage Badge */}
+                <div style={{
+                  backgroundColor: '#032D60',
+                  color: 'white',
+                  padding: '6px 12px',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  fontWeight: 500
+                }}>
+                  Risk Evaluation
+                </div>
+
+                {/* Ask Button */}
+                <Button
+                  label="Ask"
+                  variant="brand"
+                  iconCategory="utility"
+                  iconName="agent_astro"
+                  iconPosition="left"
+                  iconSize="medium"
+                />
+
+                {/* Overflow Menu */}
+                <div style={{ position: 'relative' }}>
+                  <Button
+                    iconCategory="utility"
+                    iconName="threedots_vertical"
+                    iconSize="small"
+                    variant="icon"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Toggle Arrow at Bottom Center */}
+            <button
+              onClick={() => setIsHeaderCompact(!isHeaderCompact)}
+              style={{
+                position: 'absolute',
+                bottom: '-12px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                backgroundColor: 'white',
+                border: '1px solid #c9c9c9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 10,
+                padding: 0
+              }}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="#5c5c5c"
+                style={{
+                  transform: isHeaderCompact ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.2s'
+                }}
+              >
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Progress Path - Only show in expanded state */}
+          {!isHeaderCompact && (
+          <div style={{
+            marginTop: '16px',
+            marginBottom: '16px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '16px'
+          }}>
+            <div style={{ display: 'flex', flex: 1, height: '32px' }}>
+              {/* Stage 1 - Intake and Clearance (Complete) */}
+              <div style={{
+                position: 'relative',
+                flex: 1,
+                backgroundColor: '#4BCA81',
+                color: '#032D60',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: 400,
+                clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)'
+              }}>
+                <svg style={{ width: '14px', height: '14px', fill: '#032D60', marginRight: '4px' }} viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                Intake and Clearance
+              </div>
+
+              {/* Stage 2 - Data Enrichment (Complete) */}
+              <div style={{
+                position: 'relative',
+                flex: 1,
+                backgroundColor: '#4BCA81',
+                color: '#032D60',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: 400,
+                clipPath: 'polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%)',
+                marginLeft: '-1px'
+              }}>
+                <svg style={{ width: '14px', height: '14px', fill: '#032D60', marginRight: '4px' }} viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                Data Enrichment
+              </div>
+
+              {/* Stage 3 - Risk Evaluation (Current) */}
+              <div style={{
+                position: 'relative',
+                flex: 1,
+                backgroundColor: '#032D60',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: 400,
+                clipPath: 'polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%)',
+                marginLeft: '-1px'
+              }}>
+                Risk Evaluation
+              </div>
+
+              {/* Stage 4 - Pricing and Quoting (Incomplete) */}
+              <div style={{
+                position: 'relative',
+                flex: 1,
+                backgroundColor: '#C9C9C9',
+                color: '#706E6B',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: 400,
+                clipPath: 'polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%)',
+                marginLeft: '-1px'
+              }}>
+                Pricing and Quoting
+              </div>
+
+              {/* Stage 5 - Binding and Policy Issuance (Incomplete) */}
+              <div style={{
+                position: 'relative',
+                flex: 1,
+                backgroundColor: '#C9C9C9',
+                color: '#706E6B',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '13px',
+                fontWeight: 400,
+                clipPath: 'polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%)',
+                marginLeft: '-1px'
+              }}>
+                Binding and Policy Issuance
+              </div>
+            </div>
+
+            {/* Mark as Complete button */}
+            <button className="slds-button slds-button_brand" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              height: '32px',
+              padding: '0 16px',
+              whiteSpace: 'nowrap'
+            }}>
+              <svg style={{ width: '14px', height: '14px', fill: 'white' }} viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              Mark as Complete
+            </button>
+          </div>
+          )}
+
+          {/* Main Content Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '30% 70%', gap: '16px', marginTop: isHeaderCompact ? '24px' : '0' }}>
+            {/* Left Column - Pending Tasks */}
+            <div>
+              {/* Pending Tasks Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0, color: '#2e2e2e' }}>Pending Tasks</h3>
+                <button className="slds-button slds-button_neutral" style={{ fontSize: '13px', height: '28px', padding: '0 12px' }}>New Task</button>
+              </div>
+
+              <PendingTask
+                id="task-1"
+                title="Review Line Details"
+                assignedTo={line.name}
+                assignedToType="Submission Line"
+                taskType="Manual Task"
+                progressType="normal"
+                status="in-progress"
+                description="Review and validate all line details"
+                onLaunch={() => console.log('Launch task')}
+                onEdit={() => console.log('Edit task')}
+                onDelete={() => console.log('Delete task')}
+              />
+            </div>
+
+            {/* Right Column - Tabs and Content */}
+            <div style={{ backgroundColor: 'white', borderRadius: '12px', overflow: 'visible', minHeight: isHeaderCompact ? 'calc(100vh - 200px)' : 'calc(100vh - 350px)', display: 'flex', flexDirection: 'column' }}>
+              {/* Tabs */}
+              <div style={{
+                borderBottom: '1px solid #dddbda',
+                display: 'flex',
+                padding: '0 16px',
+                backgroundColor: 'white'
+              }}>
+                {['Overview', 'Communication', 'Documents', 'Details', 'Related', 'Activity'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setSelectedTab(tab.toLowerCase().replace(' ', '-'))}
+                    style={{
+                      padding: '16px 16px 14px 16px',
+                      border: 'none',
+                      background: 'none',
+                      fontSize: '13px',
+                      fontWeight: selectedTab === tab.toLowerCase().replace(' ', '-') ? 600 : 400,
+                      color: selectedTab === tab.toLowerCase().replace(' ', '-') ? '#0176D3' : '#706E6B',
+                      borderBottom: selectedTab === tab.toLowerCase().replace(' ', '-') ? '2px solid #0176D3' : '2px solid transparent',
+                      marginBottom: '-1px',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Overview Tab Content */}
+              {selectedTab === 'overview' && (
+                <div style={{ display: 'flex', flex: 1, gap: '16px', padding: '16px' }}>
+                  {/* Left Section - Activity Log (1/3 width) */}
+                  <div style={{ flex: '1' }}>
+                    <ActivityLog
+                      activities={activities}
+                      showViewAll={true}
+                      onViewAll={() => console.log('View all activities')}
+                    />
+                  </div>
+
+                  {/* Right Section - Line Summary (2/3 width) */}
+                  <div style={{ flex: '2' }}>
+                    {/* Line Summary Card */}
+                    <div style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #c9c9c9',
+                      borderRadius: '12px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        backgroundColor: '#f1f6fa',
+                        borderBottom: isSummaryExpanded ? '1px solid #c9c9c9' : 'none',
+                        padding: '8px 16px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        cursor: 'pointer'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <button
+                            onClick={() => setIsSummaryExpanded(!isSummaryExpanded)}
+                            style={{
+                              border: 'none',
+                              background: 'none',
+                              cursor: 'pointer',
+                              padding: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="#001e5b"
+                              style={{
+                                transform: isSummaryExpanded ? 'rotate(180deg)' : 'rotate(90deg)',
+                                transition: 'transform 0.2s'
+                              }}
+                            >
+                              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                            </svg>
+                          </button>
+                          <Icon
+                            assistiveText={{ label: 'Sparkles' }}
+                            category="utility"
+                            name="sparkles"
+                            size="x-small"
+                          />
+                          <span style={{ fontSize: '16px', fontWeight: 600, color: 'black' }}>Line Summary</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <Button iconCategory="utility" iconName="sync" iconSize="small" variant="icon" />
+                          <Button iconCategory="utility" iconName="threedots_vertical" iconSize="small" variant="icon" />
+                        </div>
+                      </div>
+                      {isSummaryExpanded && (
+                        <div style={{ padding: '12px 16px' }}>
+                          <p style={{ fontSize: '12px', color: '#2e2e2e', lineHeight: '17px', margin: 0 }}>
+                            This is a {line.lineType} line for {line.lineOfBusiness}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Details Tab Content */}
+              {selectedTab === 'details' && (
+                <div style={{ padding: '16px' }}>
+                  {/* Line Information Section */}
+                  <div style={{ marginBottom: '1px' }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 16px',
+                      backgroundColor: '#f3f3f3',
+                      cursor: 'pointer'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#001e5b">
+                          <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                        </svg>
+                        <span style={{ fontSize: '16px', fontWeight: 400, color: '#001e5b' }}>Line Information</span>
+                      </div>
+                    </div>
+                    <div style={{ backgroundColor: 'white', padding: '16px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        {/* Left Column */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Line Name</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div style={{ fontSize: '13px', color: '#001e5b' }}>{line.name}</div>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Submission</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <a
+                                href={`/submissions/${line.insuranceSubmissionId}`}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  router.push(`/submissions/${line.insuranceSubmissionId}`);
+                                }}
+                                style={{ fontSize: '13px', color: '#0176D3', textDecoration: 'none', cursor: 'pointer' }}
+                              >
+                                {submission?.name || line.insuranceSubmissionId}
+                              </a>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Line Type</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div style={{ fontSize: '13px', color: '#001e5b' }}>{line.lineType}</div>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Line of Business</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div style={{ fontSize: '13px', color: '#001e5b' }}>{line.lineOfBusiness}</div>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          {parentLine && (
+                            <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                              <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Parent Line</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <a
+                                  href={`/submission-lines/${parentLine.id}`}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    router.push(`/submission-lines/${parentLine.id}`);
+                                  }}
+                                  style={{ fontSize: '13px', color: '#0176D3', textDecoration: 'none', cursor: 'pointer' }}
+                                >
+                                  {parentLine.name}
+                                </a>
+                                <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                  <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                    <path d="M45.5 7h-5.1c-.2-.6-.9-1-1.6-1h-2.5l-1.8-3.6c-.3-.6-.8-1-1.5-1h-10c-.7 0-1.2.4-1.5 1L19.7 6h-2.5c-.7 0-1.4.4-1.6 1H10.5c-1.4 0-2.5 1.1-2.5 2.5v3c0 .8.7 1.5 1.5 1.5h34c.8 0 1.5-.7 1.5-1.5v-3c0-1.4-1.1-2.5-2.5-2.5zM38 44c0 1.7-1.3 3-3 3H17c-1.7 0-3-1.3-3-3V17h24v27z"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Right Column */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Status</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{
+                                backgroundColor: line.status === 'Active' ? '#2E844A' : '#C9C9C9',
+                                color: 'white',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: 600
+                              }}>
+                                {line.status}
+                              </span>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          {line.stage && (
+                            <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                              <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Stage</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div style={{ fontSize: '13px', color: '#001e5b' }}>{line.stage}</div>
+                                <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                  <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                    <path d="M45.5 7h-5.1c-.2-.6-.9-1-1.6-1h-2.5l-1.8-3.6c-.3-.6-.8-1-1.5-1h-10c-.7 0-1.2.4-1.5 1L19.7 6h-2.5c-.7 0-1.4.4-1.6 1H10.5c-1.4 0-2.5 1.1-2.5 2.5v3c0 .8.7 1.5 1.5 1.5h34c.8 0 1.5-.7 1.5-1.5v-3c0-1.4-1.1-2.5-2.5-2.5zM38 44c0 1.7-1.3 3-3 3H17c-1.7 0-3-1.3-3-3V17h24v27z"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          {(line.sequenceNumber !== null && line.sequenceNumber !== undefined) && (
+                            <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                              <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Sequence Number</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div style={{ fontSize: '13px', color: '#001e5b' }}>{line.sequenceNumber}</div>
+                                <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                  <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                    <path d="M45.5 7h-5.1c-.2-.6-.9-1-1.6-1h-2.5l-1.8-3.6c-.3-.6-.8-1-1.5-1h-10c-.7 0-1.2.4-1.5 1L19.7 6h-2.5c-.7 0-1.4.4-1.6 1H10.5c-1.4 0-2.5 1.1-2.5 2.5v3c0 .8.7 1.5 1.5 1.5h34c.8 0 1.5-.7 1.5-1.5v-3c0-1.4-1.1-2.5-2.5-2.5zM38 44c0 1.7-1.3 3-3 3H17c-1.7 0-3-1.3-3-3V17h24v27z"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Financial Information Section */}
+                  <div style={{ marginBottom: '1px' }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 16px',
+                      backgroundColor: '#f3f3f3',
+                      cursor: 'pointer'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#001e5b">
+                          <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                        </svg>
+                        <span style={{ fontSize: '16px', fontWeight: 400, color: '#001e5b' }}>Financial Information</span>
+                      </div>
+                    </div>
+                    <div style={{ backgroundColor: 'white', padding: '16px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        {/* Left Column */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Insured Value</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div style={{ fontSize: '13px', color: '#001e5b' }}>{formatCurrency(line.insuredValue)}</div>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Coverage Limit</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div style={{ fontSize: '13px', color: '#001e5b' }}>{formatCurrency(line.coverageLimit)}</div>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Deductible</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div style={{ fontSize: '13px', color: '#001e5b' }}>{formatCurrency(line.deductible)}</div>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Column */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                            <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Premium Allocation</div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div style={{ fontSize: '13px', color: '#001e5b' }}>{formatCurrency(line.premiumAllocation)}</div>
+                              <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                  <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          {line.sublimit && (
+                            <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                              <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Sublimit</div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div style={{ fontSize: '13px', color: '#001e5b' }}>{formatCurrency(line.sublimit)}</div>
+                                <button style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}>
+                                  <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                    <path d="M45.5 7h-5.1c-.2-.6-.9-1-1.6-1h-2.5l-1.8-3.6c-.3-.6-.8-1-1.5-1h-10c-.7 0-1.2.4-1.5 1L19.7 6h-2.5c-.7 0-1.4.4-1.6 1H10.5c-1.4 0-2.5 1.1-2.5 2.5v3c0 .8.7 1.5 1.5 1.5h34c.8 0 1.5-.7 1.5-1.5v-3c0-1.4-1.1-2.5-2.5-2.5zM38 44c0 1.7-1.3 3-3 3H17c-1.7 0-3-1.3-3-3V17h24v27z"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Line Attributes Section */}
+                  {line.lineAttributes && (
+                    <div style={{ marginBottom: '1px' }}>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '12px 16px',
+                        backgroundColor: '#f3f3f3',
+                        cursor: 'pointer'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="#001e5b">
+                            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                          </svg>
+                          <span style={{ fontSize: '16px', fontWeight: 400, color: '#001e5b' }}>Line Attributes</span>
+                        </div>
+                      </div>
+                      <div style={{ backgroundColor: 'white', padding: '16px' }}>
+                        <div style={{ borderBottom: '1px solid #e5e5e5', paddingBottom: '8px' }}>
+                          <div style={{ fontSize: '12px', color: '#5c5c5c', marginBottom: '4px' }}>Attributes</div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            {editingField === 'lineAttributes' ? (
+                              <textarea
+                                value={line.lineAttributes || ''}
+                                onChange={(e) => handleFieldEdit('lineAttributes', e.target.value)}
+                                onBlur={handleFieldBlur}
+                                autoFocus
+                                rows={4}
+                                style={{
+                                  fontSize: '13px',
+                                  color: '#001e5b',
+                                  border: '1px solid #0176D3',
+                                  padding: '8px',
+                                  borderRadius: '4px',
+                                  flex: 1,
+                                  marginRight: '8px',
+                                  fontFamily: 'inherit',
+                                  resize: 'vertical'
+                                }}
+                              />
+                            ) : (
+                              <div style={{
+                                fontSize: '13px',
+                                color: '#001e5b',
+                                whiteSpace: 'pre-wrap',
+                                flex: 1
+                              }}>
+                                {line.lineAttributes}
+                              </div>
+                            )}
+                            <button
+                              onClick={() => handleFieldClick('lineAttributes')}
+                              style={{ border: 'none', background: 'none', cursor: 'pointer', padding: '4px' }}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 52 52" fill="#706E6B">
+                                <path d="M49.7 8.1L43.9 2.3c-.6-.6-1.5-.6-2.1 0l-4.2 4.2L48.1 16l1.6-1.6c.6-.6.6-1.5 0-2.1zM36.9 7.3L6.7 37.5c-.3.3-.5.7-.5 1.1l-.1 10.2c0 .8.7 1.5 1.5 1.4l10.2-.1c.4 0 .8-.2 1.1-.5l30.2-30.2L36.9 7.3z"/>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Communication Tab - Same content as submissions page */}
+              {selectedTab === 'communication' && (
+                <div style={{ padding: '48px', textAlign: 'center', color: '#706E6B' }}>
+                  <div style={{ marginBottom: '16px', fontSize: '16px', fontWeight: 600, color: '#001e5b' }}>Communication</div>
+                  <div style={{ marginBottom: '8px' }}>This tab displays the same email threads and Slack messages as the Submission page.</div>
+                  <div style={{ fontSize: '13px', color: '#5c5c5c' }}>
+                    Data source: Shared communication data across submission and all submission lines
+                  </div>
+                </div>
+              )}
+
+              {/* Documents Tab - Same content as submissions page */}
+              {selectedTab === 'documents' && (
+                <div style={{ padding: '48px', textAlign: 'center', color: '#706E6B' }}>
+                  <div style={{ marginBottom: '16px', fontSize: '16px', fontWeight: 600, color: '#001e5b' }}>Documents</div>
+                  <div style={{ marginBottom: '8px' }}>This tab displays the same documents as the Submission page.</div>
+                  <div style={{ fontSize: '13px', color: '#5c5c5c' }}>
+                    Data source: Shared document repository across submission and all submission lines
+                  </div>
+                </div>
+              )}
+
+              {/* Other tabs */}
+              {selectedTab !== 'details' && selectedTab !== 'overview' && selectedTab !== 'communication' && selectedTab !== 'documents' && (
+                <div style={{ padding: '48px', textAlign: 'center', color: '#706E6B' }}>
+                  No {selectedTab.replace('-', ' ')} to display
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </IconSettings>
+  );
+}

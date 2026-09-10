@@ -1,0 +1,166 @@
+/* c-template-init-modal - pre-builder LOB/LOC capture modal.
+   SLDS 2 modal pattern: backdrop + centered dialog. All values
+   come from global styling hooks. */
+
+:host {
+  display: contents;
+}
+
+.tim__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(3, 35, 77, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+}
+.tim__dialog {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 20px 32px rgba(0, 0, 0, 0.16),
+              0 2px 4px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 32rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.tim__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem)
+           var(--slds-g-spacing-var-5, 1.5rem)
+           var(--slds-g-spacing-var-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.tim__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.tim__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-10, 3rem);
+  height: var(--slds-g-sizing-10, 3rem);
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.tim__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.tim__close svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* ── Body ───────────────────────────────────────────────────── */
+.tim__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+}
+.tim__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+.tim__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+/* Mirrors `.rps-root-product__label` in c-rfq-playbook-setup so
+   the modal's field labels read identically to the Root Product
+   label on the Initialize panel. */
+.tim__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+/* SLDS required-field marker - red bold asterisk after the
+   label text. Matches the convention used across rfqPlaybookSetup
+   and quoteCompareSetup. */
+.slds-required {
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-decoration: none;
+  margin-left: 2px;
+}
+
+@media (max-width: 36em) {
+  .tim__grid { grid-template-columns: 1fr; }
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.tim__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem)
+           var(--slds-g-spacing-var-5, 1.5rem)
+           var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+/* SLDS 2 pill-radius CTAs - matches the workspace's
+   .isw-canvas__actions-btn primitive so the chrome reads as one
+   button system across the surface. */
+.tim__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-2, 0.5rem)
+           var(--slds-g-spacing-var-4, 1rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease,
+              color 120ms ease;
+}
+.tim__btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.tim__btn_neutral {
+  background: transparent;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.tim__btn_neutral:hover:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.tim__btn_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.tim__btn_brand:hover:not(:disabled) {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.tim__btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

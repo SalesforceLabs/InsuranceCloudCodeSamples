@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>User Testing Plan — Agentic Insurance Underwriting Workbench</title>
+<style>
+  :root {
+    --navy: #001e5b;
+    --blue: #0176D3;
+    --ink: #2e2e2e;
+    --muted: #5c5c5c;
+    --line: #e5e5e5;
+    --page: #f3f3f3;
+    --amber-fg: #B85C00;
+    --amber-bg: #fef5e8;
+    --green-fg: #2E844A;
+    --green-bg: #e7f5ec;
+    --red: #ea001e;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--page);
+    line-height: 1.55;
+    font-size: 15px;
+  }
+
+  /* ---- Header ---- */
+  header.hero {
+    background: var(--navy);
+    color: white;
+    padding: 40px 48px 32px;
+  }
+  header.hero .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #9db4e6;
+    margin: 0 0 8px;
+  }
+  header.hero h1 {
+    margin: 0 0 10px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  header.hero p {
+    margin: 0;
+    max-width: 760px;
+    color: #d3ddf3;
+    font-size: 15px;
+  }
+  header.hero .meta {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    font-size: 13px;
+    color: #c3d0ec;
+  }
+  header.hero .meta b { color: #fff; font-weight: 600; }
+
+  /* ---- Layout ---- */
+  .wrap {
+    display: flex;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 24px 64px;
+  }
+  nav.toc {
+    position: sticky;
+    top: 24px;
+    flex: 0 0 240px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 8px;
+    font-size: 13px;
+  }
+  nav.toc h2 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin: 4px 12px 10px;
+  }
+  nav.toc a {
+    display: block;
+    padding: 7px 12px;
+    color: var(--navy);
+    text-decoration: none;
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+  }
+  nav.toc a:hover { background: #f3f7fb; border-left-color: var(--blue); }
+
+  main { flex: 1; min-width: 0; }
+
+  section {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  section > h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  section > .lede {
+    margin: 0 0 20px;
+    color: var(--muted);
+  }
+  h3 { font-size: 17px; color: var(--navy); margin: 24px 0 8px; }
+  h4 { font-size: 14px; color: var(--ink); margin: 16px 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  a { color: var(--blue); }
+
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 11px;
+    vertical-align: middle;
+  }
+  .pill.amber { color: var(--amber-fg); background: var(--amber-bg); border: 1px solid #f5b87c; }
+  .pill.green { color: var(--green-fg); background: var(--green-bg); border: 1px solid #b5e0c4; }
+  .pill.blue { color: var(--navy); background: #e8f1fb; border: 1px solid #cfe0ff; }
+  .pill.gray { color: var(--muted); background: var(--page); border: 1px solid #dddbda; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border: 1px solid var(--line); vertical-align: top; }
+  th { background: #fafafa; color: var(--navy); font-weight: 600; font-size: 13px; }
+  td .step { font-weight: 700; color: var(--blue); }
+
+  /* ---- Task cards ---- */
+  .task {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .task > .task-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: #fafbfd;
+    border-bottom: 1px solid var(--line);
+  }
+  .task > .task-head .num {
+    flex: 0 0 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .task > .task-head .title { font-weight: 700; color: var(--navy); font-size: 16px; }
+  .task > .task-head .tags { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+  .task > .task-body { padding: 16px 18px 6px; }
+  .task .scenario {
+    font-style: italic;
+    color: var(--ink);
+    background: #f8fbff;
+    border-left: 3px solid var(--blue);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 14px;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 28px; }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } .wrap { flex-direction: column; } nav.toc { position: static; flex-basis: auto; width: 100%; } }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); font-weight: 700; margin-top: 10px; }
+
+  .callout {
+    background: var(--amber-bg);
+    border: 1px solid #f5d3a3;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .callout.info { background: #eef4ff; border-color: #c3dbf7; }
+  .callout b { color: var(--navy); }
+
+  .rating {
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--page);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 10px;
+  }
+  footer.foot {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .print-btn {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  @media print {
+    .print-btn, nav.toc { display: none; }
+    body { background: white; font-size: 12px; }
+    .wrap { display: block; padding: 0; max-width: none; }
+    section, .task { break-inside: avoid; box-shadow: none; }
+    header.hero { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <p class="eyebrow">Usability Test Plan</p>
+  <h1>Agentic Insurance Underwriting Workbench</h1>
+  <p>A moderated usability study to evaluate how commercial underwriters intake a new submission, review AI-extracted data, and resolve discrepancies and duplicate submission lines within the agentic workbench prototype.</p>
+  <div class="meta">
+    <span><b>Audience:</b> Commercial P&amp;C Underwriters</span>
+    <span><b>Method:</b> Moderated, task-based (think-aloud)</span>
+    <span><b>Session length:</b> 45–60 min</span>
+    <span><b>Format:</b> 1:1, in-person or remote screen-share</span>
+    <span><b>Prototype:</b> NexGen Biologics hero submission</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc">
+    <h2>Contents</h2>
+    <a href="#objectives">1 · Objectives</a>
+    <a href="#participants">2 · Participants</a>
+    <a href="#setup">3 · Setup &amp; Logistics</a>
+    <a href="#moderation">4 · Moderation Guide</a>
+    <a href="#scenario">5 · Scenario Context</a>
+    <a href="#tasks">6 · Task Scenarios</a>
+    <a href="#metrics">7 · Metrics</a>
+    <a href="#debrief">8 · Debrief &amp; SUS</a>
+    <a href="#coverage">9 · Feature Coverage</a>
+  </nav>
+
+  <main>
+
+    <!-- 1. OBJECTIVES -->
+    <section id="objectives">
+      <h2>1 · Study Objectives</h2>
+      <p class="lede">What we want to learn from putting this prototype in front of underwriters.</p>
+      <h4>Primary goals</h4>
+      <ul>
+        <li>Determine whether underwriters can move a new submission through the intake-to-submission-lines flow with minimal guidance.</li>
+        <li>Assess trust and comprehension of <b>agent-driven automation</b> (partial extraction, classification, reconciliation) — do underwriters understand what the agent did, and do they trust it?</li>
+        <li>Evaluate the clarity of the <b>discrepancy &amp; duplicate resolution</b> model: reconciling attributes, selecting canonical sources, mapping to canonical terms, and merging duplicate submission lines.</li>
+        <li>Measure whether the <b>Needs Attention</b> queue and <b>Pending Tasks</b> communicate what requires human action versus what the agent handled.</li>
+      </ul>
+      <h4>Key questions</h4>
+      <ul>
+        <li>Where do underwriters expect to start, and does the landing/list view match that expectation?</li>
+        <li>Is the difference between <span class="pill blue">Submission Attributes</span>, <span class="pill blue">Submission Parties</span>, and <span class="pill blue">Lines of Business</span> clear?</li>
+        <li>Can they locate the source of an extracted value and confidently choose the correct one when sources conflict?</li>
+        <li>Does the confidence signalling (low-confidence badges, warning triangles) drive the right level of scrutiny?</li>
+      </ul>
+    </section>
+
+    <!-- 2. PARTICIPANTS -->
+    <section id="participants">
+      <h2>2 · Participant Profile</h2>
+      <p class="lede">Recruit 5–8 participants for qualitative saturation.</p>
+      <table>
+        <thead><tr><th>Criterion</th><th>Target</th></tr></thead>
+        <tbody>
+          <tr><td>Role</td><td>Commercial P&amp;C underwriters (property &amp; general liability experience preferred)</td></tr>
+          <tr><td>Experience mix</td><td>~½ with 5+ years, ~½ with 1–4 years, to surface both expert shortcuts and novice confusion</td></tr>
+          <tr><td>Line familiarity</td><td>Comfortable reading ACORD 125 / 140 / 126 forms and broker submissions</td></tr>
+          <tr><td>Tooling</td><td>Mix of current Salesforce/Guidewire/legacy-tool users</td></tr>
+          <tr><td>Exclusions</td><td>No prior exposure to this prototype; no members of the design/build team</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <b>Screener note:</b> Confirm the participant regularly performs submission intake and triage — this study centers on the front half of the underwriting lifecycle, not pricing or bind.
+      </div>
+    </section>
+
+    <!-- 3. SETUP -->
+    <section id="setup">
+      <h2>3 · Setup &amp; Logistics</h2>
+      <div class="grid2">
+        <div>
+          <h4>Environment</h4>
+          <ul>
+            <li>Chrome (latest), desktop, ≥1440px width.</li>
+            <li>Prototype reset to <span class="pill gray">Step 1</span> before each session (clear <code>localStorage</code> / use a fresh browser profile).</li>
+            <li>Hero record: <b>NexGen Biologics Inc — New Business</b> (top of the list, red <span class="pill" style="color:#fff;background:#ea001e">NEW</span> badge).</li>
+            <li>Setup admin app is out of scope — do not navigate to the gear icon unless probing configuration expectations.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Roles &amp; kit</h4>
+          <ul>
+            <li><b>Moderator</b> — runs the script, keeps the participant thinking aloud.</li>
+            <li><b>Notetaker</b> — logs task success, errors, quotes, time.</li>
+            <li>Screen + audio recording (with consent).</li>
+            <li>Consent form, incentive, this plan, and a printed observation grid.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout info">
+        <b>Demo-flow reminder:</b> The prototype advances through 9 scripted steps via the bottom-right step controller. For most tasks the moderator drives the step; participants act <em>within</em> the current step. Note in the script where the moderator advances the flow.
+      </div>
+    </section>
+
+    <!-- 4. MODERATION -->
+    <section id="moderation">
+      <h2>4 · Moderation Guide</h2>
+      <h4>Intro script (read aloud)</h4>
+      <p style="background:#fafafa;border-left:3px solid var(--muted);padding:12px 16px;border-radius:0 6px 6px 0;">
+        “Thanks for joining. Today you'll try an early prototype of an underwriting workbench that uses AI agents to help intake and prepare a new submission. <b>We're testing the software, not you</b> — there are no wrong answers. Please think out loud: tell me what you're looking at, what you expect to happen, and anything that surprises or frustrates you. I may not answer questions right away so I can see how you'd naturally work through it.”
+      </p>
+      <h4>Facilitation rules</h4>
+      <ul>
+        <li>Ask “What do you expect to happen if you click that?” <em>before</em> they click.</li>
+        <li>When stuck, count to ~15 seconds of silence before offering a nudge; note that a nudge was needed.</li>
+        <li>Probe trust moments: “The agent filled this in — how confident are you in it? What would you do next?”</li>
+        <li>Never demonstrate the path; redirect with “Where would you look?”</li>
+      </ul>
+      <div class="rating">Rate each task: <b>1</b> Completed unaided · <b>2</b> Completed with minor nudge · <b>3</b> Completed with significant help · <b>4</b> Failed / abandoned. Capture time-on-task and error count per task.</div>
+    </section>
+
+    <!-- 5. SCENARIO -->
+    <section id="scenario">
+      <h2>5 · Scenario Context</h2>
+      <p class="lede">Give the participant this framing before Task 1.</p>
+      <p>“You're an underwriter on the commercial team. A broker, <b>Niki Paoloni at Vanguard Insurance Partners</b>, has emailed a new-business submission for <b>NexGen Biologics Inc</b>, a pharmaceutical manufacturer. The submission covers <b>Commercial Property</b> and <b>General Liability</b>. Your job today is to work it from the moment it lands in your queue through to reviewing the assembled submission lines — leaning on the AI agent where it helps, and stepping in where your judgment is needed.”</p>
+    </section>
+
+    <!-- 6. TASKS -->
+    <section id="tasks">
+      <h2>6 · Task Scenarios</h2>
+      <p class="lede">Ordered to follow the natural intake flow. Each maps to real prototype features and a scripted demo step.</p>
+
+      <!-- Task 1 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">1</div>
+          <div class="title">Find and open the new submission</div>
+          <div class="tags"><span class="pill gray">Step 1</span><span class="pill blue">List view</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“Start on your submissions home. A new submission just arrived — open it.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Do they notice the <b>NEW</b> badge / notification bell?</li>
+                <li>Do they use the <b>Run my day</b> vs <b>All submissions</b> tabs meaningfully?</li>
+                <li>Row click vs. notification — which entry point feels natural?</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul>
+                <li>Opens the NexGen Biologics record page.</li>
+              </ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“How would you normally decide which submission to work first?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 2 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">2</div>
+          <div class="title">Understand what the agent did on arrival</div>
+          <div class="tags"><span class="pill gray">Steps 1–2</span><span class="pill amber">Agentic trust</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“The submission just landed. Without doing anything yet — tell me what has happened so far and what, if anything, the system is doing on its own.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Can they narrate the agent's <b>partial extraction</b> from the activity feed / pending tasks?</li>
+                <li>Do they distinguish <b>agentic</b> tasks from <b>manual</b> ones?</li>
+                <li>Reaction to the email-received → extraction progression (moderator advances to Step 2).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Articulates that the agent read the email and began extracting data.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“How much of this would you want automated vs. done by you?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 3 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">3</div>
+          <div class="title">Classify &amp; extract the attached documents</div>
+          <div class="tags"><span class="pill gray">Step 3</span><span class="pill blue">Documents</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“Some documents came in with the submission. Get them classified and extracted.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Locate the <b>Documents</b> tab and the <b>Classify and Extract</b> action.</li>
+                <li>Reaction to auto-classification of ACORD forms vs. the amber <b>“Unable to classify — manually select”</b> file.</li>
+                <li>Comfort correcting / confirming a document category &amp; type.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Completes classification for all docs (manual pick for the unclassified one) and saves.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“Did you trust the auto-classification? What made the unclassified file different?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 4 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">4</div>
+          <div class="title">Triage the Needs Attention queue</div>
+          <div class="tags"><span class="pill gray">Steps 4–8</span><span class="pill amber">Needs Attention</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“As the submission progresses, things surface for you. Walk me through what needs your attention and clear anything you can.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Do they read the <b>Needs Attention</b> count and tiles as actionable?</li>
+                <li>Use of a tile's <b>Mark as Complete</b> vs. clicking through to the relevant tab.</li>
+                <li>Understanding of <b>dependent tasks</b> (connectors between task cards).</li>
+                <li>Handling of manual tasks with a <b>Run</b> action (e.g. qualifying / data-completion checks).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Clears at least one attention item and explains what each remaining item is asking for.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“Is it clear which items are yours to act on vs. the agent's?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 5 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">5</div>
+          <div class="title">Review reconciled Submission Attributes</div>
+          <div class="tags"><span class="pill gray">Step 9</span><span class="pill blue">Submission Data</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“Reconciliation is complete. Open the submission's data and check the account-level attributes look right.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Navigate to <b>Submission Data → Submission Attributes</b>.</li>
+                <li>Do the three sub-tabs (Attributes / Parties / Lines of business) read as distinct?</li>
+                <li>Use of search, <b>Source</b> filter, <b>Show unmapped only</b>, expand/collapse.</li>
+                <li>Notice the <b>low-confidence</b> badges and the <b>Extracted Data</b> tab's Status column.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Locates a mapped attribute and states its value + which document it came from.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“What does 'canonical term' mean to you here? Is that language you'd use?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 6 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">6</div>
+          <div class="title">Resolve an attribute-mapping discrepancy</div>
+          <div class="tags"><span class="pill gray">Step 9</span><span class="pill amber">Resolve Attribute Mapping</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“The system flagged some attributes where the sources disagree. Resolve them and pick the value you'd trust.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Find and act on the <b>Resolve Attribute Mapping</b> card (count badge, Resolve link).</li>
+                <li>Use of the <b>Select Source</b> modal: reading the doc canvas, switching source tabs, seeing the highlighted value.</li>
+                <li>Choosing a preferred source (radio), entering a <b>manual value</b>, or adding an <b>override</b>.</li>
+                <li>Whether the highlighted value in the document builds trust in the choice.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Selects a source (or manual value) for a conflicting attribute; the card count decrements.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“How did you decide which source wins? What would you need to feel fully confident?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 7 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">7</div>
+          <div class="title">Explore a Line of Business &amp; its submission lines</div>
+          <div class="tags"><span class="pill gray">Step 9</span><span class="pill blue">Submission Lines</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“Open the Commercial Property line and get familiar with how its locations, buildings and coverages are laid out.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Navigate from an LOB tile / Lines of business tab to the submission-line tree.</li>
+                <li>Comprehension of the <b>tree hierarchy</b> (Location → Building → Equipment/Contents → Coverage).</li>
+                <li>Selecting a line to open the sliding <b>detail panel</b>; reading the <b>AI Summary</b>.</li>
+                <li>Interpretation of the warning-triangle markers (discrepancy / potential duplicate).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Opens a Location's detail panel and describes its attributes/summary in their own words.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“Does this structure match how you think about a property schedule?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 8 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">8</div>
+          <div class="title">Reconcile a line's attributes via View Sources</div>
+          <div class="tags"><span class="pill gray">Step 9</span><span class="pill amber">View Sources / Reconcile</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“The Chicago Warehouse location has attributes pulled from multiple documents. Review the sources and make sure each attribute is mapped correctly.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Open <b>View Sources</b>; understand <b>Mapped</b> vs <b>Unmapped</b> vs <b>Discrepancies</b> tabs.</li>
+                <li>Picking the preferred extraction (radio per term); returning an item to the pool.</li>
+                <li>Mapping an unmapped extraction to a canonical term (single + bulk).</li>
+                <li>Use of the <b>flag rail</b> / document highlighting to verify a value.</li>
+                <li>Marking a discrepancy resolved.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Resolves at least one flagged term and maps one unmapped attribute.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“Was it clear what 'unmapped' meant and why you'd map something?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 9 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">9</div>
+          <div class="title">Resolve duplicate submission lines</div>
+          <div class="tags"><span class="pill gray">Step 9</span><span class="pill amber">Resolve Duplicates</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“The agent thinks a couple of these records might be duplicates. Review them and decide whether to merge.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Locate the <b>Resolve Duplicate Submission Lines</b> card / flow.</li>
+                <li>Reading the side-by-side comparison + AI Summary row; confidence in the merge decision.</li>
+                <li>Use of <b>Merge Selected</b> / <b>Do Not Merge</b> / <b>Skip</b>.</li>
+                <li>(Optional) Manual merge from the tree toolbar (select 2+ same-type lines → Merge).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Makes a merge decision on at least one duplicate group and understands the outcome.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“What information would you need to safely merge two records?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 10 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">10</div>
+          <div class="title">Restructure the schedule (Move / Create / Edit)</div>
+          <div class="tags"><span class="pill gray">Step 9</span><span class="pill blue">Line CRUD</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“A building was filed under the wrong location, and there's a coverage missing. Fix the structure.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Use of <b>Move</b> (reparenting with type constraints) — do the allowed-target rules make sense?</li>
+                <li>Adding a line via <b>Add</b> / <b>Add Child</b> and the New Submission Line modal (parent lookup).</li>
+                <li>Editing a line; understanding of neutral <b>Delete</b> and cascade to children.</li>
+                <li>Multi-select behavior (checkboxes, mass move/delete).</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Successfully moves a line under a valid new parent and creates one new child line.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“Were the rules about where things can move clear? Did anything block you unexpectedly?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 11 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">11</div>
+          <div class="title">Run &amp; interpret data enrichment (LOB view)</div>
+          <div class="tags"><span class="pill gray">LOB steps 1–3</span><span class="pill amber">Enrichment</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“For the Chicago Warehouse, you want third-party property data. Run the enrichment and tell me what came back.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Find and trigger the <b>Run Verisk enrichment</b> task; understand the pending → retrieved → mapped lifecycle.</li>
+                <li>Recognize enrichment (API) sources vs. document sources in View Sources.</li>
+                <li>Read the enrichment response rendered as a FIELD / VALUE grid.</li>
+                <li>Reaction to the runtime notification surfaced mid-lifecycle.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Runs enrichment and identifies at least one enriched attribute and its provider.</li></ul>
+              <div class="label">Post-task probe</div>
+              <ul><li>“Which third-party sources would you actually want, and how would you weigh them against broker data?”</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 12 -->
+      <div class="task">
+        <div class="task-head">
+          <div class="num">12</div>
+          <div class="title">Wrap-up: is this submission ready?</div>
+          <div class="tags"><span class="pill gray">Step 9</span><span class="pill green">Synthesis</span></div>
+        </div>
+        <div class="task-body">
+          <div class="scenario">“Taking everything together — would you consider this submission ready for the next stage of underwriting? Walk me through how you'd confirm that.”</div>
+          <div class="grid2">
+            <div>
+              <div class="label">What we observe</div>
+              <ul>
+                <li>Whether they can self-assess completeness (no open Needs Attention, discrepancies resolved).</li>
+                <li>What they'd still want that the prototype doesn't yet show.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="label">Success criteria</div>
+              <ul><li>Gives a reasoned ready / not-ready judgment grounded in the prototype's signals.</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 7. METRICS -->
+    <section id="metrics">
+      <h2>7 · Metrics &amp; Measures</h2>
+      <table>
+        <thead><tr><th>Measure</th><th>How captured</th><th>Target / signal</th></tr></thead>
+        <tbody>
+          <tr><td>Task completion rate</td><td>Success rating 1–4 per task</td><td>≥ 80% completed unaided or with minor nudge</td></tr>
+          <tr><td>Time on task</td><td>Notetaker stopwatch</td><td>Compare across participants; flag outliers</td></tr>
+          <tr><td>Error / misstep count</td><td>Observed wrong turns, dead ends</td><td>Cluster to find problem screens</td></tr>
+          <tr><td>Agent trust</td><td>Post-task 1–5 “How much did you trust the agent's output?”</td><td>Track by task (extraction, classification, dedup)</td></tr>
+          <tr><td>Comprehension</td><td>Can they explain what happened in their own words</td><td>Qualitative coding</td></tr>
+          <tr><td>Overall usability</td><td>SUS questionnaire (below)</td><td>Benchmark ≥ 68</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 8. DEBRIEF -->
+    <section id="debrief">
+      <h2>8 · Debrief &amp; SUS</h2>
+      <h4>Open debrief questions</h4>
+      <ol>
+        <li>What was the most confusing moment in the whole flow?</li>
+        <li>Where did the AI agent save you time — and where did it get in your way or feel risky?</li>
+        <li>How does this compare to how you intake a submission today?</li>
+        <li>What would you <em>not</em> want the agent to do automatically?</li>
+        <li>If you could change one thing, what would it be?</li>
+        <li>Would you trust this to prepare a submission for your review? Why / why not?</li>
+      </ol>
+      <h4>System Usability Scale (1 = strongly disagree, 5 = strongly agree)</h4>
+      <ol>
+        <li>I think that I would like to use this system frequently.</li>
+        <li>I found the system unnecessarily complex.</li>
+        <li>I thought the system was easy to use.</li>
+        <li>I think I would need support of a technical person to use this system.</li>
+        <li>I found the various functions in this system were well integrated.</li>
+        <li>I thought there was too much inconsistency in this system.</li>
+        <li>I would imagine most people would learn this system very quickly.</li>
+        <li>I found the system very cumbersome to use.</li>
+        <li>I felt very confident using the system.</li>
+        <li>I needed to learn a lot of things before I could get going with this system.</li>
+      </ol>
+    </section>
+
+    <!-- 9. COVERAGE -->
+    <section id="coverage">
+      <h2>9 · Feature Coverage Map</h2>
+      <p class="lede">Traceability from prototype features to the task that exercises them.</p>
+      <table>
+        <thead><tr><th>Prototype feature</th><th>Task(s)</th></tr></thead>
+        <tbody>
+          <tr><td>Submissions list, Run my day / All submissions, NEW badge, notification bell</td><td><span class="step">1</span></td></tr>
+          <tr><td>9-step demo flow, activity feed, agentic vs. manual pending tasks</td><td><span class="step">2, 4</span></td></tr>
+          <tr><td>Documents tab, multi-doc Classify &amp; Extract modal, auto vs. manual classification</td><td><span class="step">3</span></td></tr>
+          <tr><td>Needs Attention tiles, Mark as Complete, dependent tasks, Run actions</td><td><span class="step">4</span></td></tr>
+          <tr><td>Submission Data sub-tabs (Attributes / Parties / Lines), filters, low-confidence badges, Extracted Data status</td><td><span class="step">5</span></td></tr>
+          <tr><td>Resolve Attribute Mapping card + Select Source modal (doc canvas, override, manual value)</td><td><span class="step">6, 8</span></td></tr>
+          <tr><td>Submission-line tree, detail panel, AI Summary, warning markers</td><td><span class="step">7</span></td></tr>
+          <tr><td>View Sources pool model — Mapped / Unmapped / Discrepancies, flag rail, mark resolved</td><td><span class="step">8</span></td></tr>
+          <tr><td>Resolve Duplicate Submission Lines, comparison view, manual merge</td><td><span class="step">9</span></td></tr>
+          <tr><td>Move (reparenting), Create / Edit / Delete lines, multi-select</td><td><span class="step">10</span></td></tr>
+          <tr><td>Enrichment lifecycle (Verisk), API sources, enrichment JSON grid, runtime notification</td><td><span class="step">11</span></td></tr>
+          <tr><td>End-to-end readiness synthesis</td><td><span class="step">12</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<footer class="foot">
+  <p>Agentic Insurance Underwriting Workbench — Usability Test Plan · Prototype demo (NexGen Biologics). This document is a standalone artifact and is not wired to the running application.</p>
+</footer>
+
+<button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+/* SLDS 2 Input + Textarea — uses real --slds-c-input-* hooks plus
+ * --slds-s-input-* system tokens. Real SLDS 2 inputs are 32px tall
+ * (line-height 1.875rem + 1px borders) with 8px inline padding,
+ * 0.5rem (8px) border-radius.
+ */
+.slds2-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1);
+  min-width: 0;
+}
+.slds2-field--full { width: 100%; }
+
+.slds2-field__label {
+  font-size: var(--slds-s-label-font-size, var(--slds-g-font-size-base));
+  font-weight: var(--slds-s-label-font-weight, var(--slds-g-font-weight-6));
+  color: var(--slds-g-color-on-surface-2);
+}
+.slds2-field__required {
+  color: var(--slds-g-color-error-1);
+}
+.slds2-field__msg {
+  margin: 0;
+  font-size: var(--slds-s-helptext-font-size, var(--slds-g-font-scale-neg-1));
+  color: var(--slds-g-color-on-surface-1);
+}
+.slds2-field__msg--error {
+  color: var(--slds-g-color-error-1);
+}
+
+.slds2-input__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.slds2-input {
+  --slds-c-input-color-background: var(--slds-s-input-color-background, var(--slds-g-color-surface-container-1));
+  --slds-c-input-color-background-focus: var(--slds-c-input-color-background);
+  --slds-c-input-color-border: var(--slds-s-input-color-border, var(--slds-g-color-border-2));
+  --slds-c-input-color-border-focus: var(--slds-s-input-color-border-focus, var(--slds-c-input-color-border));
+  --slds-c-input-text-color: var(--slds-g-color-on-surface-1);
+  --slds-c-input-text-color-focus: var(--slds-c-input-text-color);
+  --slds-c-input-radius-border: var(--slds-s-input-radius-border, var(--slds-g-radius-border-2));
+  --slds-c-input-shadow: none;
+  --slds-c-input-shadow-focus: var(--slds-s-input-shadow-focus,
+    0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15));
+  --slds-c-input-spacing-inline-start: var(--slds-s-input-spacing, var(--slds-g-spacing-2));
+  --slds-c-input-spacing-inline-end: var(--slds-s-input-spacing, var(--slds-g-spacing-2));
+
+  display: inline-block;
+  width: 100%;
+  height: calc(1.875rem + 2px);
+  line-height: 1.875rem;
+  padding-block: 0;
+  padding-inline-start: var(--slds-c-input-spacing-inline-start);
+  padding-inline-end: var(--slds-c-input-spacing-inline-end);
+  background: var(--slds-c-input-color-background);
+  border: var(--slds-g-sizing-border-1) solid var(--slds-c-input-color-border);
+  border-radius: var(--slds-c-input-radius-border);
+  color: var(--slds-c-input-text-color);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  box-shadow: var(--slds-c-input-shadow);
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+.slds2-input::placeholder {
+  color: var(--slds-g-color-on-surface-1);
+  opacity: 0.6;
+}
+.slds2-input:focus {
+  outline: none;
+  background: var(--slds-c-input-color-background-focus);
+  border-color: var(--slds-c-input-color-border-focus);
+  color: var(--slds-c-input-text-color-focus);
+  box-shadow: var(--slds-c-input-shadow-focus);
+}
+.slds2-input:disabled {
+  background: var(--slds-s-input-color-background-disabled, var(--slds-g-color-disabled-container-1));
+  color: var(--slds-g-color-disabled-1);
+  cursor: not-allowed;
+}
+.slds2-input--error {
+  --slds-c-input-color-background: var(--slds-s-input-color-background-invalid, var(--slds-g-color-error-container-1));
+  --slds-c-input-color-border: var(--slds-g-color-border-error-1);
+  --slds-c-input-color-border-focus: var(--slds-g-color-border-error-1);
+}
+
+.slds2-input--icon-leading  { padding-inline-start: 2rem; }
+.slds2-input--icon-trailing { padding-inline-end: 2rem; }
+
+.slds2-input__icon {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-on-surface-1);
+  pointer-events: none;
+  width: 2rem;
+  height: 2rem;
+}
+.slds2-input__icon--leading  { left: 0; }
+.slds2-input__icon--trailing { right: 0; }
+.slds2-input__icon svg { width: 14px; height: 14px; }
+
+.slds2-textarea {
+  width: 100%;
+  min-height: 5rem;
+  padding-block: var(--slds-g-spacing-2);
+  padding-inline: var(--slds-s-input-spacing, var(--slds-g-spacing-2));
+  background: var(--slds-s-input-color-background, var(--slds-g-color-surface-container-1));
+  border: var(--slds-g-sizing-border-1) solid var(--slds-s-input-color-border, var(--slds-g-color-border-2));
+  border-radius: var(--slds-s-input-radius-border, var(--slds-g-radius-border-2));
+  color: var(--slds-g-color-on-surface-1);
+  font-size: var(--slds-g-font-scale-base);
+  font-family: inherit;
+  resize: vertical;
+  line-height: 1.5;
+}
+.slds2-textarea:focus {
+  outline: none;
+  border-color: var(--slds-g-color-border-2);
+  box-shadow: var(--slds-s-input-shadow-focus,
+    0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15));
+}

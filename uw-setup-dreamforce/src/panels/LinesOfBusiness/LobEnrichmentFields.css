@@ -1,0 +1,7 @@
+/* LOB → Enrichment Fields. Reuses the Document Classification two-column
+ * taxonomy chrome (.dc-row, .dc-col, .dc-row__menu) — only the row-side
+ * type badge and the inline field editor's grid live here. */
+
+.lef-taxonomy {
+  grid-template-columns: 50% 50%;
+}

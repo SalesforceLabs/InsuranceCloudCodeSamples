@@ -1,0 +1,503 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   c-account-rfq-list - SLDS 2 compliant data table.
+
+   Token mapping (per workspace SLDS 2 rules - uses density-aware `var-*`
+   tokens so the table adapts to comfy ↔ compact density automatically):
+
+   - --slds-g-color-surface-container-1 (#FFFFFF) → table surface
+   - --slds-g-color-surface-2           (#F3F3F3) → header strip + hover row
+   - --slds-g-color-border-1            (#C9C9C9) → decorative dividers
+   - --slds-g-color-on-surface-1/2/3              → text hierarchy
+   - --slds-g-color-accent-1            (#066AFE) → focus ring + link
+   - --slds-g-color-accent-2            (#0250D9) → link
+   - --slds-g-color-success-*, info-*, warning-* → status badge tone hooks
+   - --slds-g-spacing-var-*                       → density-aware spacing
+   - --slds-g-font-scale-var-*                    → density-aware type
+   - --slds-g-font-lineheight-var-base            → density-aware leading
+
+   Status chips use SLDS 2 Badge anatomy (`slds-badge`) shared with the
+   Submission Board. Soft feedback tones set `--slds-c-badge-*` hooks
+   (blueprint only ships lightest/inverse modifiers).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.arl {
+  position: relative;
+  /* This component is rendered inside the parent record-page card
+     (.sf-body-main). It deliberately has no background / shadow /
+     border-radius of its own so it stays flush with the parent card
+     surface (avoids the card-in-card double-chrome look). */
+  background: transparent;
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  overflow: visible;
+}
+
+/* ── Panel header strip ─────────────────────────────────────── */
+.arl__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: 0 0 var(--slds-g-spacing-var-3, 0.75rem) 0;
+}
+
+.arl__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+  min-width: 0;
+}
+
+.arl__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: 0;
+}
+
+.arl__count {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Table ──────────────────────────────────────────────────── */
+.arl__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  /* No `overflow: hidden` here - it would clip the row action dropdown.
+     Corners are rounded on the edge cells below instead. */
+}
+
+/* Header - sentence case in SLDS 2 (no `text-title_caps`). Subtle
+   surface-2 wash to set the header row apart, with semibold body
+   type rather than the SLDS 1 micro-caps treatment. */
+.arl__th,
+.arl__table thead th {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  /* Header opts out of the table's 1.5 leading so the strip stays 34px. */
+  line-height: normal;
+  letter-spacing: 0;
+  text-align: left;
+  padding: var(--slds-g-spacing-var-block-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+/* Edge cells carry the radii (the table no longer clips overflow), so the
+   rounded SLDS 2 table corners survive without trapping the row dropdown. */
+.arl__table thead th:first-child {
+  border-top-left-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.arl__table thead th:last-child {
+  border-top-right-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.arl__table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.arl__table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+.arl__table tbody td {
+  padding: var(--slds-g-spacing-3, 0.75rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  vertical-align: middle;
+}
+
+.arl__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.arl__parent-row:hover td,
+.arl__loc-row:hover td {
+  /* SLDS 2 row hover - surface-2 wash; readable contrast preserved. */
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+.arl__row-sub {
+  /* 2px is below the SLDS spacing scale floor (spacing-1 = 4px). */
+  margin-top: 0.125rem;
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Multi-LOC bundle parent + child rows ─────────────────────
+   Sibling RFQs stamped with the same bundleId (from the Add-
+   Another-LOC intake flow) collapse under one parent row so the
+   whole flow reads as a unit. Parent and child rows occupy the
+   same five columns; only the leading toggle cell differs. */
+.arl__col-toggle {
+  /* Global `* { box-sizing }` does not cross this shadow root, so the
+     52px column width is declared border-box explicitly. */
+  box-sizing: border-box;
+  width: 3.25rem;
+  vertical-align: middle;
+}
+
+/* Resting state carries no wash on either level - the toggle and
+   the child indent are what convey the relationship. */
+.arl__parent-row > td {
+  background: transparent;
+}
+.arl__loc-row > td {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+.arl__toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.arl__toggle-btn:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.arl__toggle-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+.arl-chevron {
+  /* --slds-g-sizing-5 is not defined in styles/tokens.css; literal so
+     the glyph can't silently resize if that token is added later. */
+  width: 1rem;
+  height: 1rem;
+  transition: transform 150ms ease;
+  transform: none;
+}
+.arl__toggle-btn[aria-expanded="true"] .arl-chevron {
+  transform: rotate(90deg);
+}
+/* SLDS assistive-text primitive (visually hidden, screen-reader
+   readable). Re-declared locally because SLDS base styles don't
+   cross the shadow DOM in this OSS build. */
+.slds-assistive-text {
+  position: absolute;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+/* The child's cell box stays flush with the parent's name column and
+   the indent sits on the link inside it (see .arl__loc-name-link
+   below). The disclosure caret lives in its own .arl__col-toggle
+   column here, so the parent's label already starts at the cell's
+   padding and one shared step is the whole indent. */
+.arl__name-cell_child {
+  position: relative;
+}
+.arl__loc-name-link {
+  display: inline;
+  /* One shared nesting step - the same hook the Policy UI tree, the
+     Submission Board, and the asset trees indent by. */
+  padding-left: var(--slds-g-spacing-6, 2rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.arl__loc-name-link:hover {
+  text-decoration: underline;
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.arl__loc-name-link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+  text-decoration: underline;
+}
+
+/* ── Quotes-received link / count ────────────────────────────── */
+/* The count is static text on every row - Compare Quotes lives in the
+   row's ⋮ menu, so nothing here is a link. */
+.arl__quotes-count {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.arl__quotes-none {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Row ⋮ action menu (icon-only button + fixed dropdown) ─────
+   Bordered neutral icon button, sized to 28px so it sets the 54px
+   floor for child rows that carry no second line of text. */
+.arl__menu-wrap {
+  display: inline-flex;
+}
+.arl__row-menu-btn {
+  /* Global `* { box-sizing }` does not cross this shadow root, so the
+     border has to be counted inside the 28px box explicitly. */
+  box-sizing: border-box;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.arl__row-menu-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.arl__row-menu-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.arl__row-menu-btn svg {
+  /* --slds-g-sizing-5 is not defined in styles/tokens.css; literal so
+     the glyph can't silently resize if that token is added later. */
+  width: 0.875rem;
+  height: 0.875rem;
+  display: block;
+}
+
+/* Fixed-positioned (coords set in JS) so the menu escapes the record
+   card's overflow:hidden instead of being clipped. */
+.arl__row-menu {
+  position: fixed;
+  z-index: 9001;
+  text-align: left;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+  margin-top: var(--slds-g-spacing-var-1, 0.25rem);
+  min-width: 12rem;
+  padding: var(--slds-g-spacing-var-1, 0.25rem) 0;
+}
+.arl__row-menu .slds-dropdown__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.arl__row-menu .slds-dropdown__item > a {
+  display: block;
+  padding: var(--slds-g-spacing-var-block-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  text-decoration: none;
+  text-align: left;
+  white-space: nowrap;
+}
+.arl__row-menu .slds-dropdown__item > a:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.arl__row-menu .slds-dropdown__item > a:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: -2px;
+}
+.arl__row-menu .slds-dropdown__divider {
+  height: 0;
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  margin: var(--slds-g-spacing-var-1, 0.25rem) 0;
+}
+
+/* ── RFQ name link ──────────────────────────────────────────── */
+.arl__name-link {
+  display: block;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+.arl__name-link:hover {
+  text-decoration: underline;
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+
+.arl__name-link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+  text-decoration: underline;
+}
+
+.arl__col-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* ── Status badge (SLDS 2 Badge anatomy) ──────────────────────
+   LWC OSS shadow DOM does not receive global SLDS badge CSS, so
+   anatomy + `--slds-c-badge-*` hooks are declared locally. Tone
+   classes below match Submission Board so both tabs read the same.
+     - Draft                         → status-badge_neutral
+     - Ready for Submission /
+       Sent to Carrier               → status-badge_info
+     - Quotes Received               → status-badge_warning
+     - Closed / Bound (Won)          → status-badge_success */
+.slds-badge {
+  display: inline-flex;
+  align-items: center;
+  /* 2px block padding is below the SLDS spacing scale floor. */
+  padding: 0.125rem var(--slds-g-spacing-2, 0.5rem);
+  color: var(
+    --slds-c-badge-text-color,
+    var(--slds-g-color-on-surface-2, #2e2e2e)
+  );
+  font-size: var(
+    --slds-c-badge-font-size,
+    var(--slds-g-font-scale-neg-1, 0.75rem)
+  );
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(
+    --slds-c-badge-line-height,
+    var(--slds-g-font-lineheight-2, 1.25)
+  );
+  white-space: nowrap;
+  border-width: var(--slds-c-badge-sizing-border, 1px);
+  border-style: solid;
+  border-color: var(--slds-c-badge-color-border, transparent);
+  border-radius: var(
+    --slds-c-badge-radius-border,
+    var(--slds-g-radius-border-pill, 15rem)
+  );
+  background-color: var(
+    --slds-c-badge-color-background,
+    var(--slds-g-color-neutral-base-95, #f3f3f3)
+  );
+}
+
+/* Default/neutral tone - the org renders Draft with no semantic
+   colour, just the neutral surface wash and a border-1 outline. */
+.status-badge_neutral {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-neutral-base-95,
+    #f3f3f3
+  );
+  --slds-c-badge-color-border: var(--slds-g-color-border-1, #c9c9c9);
+  --slds-c-badge-text-color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Retained as the fallback tone for any status outside STATUS_TONE. */
+.slds-badge_lightest {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-neutral-base-100,
+    #ffffff
+  );
+  --slds-c-badge-color-border: var(--slds-g-color-border-1, #e5e5e5);
+  --slds-c-badge-text-color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.status-badge_info {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-info-container-1,
+    #d8e6fe
+  );
+  --slds-c-badge-text-color: var(
+    --slds-g-color-on-info-1,
+    var(--slds-g-color-info-1, #0b5cab)
+  );
+  --slds-c-badge-color-border: transparent;
+}
+
+.status-badge_success {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-success-container-1,
+    #acf3e4
+  );
+  --slds-c-badge-text-color: var(--slds-g-color-on-success-1, #056764);
+  --slds-c-badge-color-border: transparent;
+}
+
+.status-badge_warning {
+  --slds-c-badge-color-background: var(
+    --slds-g-color-warning-container-1,
+    #ffe9b3
+  );
+  --slds-c-badge-text-color: var(--slds-g-color-on-warning-1, #7c4a03);
+  --slds-c-badge-color-border: transparent;
+}
+
+/* ── Empty state ──────────────────────────────────────────────
+   Plain block wrapper, per the .pa-asset-tree__empty pattern -
+   c-empty-state owns the centring and its own vertical padding.
+   A flex column with centred align-items collapsed the host to
+   zero width (see emptyState.css). */
+.arl__empty {
+  display: block;
+  padding: 0;
+}
+.arl__empty c-empty-state {
+  display: block;
+  width: 100%;
+}
+
+.arl__empty-cta {
+  height: 2rem;
+}
+
+
+/* SLDS assistive-text - hide-but-readable for screen readers. */
+.slds-assistive-text {
+  position: absolute;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+  white-space: nowrap;
+}
+
+.slds-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

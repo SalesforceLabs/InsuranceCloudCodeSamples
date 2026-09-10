@@ -1,0 +1,3630 @@
+/* Salesforce Lightning shell mock - faithful to the screenshot's chrome
+   without importing the SLDS stylesheet. All values pulled from the SLDS
+   design tokens (color, type, spacing) so the visual handoff feels native. */
+
+.sf-shell {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  min-height: 100vh;
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.sf-shell,
+.sf-shell * {
+  box-sizing: border-box;
+}
+
+/* ── Workspace tab content panels ──────────────────────────────
+   Account body + every open RFQ wizard panel live in the DOM at
+   the same time. The active tab's panel is shown; inactive ones
+   are hidden via display:none so their internal state survives
+   tab switches without LWC remounting them. */
+.sf-shell-body {
+  /* Inherit the page's flow box so the panel slots in cleanly
+     between the tab strip and the bottom of the viewport. */
+  min-width: 0;
+}
+
+.sf-shell-body_hidden {
+  display: none;
+}
+
+.sf-shell-body_active {
+  display: block;
+}
+
+/* ── App bar (top OS-like chrome) ──────────────────────────── */
+.sf-app-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-3, 12px);
+  height: var(--slds-g-sizing-9, 32px);
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: #5c5c5c;
+}
+
+.sf-app-bar-btn {
+  background: transparent;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: inherit;
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+.sf-cloud { width: 16px; height: var(--slds-g-sizing-4, 12px); }
+
+.sf-app-bar-divider {
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: 18px;
+  background: #e5e5e5;
+}
+
+.sf-app-bar-icon {
+  background: transparent;
+  border: 0;
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.sf-app-bar-icon:hover { background: #f4f6f9; }
+
+.sf-grid-dots {
+  display: grid;
+  grid-template-columns: repeat(3, 3px);
+  gap: 2px;
+}
+
+.sf-grid-dots span {
+  width: var(--slds-g-sizing-border-3, 3px);
+  height: var(--slds-g-sizing-border-3, 3px);
+  border-radius: 1px;
+  background: #5c5c5c;
+}
+
+.sf-app-url {
+  flex: 1;
+  background: #f4f6f9;
+  border: var(--slds-g-sizing-border-1, 1px) solid #dddbda;
+  border-radius: 14px;
+  padding: 3px var(--slds-g-spacing-3, 12px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: #444;
+  font-family: var(--atlas-mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 720px;
+}
+
+.sf-app-bar-right { display: flex; align-items: center; gap: 6px; }
+
+.sf-work-pill {
+  background: #f9c440;
+  color: #181818;
+  padding: 2px 10px;
+  border-radius: var(--slds-g-radius-border-3, 12px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+
+/* ── Reload banner ─────────────────────────────────────────── */
+.sf-notify-reload {
+  background: #514f4d;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px var(--slds-g-spacing-4, 16px);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  position: relative;
+}
+
+.sf-notify-reload svg { width: var(--slds-g-sizing-5, 1rem); height: var(--slds-g-sizing-5, 1rem); opacity: 0.85; }
+
+.sf-notify-reload-btn {
+  background: #f9c440;
+  color: #181818;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-3, 12px);
+  padding: var(--slds-g-spacing-1, 4px) 14px;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  cursor: pointer;
+}
+
+.sf-notify-close {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  position: absolute;
+  right: var(--slds-g-spacing-3, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--slds-g-font-scale-2, 16px);
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-notify-close:hover { background: rgba(255, 255, 255, 0.18); }
+
+/* ── Primary nav (cloud + search) ──────────────────────────── */
+.sf-primary {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-4, 16px);
+  background: #ffffff;
+  border-bottom: 1px solid var(--slds-g-color-border-1, #c9c9c9);
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-3, 12px);
+  height: 50px;
+  /* Anchor so the absolutely-positioned search bar can center inside
+     the header without affecting cloud-logo / right-icon layout. */
+  position: relative;
+  /* Keep this. The header's floating layers (search typeahead, gear Setup
+     popover) cannot raise themselves: .sf-search is transformed, so it opens
+     a stacking context that seals their z-index inside it. Without a z-index
+     here the header resolves into the root stacking context as a plain
+     positioned element, tying with .sf-tab (also positioned, z-index auto)
+     and losing on tree order, so tab glyphs paint over the open dropdown.
+     1 is enough because the strip never sets a positive z-index. */
+  z-index: 1;
+}
+
+/* SLDS global header logo - uses the canonical utility:salesforce1
+   icon path inlined as a data URI background. Fill color stays
+   Salesforce brand blue.
+
+   The box is sized to the painted cloud itself rather than to a padded
+   container. 80 x 44.44 is 2x the glyph the previous 40 x 32 box
+   painted at the Figma inset (32 * 69.43%), and the 50px header only
+   offers a 34px content row. .sf-primary is align-items: center with
+   overflow visible, so the cloud centers on y=24.5 and overhangs the
+   header padding while staying inside the 50px border box. Keeping the
+   inset would need an 80 x 64 box, which would overhang the
+   notification and context bars instead. */
+.slds-global-header__logo {
+  width: 80px;
+  height: 44.44px;
+  display: inline-flex;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%2300a1e0' d='M40.6 25.4c2.9-3 7-4.9 11.5-4.9 6 0 11.2 3.4 14 8.3 2.4-1.1 5.1-1.7 8-1.7 11 0 19.9 9 19.9 20.1S85.1 67.3 74.1 67.3c-1.3 0-2.7-.1-3.9-.4-2.5 4.5-7.3 7.5-12.8 7.5-2.3 0-4.5-.5-6.5-1.5-2.5 5.9-8.3 10-15.1 10-7.1 0-13.2-4.5-15.5-10.8-1 .2-2 .3-3.1.3C8.4 72.4 1 64.9 1 55.7c0-6.2 3.4-11.6 8.3-14.5-1-2.3-1.6-4.8-1.6-7.5 0-10.4 8.5-18.8 18.9-18.8 6.1 0 11.6 2.9 15 7.5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+}
+
+/* SLDS pattern: visually hidden text for screen readers - keeps the
+   logo accessible while letting CSS render the visual. */
+.slds-assistive-text {
+  position: absolute;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.sf-search {
+  /* Traced from live LEX: 400x32 search control, 8px radius, 1px
+     #5c5c5c border, white fill. Centered in the 50px global header. */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: min(400px, calc(100% - 280px));
+  min-width: 0;
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--slds-g-spacing-4, 16px);
+  height: 32px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.sf-search:hover {
+  background: #ffffff;
+}
+
+.sf-search:focus-within {
+  background: #ffffff;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 1px var(--slds-g-color-border-accent-1, #066afe);
+}
+
+.sf-search-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sf-search-icon svg { width: var(--slds-g-sizing-5, 1rem); height: var(--slds-g-sizing-5, 1rem); }
+
+.sf-search-input {
+  flex: 1 1 auto;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  outline: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.sf-search-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+
+/* App name lives in the context bar (see .sf-context-app), matching LEX. */
+.sf-primary-app {
+  display: none;
+}
+
+/* ── Search dropdown - Digital Experiences ────────────────────
+   Opens on input focus / typing, lists accounts + currently-open
+   runtime tabs. Positioned absolutely so it floats below the input
+   without affecting the header layout.
+
+   Dismiss is a document click listener (see _sfSearchDocClick), not a
+   scrim. .sf-search is transformed, so it is the containing block for
+   any `position: fixed` descendant: a scrim nested here resolves
+   `inset: 0` against the 400x32 control, not the viewport, and can only
+   ever catch clicks on the search box itself. Hoisting one out to
+   .sf-primary would work only by also inverting the z-index order it
+   shares with the gear Setup popover. Do not reintroduce a scrim. */
+.sf-search-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 9101;
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius-sm);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+  padding: var(--slds-g-spacing-2, 8px);
+  max-height: 22rem;
+  overflow-y: auto;
+}
+.sf-search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sf-search-result {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-3, 12px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.sf-search-result:hover,
+.sf-search-result:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  outline: none;
+}
+.sf-search-result-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  flex-shrink: 0;
+}
+/* Object-icon hues ship bundled with the icon name in the org, so these
+   repeat the values already on .sf-tab-icon_* for the same entities. */
+.sf-search-result-mark_account {
+  background: var(--slds-g-color-palette-indigo-50, #5867e8);
+}
+.sf-search-result-mark_quotes {
+  background: var(--slds-g-color-palette-green-60, #3ba755);
+}
+.sf-search-result-mark svg {
+  width: 16px;
+  height: 16px;
+}
+.sf-search-result-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.sf-search-result-label {
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sf-search-result-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sf-search-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-3, 12px);
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-align: center;
+}
+
+/* Agentforce Ask pill.
+
+   .sf-search is absolutely centred, so a normal-flow sibling would not track
+   it. The left offset therefore restates .sf-search's own width expression,
+   min(400px, 100% - 280px), and adds half of it to the 50% centre line to
+   land on the box's right edge. Both percentages resolve against the same
+   containing block, .sf-primary's padding box, so the pill stays glued to the
+   search box at every viewport width instead of drifting when it shrinks. */
+.sf-ask {
+  position: absolute;
+  top: 50%;
+  left: calc(
+    50% + min(400px, 100% - 280px) / 2 + var(--slds-g-spacing-2, 8px)
+  );
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.sf-primary-right {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 4px);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.sf-telemetry {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-1, 4px);
+  margin-right: var(--slds-g-spacing-2, 8px);
+  max-width: 360px;
+  justify-content: flex-end;
+}
+
+.sf-tel-pill {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #fff;
+  font-family: var(--atlas-mono);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.sf-tel-ept { background: #c23934; }
+.sf-tel-art { background: var(--slds-g-color-palette-green-50, #04844b); }
+.sf-tel-mem { background: var(--slds-g-color-palette-green-50, #04844b); }
+.sf-tel-actions {
+  background: var(--slds-g-color-palette-green-50, #04844b);
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.sf-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  border: 0;
+  background: transparent;
+  color: #5c5c5c;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-family: inherit;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.sf-icon-btn:hover { background: #f4f6f9; color: #181818; }
+.sf-icon-btn svg { width: 18px; height: 18px; }
+
+/* Header icon strip - design-supplied PNG used verbatim. Sized to sit
+   in the same vertical band as the other top-bar elements. */
+.sf-header-icons {
+  display: block;
+  height: var(--slds-g-sizing-8, 28px);
+  /* The sprite is 367x32 with ~16px of transparent gutter past its last
+     icon, so at the 28px render height (scale 28/32) its box would end
+     14px beyond the visible glyphs and sit the avatar 26px off the
+     viewport edge against the cloud logo's 12px. Boxing it to just the
+     inked span (351 sprite px x 0.875) and letting `cover` hold the same
+     scale trims the gutter, so the box edge is the optical edge and the
+     two insets match without a negative margin overhanging the viewport. */
+  width: 307px;
+  object-fit: cover;
+  object-position: left center;
+  /* Crisp rendering of the bitmap glyphs on hi-DPI screens. */
+  image-rendering: -webkit-optimize-contrast;
+  user-select: none;
+}
+
+/* ── Global-header gear + "Setup Menu" popover ─────────────────
+   Separable block. Removing it and the matching markup in
+   accountRecordPage.html restores the untouched bitmap strip. */
+.sf-header-icons-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Elena's profile photo, masking the strip's bitmap avatar. That cell is
+   inked 319-350 of the 367px sprite, so its centre sits 91.14% in; at the
+   0.875 render scale that lands at 0.9114 x 367 x 0.875 = 292.7px, i.e.
+   95.3% of the boxed 307px strip. Sized to the strip height so the opaque
+   photo covers the glyph underneath. */
+.sf-header-avatar {
+  position: absolute;
+  top: 50%;
+  left: 95.3%;
+  transform: translate(-50%, -50%);
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  object-fit: cover;
+  user-select: none;
+}
+
+/* The gear cell sits 68.26% into the 367px sprite. Now that the strip is
+   boxed to its inked 307px rather than the full natural width, that same
+   cell lands at 0.6826 x 367 x 0.875 = 219.2px, i.e. 71.4% of the box.
+   The button's opaque fill masks the bitmap gear underneath. */
+.sf-gear-btn {
+  position: absolute;
+  top: 50%;
+  left: 71.4%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  cursor: pointer;
+}
+
+.sf-gear-btn__glyph {
+  width: 20px;
+  height: 20px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sf-gear-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.sf-gear-btn_open .sf-gear-btn__glyph,
+.sf-gear-btn:hover .sf-gear-btn__glyph {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+/* ── Global-header bell + notification tray ────────────────────
+   Same masking technique as .sf-gear-btn. The bell cell sits 79.16%
+   into the 367px sprite (measured off the alpha channel, same method
+   that puts the gear at 68.26%), so against the inked 307px box it
+   lands at 0.7916 x 367 x 0.875 = 254.2px, i.e. 82.8%. */
+.sf-bell-btn {
+  position: absolute;
+  top: 50%;
+  left: 82.8%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  cursor: pointer;
+}
+
+.sf-bell-btn__glyph {
+  width: 18px;
+  height: 18px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sf-bell-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.sf-bell-btn_open .sf-bell-btn__glyph,
+.sf-bell-btn:hover .sf-bell-btn__glyph {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+/* Unread count. Error red is the LEX convention for the bell counter
+   and reads at this size where the accent blue would blend into the
+   glyph it sits on. */
+.sf-bell-btn__badge {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-error-base-40, #b60554);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: 1;
+}
+
+/* Fires only on the render where the count changes, because the shell
+   swaps the modifier class off again once the beat has played. */
+.sf-bell-btn__badge_pop {
+  animation: sf-bell-badge-pop 420ms ease-out;
+}
+
+.sf-bell-btn_ring .sf-bell-btn__glyph {
+  animation: sf-bell-ring 700ms ease-in-out;
+  transform-origin: top center;
+}
+
+@keyframes sf-bell-badge-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes sf-bell-ring {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(14deg);
+  }
+  30% {
+    transform: rotate(-12deg);
+  }
+  45% {
+    transform: rotate(9deg);
+  }
+  60% {
+    transform: rotate(-6deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+/* Trailing edge flush with the strip, matching .sf-setup-menu. The
+   bell centre is 307 - 254.2 = 52.8px in from that edge, which is
+   further than the 1.5rem SLDS pins its top-right nubbin at, so the
+   real distance is handed to the tray to position the nubbin. */
+.sf-notif-tray {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 9101;
+  --nt-nubbin-inset: 52.8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-bell-btn__badge_pop,
+  .sf-bell-btn_ring .sf-bell-btn__glyph {
+    animation: none;
+  }
+}
+
+.sf-setup-menu__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  background: transparent;
+}
+
+/* Centring this on the gear used to hang it ~12px off the right of the
+   viewport. Anchoring the trailing edge to the strip instead lands it on
+   the same 12px inset as the rest of the header, and the nubbin carries
+   the pointer back to the gear. */
+.sf-setup-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 9101;
+  width: 223px;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  box-shadow: 0 2px 12px rgba(24, 24, 24, 0.16);
+}
+
+/* The panel is trailing-edge anchored, so the nubbin is offset to the
+   gear's centre rather than the panel's: the gear sits 135px in from the
+   panel's left edge across its 223px width. */
+.sf-setup-menu__nubbin {
+  position: absolute;
+  top: -5px;
+  left: 60.6%;
+  width: 8px;
+  height: 8px;
+  transform: translateX(-50%) rotate(45deg);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-left: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+.sf-setup-menu__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.sf-setup-menu__heading {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.sf-setup-menu__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: transparent;
+  cursor: pointer;
+}
+
+.sf-setup-menu__close:hover,
+.sf-setup-menu__close:focus-visible {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.sf-setup-menu__close-glyph {
+  width: 20px;
+  height: 20px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sf-setup-menu__list {
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem) 0;
+  list-style: none;
+}
+
+.sf-setup-menu__row {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  height: 40px;
+  padding: 0 var(--slds-g-spacing-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  text-decoration: none;
+}
+
+.sf-setup-menu__row_plain {
+  height: 35px;
+}
+
+.sf-setup-menu__row:hover,
+.sf-setup-menu__row:focus-visible {
+  background: var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+
+.sf-setup-menu__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  flex: 0 0 auto;
+}
+
+.sf-setup-menu__glyph {
+  width: 100%;
+  height: 100%;
+}
+
+.sf-setup-menu__icon_cloud {
+  color: var(--slds-g-color-palette-cloud-blue-50, #107cad);
+}
+
+.sf-setup-menu__icon_teal {
+  color: var(--slds-g-color-success-base-50, #0b827c);
+}
+
+.sf-setup-menu__icon_neutral {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sf-setup-menu__icon_disc {
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-palette-cloud-blue-50, #107cad);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+
+.sf-setup-menu__label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Transparent at rest, revealed on row hover/focus - matches the org. */
+.sf-setup-menu__ext {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex: 0 0 auto;
+  color: transparent;
+}
+
+.sf-setup-menu__row:hover .sf-setup-menu__ext,
+.sf-setup-menu__row:focus-visible .sf-setup-menu__ext,
+.sf-setup-menu__row:active .sf-setup-menu__ext {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sf-setup-menu__divider {
+  height: 9px;
+  margin-top: var(--slds-g-spacing-1, 0.25rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+/* Favorites combo button - star with a small dropdown caret next to it,
+   matching SF's combined favorites picker. */
+.sf-icon-btn_combo {
+  width: auto;
+  min-width: 40px;
+  padding: 0 6px;
+  gap: 2px;
+}
+
+.sf-icon-btn_combo .sf-icon-btn-star {
+  width: 16px;
+  height: 16px;
+}
+
+.sf-icon-btn_combo .sf-icon-btn-caret {
+  width: var(--slds-g-sizing-4, 12px);
+  height: var(--slds-g-sizing-4, 12px);
+  color: #5c5c5c;
+}
+
+.sf-avatar {
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--slds-g-color-accent-1, #066afe),
+    var(--slds-g-color-accent-3, #022ac0)
+  );
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: var(--slds-g-spacing-1, 4px);
+}
+
+.sf-avatar svg { width: 18px; height: 18px; }
+
+/* ── Info / debug banners ──────────────────────────────────── */
+.sf-info-banner {
+  position: relative;
+  background: #f3edff;
+  color: #514f4d;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-7, 40px) var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-4, 16px);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.sf-info-banner_debug {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+
+.sf-info-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--slds-g-color-accent-1, #066afe);
+  flex-shrink: 0;
+}
+
+.sf-info-banner_debug .sf-info-icon { color: var(--slds-g-color-accent-1, #066afe); }
+
+.sf-info-icon svg { width: var(--slds-g-sizing-5, 1rem); height: var(--slds-g-sizing-5, 1rem); }
+
+.sf-info-body a {
+  color: var(--slds-g-color-accent-1, #066afe);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  margin-left: var(--slds-g-spacing-1, 4px);
+}
+
+.sf-info-banner .sf-notify-close {
+  color: #5c5c5c;
+}
+
+/* ── Edition pill row ──────────────────────────────────────── */
+.sf-edition-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px var(--slds-g-spacing-4, 16px) var(--slds-g-spacing-1, 4px);
+  background: #ffffff;
+}
+
+.sf-menu-burger {
+  background: transparent;
+  border: 0;
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.sf-menu-burger span {
+  width: 16px;
+  height: 1.5px;
+  background: #5c5c5c;
+  border-radius: 1px;
+}
+
+.sf-edition-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--slds-g-spacing-1, 4px) 10px;
+  background: #f4f6f9;
+  border: var(--slds-g-sizing-border-1, 1px) solid #dddbda;
+  border-radius: var(--slds-g-radius-border-3, 12px);
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: #5c5c5c;
+}
+
+.sf-edition-pill svg { width: var(--slds-g-sizing-4, 0.75rem); height: var(--slds-g-sizing-4, 0.75rem); opacity: 0.7; }
+
+.sf-edition-caret {
+  background: transparent;
+  border: 0;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #5c5c5c;
+}
+
+.sf-edition-caret svg { width: 14px; height: 14px; }
+
+/* ── Workspace tabs ────────────────────────────────────────── */
+.sf-tabs {
+  /* Lifts the strip's contents off the hairline by moving the row's 4px
+     of slack from the top pad to the bottom pad, so the 35px content row
+     translates up instead of shrinking. Tunable 0 - 4px; past 4px the row
+     itself has to get shorter. .sf-tab_active::after subtracts this same
+     value so the active underline stays on the hairline. */
+  --sf-tab-row-lift: 4px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: #ffffff;
+  border-bottom: 1px solid var(--slds-g-color-border-1, #c9c9c9);
+  padding: calc(4px - var(--sf-tab-row-lift)) 12px var(--sf-tab-row-lift);
+  height: 40px;
+  overflow-x: auto;
+}
+
+.sf-context-app {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 16px 0 8px;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 25px;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── App Launcher popover ───────────────────────────────────
+   Clicking the 3x3 dot grid opens a Lightning-style App Launcher
+   anchored to the launcher button: Setup row on top, then a grid
+   of apps. */
+.sf-app-launcher-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.sf-app-launcher-popover {
+  /* Fixed positioning escapes the .sf-tabs `overflow-x: auto` clip
+     that would otherwise hide the dropdown. The top/left are set in JS
+     from the launcher button's bounding rect so the popover stays
+     anchored to it across responsive widths and scroll. */
+  position: fixed;
+  z-index: 60;
+  width: 360px;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.18),
+    0 2px 6px rgba(15, 23, 42, 0.08);
+  padding: var(--slds-g-spacing-3, 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  font-family: var(--atlas-font);
+}
+
+.sf-app-launcher-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: 0 var(--slds-g-spacing-3, 0.75rem);
+}
+.sf-app-launcher-search-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  flex-shrink: 0;
+}
+.sf-app-launcher-search-input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  padding: var(--slds-g-spacing-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  outline: none;
+}
+
+.sf-app-launcher-setup {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-3, 0.75rem);
+  border: 0;
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  text-align: left;
+  transition: background 120ms ease;
+}
+.sf-app-launcher-setup:hover {
+  background: var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.sf-app-launcher-setup:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.sf-app-launcher-setup-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sf-app-launcher-setup-icon svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.sf-app-launcher-setup-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.sf-app-launcher-setup-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sf-app-launcher-setup-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: 1.35;
+}
+.sf-app-launcher-setup-chevron {
+  width: 1rem;
+  height: 1rem;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  flex-shrink: 0;
+}
+
+/* Run my day quick-action - same layout as the Setup segment, tinted
+   teal so the two prominent shortcuts read as distinct. Placed after the
+   Setup rules so the equal-specificity overrides win. */
+.sf-app-launcher-runmyday {
+  background: var(--slds-g-color-palette-teal-95, #def9f3);
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+}
+.sf-app-launcher-runmyday:hover {
+  background: var(--slds-g-color-palette-teal-90, #acf3e4);
+}
+.sf-app-launcher-runmyday-icon {
+  background: var(--slds-g-color-palette-teal-50, #0b827c);
+}
+
+/* ── Dashboards launcher row ──────────────────────────────────
+   Opens the Setup-lookalike Dashboards landing page. Reuses the
+   .sf-app-launcher-setup chrome; tinted indigo icon to distinguish
+   it from Setup. */
+.sf-app-launcher-dashboards {
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+}
+.sf-app-launcher-dashboards-icon {
+  background: var(--slds-g-color-palette-indigo-40, #3a49da);
+}
+
+.sf-app-launcher-section {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+}
+.sf-app-launcher-section-title {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.sf-app-launcher-section-link {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+}
+.sf-app-launcher-section-link:hover { text-decoration: underline; }
+
+.sf-app-launcher-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sf-app-launcher-tile {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--atlas-radius-sm);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.sf-app-launcher-tile:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.sf-app-launcher-tile-mark {
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--app-tile-accent, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+}
+.sf-app-launcher-tile-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.sf-app-launcher-tile-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sf-app-launcher-tile-meta {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* App Launcher - 3x3 dot grid that lives at the very start of the
+   workspace tab strip. Mirrors the org's slds-icon-waffle: nine 5px
+   dots on an 8px pitch, neutral grey at rest, sweeping to three
+   colour bands on hover and focus. */
+/* No divider and no corner radius: sampling the org's header across the 8px
+   gap to the right of the waffle gives 253.7 to 254.1 mean luma per column,
+   i.e. bare white. A 1px #d4d4d4 rule would read about 212 down every row. */
+.sf-tab-launcher {
+  background: transparent;
+  border: 0;
+  width: var(--slds-g-sizing-10, 48px);
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  color: #5c5c5c;
+  transition: background 140ms ease;
+}
+
+/* The org's waffle button stays transparent in every state; the dot
+   colour sweep is the whole affordance. The focus ring is a local
+   addition, since colour alone is a thin focus signal. */
+.sf-tab-launcher:hover {
+  background: transparent;
+}
+
+.sf-tab-launcher:focus-visible {
+  background: transparent;
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+/* 3 columns of 5px plus 2 gaps of 3px puts the dot origins at
+   0 / 8 / 16 inside a 21px box, matching the org's absolutely
+   positioned slds-r1 - slds-r9. */
+.sf-tab-launcher .sf-grid-dots {
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  grid-template-rows: repeat(3, 5px);
+  gap: 3px;
+  width: 21px;
+  height: 21px;
+  padding: 0;
+}
+
+.sf-tab-launcher .sf-grid-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--slds-g-color-disabled-1, #757575);
+  transition: background-color 0.1s;
+}
+
+/* Colour bands and stagger read off the org's computed styles. Delay
+   falls from 0.2s at the top-left dot to 0s at the bottom-right, so
+   the sweep travels up the anti-diagonal. Grid order is row-major,
+   so nth-child(n) maps 1:1 onto the org's slds-r1 - slds-r9. */
+.sf-tab-launcher .sf-grid-dots span:nth-child(1) { transition-delay: 0.2s; }
+.sf-tab-launcher .sf-grid-dots span:nth-child(2) { transition-delay: 0.15s; }
+.sf-tab-launcher .sf-grid-dots span:nth-child(3) { transition-delay: 0.1s; }
+.sf-tab-launcher .sf-grid-dots span:nth-child(4) { transition-delay: 0.15s; }
+.sf-tab-launcher .sf-grid-dots span:nth-child(5) { transition-delay: 0.1s; }
+.sf-tab-launcher .sf-grid-dots span:nth-child(6) { transition-delay: 0.05s; }
+.sf-tab-launcher .sf-grid-dots span:nth-child(7) { transition-delay: 0.1s; }
+.sf-tab-launcher .sf-grid-dots span:nth-child(8) { transition-delay: 0.05s; }
+.sf-tab-launcher .sf-grid-dots span:nth-child(9) { transition-delay: 0s; }
+
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(1),
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(2),
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(3),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(1),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(2),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(3) {
+  background: var(--slds-g-color-brand-base-50, #066afe);
+}
+
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(4),
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(5),
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(7),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(4),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(5),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(7) {
+  background: var(--slds-g-color-warning-base-70, #e4a201);
+}
+
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(6),
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(8),
+.sf-tab-launcher:hover .sf-grid-dots span:nth-child(9),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(6),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(8),
+.sf-tab-launcher:focus-visible .sf-grid-dots span:nth-child(9) {
+  background: var(--slds-g-color-warning-base-80, #fcc003);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-tab-launcher .sf-grid-dots span {
+    transition: none;
+    transition-delay: 0s;
+  }
+}
+
+.sf-app-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f3f3f3;
+  border: 0;
+  padding: 10px var(--slds-g-spacing-4, 16px);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: #181818;
+  cursor: pointer;
+  font-family: inherit;
+  border-right: 1px solid #d4d4d4;
+  white-space: nowrap;
+}
+
+.sf-app-tab-icon { width: 18px; height: 14px; }
+.sf-app-tab-icon svg { width: 18px; height: 14px; }
+
+/* Workspace tab. Traced from the LEX console tab strip: fixed-width
+   item, 30px tall, hairline divider on the right, transparent fill.
+   The active state is text colour plus a 3px bar pinned to the bottom
+   of the 40px strip - never a filled pill. */
+.sf-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: transparent;
+  cursor: default;
+  white-space: nowrap;
+  position: relative;
+  width: 220px;
+  flex: 0 0 220px;
+  /* Clipped, but with just enough slack for the active tab's 3px bar to
+     paint below the box once --sf-tab-row-lift raises the row off the
+     hairline. Plain `hidden` swallows the bar entirely. */
+  overflow: clip;
+  overflow-clip-margin: var(--sf-tab-row-lift, 0px);
+  height: 30px;
+  /* Bottom-aligned so the active tab's 3px bar lands on the strip's
+     hairline rather than floating mid-strip. */
+  align-self: flex-end;
+}
+
+/* Carries the border-right divider the rest of the way to the strip's
+   hairline. The border itself stops at the tab's box, which --sf-tab-row-lift
+   raises off the hairline; this stub spans exactly that shortfall. The
+   100% offsets pin it to the padding box's bottom-right corner, which is
+   where the border-right's lower end sits, so width, colour and column
+   come straight from the border's own tokens. */
+.sf-tab::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 100%;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--sf-tab-row-lift, 0px);
+  background: var(--slds-g-color-border-1, #c9c9c9);
+}
+
+/* The label sits between the brand tab icon and the caret/close - give
+   it the actual ellipsis treatment so SF-style truncation kicks in
+   (e.g. "Mavericks House…"). */
+/* The label absorbs the slack in the fixed-width tab slot so the caret and
+   close button pin to the tab's right edge, the way the org's flexible
+   tabHeader anchor does. Without the grow the label only takes its text
+   width and the rest of the slot reads as dead space. */
+.sf-tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.sf-tab_static { color: #5c5c5c; }
+
+/* Clickable account tabs (inactive variant) - pointer + subtle hover so the
+   user can tell tabs are switchable. */
+span.sf-tab_static[data-id] {
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+span.sf-tab_static[data-id]:hover {
+  background: #fafaf9;
+  color: #181818;
+}
+
+/* Clickable Home pill (routes to Run My Day). Mirrors the account
+   tab affordance so the Home tab feels navigable, not decorative. */
+.sf-tab_link {
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.sf-tab_link:hover,
+.sf-tab_link:focus-visible {
+  background: #fafaf9;
+  color: #181818;
+  outline: none;
+}
+
+.sf-tab_link:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--slds-g-color-accent-1, #066afe);
+}
+
+/* Home sizing. It holds one short label and no close button, so it does not
+   need the 220px slot the record tabs reserve for truncating account names.
+   flex-basis rides along with width because .sf-tab sets `flex: 0 0 220px`,
+   whose basis would otherwise win. Keep the width above the pill's ~108px
+   intrinsic content width or "Home" starts to ellipsis. */
+.sf-tab_home {
+  --sf-home-tab-width: 140px;
+  --sf-home-tab-shift: var(--slds-g-spacing-5, 1.5rem);
+  width: var(--sf-home-tab-width);
+  flex-basis: var(--sf-home-tab-width);
+  margin-left: var(--sf-home-tab-shift);
+}
+
+.sf-tab_active {
+  background: transparent;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  border-bottom: 0;
+  border-radius: 0;
+  cursor: default;
+}
+
+/* 3px brand bar pinned to the bottom of the 40px strip, sitting over
+   the strip's hairline. This - not a filled pill - is how LEX marks
+   the active workspace tab. The negative offset cancels the strip's
+   --sf-tab-row-lift, so the bar stays on the hairline while the tab
+   box above it rides up. */
+.sf-tab_active::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(-1 * var(--sf-tab-row-lift, 0px));
+  height: 3px;
+  background: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.sf-tab_active .sf-tab-label { color: inherit; }
+
+/* Base console tab icon: a transparent 24px box whose glyph takes the
+   tab's own colour, so utility marks (Home, Recently Viewed, the Setup
+   gear) read grey on idle tabs and brand-blue on the active one.
+   Inheriting `color` is what buys that state change for free - a
+   hardcoded fill would strand the active tab's icon grey. Entity tabs
+   pin a fixed grey via .sf-tab-icon_object below. */
+.sf-tab-icon {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  /* The label grows into the fixed 220px slot, so pin the icon's basis. */
+  flex-shrink: 0;
+}
+
+.sf-tab-icon svg {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+}
+
+/* Standard object icons in the tab strip drop the object's brand hue:
+   the org applies `slds-icon-text-default` to console tab glyphs, which
+   paints them flat on-surface-1 with no keyline shape behind them. The
+   colour still ships with the icon name elsewhere (related lists, search
+   results) - it is the tab strip specifically that goes monochrome, so
+   a row of open records reads as one strip instead of a colour bar.
+   Glyphs carry their own padding inside the 100/1000 grid, so they fill
+   the 24px box rather than being inset like a chipped icon. */
+.sf-tab-icon_object {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* The Ask tab carries utility:sparkles, which is a utility glyph rather
+   than an entity badge, so it keeps the brand tint the org paints on it
+   instead of joining the monochrome entity run above. The sparkles path
+   fills its 520 grid edge to edge, so it is inset to sit level with the
+   24px object glyphs beside it. */
+.sf-tab-icon_agentforce {
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+.sf-tab-icon_agentforce svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* Hybrid session-tab "done" glyph. Sits between the entity icon and
+   the label, deliberately a step down from the 24px entity icon so it
+   reads as a status marker rather than a second object icon. Success
+   token via the inline SVG fill keeps the check theming-aware without
+   a wrapping colour rule. */
+.sf-tab-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex-shrink: 0;
+  margin-inline-start: calc(var(--slds-g-spacing-1, 0.25rem) * -1);
+}
+.sf-tab-check svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* Done tabs stay clickable + editable - the modifier is purely a
+   scan-path hint. Slight color desaturation on the label reads
+   "already handled" without dimming enough to feel disabled. */
+.sf-tab_done .sf-tab-label {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.sf-tab_done.sf-tab_active .sf-tab-label {
+  /* Active + done: keep the active-tab brand color; the check
+     alone signals the done state. */
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+
+.sf-tab-caret {
+  width: 14px;
+  height: 14px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  flex-shrink: 0;
+}
+
+.sf-tab-close {
+  background: transparent;
+  border: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  color: #706e6b;
+  cursor: pointer;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  line-height: var(--slds-g-font-line-height-1, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sf-tab-close:hover { background: #f4f6f9; color: #181818; }
+
+/* ── Page Header / Highlights Panel ────────────────────────── */
+/* The highlights panel is transparent in LEX - the record name, the
+   field strip and the action buttons all sit directly on the gray
+   page canvas. Only the content below (tabs + related lists) gets a
+   white panel. */
+.slds-page-header {
+  background: transparent;
+  border-bottom: 0;
+  /* LEX `div.highlights.slds-page-header` is a flat 16px box; the field
+     strip below cancels the bottom padding with a negative margin. The
+     side margin puts this box on the same left edge as the white panel
+     below, so the avatar and the tab strip share a baseline. */
+  margin: 0 var(--slds-g-spacing-4, 1rem);
+  padding: var(--slds-g-spacing-4, 1rem);
+}
+
+.slds-page-header__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-4, 1rem);
+  padding: 0;
+}
+
+.slds-page-header__col-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.slds-media { display: flex; align-items: center; gap: 12px; }
+.slds-media__figure { flex-shrink: 0; }
+.slds-media__body { min-width: 0; }
+
+.sf-record-avatar {
+  width: 32px;
+  height: 32px;
+  /* SLDS 2 standard object icons are circular; Account uses indigo. */
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-palette-indigo-50, #5867e8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.sf-record-avatar svg { width: 20px; height: 20px; }
+
+.sf-hierarchy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  margin-right: var(--slds-g-spacing-3, 0.75rem);
+  padding: 0;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+}
+
+.sf-hierarchy-btn svg { width: 14px; height: 14px; }
+
+.sf-hierarchy-btn:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+/* Entity eyebrow - 13px on a 13px line box, sitting tight above the
+   record name. Neutral-30, a shade darker than body-copy gray. */
+.slds-page-header__name-meta {
+  margin: 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 13px;
+  color: var(--slds-g-color-palette-neutral-30, #444444);
+  letter-spacing: 0;
+}
+
+.slds-page-header__title.sf-record-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-5, 1.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 35px;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: 0;
+}
+
+.slds-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Action button group. Follow is a standalone pill, then a gap, then
+   the joined Create RFQ / New Contact / New Case / caret group. */
+.slds-page-header__col-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+
+.slds-button-group.sf-action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  background: #fff;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  overflow: visible;
+}
+
+.slds-button_neutral.sf-follow-btn {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: 30px;
+  padding: 0 var(--slds-g-spacing-4, 1rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  height: 32px;
+}
+
+.slds-button_neutral.sf-follow-btn:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+.slds-button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.slds-button_neutral.sf-record-btn {
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: 30px;
+  padding: 0 var(--slds-g-spacing-4, 1rem);
+  border-radius: 0;
+  border-right-width: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+}
+
+.slds-button_neutral.sf-record-btn:first-child {
+  border-radius: var(--slds-g-radius-border-pill, 9999px) 0 0 var(--slds-g-radius-border-pill, 9999px);
+}
+
+.slds-button_neutral.sf-record-btn:hover {
+  background: #f4f6f9;
+}
+
+.slds-button_brand.sf-record-btn_brand {
+  background: var(--slds-g-color-accent-2, #0250d9);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-accent-2, #0250d9);
+  color: #ffffff;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  padding: 0 16px;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+}
+
+.slds-button_brand.sf-record-btn_brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+
+.sf-record-btn-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+/* Must follow the base rule - equal specificity, so source order
+   decides. Keeps glyphs on a brand-filled button white instead of
+   inheriting the blue-on-blue fill. */
+.sf-record-btn-icon_inverse {
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+
+.sf-record-btn-icon svg { width: 14px; height: 14px; }
+
+.slds-dropdown-trigger {
+  position: relative;
+  display: inline-flex;
+}
+
+.sf-caret-btn {
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: 0 var(--slds-g-radius-border-pill, 15rem) var(--slds-g-radius-border-pill, 15rem) 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* SLDS scopes `.slds-button-group .slds-button:only-child` at 0,2,1 and forces
+   a uniform 0.25rem, which outranks the 0,1,0 rule above. The caret is the sole
+   child of its dropdown trigger, so it needs 0,3,0 to keep the right-hand cap of
+   the segmented pill. */
+.sf-action-group .slds-dropdown-trigger .sf-caret-btn {
+  border-radius: 0 var(--slds-g-radius-border-pill, 15rem)
+    var(--slds-g-radius-border-pill, 15rem) 0;
+}
+
+.sf-caret-btn svg { width: var(--slds-g-sizing-5, 1rem); height: var(--slds-g-sizing-5, 1rem); }
+.sf-caret-btn:hover { background: #f4f6f9; }
+
+.slds-is-open .sf-caret-btn {
+  background: #f4f6f9;
+}
+
+/* Dropdown menu */
+.slds-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid #dddbda;
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+  z-index: 100;
+  min-width: var(--slds-g-sizing-14, 240px);
+  padding: 6px 0;
+  animation: sf-fade 140ms ease;
+}
+
+@keyframes sf-fade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.slds-dropdown_right { right: 0; }
+
+.slds-dropdown__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.slds-dropdown__item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-4, 16px);
+  color: #181818;
+  text-decoration: none;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.slds-dropdown__item a:hover {
+  background: #f4f6f9;
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+
+.slds-dropdown__item.is-featured {
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.06), rgba(6, 106, 254, 0.06));
+}
+
+.slds-dropdown__item.is-featured a {
+  position: relative;
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: #181818;
+  flex-wrap: wrap;
+}
+
+.slds-dropdown__item.is-featured a:hover {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: #181818;
+}
+
+.featured-spark {
+  font-size: var(--slds-g-font-scale-2, 16px);
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+
+.featured-label {
+  flex: 1;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+
+.featured-meta {
+  width: 100%;
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  margin-left: var(--slds-g-spacing-5, 24px);
+  margin-top: 2px;
+}
+
+.slds-dropdown__item.is-danger a:hover {
+  color: #c23934;
+}
+
+.slds-dropdown__divider {
+  border: 0;
+  border-top: 1px solid #f4f6f9;
+  margin: var(--slds-g-spacing-1, 4px) 0;
+  list-style: none;
+}
+
+/* Field strip - LEX `records-highlights-details-item`. Each field is a
+   shrink-to-fit block carrying its own 32px side gutters, so adjacent
+   fields end up 64px apart while the first and last sit flush with the
+   panel edges. Fields size to their content; they are not stretched
+   across equal columns. */
+.sf-record-fields {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* Reset the .slds-page-header__row gap - spacing lives in each
+     field's own 32px side gutters, as in the org. */
+  gap: 0;
+  /* LEX `.slds-page-header__detail-row` clears the title block by 16px,
+     then adds another 16px of its own padding above the field items. The
+     negative bottom margin cancels the panel's bottom padding, so the
+     strip ends 16px below the values. */
+  margin: var(--slds-g-spacing-4, 1rem) 0 calc(-1 * var(--slds-g-spacing-4, 1rem));
+  padding: var(--slds-g-spacing-4, 1rem) 0;
+}
+
+.sf-record-field {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  min-width: 0;
+  min-height: var(--slds-g-sizing-10, 2.5rem);
+  padding: 0 var(--slds-g-spacing-6, 2rem);
+}
+
+.sf-record-field:first-child { padding-left: 0; }
+.sf-record-field:last-child { padding-right: 0; }
+
+.sf-record-field-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 15px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sf-record-field-value {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 21px;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-height: 21px;
+}
+
+.sf-record-field-link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-4, 400);
+  white-space: nowrap;
+}
+
+.sf-record-field-link:hover {
+  text-decoration: underline;
+}
+
+/* User avatars are 20px circles on cloud-blue in SLDS 2. */
+.sf-owner-avatar {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-palette-blue-60, #1b96ff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sf-owner-avatar svg { width: 14px; height: 14px; }
+
+.sf-owner-change {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: transparent;
+  cursor: pointer;
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.sf-owner-change:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+
+.sf-owner-edit { width: 14px; height: 14px; }
+
+/* ── Record tabs (Related / Details / …) ───────────────────── */
+.sf-record-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #ffffff;
+  border-bottom: 1px solid #d8dde6;
+  padding: 0 var(--slds-g-spacing-4, 16px);
+  margin-top: var(--slds-g-spacing-4, 16px);
+}
+
+/* Traced from the org's `slds-tabs_default__link`: 16px/600, 40px tall
+   item with 12px inline padding, and a 3px accent-3 underline on the
+   active tab. */
+.sf-record-tab {
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  height: 40px;
+  /* LEX pads the link 8px at the bottom, lifting the label off the
+     underline; the 12px side gutters live on the list item. */
+  padding: 0 var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-2, 0.5rem);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: 40px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sf-record-tab:hover { color: var(--slds-g-color-accent-3, #022ac0); }
+
+.sf-record-tab.is-active {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  border-bottom-color: var(--slds-g-color-accent-3, #022ac0);
+}
+
+/* ── Related lists ─────────────────────────────────────────── */
+.sf-related {
+  background: #f3f3f3;
+  padding: var(--slds-g-spacing-4, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sf-related-banner {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  box-shadow: none;
+}
+
+/* Standard "merge" object icon on the duplicate-check card - hot-orange
+   circle, white glyph, same 24px footprint as the related-list icons. */
+.sf-related-merge {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  flex-shrink: 0;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-palette-hot-orange-60, #ff5d2d);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-related-merge svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* Each related list item is its own SLDS 2 card - wrapped layout
+   (sibling cards, independent). No border, no shadow per SLDS 2. */
+.sf-related-row {
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-4, 1rem);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  box-shadow: none;
+}
+
+/* SLDS 2 standard object icons: 24px circles. Colors sampled from the
+   org's related lists so each entity keeps its canonical hue. */
+.sf-related-icon {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  flex-shrink: 0;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-related-icon_contact { background: var(--slds-g-color-palette-violet-40, #9602c7); }
+.sf-related-icon_opp { background: var(--slds-g-color-palette-hot-orange-60, #ff5d2d); }
+.sf-related-icon_case { background: var(--slds-g-color-palette-pink-60, #ff538a); }
+
+.sf-related-icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* SLDS 2 card title: font-scale-3 (20px) at regular weight in
+   on-surface-3, with the record count set in the same style. */
+.sf-related-label {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.sf-related-title-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.sf-related-title-link:hover {
+  text-decoration: underline;
+}
+
+.sf-related-count {
+  font-size: inherit;
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: inherit;
+}
+
+.sf-related-btn {
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  padding: 0 16px;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  height: 32px;
+}
+
+.sf-related-btn:hover { background: #f4f6f9; }
+
+/* ── 2-column body grid (related lists left, Activity + Client Pulse
+   right) ────────────────────────────────────────────────────────
+   The org's second column measures 320px; this app runs it at 1.5x so
+   the Activity composer row, filter line and timeline links all fit on
+   their intended rows. This declaration is the only width source - the
+   panels inside are fluid and the left column absorbs the difference. */
+.sf-body-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 480px;
+  gap: 16px;
+  padding: 12px 16px 16px;
+  align-items: flex-start;
+}
+
+.sf-body-grid_single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* The tab strip and everything under it live in ONE white panel on the
+   gray page canvas - the LEX `slds-tabs_card`. Measured in the org:
+   20px radius, 12px/16px padding, transparent border. The highlights
+   panel above stays transparent so it reads as gray. */
+.sf-body-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+}
+
+/* Tabs are the panel's own header row - no nested box, just the
+   hairline that separates them from the tab body. */
+.sf-body-main .sf-record-tabs {
+  margin-top: 0;
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: 0;
+  padding: 0;
+  /* LEX puts `margin-left: 24px` on every `slds-tabs_default__item`
+     after the first, on top of each item's 12px inline padding. */
+  gap: var(--slds-g-spacing-5, 1.5rem);
+}
+
+.sf-body-main .sf-related {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: var(--slds-g-spacing-3, 0.75rem) 0 0;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* RFQs tab body - same flush-inside-parent treatment as .sf-related so
+   the c-account-rfq-list child card sits cleanly without nested chrome. */
+.sf-record-rfqs {
+  background: transparent;
+  /* Inline padding comes from the .sf-body-main panel. */
+  padding: var(--slds-g-spacing-3, 0.75rem) 0 0;
+}
+
+/* Submission Board tab body - identical container treatment to the
+   RFQs tab so the two related surfaces read as one family. The
+   board's own chrome is provided by c-submission-board. */
+.sf-record-submission-board {
+  background: transparent;
+  padding: var(--slds-g-spacing-3, 0.75rem) 0 0;
+}
+
+/* Client 360 tab body - same flush treatment as the RFQs and
+   Submission Board tabs; c-client-360-dashboard brings its own
+   toolbar, KPI banner and card chrome. */
+.sf-record-client360 {
+  background: transparent;
+  padding: var(--slds-g-spacing-3, 0.75rem) 0 0;
+  min-width: 0;
+}
+
+/* ── Details tab ────────────────────────────────────────────────
+   Stock-Lightning "Details" tab: two stacked "cards" (Account +
+   Address Information), each with a title strip and a 2-column
+   output grid of label/value pairs. Flush inside the parent
+   record card, matching the RFQs/Submission Board treatment. */
+.sf-record-details {
+  background: transparent;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  font-family: var(--atlas-font);
+}
+
+.sf-details-card {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.sf-details-card__head {
+  padding: 0 0 var(--slds-g-spacing-var-2, 0.5rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  margin-bottom: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.sf-details-card__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-line-height-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.sf-details-grid {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--slds-g-spacing-var-6, 2rem);
+  row-gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+.sf-details-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+  min-width: 0;
+}
+.sf-details-field_full {
+  grid-column: 1 / -1;
+  margin-top: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.sf-details-field__label {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+}
+.sf-details-field__value {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) dotted
+    var(--slds-g-color-border-1, #e5e5e5);
+  padding-bottom: var(--slds-g-spacing-var-1, 0.25rem);
+  word-break: break-word;
+}
+.sf-details-field__value_multiline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+}
+.sf-details-addr-line {
+  display: block;
+}
+
+/* Stack the grid on narrow columns so no field is squeezed. */
+@media (max-width: 40rem) {
+  .sf-details-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Inside the panel each related list is its own bordered card, matching
+   the org's `slds-card_boundary`: white fill, 1px #c9c9c9 hairline,
+   12px radius, no shadow, 12px apart. */
+.sf-body-main .sf-related-row,
+.sf-body-main .sf-related-card,
+.sf-body-main .sf-related-banner {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius);
+  box-shadow: none;
+}
+
+/* An empty related-list card is 66px tall in LEX: 16px of padding around
+   its 32px action row. The duplicate-check banner has no action row, so it
+   keeps the tighter 12px block padding and lands at 52px. */
+.sf-body-main .sf-related-row {
+  padding: var(--slds-g-spacing-4, 1rem);
+}
+
+.sf-body-main .sf-related-banner {
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+}
+
+.sf-body-main .sf-related-banner {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* ── Client Pulse sidebar card ─────────────────────────────── */
+/* Same panel shell as .sf-body-main and .sf-activity-card. */
+.sf-pulse {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  padding: var(--slds-g-spacing-4, 1rem);
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.sf-pulse-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sf-pulse-spark {
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+
+.sf-pulse-spark svg { width: var(--slds-g-sizing-7, 1.5rem); height: var(--slds-g-sizing-7, 1.5rem); }
+
+.sf-pulse-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: #181818;
+}
+
+.sf-pulse-body {
+  margin: 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: #5c5c5c;
+  line-height: 1.5;
+}
+
+/* Decorative illustration - purple-blue gradient blobs + a small doc tile
+   + tiny plus marks, mirroring the SF "Start with a prompt" visual. */
+.sf-pulse-illustration {
+  position: relative;
+  height: 150px;
+  margin: var(--slds-g-spacing-2, 8px) 0 var(--slds-g-spacing-1, 4px);
+  background: linear-gradient(
+    135deg,
+    #f3edff 0%,
+    var(--slds-g-color-brand-base-95, #edf4ff) 100%
+  );
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  overflow: hidden;
+}
+
+.sf-pulse-blob {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(18px);
+  opacity: 0.65;
+}
+
+.sf-pulse-blob_a {
+  width: 130px;
+  height: 130px;
+  background: rgba(6, 106, 254, 0.32);
+  top: -30px;
+  left: -20px;
+}
+
+.sf-pulse-blob_b {
+  width: 110px;
+  height: 110px;
+  background: rgba(6, 106, 254, 0.28);
+  bottom: -30px;
+  right: -20px;
+}
+
+.sf-pulse-doc {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  /* Scales with the column so the tile keeps its share of the plate
+     instead of shrinking into the middle as the panel widens. */
+  width: 40%;
+  min-width: 150px;
+  background: #ffffff;
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  padding: 14px var(--slds-g-spacing-3, 12px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sf-pulse-doc-line {
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e9f1;
+  width: 100%;
+}
+
+.sf-pulse-doc-line_brand {
+  background: var(--slds-g-color-accent-1, #066afe);
+  width: 70%;
+  height: var(--slds-g-sizing-3, 8px);
+}
+
+.sf-pulse-doc-line_short {
+  width: 45%;
+}
+
+.sf-pulse-plus {
+  position: absolute;
+  color: rgba(6, 106, 254, 0.55);
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+
+.sf-pulse-plus_a {
+  top: 18px;
+  right: var(--slds-g-spacing-5, 24px);
+}
+
+.sf-pulse-plus_b {
+  bottom: 14px;
+  left: 22px;
+  color: rgba(6, 106, 254, 0.55);
+}
+
+.sf-pulse-prompt {
+  margin: 6px 0 0;
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: #181818;
+  text-align: center;
+}
+
+.sf-pulse-cta {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px var(--slds-g-spacing-4, 16px);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid #dddbda;
+  color: var(--slds-g-color-accent-1, #066afe);
+  font-family: inherit;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.sf-pulse-cta svg { width: var(--slds-g-sizing-4, 0.75rem); height: var(--slds-g-sizing-4, 0.75rem); }
+
+.sf-pulse-cta .sf-pulse-cta-plus {
+  width: 14px;
+  height: 14px;
+  border: var(--slds-g-sizing-border-1, 1px) solid currentColor;
+  border-radius: 999px;
+  padding: 2px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.sf-pulse-cta:hover {
+  background: #f4f6f9;
+}
+
+/* ── Sidebar stack (Activity / Chatter, then Client Pulse) ────── */
+.sf-sidebar-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  min-width: 0;
+}
+
+/* ── Related: Notes & Attachments card + dropzone ─────────────── */
+/* `article.slds-card_boundary` carries no padding of its own - the
+   header holds the 16px side gutters and the table below bleeds to the
+   card edge, so its cells align on their own 8px padding. */
+.sf-related-card {
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+/* Inline header row inside a card - same look as .sf-related-row but
+   without its own box border (the parent .sf-related-card owns the border). */
+.sf-related-row_inline {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem) 0 !important;
+  margin-bottom: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.sf-related-row-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.sf-related-icon_notes { background: var(--slds-g-color-palette-pink-40, #b60554); }
+.sf-related-icon_partner { background: var(--slds-g-color-palette-teal-60, #06a59a); }
+.sf-related-icon_invoice { background: var(--slds-g-color-palette-hot-orange-60, #ff5d2d); }
+
+/* The duplicate-check card's sentence IS its card title in LEX, so it
+   takes the same font-scale-3 treatment as "Contacts (0)". */
+.sf-related-banner-text {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 25px;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.sf-rl-table-wrap {
+  padding: 0;
+}
+
+.sf-rl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+}
+
+.sf-rl-table th,
+.sf-rl-table td {
+  text-align: left;
+  font-weight: var(--slds-g-font-weight-4, 400);
+  padding: var(--slds-g-spacing-2, 0.5rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Column headers sit on a neutral-95 wash at semibold. The 16px line box
+   plus 8px padding gives the org's 32px header band. */
+.sf-rl-table thead th {
+  line-height: 16px;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.sf-rl-name {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+.sf-rl-name:hover {
+  text-decoration: underline;
+}
+
+.sf-rl-preview {
+  margin-left: 8px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+}
+
+.sf-rl-preview:hover {
+  text-decoration: underline;
+}
+
+.sf-rl-row-menu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #706e6b;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.sf-rl-row-menu:hover {
+  background: #f3f3f3;
+}
+
+.sf-rl-row-menu svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sf-rl-view-all {
+  display: inline-block;
+  margin: 8px 12px 4px;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+}
+
+.sf-rl-view-all:hover {
+  text-decoration: underline;
+}
+
+.sf-notes-dropzone {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) dashed #c9c7c5;
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: 36px var(--slds-g-spacing-4, 16px) var(--slds-g-spacing-6, 32px);
+  min-height: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.sf-notes-dropzone:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+
+.sf-notes-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid #dddbda;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 6px var(--slds-g-spacing-4, 16px);
+  font-family: inherit;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-1, #066afe);
+  cursor: pointer;
+}
+
+.sf-notes-upload-btn:hover {
+  background: #f4f6f9;
+}
+
+.sf-notes-upload-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sf-notes-drop-helper {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: #706e6b;
+}
+
+/* ── Related Contacts (2) tile grid ──────────────────────────── */
+.sf-related-contacts-card {
+  gap: 14px;
+}
+
+.sf-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.sf-contact-tile {
+  background: #fafaf9;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--atlas-radius);
+  padding: var(--slds-g-spacing-3, 12px) 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.sf-contact-tile:hover {
+  background: #f4f6f9;
+  border-color: rgba(6, 106, 254, 0.18);
+}
+
+.sf-contact-tile-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* SF "Contact" object color: pink/magenta tile (matches the standard
+   c-contact icon in SLDS). */
+.sf-contact-avatar {
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  background: linear-gradient(135deg, #e6437d, #c23da4);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.sf-contact-name {
+  flex: 1;
+  color: var(--slds-g-color-accent-1, #066afe);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sf-contact-name:hover { text-decoration: underline; }
+
+.sf-contact-caret {
+  background: transparent;
+  border: 0;
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  border-radius: 999px;
+  color: #706e6b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sf-contact-caret:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: #181818;
+}
+
+.sf-contact-caret svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sf-contact-fields {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  row-gap: 4px;
+  column-gap: 8px;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+}
+
+.sf-contact-fields dt {
+  color: #706e6b;
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+
+.sf-contact-fields dd {
+  margin: 0;
+  color: #181818;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.sf-contact-fields dd a {
+  color: var(--slds-g-color-accent-1, #066afe);
+  text-decoration: none;
+}
+
+.sf-contact-fields dd a:hover { text-decoration: underline; }
+
+.sf-contacts-view-all {
+  align-self: center;
+  color: var(--slds-g-color-accent-1, #066afe);
+  text-decoration: none;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  padding: 6px var(--slds-g-spacing-3, 12px);
+}
+
+.sf-contacts-view-all:hover { text-decoration: underline; }
+
+/* ── Slack Channel sidebar card (disconnected empty state) ────── */
+.sf-slack-card {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: 0;
+  border-radius: var(--atlas-radius-lg);
+  padding: 14px var(--slds-g-spacing-4, 16px) 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: none;
+}
+
+.sf-slack-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sf-slack-logo {
+  width: 33px;
+  height: 33px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-slack-logo svg {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+}
+
+.sf-slack-card-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: #181818;
+}
+
+/* ── Active Slack chat panel (drawer conversation in progress) ── */
+.sf-slack-status {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-success-1, #056764);
+}
+.sf-slack-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-success-base-60, #06a59a);
+  box-shadow: 0 0 0 3px rgba(6, 165, 154, 0.18);
+}
+
+.sf-slack-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: var(--slds-g-spacing-1, 4px);
+}
+
+.sf-slack-chat-channel {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: #181818;
+  padding-bottom: var(--slds-g-spacing-2, 8px);
+  border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+}
+
+.sf-slack-msgs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 230px;
+  overflow-y: auto;
+}
+
+.sf-slack-msg {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+
+.sf-slack-msg-avatar {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-accent-1, #066afe);
+  color: #fff;
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.sf-slack-msg-avatar.is-agent {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+}
+
+.sf-slack-msg-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.sf-slack-msg-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.sf-slack-msg-name {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: #181818;
+}
+.sf-slack-msg-time {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  color: #939393;
+}
+.sf-slack-msg-text {
+  margin-top: 2px;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  line-height: 1.45;
+  color: #444444;
+  word-break: break-word;
+}
+
+.sf-slack-compose {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: var(--slds-g-spacing-2, 8px);
+  border-top: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+}
+.sf-slack-compose-input {
+  flex: 1;
+  min-width: 0;
+  height: var(--slds-g-sizing-9, 32px);
+  padding: 0 10px;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: #181818;
+}
+.sf-slack-compose-input:focus {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 2px var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.sf-slack-compose-send {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-accent-1, #066afe);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.sf-slack-compose-send:hover {
+  background: var(--slds-g-color-accent-2, #0250d9);
+}
+.sf-slack-compose-send svg { width: 1rem; height: 1rem; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .sf-record-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sf-telemetry { max-width: 220px; }
+  .sf-body-grid { grid-template-columns: minmax(0, 1fr) 420px; }
+  .sf-body-grid_single { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .sf-body-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .sf-contact-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .sf-record-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .slds-page-header__row { flex-direction: column; align-items: stretch; }
+  .slds-button-group.sf-action-group { flex-wrap: wrap; }
+}
+
+/* ── Policies tab - mirrors the RFQs tab chrome 1:1 (sf-record-rfqs +
+   c-account-rfq-list). Wrapper carries the gutter; section sits flush
+   transparent; table carries its own SLDS 2 card chrome. */
+.sf-record-policies {
+  background: transparent;
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px) var(--slds-g-spacing-4, 16px);
+}
+.sf-policies {
+  position: relative;
+  background: transparent;
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  overflow: visible;
+}
+
+/* Title strip - same padding rhythm as .arl__head. */
+.sf-policies__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: 0 0 var(--slds-g-spacing-var-3, 0.75rem) 0;
+}
+.sf-policies__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+  min-width: 0;
+}
+.sf-policies__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-line-height-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: 0;
+}
+.sf-policies__count {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Table - own card chrome (matches .arl__table). */
+.sf-policies__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* Header band - surface-2 wash, sentence case, semibold. */
+.sf-policies__table thead th {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  text-align: left;
+  padding: var(--slds-g-spacing-var-block-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  text-transform: none;
+  white-space: nowrap;
+}
+.sf-policies__table thead th:first-child {
+  border-top-left-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.sf-policies__table thead th:last-child {
+  border-top-right-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.sf-policies__table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.sf-policies__table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* Body cells - same density-aware rhythm as the RFQ table. */
+.sf-policies__table tbody td {
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  vertical-align: middle;
+}
+.sf-policies__table tbody tr:last-child td { border-bottom: 0; }
+.sf-policies__table tbody tr:hover td {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+.sf-policies__link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  text-decoration: none;
+}
+.sf-policies__link:hover {
+  text-decoration: underline;
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.sf-policies__cell-muted {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+/* Premium Amount - FSC right-aligns currency columns in list views. */
+.sf-policies__table thead th.sf-policies__th-num,
+.sf-policies__table tbody td.sf-policies__cell-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.sf-policies__status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem var(--slds-g-spacing-var-inline-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-1, #056764);
+}
+
+/* ── Policy row actions (⋮ overflow menu) ─────────────────────
+   Mirrors the RFQs tab row menu in c-account-rfq-list so both
+   related lists expose actions the same way. */
+.sf-policies__table thead th.sf-policies__col-actions,
+.sf-policies__table tbody td.sf-policies__col-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+.sf-policies__menu-wrap {
+  display: inline-flex;
+}
+.sf-policies__row-menu-btn {
+  box-sizing: border-box;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.sf-policies__row-menu-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.sf-policies__row-menu-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.sf-policies__row-menu-btn svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  display: block;
+}
+
+/* Fixed-positioned (coords set in JS) so the menu escapes the
+   record card's overflow:hidden instead of being clipped. */
+.sf-policies__row-menu {
+  position: fixed;
+  z-index: 9001;
+  text-align: left;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+  margin-top: var(--slds-g-spacing-var-1, 0.25rem);
+  min-width: 12rem;
+  padding: var(--slds-g-spacing-var-1, 0.25rem) 0;
+}
+.sf-policies__row-menu .slds-dropdown__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sf-policies__row-menu .slds-dropdown__item > a {
+  display: block;
+  padding: var(--slds-g-spacing-var-block-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-var-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  text-decoration: none;
+  text-align: left;
+  white-space: nowrap;
+}
+.sf-policies__row-menu .slds-dropdown__item > a:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.sf-policies__row-menu .slds-dropdown__item > a:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: -2px;
+}
+
+/* SLDS 2 brand / ghost action buttons - shadow DOM doesn't carry the
+   workspace component's button rules, so each component that uses
+   .brand / .ghost (e.g. New Rate Plan, Cancel) needs its own copy. */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 10px 20px;
+  font-family: inherit;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.brand:hover { background: var(--slds-g-color-accent-container-2, #0250d9); }
+.brand:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.brand:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 9px var(--slds-g-spacing-4, 16px);
+  font-family: inherit;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-size-base, 13px);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.ghost:hover { background: var(--slds-g-color-surface-container-2, #f3f3f3); }
+.ghost:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Rate Plans related list (Account → Policies → Rate Plans)
+   Reuses the .sf-policies__* table chrome - only the deltas live here:
+   the header's right-aligned New Rate Plan action, the inline form
+   panel, the tier multi-select, the Edit row pill, and the action
+   column. Moved from the EB RFQ workspace to the account so the
+   broker sees every Insurance Rate Plan for the account in one place.
+   ════════════════════════════════════════════════════════════════ */
+.sf-rp-section {
+  margin-top: var(--slds-g-spacing-var-6, 2rem);
+}
+.sf-rp-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  flex-wrap: wrap;
+}
+.sf-rp-head__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.sf-rp-new {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.sf-rp-new__icon {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* Inline form - accent left border + tinted surface to set it apart
+   from the data tables above + below it. */
+.sf-rp-form {
+  margin: var(--slds-g-spacing-var-4, 1rem) 0
+    var(--slds-g-spacing-var-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-left: var(--slds-g-sizing-3, 0.5rem) solid
+    var(--slds-g-color-accent-1, #066afe);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+.sf-rp-form__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--slds-g-spacing-var-4, 1rem);
+}
+.sf-rp-form__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.sf-rp-form__hint {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.sf-rp-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.sf-rp-field {
+  min-width: 0;
+}
+.sf-rp-field_full {
+  grid-column: 1 / -1;
+}
+.sf-rp-field .slds-form-element__label {
+  display: block;
+  margin-bottom: var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.sf-rp-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  margin-top: var(--slds-g-spacing-var-5, 1.5rem);
+  padding-top: var(--slds-g-spacing-var-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+/* Tier Structure (SLDS 2 multi-select combobox) - ported from the EB
+   workspace pattern so the keyboard/menu behaviour stays identical. */
+.sf-rp__multi {
+  position: relative;
+  width: 100%;
+}
+.sf-rp__multi-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  width: 100%;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  box-sizing: border-box;
+  padding: 0 var(--slds-g-spacing-var-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.sf-rp__multi-trigger:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.sf-rp__multi-trigger:focus,
+.sf-rp__multi-trigger:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.sf-rp__multi-trigger.is-open {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.sf-rp__multi-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sf-rp__multi-value.is-placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+.sf-rp__multi-chev {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: transform 160ms ease;
+}
+.sf-rp__multi-trigger.is-open .sf-rp__multi-chev {
+  transform: rotate(180deg);
+}
+.sf-rp__multi-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  background: transparent;
+}
+.sf-rp__multi-menu {
+  position: fixed;
+  z-index: 9101;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  max-height: 18rem;
+  overflow-y: auto;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+}
+.sf-rp__multi-item {
+  margin: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.sf-rp__multi-item:hover,
+.sf-rp__multi-item.is-selected {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+.sf-rp__multi-item-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  cursor: pointer;
+}
+.sf-rp__multi-input {
+  position: absolute;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  opacity: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.sf-rp__multi-check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  position: relative;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.sf-rp__multi-input:checked + .sf-rp__multi-check {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+}
+.sf-rp__multi-input:checked + .sf-rp__multi-check::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: var(--slds-g-sizing-3, 8px);
+  border: solid var(--slds-g-color-on-accent-1, #fff);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+.sf-rp__multi-input:focus-visible + .sf-rp__multi-check {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Disabled state (SLDS 2 spec). Both checked + unchecked greyed. */
+.sf-rp__multi-input:disabled + .sf-rp__multi-check {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+}
+.sf-rp__multi-input:disabled:checked + .sf-rp__multi-check::after {
+  border-color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.sf-rp__multi-item-label {
+  flex: 1 1 auto;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* Rate Plans table - small refinements on top of .sf-policies__table. */
+.sf-rp-table__name {
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.sf-rp-table__tiers {
+  max-width: 22rem;
+  white-space: normal;
+}
+.sf-rp-table__th_action,
+.sf-rp-table__cell_action {
+  width: 6rem;
+  text-align: right;
+}
+.sf-rp-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-var-2, 0.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease,
+    color 120ms ease;
+}
+.sf-rp-edit svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.sf-rp-edit:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.sf-rp-edit:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+@media (max-width: 640px) {
+  .sf-rp-form__grid {
+    grid-template-columns: 1fr;
+  }
+}

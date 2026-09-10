@@ -1,0 +1,124 @@
+<template>
+  <!--
+    Inline insight details column - third child of c-run-my-day's
+    insights grid. Populates from { card-id, category-id }; empty
+    state is the org "Select an insight" banner.
+  -->
+  <section
+    class={drawerClass}
+    role="region"
+    aria-labelledby="af-drawer-title"
+  >
+    <template lwc:if={hasCard}>
+      <header class="af-drawer__header">
+        <h2 id="af-drawer-title" class="af-drawer__title">{title}</h2>
+      </header>
+
+      <div class="af-drawer__body">
+        <template lwc:if={hasRows}>
+          <div class="af-rows">
+            <template for:each={rows} for:item="r">
+              <article key={r.id} class="slds-tile af-row">
+                <div class="af-row__info">
+                  <div class="af-row__name">
+                    <template lwc:if={r.hasAccountLink}>
+                      <a
+                        href="#"
+                        class="af-row__name-link"
+                        data-account-id={r.accountId}
+                        onclick={handleOpenAccountLink}
+                      >{r.name}</a>
+                    </template>
+                    <template lwc:if={r.isAccountPlainText}>
+                      <span class="af-row__name-text">{r.name}</span>
+                    </template>
+                    <template for:each={r.badgeItems} for:item="b">
+                      <span key={b.key} class={b.cls}>
+                        <template lwc:if={b.showIcon}>
+                          <svg class="rmd-name-badge__icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                          </svg>
+                        </template>
+                        <span>{b.label}</span>
+                      </span>
+                    </template>
+                    <template lwc:if={r.hasEscalation}>
+                      <span class="af-escalation">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                          <line x1="12" y1="9" x2="12" y2="13"/>
+                          <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <span>{r.escalationLabel}</span>
+                      </span>
+                    </template>
+                  </div>
+                  <p class="slds-tile__detail af-row__detail">{r.detail}</p>
+                </div>
+                <div class="af-row__actions">
+                  <div class={r.triggerClass}>
+                    <button
+                      type="button"
+                      class="slds-button slds-button_icon slds-button_icon-bare af-action-btn"
+                      aria-label="Show more actions"
+                      aria-expanded={r.menuBtnAria}
+                      aria-haspopup="true"
+                      aria-controls={r.menuId}
+                      title="Show more actions"
+                      data-row-id={r.id}
+                      onclick={handleRowMenuToggle}
+                      onkeydown={handleTriggerKeydown}
+                    >
+                      <!--
+                        utility:chevrondown, copied verbatim from the org's own
+                        utility sprite. The viewBox has to stay 0 0 520 520:
+                        that sprite is 520-unit, so a 52-unit box renders this
+                        path at one tenth scale.
+                      -->
+                      <svg class="slds-button__icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+                        <path d="M476 178L271 385c-6 6-16 6-22 0L44 178c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l161 163c6 6 16 6 22 0l161-162c6-6 16-6 22 0l22 22c5 6 5 15 0 21"/>
+                      </svg>
+                      <span class="slds-assistive-text">Show more actions</span>
+                    </button>
+                    <div class={r.menuClass}>
+                      <ul id={r.menuId} class="slds-dropdown__list" role="menu" aria-label="Row actions">
+                        <template for:each={r.actionItems} for:item="a">
+                          <li key={a.key} class="slds-dropdown__item" role="presentation">
+                            <button
+                              type="button"
+                              class={a.cls}
+                              role="menuitem"
+                              tabindex={a.tabIndex}
+                              data-row-id={r.id}
+                              data-action={a.actionId}
+                              onclick={handleRowAction}
+                              onkeydown={handleMenuKeydown}
+                            >{a.label}</button>
+                          </li>
+                        </template>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <template lwc:else>
+      <div class="af-drawer__empty-pill" role="status">
+        <span class="af-drawer__empty-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5"/>
+            <path d="M12 19l-7-7 7-7"/>
+          </svg>
+        </span>
+        <span>Select an insight to see details.</span>
+      </div>
+    </template>
+  </section>
+</template>

@@ -1,0 +1,220 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-add-asset-modal - two-step "Add Asset" dialog. Owns modal chrome +
+   Step 1 picker card rules; Step 2 body is composed of the shared
+   c-pa-vehicle-form-fields / c-pa-driver-form-fields subcomponents
+   (they own their own field + lookup CSS).
+   ════════════════════════════════════════════════════════════════════ */
+
+.slds-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 9000;
+}
+
+.slds-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-5, 24px);
+  z-index: 9001;
+  font-family: var(--atlas-font);
+}
+
+.slds-modal__container {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-4, 0.75rem);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 32rem;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  animation: add-asset-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes add-asset-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.slds-modal__header {
+  position: relative;
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-7, 2.5rem);
+  text-align: center;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.slds-modal__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.01em;
+}
+.slds-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.slds-modal__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.slds-modal__close svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+.slds-modal__content {
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  overflow-y: auto;
+}
+
+.slds-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--atlas-button-gap, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.slds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-4, 1rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border-width: var(--slds-g-sizing-border-1, 1px);
+  border-style: solid;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease;
+}
+.slds-button_neutral {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.slds-button_neutral:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.slds-button_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.slds-button_brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.slds-button_icon {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+/* ── Step 1: picker cards ─────────────────────────────────────────
+   Tall clickable rows with a leading icon square (SLDS 2 accent) and
+   a title + short description. Chevron on the right hints that the
+   card advances to Step 2. */
+.add-asset-modal__hint {
+  margin: 0 0 var(--slds-g-spacing-var-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.add-asset-modal__picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.add-asset-modal__card {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--atlas-font);
+  transition: border-color 120ms ease, box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+.add-asset-modal__card:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+.add-asset-modal__card:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+
+.add-asset-modal__card-icon {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-10, 3rem);
+  height: var(--slds-g-sizing-10, 3rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.add-asset-modal__card-icon svg {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+}
+
+.add-asset-modal__card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.add-asset-modal__card-title {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.add-asset-modal__card-desc {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.add-asset-modal__card-chev {
+  flex-shrink: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.add-asset-modal__card-chev svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.add-asset-modal__card:hover .add-asset-modal__card-chev {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}

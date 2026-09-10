@@ -1,0 +1,98 @@
+/* SLDS 2 Card — uses real --slds-c-card-* hooks plus --slds-s-container-*
+ * system tokens. Real SLDS 2 cards have NO border/shadow by default,
+ * 20px (1.25rem) corner radius, on-surface-3 (navy) headings.
+ */
+.slds2-card {
+  --slds-c-card-color-background: var(--slds-g-color-surface-container-1);
+  --slds-c-card-color-border: var(--slds-s-container-color-border, transparent);
+  --slds-c-card-text-color: var(--slds-s-container-color, var(--slds-g-color-on-surface-1));
+  --slds-c-card-radius-border: var(--slds-s-container-radius-border, var(--slds-g-radius-border-4));
+  --slds-c-card-sizing-border: var(--slds-s-container-sizing-border, 0);
+  --slds-c-card-shadow: var(--slds-s-container-shadow, none);
+  --slds-c-card-heading-font-size: var(--slds-s-container-heading-font-size, var(--slds-g-font-scale-3));
+  /* SLDS 2 container headings use weight 400, not bold. */
+  --slds-c-card-heading-font-weight: var(--slds-s-container-heading-font-weight, var(--slds-g-font-weight-4));
+
+  --slds-c-card-header-spacing-block-start: var(--slds-g-spacing-4);
+  --slds-c-card-header-spacing-block-end: var(--slds-g-spacing-4);
+  --slds-c-card-header-spacing-inline-start: var(--slds-g-spacing-5);
+  --slds-c-card-header-spacing-inline-end: var(--slds-g-spacing-5);
+
+  --slds-c-card-body-spacing-block-start: var(--slds-g-spacing-4);
+  --slds-c-card-body-spacing-block-end: var(--slds-g-spacing-4);
+  --slds-c-card-body-spacing-inline-start: var(--slds-g-spacing-5);
+  --slds-c-card-body-spacing-inline-end: var(--slds-g-spacing-5);
+
+  --slds-c-card-footer-color-border: var(--slds-s-container-footer-color-background, var(--slds-g-color-surface-container-1));
+  --slds-c-card-footer-sizing-border: var(--slds-s-container-footer-sizing-border, var(--slds-g-sizing-border-1));
+  --slds-c-card-footer-font-size: var(--slds-g-font-scale-base);
+  --slds-c-card-footer-spacing-block-start: var(--slds-g-spacing-3);
+  --slds-c-card-footer-spacing-block-end: var(--slds-g-spacing-3);
+  --slds-c-card-footer-spacing-inline-start: var(--slds-g-spacing-5);
+  --slds-c-card-footer-spacing-inline-end: var(--slds-g-spacing-5);
+
+  background: var(--slds-c-card-color-background);
+  color: var(--slds-c-card-text-color);
+  border: var(--slds-c-card-sizing-border) solid var(--slds-c-card-color-border);
+  border-radius: var(--slds-c-card-radius-border);
+  box-shadow: var(--slds-c-card-shadow);
+  overflow: hidden;
+}
+
+.slds2-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4);
+  padding-block-start: var(--slds-c-card-header-spacing-block-start);
+  padding-block-end: var(--slds-c-card-header-spacing-block-end);
+  padding-inline-start: var(--slds-c-card-header-spacing-inline-start);
+  padding-inline-end: var(--slds-c-card-header-spacing-inline-end);
+  border-bottom: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  background: var(--slds-c-card-color-background);
+}
+.slds2-card__titles { min-width: 0; }
+.slds2-card__title {
+  margin: 0;
+  font-size: var(--slds-c-card-heading-font-size);
+  font-weight: var(--slds-c-card-heading-font-weight);
+  color: var(--slds-s-container-heading-font-color, var(--slds-g-color-on-surface-3));
+}
+.slds2-card__subtitle {
+  margin: 2px 0 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+.slds2-card__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+}
+
+.slds2-card__body--none { padding: 0; }
+.slds2-card__body--sm {
+  padding-block: var(--slds-g-spacing-3);
+  padding-inline: var(--slds-c-card-body-spacing-inline-start);
+}
+.slds2-card__body--md {
+  padding-block-start: var(--slds-c-card-body-spacing-block-start);
+  padding-block-end: var(--slds-c-card-body-spacing-block-end);
+  padding-inline-start: var(--slds-c-card-body-spacing-inline-start);
+  padding-inline-end: var(--slds-c-card-body-spacing-inline-end);
+}
+.slds2-card__body--lg {
+  padding-block: var(--slds-g-spacing-5);
+  padding-inline: var(--slds-g-spacing-6);
+}
+
+.slds2-card__footer {
+  font-size: var(--slds-c-card-footer-font-size);
+  padding-block-start: var(--slds-c-card-footer-spacing-block-start);
+  padding-block-end: var(--slds-c-card-footer-spacing-block-end);
+  padding-inline-start: var(--slds-c-card-footer-spacing-inline-start);
+  padding-inline-end: var(--slds-c-card-footer-spacing-inline-end);
+  border-top: var(--slds-c-card-footer-sizing-border) solid var(--slds-g-color-border-1);
+  background: var(--slds-s-container-footer-color-background, var(--slds-g-color-surface-container-1));
+  color: var(--slds-s-container-footer-font-color, var(--slds-g-color-on-surface-2));
+  text-align: var(--slds-s-container-footer-font-align, right);
+}

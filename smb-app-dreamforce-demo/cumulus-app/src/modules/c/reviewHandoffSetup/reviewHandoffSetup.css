@@ -1,0 +1,1028 @@
+/* c-review-handoff-setup
+ *
+ * Admin-persona "Integrations & Preview" configuration surface.
+ * Tabbed: Runtime Preview Display + Quote Provider Selection.
+ * Reuses the same SLDS 2 nested-card pattern as c-rfq-publish-
+ * template (12px radius, 1px gray border, white surface) so the
+ * Configure-level inline mounts read as one visual system.
+ *
+ * Namespaced `rhs-` to avoid bleeding into other components.
+ */
+
+:host {
+  display: block;
+}
+
+.rhs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+/* ── Tabset - SLDS 2 underline tabs ─────────────────────────
+   Mirrors c-coverage-limits-setup so Configure surfaces share
+   one tab vocabulary. */
+.rhs-tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-var-6, 2rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.rhs-tabs__btn {
+  position: relative;
+  padding: var(--slds-g-spacing-2, 0.5rem) 0;
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  margin-bottom: calc(-1 * var(--slds-g-sizing-border-1, 1px));
+  font-family: var(--atlas-font, inherit);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.rhs-tabs__btn:hover {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rhs-tabs__btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.rhs-tabs__btn_active {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+
+
+/* Flat tab panel - no card chrome; the tab label is the header.
+   Parent `.rhs` uses flex `gap: 0.75rem` between the tabs and this
+   panel, so no additional padding-top is needed on top of the gap. */
+.rhs-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+
+
+/* ── Nested Card ──────────────────────────────────────────────
+   SLDS 2 spec - 12px corners, 1px border-1, white surface,
+   header 12px 16px, body 0 12px 12px. Container itself has zero
+   padding; each section paints its own padding. */
+.rhs__card {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.rhs__card-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  min-height: 3.25rem;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.rhs__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.rhs__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rhs__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  padding: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* ── Toggle (SLDS 2 faux) ─────────────────────────────────────
+   Custom switch - checkbox input is visually hidden; .rhs-toggle__
+   track + thumb form the visible affordance. Accent-1 fill when
+   checked, gray track when not. Matches the proportions of the
+   existing eb-cs__check-faux family. */
+.rhs-toggle {
+  display: grid;
+  /* Track | Brand icon | Body. The icon column is optional -
+     when no `.rhs-toggle__icon` is present the body slot collapses
+     into its old position naturally. */
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  cursor: pointer;
+  user-select: none;
+}
+/* Brand icon - sits between the toggle track and the label
+   stack. Sized to match an SLDS small icon (1.5rem) so the row
+   height stays predictable. */
+.rhs-toggle__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  flex-shrink: 0;
+}
+.rhs-toggle__icon svg,
+.rhs-toggle__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+/* Agentforce mascot uses a colored gradient bg in the PNG - give
+   it a subtle white-pill background so it doesn't read as floating
+   on the surface color. */
+.rhs-toggle__icon_agentforce {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  overflow: hidden;
+}
+
+.rhs-toggle__input {
+  position: absolute;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.rhs-toggle__track {
+  position: relative;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-border-1, #c9c9c9);
+  transition: background 120ms ease;
+  flex-shrink: 0;
+}
+.rhs-toggle__thumb {
+  position: absolute;
+  top: 50%;
+  left: 0.125rem;
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-on-accent-1, #ffffff);
+  transform: translateY(-50%);
+  transition: left 120ms ease;
+}
+.rhs-toggle__input:checked ~ .rhs-toggle__track {
+  background: var(--slds-g-color-accent-1, #066afe);
+}
+.rhs-toggle__input:checked ~ .rhs-toggle__track .rhs-toggle__thumb {
+  left: calc(100% - 0.875rem);
+}
+.rhs-toggle__input:focus-visible ~ .rhs-toggle__track {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.rhs-toggle__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+.rhs-toggle__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.rhs-toggle__hint {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+/* Compact variant - used inside the LOB attribute rows so the
+   toggle sits inline next to the disabled Phase-2 gear button.
+   Legacy class kept for back-compat; new LOB rows use
+   .rhs-toggle_switch (toggle-only, label rendered separately). */
+.rhs-toggle_compact {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.rhs-toggle_compact .rhs-toggle__body {
+  gap: 0;
+}
+.rhs-toggle_compact .rhs-toggle__label {
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Switch-only variant - the toggle without an icon / inline label.
+   Used in `.rhs-row_lob` rows where the row's label sits on the
+   LEFT (as a sibling .rhs-row__label) and this switch + gear
+   cluster sits on the RIGHT. Keeps the click-target wrapping the
+   hidden input via <label> so a11y stays intact (aria-label on
+   the <label> tells screen readers what the switch controls). */
+.rhs-toggle_switch {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ── Agentforce Summary subcard ───────────────────────────────
+   Light surface-container-2 inset with a dashed border that
+   telegraphs "managed elsewhere" (the actual prompt lives in
+   AI Studio - this is a read-only acknowledgement). */
+.rhs-subcard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border: var(--slds-g-sizing-border-1, 1px) dashed
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius);
+  margin-left: var(--slds-g-spacing-7, 2.5rem);
+}
+.rhs-subcard__label {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.rhs-subcard__area {
+  width: 100%;
+  min-height: var(--slds-g-sizing-11, 4rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius-sm);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  resize: vertical;
+  box-sizing: border-box;
+}
+.rhs-subcard__area:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.rhs-subcard__hint {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Preview Display groups ───────────────────────────────────
+   Two stacked sections inside Card 2 (Quote Details / LOB
+   Attributes). Each surfaces a list of toggles or checkboxes. */
+.rhs-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.rhs-group__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.rhs-group__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.rhs-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) 0;
+}
+.rhs-row_stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rhs-row__hint {
+  margin: 0;
+  margin-left: var(--slds-g-spacing-7, 2.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* ── LOB attribute row (label-left / actions-right) ───────────
+   Replaces the prior layout where the toggle sat on the left
+   wrapping the label. Reads as: text on the left explaining what
+   the row controls, switch + gear cluster pinned to the right. */
+.rhs-row_lob {
+  /* grid-template-columns from .rhs-row already gives us
+     1fr | auto - the new label / actions blocks slot into those
+     two cells naturally. */
+}
+.rhs-row__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  min-width: 0;
+}
+.rhs-row__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* ── Faux checkbox (SLDS 2) ───────────────────────────────────
+   Standardized 1rem × 1rem, 1px border, accent-fill on check.
+   Mirrors the eb-cs__check-faux / eb-bs__check-faux pattern used
+   elsewhere in the workspace. */
+.rhs-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  cursor: pointer;
+  user-select: none;
+}
+.rhs-check__input {
+  position: absolute;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.rhs-check__faux {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: transparent;
+  flex-shrink: 0;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.rhs-check__faux svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.rhs-check__input:checked ~ .rhs-check__faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.rhs-check__input:focus-visible ~ .rhs-check__faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Disabled state (SLDS 2 spec). Both checked + unchecked greyed. */
+.rhs-check__input:disabled ~ .rhs-check__faux {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.rhs-check__input:disabled:checked ~ .rhs-check__faux {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.rhs-check:has(.rhs-check__input:disabled) .rhs-check__label {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.rhs-check__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* ── Disabled gear (Phase-2 affordance) ───────────────────────
+   Inline icon button telegraphing "granular field selection is
+   coming in Phase 2". Disabled state is the resting state - no
+   hover / focus interactions. */
+.rhs-gear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.rhs-gear svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+
+/* ── Empty state for unsupported LOBs ────────────────────────
+   Reads as quiet copy, no card chrome, so it doesn't compete
+   with the Quote Details section above. */
+.rhs-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-2, 0.5rem) 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+
+/* ── Quote Provider Configuration ───────────────────────────── */
+.rhs-qp__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rhs-qp__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.rhs-qp__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+.rhs-qp-card {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius);
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.rhs-qp-card__head {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.rhs-qp-card__toggle {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-3, 0.75rem)
+           var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+.rhs-qp-card__toggle:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.rhs-qp-card__title {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rhs-qp-card__chevron {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  flex-shrink: 0;
+  transition: transform 140ms ease;
+}
+.rhs-qp-card__chevron.is-open {
+  transform: rotate(180deg);
+}
+.rhs-qp-card__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  flex-shrink: 0;
+  align-self: center;
+  margin-right: var(--slds-g-spacing-var-4, 1rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+}
+.rhs-qp-card__remove:hover:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rhs-qp-card__remove:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.rhs-qp-card__remove svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+.rhs-qp-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem)
+           var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.rhs-qp-card__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.rhs-qp-card__json {
+  margin-top: var(--slds-g-spacing-1, 0.25rem);
+}
+
+.slds-form-element__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  margin-bottom: var(--slds-g-spacing-1, 0.25rem);
+}
+.slds-form-element__control {
+  width: 100%;
+}
+.slds-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font, inherit);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+.slds-input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+
+.rhs-qp-typeahead {
+  position: relative;
+}
+.rhs-qp-typeahead__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.rhs-qp-typeahead__trigger {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  box-sizing: border-box;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  font-family: var(--atlas-font, inherit);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  text-align: left;
+  cursor: pointer;
+}
+.rhs-qp-typeahead__trigger:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.rhs-qp-typeahead__trigger:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.rhs-qp-typeahead__icon {
+  display: inline-flex;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  flex-shrink: 0;
+}
+.rhs-qp-typeahead__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.rhs-qp-typeahead__value {
+  flex: 1 1 auto;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rhs-qp-typeahead__placeholder {
+  flex: 1 1 auto;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.rhs-qp-typeahead__clear {
+  position: absolute;
+  right: var(--slds-g-spacing-2, 0.5rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  z-index: 1;
+}
+.rhs-qp-typeahead__clear:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rhs-qp-typeahead__clear svg {
+  width: var(--slds-g-sizing-4, 0.875rem);
+  height: var(--slds-g-sizing-4, 0.875rem);
+}
+.rhs-qp-typeahead__control:has(.rhs-qp-typeahead__clear) .rhs-qp-typeahead__trigger {
+  padding-right: var(--slds-g-sizing-9, 2rem);
+}
+.rhs-qp-typeahead__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: transparent;
+}
+.rhs-qp-typeahead__panel {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-1, 0.25rem));
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+  max-height: 16rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.rhs-qp-typeahead__search {
+  padding: var(--slds-g-spacing-2, 0.5rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+/* Scoped override so the typeahead query field matches the
+   attributePicker canonical (lighter border, softer focus ring,
+   explicit placeholder) without affecting non-search .slds-input
+   fields elsewhere in this component. */
+.rhs-qp-typeahead__search .slds-input {
+  border-color: var(--slds-g-color-border-1, #c9c9c9);
+}
+.rhs-qp-typeahead__search .slds-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.rhs-qp-typeahead__search .slds-input:focus {
+  outline: none;
+  outline-offset: 0;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.rhs-qp-typeahead__results {
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem) 0;
+  overflow-y: auto;
+}
+.rhs-qp-typeahead__option {
+  display: block;
+  width: 100%;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-family: var(--atlas-font, inherit);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  cursor: pointer;
+}
+.rhs-qp-typeahead__option:hover,
+.rhs-qp-typeahead__option:focus-visible {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  outline: none;
+}
+.rhs-qp-typeahead__empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.rhs-qp-active {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  cursor: pointer;
+  user-select: none;
+}
+.rhs-qp-active__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.rhs-qp-active__faux {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: transparent;
+  flex-shrink: 0;
+}
+.rhs-qp-active__faux svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+.rhs-qp-active__input:checked + .rhs-qp-active__faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.rhs-qp-active__input:focus-visible + .rhs-qp-active__faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.rhs-qp-active__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.rhs-qp-info {
+  display: inline-flex;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.rhs-qp-info svg {
+  width: var(--slds-g-sizing-4, 0.875rem);
+  height: var(--slds-g-sizing-4, 0.875rem);
+}
+
+.rhs-qp-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 5.5rem;
+  padding: var(--slds-g-spacing-2, 0.5rem)
+           var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  resize: vertical;
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rhs-qp-textarea:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+
+.rhs-qp-carriers {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding-top: var(--slds-g-spacing-2, 0.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.rhs-qp-carriers__msg {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.rhs-qp-carriers__count {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.rhs-qp-carriers__info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: transparent;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.rhs-qp-carriers__info:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.rhs-qp-carriers__info:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.rhs-qp-carriers__info svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+
+/* ── Carriers modal (SLDS structure, local shadow styles) ───── */
+.slds-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 9000;
+}
+.slds-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-5, 1.5rem);
+  z-index: 9001;
+  font-family: var(--atlas-font, inherit);
+}
+.slds-modal__container {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--slds-g-sizing-16, 30rem);
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+}
+.slds-modal__header {
+  position: relative;
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-7, 2.5rem);
+  text-align: center;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.slds-modal__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rhs-qp-modal__sub {
+  margin: var(--slds-g-spacing-1, 0.25rem) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.slds-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.slds-modal__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.slds-modal__close svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.slds-modal__content {
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  overflow-y: auto;
+}
+.slds-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--atlas-button-gap, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.slds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-4, 1rem);
+  font-family: var(--atlas-font, inherit);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border-width: var(--slds-g-sizing-border-1, 1px);
+  border-style: solid;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  cursor: pointer;
+}
+.slds-button_neutral {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.slds-button_neutral:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.slds-button_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.slds-button_brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.slds-button_icon {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.rhs-qp-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.rhs-qp-modal__row {
+  margin: 0;
+}

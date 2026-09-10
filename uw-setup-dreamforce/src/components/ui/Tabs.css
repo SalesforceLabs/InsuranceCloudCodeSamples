@@ -1,0 +1,111 @@
+/* SLDS 2 Tabs — uses real --slds-c-tabs-list-* + --slds-c-tabs-item-* hooks. */
+.slds2-tabs {
+  --slds-c-tabs-list-color-border: var(--slds-g-color-border-1);
+  --slds-c-tabs-list-sizing-border: var(--slds-g-sizing-border-1);
+
+  display: flex;
+  gap: 0;
+}
+
+.slds2-tabs--underline {
+  border-bottom: var(--slds-c-tabs-list-sizing-border) solid var(--slds-c-tabs-list-color-border);
+}
+
+.slds2-tabs--segment {
+  background: var(--slds-g-color-surface-container-2);
+  padding: var(--slds-g-spacing-1);
+  border-radius: var(--slds-g-radius-border-3);
+  display: inline-flex;
+}
+
+.slds2-tab {
+  --slds-c-tabs-item-color-foreground: var(--slds-g-color-on-surface-1);
+  --slds-c-tabs-item-color-foreground-active: var(--slds-g-color-on-surface-3);
+  --slds-c-tabs-item-color-foreground-hover: var(--slds-g-color-on-surface-3);
+  --slds-c-tabs-item-text-color: var(--slds-c-tabs-item-color-foreground);
+  --slds-c-tabs-item-text-color-active: var(--slds-c-tabs-item-color-foreground-active);
+  --slds-c-tabs-item-color-border-active: var(--slds-g-color-accent-1);
+  --slds-c-tabs-item-color-border-hover: transparent;
+  --slds-c-tabs-item-font-size: var(--slds-g-font-scale-1);
+  --slds-c-tabs-item-font-weight: var(--slds-g-font-weight-5);
+  --slds-c-tabs-item-font-weight-active: var(--slds-g-font-weight-6);
+  --slds-c-tabs-item-font-lineheight: 1.25;
+  --slds-c-tabs-item-spacing-block-start: var(--slds-g-spacing-3);
+  --slds-c-tabs-item-spacing-block-end: var(--slds-g-spacing-3);
+  --slds-c-tabs-item-spacing-inline-start: var(--slds-g-spacing-4);
+  --slds-c-tabs-item-spacing-inline-end: var(--slds-g-spacing-4);
+  --slds-c-tabs-item-indicator-color-background: var(--slds-g-color-accent-1);
+  --slds-c-tabs-item-indicator-sizing-height: 0;
+  --slds-c-tabs-item-indicator-sizing-height-active: var(--slds-g-sizing-border-3);
+  --slds-c-tabs-item-indicator-sizing-height-hover: var(--slds-g-sizing-border-3);
+
+  position: relative;
+  background: transparent;
+  border: none;
+  color: var(--slds-c-tabs-item-text-color);
+  font-family: inherit;
+  font-weight: var(--slds-c-tabs-item-font-weight);
+  font-size: var(--slds-c-tabs-item-font-size);
+  line-height: var(--slds-c-tabs-item-font-lineheight);
+  padding-block-start: var(--slds-c-tabs-item-spacing-block-start);
+  padding-block-end: var(--slds-c-tabs-item-spacing-block-end);
+  padding-inline-start: var(--slds-c-tabs-item-spacing-inline-start);
+  padding-inline-end: var(--slds-c-tabs-item-spacing-inline-end);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+  transition: color 100ms ease;
+}
+
+.slds2-tab:hover:not(:disabled) {
+  color: var(--slds-c-tabs-item-color-foreground-hover);
+}
+.slds2-tab:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.slds2-tabs--underline .slds2-tab--active {
+  color: var(--slds-c-tabs-item-text-color-active);
+  font-weight: var(--slds-c-tabs-item-font-weight-active);
+}
+.slds2-tabs--underline .slds2-tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: var(--slds-c-tabs-item-indicator-sizing-height-active);
+  background: var(--slds-c-tabs-item-indicator-color-background);
+  border-radius: var(--slds-c-tabs-item-indicator-sizing-height-active);
+}
+
+.slds2-tabs--segment .slds2-tab {
+  border-radius: var(--slds-g-radius-border-2);
+  padding-block: var(--slds-g-spacing-2);
+  padding-inline: var(--slds-g-spacing-4);
+}
+.slds2-tabs--segment .slds2-tab--active {
+  background: var(--slds-g-color-surface-container-1);
+  color: var(--slds-g-color-on-surface-3);
+  box-shadow: var(--slds-g-shadow-1);
+}
+
+.slds2-tab__badge {
+  background: var(--slds-g-color-surface-container-3);
+  color: var(--slds-g-color-on-surface-2);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-5);
+  padding: 0 6px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.slds2-tab--active .slds2-tab__badge {
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-brand-base-30);
+}

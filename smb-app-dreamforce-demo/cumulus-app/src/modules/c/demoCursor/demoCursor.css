@@ -1,0 +1,78 @@
+/* ── Demo cursor + click hotspot overlay ────────────────────────
+   Sits above every app surface (modals included) and never intercepts
+   input: the layer and both children are pointer-events:none, so real
+   clicks pass straight through to the UI underneath. */
+.dc-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Synthetic pointer dot. Deliberately smaller and softer than the OS
+   cursor it shadows so it reads as a highlight rather than competing
+   with the real pointer. */
+.dc-pointer {
+  position: fixed;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  margin: calc(-1 * var(--slds-g-sizing-3, 0.5rem)) 0 0
+    calc(-1 * var(--slds-g-sizing-3, 0.5rem));
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: color-mix(
+    in srgb,
+    var(--slds-g-color-accent-1, #066afe) 28%,
+    transparent
+  );
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    color-mix(in srgb, var(--slds-g-color-accent-1, #066afe) 55%, transparent);
+  pointer-events: none;
+}
+
+/* Click hotspot. Expands outward from the click point while fading, so
+   the viewer's eye is pulled to where the demo just acted. */
+.dc-hotspot {
+  position: fixed;
+  width: var(--slds-g-sizing-10, 2.5rem);
+  height: var(--slds-g-sizing-10, 2.5rem);
+  margin: calc(-1 * var(--slds-g-sizing-8, 1.25rem)) 0 0
+    calc(-1 * var(--slds-g-sizing-8, 1.25rem));
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: color-mix(
+    in srgb,
+    var(--slds-g-color-accent-1, #066afe) 22%,
+    transparent
+  );
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    color-mix(in srgb, var(--slds-g-color-accent-1, #066afe) 60%, transparent);
+  pointer-events: none;
+  animation: dc-ripple 620ms ease-out forwards;
+}
+
+@keyframes dc-ripple {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+/* Respect reduced-motion: hold a brief static halo instead of the
+   expanding ripple, so the hotspot still marks the click location. */
+@media (prefers-reduced-motion: reduce) {
+  .dc-hotspot {
+    animation: dc-fade 620ms linear forwards;
+  }
+  @keyframes dc-fade {
+    0% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}

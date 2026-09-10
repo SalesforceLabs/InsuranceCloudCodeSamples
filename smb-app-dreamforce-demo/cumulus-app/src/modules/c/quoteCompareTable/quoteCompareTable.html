@@ -1,0 +1,164 @@
+<template>
+  <div class="qct">
+    <template lwc:if={hasForcedState}>
+      <c-empty-state
+        illustration-name={emptyIllustration}
+        title={forcedStateTitle}
+        size="medium"
+      >
+        {forcedStateDescription}
+        <template lwc:if={hasForcedStateCta}>
+          <button
+            slot="cta"
+            type="button"
+            class="slds-button slds-button_brand"
+          >{forcedStateCtaLabel}</button>
+        </template>
+      </c-empty-state>
+    </template>
+    <template lwc:elseif={hasQuotes}>
+      <div class="qct-scroll">
+        <table class="qct-table">
+          <thead>
+            <tr>
+              <th class="qct-corner" scope="col">
+                <template lwc:if={recommendation}>
+                  <span class="qct-corner-eyebrow">
+                    <span class="qct-corner-spark" aria-hidden="true">
+                      <svg aria-hidden="true" viewBox="0 0 13 13" focusable="false"><path fill="currentColor" d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738Z"/></svg>
+                    </span>
+                    Agent recommendation
+                  </span>
+                  <span class="qct-corner-best">
+                    Best Quote: {recommendation.carrierName}
+                    <template lwc:if={recommendation.planName}>- {recommendation.planName}</template>
+                  </span>
+                  <template lwc:if={recommendation.hasBullets}>
+                    <ul class="qct-corner-list">
+                      <template for:each={recommendation.bullets} for:item="b">
+                        <li class="qct-corner-list-item" key={b.id}>{b.text}</li>
+                      </template>
+                    </ul>
+                  </template>
+                  <template lwc:else>
+                    <p class="qct-corner-reason">{recommendation.reason}</p>
+                  </template>
+                  <button
+                    class="qct-corner-ask"
+                    type="button"
+                    onclick={handleAskAgent}
+                    title="Ask an agent about these quotes"
+                  >
+                    <img
+                      class="qct-corner-ask__mascot"
+                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACMUlEQVR4AbSUi3HbMBBEj1RqSSZVJO5AHZHsSB1YriIT12IT3nfC3QCUKH9mrMEKh73PHgCSo33z70pgPP6ffxz//f2s7l5eJ1ALT6uNjySECDyAA9gg/MPx+VG252nuRifQecwmigkFQSD/BLABhR1WcsetsGKtE3g5/T6LXIQYFAz7ah5UGDSOpdZIqhNI9otGseHPNrUT0HHMCrjbtfy7g91wZG1ACnykuDo8g7bA1kak1nJXCmj1buckC0/r6deg+PautOxG1nKB7c1H6E63niwRjjNEYo5Ui124wKsdPCm8Ubicfj6Mtj6wBuGPhqpI0J2I4v3CXUDbzueY6IO9EgyMxw4hoIIDgCMOjGpAOItnR1AdXKBlpHymAAl0GmhjsIMnFsAJ3pRmi6ZdgKKQQI4nZs5w1ScjoHUBPIbMLY8YObfgArccO1x22Pol5kdcmhdNNl+Fy6ciuq5JfuGca13nBHe43E9yGKOtXkx1XAjuUON8B5w3ZEBHMNdzpWPHqMuEA4pzjjl4crTOUeMuO6gsSdU0/5IiHIgEAoJjhq/Ffef4hazlOxBhBMe5sRYmLvTeBSomXqiuOLXwgRRgwbOuOdU501VPEkIAMboFrDUXxWfxYsPV+9AJKNh3ojlFZPszPejbv0pMawpOrGW3Y6kNtlx3B+lgi1yeiKWoK833xqJ43vCPvclRictT4kxXiAH52NmCLR9Fwc3CivVxdUTObv4QAyo6A+xNyO7yDQAA//8TB3zoAAAABklEQVQDAL8VQEBvO1qsAAAAAElFTkSuQmCC"
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    Ask an Agent
+                  </button>
+                </template>
+                <template lwc:else>
+                  <span class="qct-corner-eyebrow">Comparison Summary</span>
+                  <span class="qct-corner-sub">Annual premium per plan</span>
+                </template>
+              </th>
+              <template for:each={columns} for:item="col">
+                <th key={col.id} class={col.headClass} scope="col">
+                  <div class="qct-col-top">
+                    <span class="qct-col-logo" style={col.logoStyle} aria-hidden="true">{col.logoInitial}</span>
+                    <span class={col.tag.cls}>{col.tag.label}</span>
+                  </div>
+                  <span class="qct-col-name">{col.carrierName}</span>
+                  <span class="qct-col-plan">{col.planName}</span>
+                  <span class="qct-col-premium">{col.premium}<span class="qct-col-per"> / yr</span></span>
+                  <template lwc:if={col.delta}>
+                    <span class={col.delta.cls}>{col.delta.label}</span>
+                  </template>
+                  <dl class="qct-col-stats">
+                    <template for:each={col.stats} for:item="s">
+                      <div class="qct-col-stat" key={s.id}>
+                        <dt>{s.label}</dt>
+                        <dd>{s.value}</dd>
+                      </div>
+                    </template>
+                  </dl>
+                </th>
+              </template>
+            </tr>
+          </thead>
+          <tbody>
+            <template for:each={sections} for:item="section">
+              <tr class="qct-band-row" key={section.id}>
+                <th class="qct-band" scope="colgroup" colspan={colSpan}>
+                  <span class="qct-band-label">{section.label}</span>
+                </th>
+              </tr>
+              <template for:each={section.rows} for:item="row">
+                <template lwc:if={row.isAttrHeader}>
+                  <!-- Benefit-first layout only: attribute-name header
+                       spanning every column, followed by one indented
+                       tier sub-row per selected tier. -->
+                  <tr class="qct-attr-header-row" key={row.key}>
+                    <th class="qct-attr-header-label" scope="rowgroup" colspan={colSpan}>
+                      {row.label}
+                    </th>
+                  </tr>
+                </template>
+                <template lwc:else>
+                  <tr key={row.key}>
+                    <th class={row.labelClass} scope="row">{row.label}</th>
+                    <template for:each={row.cells} for:item="cell">
+                      <td key={cell.id} class={cell.cellClass}>
+                        <span class="qct-cell-inner">
+                          <span class="qct-cell-text">{cell.value}</span>
+                          <template lwc:if={cell.check}>
+                            <span class="qct-cell-check" aria-hidden="true">
+                              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+                            </span>
+                          </template>
+                        </span>
+                      </td>
+                    </template>
+                  </tr>
+                </template>
+              </template>
+            </template>
+
+            <tr class="qct-actions-row">
+              <th class="qct-row-label" scope="row"></th>
+              <template for:each={columns} for:item="col">
+                <td key={col.id} class={col.cellClass}>
+                  <button
+                    class={col.selectClass}
+                    type="button"
+                    data-id={col.id}
+                    aria-pressed={col.ariaPressed}
+                    onclick={handleSelect}
+                  >
+                    <template lwc:if={col.isPicked}>
+                      <span class="qct-select__check" aria-hidden="true">
+                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+                      </span>
+                    </template>
+                    {col.selectLabel}
+                  </button>
+                </td>
+              </template>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </template>
+    <template lwc:else>
+      <c-empty-state
+        illustration-name="success:new"
+        title="No quotes selected"
+        size="small"
+      >
+        Select at least two quotes on the RFQ to compare them
+        side-by-side here.
+      </c-empty-state>
+    </template>
+  </div>
+</template>

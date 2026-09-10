@@ -1,0 +1,66 @@
+/* SLDS 2 Badge — small, slightly-rounded chips (NOT pill-shaped).
+ * Real SLDS 2 default radius is --slds-g-radius-border-1 (4px) and
+ * the default background is --slds-g-color-surface-container-3 (neutral).
+ */
+.slds2-badge {
+  --slds-c-badge-color-background: var(--slds-g-color-surface-container-3);
+  --slds-c-badge-color-border: transparent;
+  --slds-c-badge-text-color: var(--slds-g-color-on-surface-2);
+  --slds-c-badge-color-foreground: var(--slds-c-badge-text-color);
+  --slds-c-badge-radius-border: var(--slds-g-radius-border-1);
+  --slds-c-badge-sizing-border: var(--slds-g-sizing-border-1);
+  --slds-c-badge-font-size: var(--slds-g-font-scale-neg-1);
+  --slds-c-badge-font-weight: var(--slds-g-font-weight-5);
+  --slds-c-badge-font-line-height: 1.4;
+  --slds-c-badge-spacing-block-start: 2px;
+  --slds-c-badge-spacing-block-end: 2px;
+  --slds-c-badge-spacing-inline-start: var(--slds-g-spacing-2);
+  --slds-c-badge-spacing-inline-end: var(--slds-g-spacing-2);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1);
+  background: var(--slds-c-badge-color-background);
+  color: var(--slds-c-badge-text-color);
+  border: var(--slds-c-badge-sizing-border) solid var(--slds-c-badge-color-border);
+  border-radius: var(--slds-c-badge-radius-border);
+  font-size: var(--slds-c-badge-font-size);
+  font-weight: var(--slds-c-badge-font-weight);
+  line-height: var(--slds-c-badge-font-line-height);
+  padding-block-start: var(--slds-c-badge-spacing-block-start);
+  padding-block-end: var(--slds-c-badge-spacing-block-end);
+  padding-inline-start: var(--slds-c-badge-spacing-inline-start);
+  padding-inline-end: var(--slds-c-badge-spacing-inline-end);
+  white-space: nowrap;
+}
+
+.slds2-badge--neutral {
+  --slds-c-badge-color-background: var(--slds-g-color-surface-container-3);
+  --slds-c-badge-text-color: var(--slds-g-color-on-surface-2);
+}
+.slds2-badge--brand {
+  /* Soft brand tint — accent-container-1 is the saturated brand,
+   * which is illegible behind dark text. Use brand-95 / brand-30 instead. */
+  --slds-c-badge-color-background: var(--slds-g-color-brand-base-95);
+  --slds-c-badge-text-color: var(--slds-g-color-brand-base-30);
+}
+.slds2-badge--success {
+  --slds-c-badge-color-background: var(--slds-g-color-success-container-1);
+  --slds-c-badge-text-color: var(--slds-g-color-on-success-container-1, var(--slds-g-color-success-1));
+}
+.slds2-badge--warning {
+  --slds-c-badge-color-background: var(--slds-g-color-warning-container-1);
+  --slds-c-badge-text-color: var(--slds-g-color-on-warning-container-1, var(--slds-g-color-warning-1));
+}
+.slds2-badge--error {
+  --slds-c-badge-color-background: var(--slds-g-color-error-container-1);
+  --slds-c-badge-text-color: var(--slds-g-color-on-error-container-1, var(--slds-g-color-error-1));
+}
+.slds2-badge--info {
+  --slds-c-badge-color-background: var(--slds-g-color-info-container-1);
+  --slds-c-badge-text-color: var(--slds-g-color-on-info-container-1, var(--slds-g-color-info-1));
+}
+.slds2-badge--outline {
+  --slds-c-badge-color-background: transparent;
+  --slds-c-badge-color-border: currentColor;
+}

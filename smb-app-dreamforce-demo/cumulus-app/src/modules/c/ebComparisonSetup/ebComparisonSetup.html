@@ -1,0 +1,49 @@
+<template>
+  <section class="ecs" aria-label="Side-by-Side Compare">
+    <header class="ecs__head">
+      <span class="ecs__eyebrow">Evaluation &amp; Presentation</span>
+      <h2 class="ecs__title">Side-by-Side Compare (new)</h2>
+      <p class="ecs__sub">
+        Build a linked comparison template for this RFQ flow. Pick the
+        Highlights row (top KPI cards) and the Body Fields strip
+        (exhaustive copays + limits) the broker presents at quote time.
+      </p>
+    </header>
+
+    <div class="ecs__panel" role="status">
+      <span class="ecs__pill">Scaffold</span>
+      <h3 class="ecs__panel-title">Configuration coming soon</h3>
+      <p class="ecs__panel-sub">
+        Modular contract is live - the component receives the selected
+        Root Product through <code>@api</code> and reports saves
+        through the uniform <code>configurationsave</code> event. The
+        Highlights / Body Fields builder UI lands in a follow-up pass.
+      </p>
+      <dl class="ecs__meta">
+        <div class="ecs__meta-row">
+          <dt class="ecs__meta-dt">Active Root Product</dt>
+          <dd class="ecs__meta-dd">
+            <template lwc:if={hasRootProduct}>{rootProductLabel}</template>
+            <template lwc:else>- none selected -</template>
+          </dd>
+        </div>
+        <div class="ecs__meta-row">
+          <dt class="ecs__meta-dt">Contract</dt>
+          <dd class="ecs__meta-dd">
+            <code>@api rootProduct</code> · emits
+            <code>configurationsave</code>
+          </dd>
+        </div>
+      </dl>
+
+      <button
+        type="button"
+        class="ecs__btn"
+        onclick={handlePlaceholderSave}
+        title="Fires the configurationsave event for QA"
+      >
+        Save (placeholder)
+      </button>
+    </div>
+  </section>
+</template>

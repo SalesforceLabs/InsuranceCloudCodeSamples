@@ -1,0 +1,1472 @@
+/* ─────────────────────────────────────────────────────────────────────
+   c-agentforce-setup - Salesforce Setup → Agentforce Meeting Concierge
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Make the LWC host fill the area below the SF workspace chrome
+   so the Setup page doesn't render "cut in half" with empty grey
+   below it. The 104px offset accounts for the .sf-app-bar plus the
+   .sf-tabs workspace strip + borders. */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 104px);
+}
+
+.afs-setup {
+  flex: 1;
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--atlas-font);
+}
+
+/* ── Setup chrome (Home / Object Manager tabs) ──────────────── */
+.afs-setup__chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding: 0 var(--slds-g-spacing-var-5, 1.5rem);
+}
+.afs-setup__chrome-tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.afs-setup__chrome-tab {
+  background: none;
+  border: 0;
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  position: relative;
+}
+.afs-setup__chrome-tab.is-active {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-setup__chrome-tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: var(--slds-g-sizing-border-2, 2px);
+  background: var(--slds-g-color-accent-1, #066afe);
+}
+.afs-setup__chrome-tab:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.afs-setup__chrome-close {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+.afs-setup__chrome-close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-setup__chrome-close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.afs-setup__chrome-close svg {
+  width: var(--slds-g-sizing-base, 1rem);
+  height: var(--slds-g-sizing-base, 1rem);
+}
+
+/* ── Body grid (sidebar + main) ─────────────────────────────── */
+.afs-setup__body {
+  /* Setup sidebar was removed - main content takes the full width.
+     Single-column grid (vs. flex) so adding the sidebar back is a
+     one-line change. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  flex: 1;
+}
+
+.afs-setup__nav {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.afs-setup__nav-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: 0 var(--slds-g-spacing-3, 0.75rem);
+}
+.afs-setup__nav-search svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.afs-setup__nav-search input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  padding: var(--slds-g-spacing-2, 0.5rem) 0;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  outline: none;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-setup__nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.afs-setup__nav-title {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.afs-setup__nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+/* The class applies to both <button> (selectable Feature Settings
+   items) and <span> (decorative items like Meetings / Einstein).
+   Reset native button chrome so both render identically. */
+.afs-setup__nav-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: var(--slds-g-spacing-var-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+/* Decorative <span> variants don't accept clicks. */
+span.afs-setup__nav-item {
+  cursor: default;
+}
+.afs-setup__nav-item:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.afs-setup__nav-item:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 1px;
+}
+.afs-setup__nav-item.is-active {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+/* ── Main content ──────────────────────────────────────────── */
+.afs-setup__main {
+  /* Vertical padding bumped to var-5 (1.5rem) so the workspace
+     header has room to breathe from the chrome above. Horizontal
+     padding (page gutter) stays at var-7 = 2.5rem (40px) so the
+     workspace card breathes between itself and the page edges. */
+  padding: var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-var-7, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.afs-setup__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.afs-setup__header-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  letter-spacing: 0.04em;
+}
+.afs-setup__header-eyebrow svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.afs-setup__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+.afs-setup__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-setup__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.afs-setup__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.afs-setup__cta-icon {
+  width: var(--slds-g-sizing-base, 1rem);
+  height: var(--slds-g-sizing-base, 1rem);
+}
+
+/* ── Playbook tiles ────────────────────────────────────────── */
+.afs-setup__playbooks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* Empty-state shown when there are no templates yet. SLDS 2 empty
+   pattern: muted neutral surface, soft icon, clear next-step copy. */
+.afs-setup__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-7, 2.5rem) var(--slds-g-spacing-var-5, 1.5rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  text-align: center;
+}
+.afs-setup__empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-10, 3rem);
+  height: var(--slds-g-sizing-10, 3rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+.afs-setup__empty-icon svg {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+}
+.afs-setup__empty-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-setup__empty-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.afs-setup__empty-sub strong {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-setup__playbook {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  /* Slimmer padding so the tile reads as a summary row rather
+     than a big card - paired with the inline metadata line, the
+     tile now lands at ~half the previous height. */
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 4px 12px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+.afs-setup__playbook:hover {
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06),
+    0 8px 20px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
+}
+/* Inactive tiles dim so admins can spot stale templates without
+   them visually competing with the active ones. */
+.afs-setup__playbook.is-inactive {
+  opacity: 0.6;
+}
+.afs-setup__playbook.is-inactive:hover {
+  opacity: 0.85;
+}
+/* While its kebab menu is open, the tile is lifted above the
+   click-outside scrim (z-index 25) so the dropdown's items remain
+   clickable. The hover transform / inactive opacity create a stacking
+   context on the tile, so the menu's own z-index can't escape it -
+   raising the whole tile is what keeps the menu above the scrim. */
+.afs-setup__playbook.is-menu-open {
+  position: relative;
+  z-index: 40;
+}
+.afs-setup__playbook-head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.afs-setup__playbook-mark {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+}
+.afs-setup__playbook-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.afs-setup__playbook-name {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+/* Source badge (BROKERAGE / CUSTOM) + status badge (ACTIVE /
+   INACTIVE) sit side-by-side under the template name. */
+.afs-setup__playbook-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.afs-setup__playbook-badge {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  letter-spacing: 0.04em;
+}
+.afs-setup__playbook-status {
+  display: inline-flex;
+  align-items: center;
+  height: var(--slds-g-sizing-5, 1rem);
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+}
+.afs-setup__playbook-status.is-active {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-2, #023434);
+}
+.afs-setup__playbook-status.is-inactive {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.afs-setup__playbook-more {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+.afs-setup__playbook-more:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-setup__playbook-more:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 1px;
+}
+.afs-setup__playbook-more.is-open {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-setup__playbook-more svg {
+  width: var(--slds-g-sizing-base, 1rem);
+  height: var(--slds-g-sizing-base, 1rem);
+}
+
+/* Anchor wraps the kebab and its dropdown so the menu can position
+   relative to the trigger. */
+.afs-menu-anchor {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Kebab dropdown - right-anchored, soft shadow card. role="menu"
+   in HTML drives semantics; Esc/scrim close the menu, click on any
+   item executes + closes. */
+.afs-menu {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-1, 0.25rem));
+  right: 0;
+  z-index: 30;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 9rem;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.06),
+    0 8px 20px rgba(15, 23, 42, 0.10);
+  animation: afs-menu-pop 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes afs-menu-pop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.afs-menu__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.afs-menu__item:hover {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.afs-menu__item:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: calc(-1 * var(--slds-g-sizing-border-2, 2px));
+}
+.afs-menu__icon {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex-shrink: 0;
+}
+/* Thin divider above the destructive action so Delete reads as set
+   apart from the routine actions. */
+.afs-menu__sep {
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: var(--slds-g-spacing-1, 0.25rem) 0;
+  background: var(--slds-g-color-border-1, #c9c9c9);
+}
+/* Destructive item - error ramp text + a soft error wash on hover. */
+.afs-menu__item_destructive {
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.afs-menu__item_destructive:hover {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-on-error-1, #b60554);
+}
+
+/* Invisible scrim that catches clicks outside the open menu and
+   closes it. Lower z-index than the menu but above page content. */
+.afs-menu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  background: transparent;
+}
+
+/* ── Tile meta line ──────────────────────────────────────────
+   Single horizontal line - Root Product · Version · Live since
+   - so the tile reads as a slim summary instead of a tall
+   key/value table. Truncates with ellipsis when the inline
+   string overflows the tile width. */
+.afs-setup__playbook-meta-line {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Wizard modal
+   ═══════════════════════════════════════════════════════════ */
+/* SLDS global modal classes don't pierce the LWC shadow DOM, so the wizard
+   re-declares the centering chrome under our own afs- namespace
+   (per slds/no-slds-class-overrides). */
+.afs-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+  z-index: 9000;
+}
+.afs-backdrop.afs-backdrop_open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.afs-wizard {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  z-index: 9001;
+  font-family: var(--atlas-font);
+  pointer-events: none;
+}
+.afs-wizard.afs-wizard_open {
+  pointer-events: auto;
+}
+.afs-wizard__container {
+  pointer-events: auto;
+  width: min(1320px, 96vw);
+  max-width: none;
+  height: min(960px, 96vh);
+  max-height: 96vh;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--atlas-font);
+  animation: afs-wizard-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes afs-wizard-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+@media (max-width: 48em) {
+  .afs-wizard {
+    padding: 0;
+  }
+  .afs-wizard__container {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}
+.afs-wizard__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.afs-wizard__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.afs-wizard__close {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+.afs-wizard__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-wizard__close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.afs-wizard__close svg {
+  width: var(--slds-g-sizing-base, 1rem);
+  height: var(--slds-g-sizing-base, 1rem);
+}
+
+.afs-wizard__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Inner stepper sidebar (RFQ Progress card) ──────────────── */
+.afs-wizard__nav {
+  flex: 0 0 16rem;
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding: var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-var-4, 1rem);
+  overflow-y: auto;
+}
+.afs-wizard__progress {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 4px 12px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.afs-wizard__progress-head {
+  padding-bottom: var(--slds-g-spacing-var-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.afs-wizard__progress-eyebrow {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Step list */
+.afs-wizard__nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* Each step row: numbered/checkmark mark + 2-line text body. */
+.afs-wizard__nav-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--slds-g-sizing-7, 1.5rem) 1fr;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  align-items: flex-start;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+}
+
+/* Vertical connector line dropped from one circle to the next.
+   SLDS 2 Path pattern: trail is brand-coloured up to the current
+   step so the completed path reads as the user's progress. */
+.afs-wizard__nav-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--slds-g-sizing-7, 1.5rem) / 2);
+  top: var(--slds-g-sizing-7, 1.5rem);
+  width: var(--slds-g-sizing-border-2, 2px);
+  height: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-border-1, #c9c9c9);
+  transform: translateX(-50%);
+  transition: background 150ms ease;
+}
+/* Connector dropping out of a done step is brand-coloured so the
+   trail visually carries the broker's progress through the path. */
+.afs-wizard__nav-step.is-done:not(:last-child)::before {
+  background: var(--slds-g-color-accent-1, #066afe);
+}
+
+/* Mark wrapper holds the circle and gives the active state room for the
+   light-blue halo without affecting the row's grid-track size. */
+.afs-wizard__nav-mark-wrap {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.afs-wizard__nav-mark {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 150ms ease, background 150ms ease,
+    border-color 150ms ease;
+}
+/* SLDS 2 Path - current step. Brand-coloured filled circle with a
+   soft brand-base-90 halo so the active step pops vs both done
+   and pending neighbours. */
+.afs-wizard__nav-mark.is-active {
+  background: var(--slds-g-color-accent-1, #066afe);
+  border-color: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  box-shadow: 0 0 0 var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+/* SLDS 2 Path - completed step. Brand-coloured filled circle with
+   a white checkmark glyph. Reserved for the navigation trail -
+   success/teal in SLDS 2 is for confirmation outcomes (saved,
+   bound), not stepper progress. */
+.afs-wizard__nav-mark.is-done {
+  background: var(--slds-g-color-accent-1, #066afe);
+  border-color: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+/* Done-state checkmark SVG sized to fit the 24x24 nav mark. */
+.afs-wizard__nav-mark svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* Two-line text body (title + subtitle) next to the circle. */
+.afs-wizard__nav-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.afs-wizard__nav-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.afs-wizard__nav-sub {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+/* SLDS 2 Path label states - current is brand-coloured to mirror
+   the active mark, done is the standard heading colour (full
+   weight, slightly muted vs current), pending is dimmer so the
+   user's eye lands on the active step first. */
+.afs-wizard__nav-step.is-active .afs-wizard__nav-label {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.afs-wizard__nav-step.is-done .afs-wizard__nav-label {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-wizard__nav-step:not(.is-active):not(.is-done) .afs-wizard__nav-label {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* ── Main panel (right side of wizard) ──────────────────────── */
+.afs-wizard__panel {
+  flex: 1;
+  padding: var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-var-6, 2rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+.afs-wizard__panel-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-wizard__panel-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.afs-wizard__panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+
+/* ── Define-step form ──────────────────────────────────────── */
+.afs-wizard__form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+}
+
+/* ── Stage 0: Initialization picker grid ────────────────────── */
+.afs-init-grid {
+  display: grid;
+  /* Two-up on wide enough panels (LOB | Line of Coverage on the same
+     row), collapses to a single column on narrow viewports so labels
+     stay readable. */
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  max-width: 40rem;
+}
+.afs-field__select-wrap {
+  position: relative;
+}
+.afs-field__select-wrap::after {
+  content: '';
+  position: absolute;
+  right: var(--slds-g-spacing-3, 0.75rem);
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-left: 0.3rem solid transparent;
+  border-right: 0.3rem solid transparent;
+  border-top: 0.3rem solid var(--slds-g-color-on-surface-1, #5c5c5c);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.afs-field__select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-var-6, 2rem)
+    var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-var-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.afs-field__select:disabled {
+  cursor: not-allowed;
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+}
+.afs-field__select:focus,
+.afs-field__select:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+
+@media (max-width: 48em) {
+  .afs-init-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Existing-template prompt (edit vs. clone) ─────────────────── */
+/* Flat layout: header → sub → (banner) → tiles. The previous grey
+   surface with a blue left border was removed so contextual banners
+   sit naturally between the section copy and the action tiles -
+   matching the broader info/warning placement pattern. */
+.afs-mode-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-top: var(--slds-g-spacing-var-5, 1.5rem);
+  max-width: 56rem;
+}
+.afs-mode-prompt__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-mode-prompt__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.afs-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+}
+.afs-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  transition: border-color 120ms ease, background-color 120ms ease,
+    box-shadow 120ms ease;
+}
+.afs-tile:hover {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.afs-tile:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 1px;
+}
+.afs-tile.is-active {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-1, 1px)
+    var(--slds-g-color-border-accent-1, #066afe);
+}
+.afs-tile__icon {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.afs-tile__icon svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.afs-tile__title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-tile__sub {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+@media (max-width: 48em) {
+  .afs-tile-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Standardized info / warning banner ─────────────────────────
+   Shared visual treatment used across the three Setup wizards
+   (afs / qcs / rps prefixes) so contextual messages read as one
+   design language. Two severity variants:
+     _info     - blue ramp, explanatory or status-only copy
+     _warning  - yellow ramp, admin action recommended
+   Single rounded pill mirroring the 429x42 reference SVG; the inline
+   link affordance (.afs-banner__link) is a real <button>/<a> so each
+   instance can carry contextual copy + a meaningful action. */
+.afs-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  /* No own margin - every parent that hosts a banner is a flex
+     column with its own `gap`, so adding margin-top here compounds
+     with the parent gap and produces a double-padded slab. */
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.afs-banner__icon {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--slds-g-spacing-1, 0.25rem);
+}
+.afs-banner__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.afs-banner__copy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.afs-banner__copy strong {
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.afs-banner__link {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin-left: var(--slds-g-spacing-1, 0.25rem);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  color: inherit;
+}
+.afs-banner__link:hover {
+  text-decoration: none;
+}
+.afs-banner__link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid currentColor;
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.afs-banner_info {
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+}
+.afs-banner_warning {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-on-warning-1, #8c4b02);
+}
+
+/* Active-version warning + Publish-step note both now use the
+   standardized .afs-banner pattern above (info/warning variants).
+   The legacy .afs-version-warning / .afs-version-note rules were
+   removed to keep one source of truth for contextual messages. */
+
+.afs-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  position: relative;
+  min-width: 0;
+}
+.afs-field_full {
+  grid-column: 1 / -1;
+}
+.afs-field__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* SLDS required-field marker - red asterisk to the right of the
+   label text. Convention: every mandatory field renders the
+   <abbr class="slds-required"> AFTER the label so the eye scans the
+   label text first, then catches the requiredness cue. */
+.slds-required {
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-decoration: none;
+  margin-left: 2px;
+}
+.afs-field__count {
+  position: absolute;
+  bottom: var(--slds-g-spacing-1, 0.25rem);
+  right: var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  pointer-events: none;
+}
+
+/* ── Meeting stages list ───────────────────────────────────── */
+.afs-stages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+.afs-stages__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.afs-stages__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-stages__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.afs-stages__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.afs-stage {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.afs-stage__handle {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  cursor: grab;
+}
+.afs-stage__num {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+}
+.afs-stage__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.afs-stage__title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-stage__desc {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Configure-step canvas ─────────────────────────────────── */
+.afs-wizard__panel_configure {
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+/* ── Publish-step sections (Version & Validity, Activation) ────
+   Flat layout - no card chrome - so the Publish step reads as
+   stacked form sections rather than two heavy cards. The panel's
+   gap (1.5rem) handles section separation; the bold section
+   heading provides the visual anchor. */
+.afs-assign-card {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+/* Section break - when two Publish-step assign cards (Version &
+   Validity → Activation) stack on the same panel, the parent flex
+   gap alone is too tight to signal a new section. Add an extra
+   margin-top to the second card so the visual rhythm reads as
+   "section → break → next section" instead of "row → row → row". */
+.afs-assign-card + .afs-assign-card {
+  margin-top: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.afs-assign-card strong {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-assign-card p {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Card head - title + helper hint stacked on the left. */
+.afs-assign-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.afs-assign-card__hint {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* Row variant - places the head on the left and the toggle on the
+   right (used by the Activation row). Capped to the same 36rem
+   width as the Version & Validity grid so the toggle sits in line
+   with the right edge of the date fields above. */
+.afs-assign-card_row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  max-width: 36rem;
+}
+.afs-assign-card_row .afs-assign-card__head {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ── Version & Validity form grid ────────────────────────────
+   2-column responsive grid hosting the Version Name field (full
+   width) on row 1 and Effective Start/End dates side-by-side on
+   row 2. Capped at 36rem so the inputs read as form fields rather
+   than wide bands; drops to a single column on narrow viewports. */
+.afs-version-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  max-width: 36rem;
+}
+.afs-field_full {
+  grid-column: 1 / -1;
+}
+.afs-field__input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-var-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.afs-field__input:hover {
+  border-color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.afs-field__input:focus,
+.afs-field__input:focus-visible {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-1, 1px)
+    var(--slds-g-color-border-accent-1, #066afe);
+}
+.afs-field__input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+/* Browser-native date-picker indicator - sized to the SLDS 2 icon
+   floor (1rem) and tinted to the accent color so the calendar glyph
+   reads as interactive at SLDS contrast. */
+.afs-field__input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  padding: 0;
+  margin-left: var(--slds-g-spacing-2, 0.5rem);
+  filter: invert(38%) sepia(83%) saturate(2089%) hue-rotate(206deg) brightness(99%) contrast(101%);
+}
+
+/* Inline validation message (end-before-start) - error palette. */
+.afs-field__error {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-error-1, #b60554);
+}
+
+@media (max-width: 48em) {
+  .afs-version-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Toggle (lightning-input type="toggle" equivalent) ──────────── */
+.afs-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-2, 0.5rem);
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  flex: 0 0 auto;
+}
+.afs-toggle:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.afs-toggle__caption {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.afs-toggle__track {
+  position: relative;
+  width: 2.25rem;
+  height: var(--slds-g-sizing-6, 1.25rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  transition: background-color 150ms ease;
+  flex: 0 0 auto;
+}
+.afs-toggle__track.is-on {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+}
+.afs-toggle__thumb {
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  transition: left 150ms ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.25);
+}
+.afs-toggle__track.is-on .afs-toggle__thumb {
+  left: 1.125rem;
+}
+.afs-toggle__state {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  min-width: var(--slds-g-sizing-10, 3rem);
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   SLDS 2 buttons (afs- namespace)
+
+   Global SLDS button classes don't pierce the LWC shadow DOM, so the
+   wizard re-declares button chrome locally under the afs-button family.
+   Tokens follow the SLDS 2 button anatomy:
+     • Brand    = accent-container-1 / on-accent-1
+     • Neutral  = surface-container-1 / on-surface-2 / border-2
+     • Disabled = disabled-container-1 / on-disabled-1
+   ───────────────────────────────────────────────────────────────────── */
+.afs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-4, 1rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease,
+    color 120ms ease, box-shadow 120ms ease;
+}
+.afs-button:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.afs-button[disabled],
+.afs-button:disabled {
+  cursor: not-allowed;
+}
+
+/* Neutral (secondary) */
+.afs-button_neutral {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.afs-button_neutral:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.afs-button_neutral:active {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+.afs-button_neutral[disabled],
+.afs-button_neutral:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.afs-button_neutral[disabled]:hover,
+.afs-button_neutral:disabled:hover {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+
+/* Brand (primary) */
+.afs-button_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.afs-button_brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.afs-button_brand:active {
+  background: var(--slds-g-color-accent-container-3, #022ac0);
+  border-color: var(--slds-g-color-accent-container-3, #022ac0);
+}
+.afs-button_brand[disabled],
+.afs-button_brand:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.afs-button_brand[disabled]:hover,
+.afs-button_brand:disabled:hover {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-disabled-container-1, #e5e5e5);
+}
+
+/* ── Wizard footer ─────────────────────────────────────────── */
+.afs-wizard__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--atlas-button-gap, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.afs-wizard__foot-spacer {
+  flex: 1;
+}
+
+
+/* ── SLDS 2 conformance: pill action buttons (radius-border/circle) ── */
+.afs-button { border-radius: var(--slds-g-radius-border-pill, 9999px); }

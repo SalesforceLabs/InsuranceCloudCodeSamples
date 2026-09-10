@@ -1,0 +1,150 @@
+<template>
+  <div class="app-shell">
+    <!--
+      Atlas <c-top-nav> retired 2026-07-23: the Home pill on the
+      account-record-page tab strip is now the canonical entry point
+      back to Run My Day, so the Atlas bar is redundant. Non-shell
+      routes (RMD, Renewals Workspace, RFQ Workspace, Meeting Center)
+      instead get the lightweight c-home-tab-strip below so the Home
+      affordance survives. c-top-nav source is preserved under
+      src/modules/c/topNav/ in case we need to bring it back.
+    -->
+    <template lwc:if={showHomeTabStrip}>
+      <c-home-tab-strip
+        onnavigate={handleNavigate}
+      ></c-home-tab-strip>
+    </template>
+
+    <main class="app-main">
+      <template lwc:if={isAccountRecordPage}>
+        <!--
+          Run My Day now lives inside the SF shell as the Home
+          workspace tab (see accountRecordPage.html's homeOpen panel),
+          so persona / bound-account / rmd-tab flow down through
+          c-account-record-page and the onrmdtabchange event bubbles
+          back up here for URL persistence. Clicking Home from any
+          other workspace tab activates Home in-place instead of
+          swapping the top-level route.
+        -->
+        <c-account-record-page
+          ontoast={handleChildToast}
+          rfq-tabs={accountRfqTabs}
+          meeting-tabs={accountMeetingTabs}
+          active-workspace-tab-id={activeWorkspaceTabId}
+          account-rfqs={accountRfqs}
+          notifications={notifications}
+          quotes-arriving={quoteArrivalsActive}
+          client-reply-signal={clientReplySignal}
+          rmd-meetings-revision={rmdMeetingsRevision}
+          rmd-focus-date-key={rmdFocusDateKey}
+          rmd-highlight-meeting-id={rmdHighlightMeetingId}
+          slack-open={slackOpen}
+          persona-id={activePersonaId}
+          bound-account-ids={boundAccountIdsArray}
+          rmd-tab={rmdTab}
+          onnavigate={handleNavigate}
+          onstartrfqintake={handleStartRfqIntake}
+          onopenrfqtab={handleOpenRfqTab}
+          onopenpolicytab={handleOpenPolicyTab}
+          onopenquotecompare={handleOpenQuoteCompare}
+          ontabactivate={handleWorkspaceTabActivate}
+          ontabclose={handleWorkspaceTabClose}
+          onrmdtabchange={handleRmdTabChange}
+          onpolicybound={handlePolicyBound}
+          onrisksubmitted={handleRiskSubmitted}
+          onroutebundle={handleRouteBundle}
+          onnotificationsread={handleNotificationsRead}
+          onnotificationopen={handleNotificationOpen}
+          onrfqlistviewed={handleRfqListViewed}
+          onratingcomplete={handleRatingComplete}
+          onrfqaction={handleRfqAction}
+          onslackaction={handleSlackAction}
+        ></c-account-record-page>
+      </template>
+
+      <template lwc:if={isRenewalWorkspace}>
+        <c-renewal-workspace onnavigate={handleNavigate}></c-renewal-workspace>
+      </template>
+
+      <template lwc:if={isPaWorkspace}>
+        <c-rfq-workspace
+          context={rfqContext}
+          onnavigate={handleNavigate}
+          onpolicybound={handlePolicyBound}
+          onrisksubmitted={handleRiskSubmitted}
+          ontoast={handleChildToast}
+        ></c-rfq-workspace>
+      </template>
+
+      <template lwc:if={isEbWorkspace}>
+        <c-rfq-workspace-eb
+          context={rfqContext}
+          onnavigate={handleNavigate}
+          onpolicybound={handlePolicyBound}
+          onrisksubmitted={handleRiskSubmitted}
+          ontoast={handleChildToast}
+        ></c-rfq-workspace-eb>
+      </template>
+
+      <template lwc:if={isHomeWorkspace}>
+        <c-rfq-workspace-home
+          context={rfqContext}
+          onnavigate={handleNavigate}
+          onpolicybound={handlePolicyBound}
+          onrisksubmitted={handleRiskSubmitted}
+          ontoast={handleChildToast}
+        ></c-rfq-workspace-home>
+      </template>
+
+      <template lwc:if={isEbPolicyRecordPage}>
+        <c-eb-policy-record-page ontoast={handleChildToast}></c-eb-policy-record-page>
+      </template>
+    </main>
+
+    <c-slack-drawer
+      open={slackOpen}
+      onclose={handleCloseSlack}
+      onslackaction={handleSlackAction}
+    ></c-slack-drawer>
+
+    <c-rfq-intake-modal
+      open={intakeModalOpen}
+      context={intakeModalContext}
+      oncancel={handleIntakeCancel}
+      oncontinue={handleIntakeContinue}
+    ></c-rfq-intake-modal>
+
+    <c-quote-comparison-modal
+      application-id={quoteModalApplicationId}
+      application-name={quoteModalApplicationName}
+      account-name={quoteModalAccountName}
+      account-id={quoteModalAccountId}
+      flow={quoteModalFlow}
+      line-label={quoteModalLineLabel}
+      selected-quote-ids={quoteModalQuoteIdList}
+      open={quoteModalOpen}
+      onclose={handleQuoteModalClose}
+      onpolicybound={handlePolicyBound}
+      onproposalsent={handleProposalSent}
+    ></c-quote-comparison-modal>
+
+    <c-client-reply-modal
+      open={clientReplyOpen}
+      reply={clientReply}
+      onclose={handleClientReplyClose}
+      onschedulemeeting={handleScheduleMeeting}
+    ></c-client-reply-modal>
+
+    <!-- Demo presentation overlay. Renders above every surface but is
+         pointer-events:none throughout, so it can never intercept a
+         click. Inert unless the session was launched with ?demo=1. -->
+    <c-demo-cursor active={demoMode}></c-demo-cursor>
+
+    <c-toast
+      message={toastMessage}
+      kind={toastKind}
+      visible={toastVisible}
+      ondismiss={handleToastDismiss}
+    ></c-toast>
+  </div>
+</template>

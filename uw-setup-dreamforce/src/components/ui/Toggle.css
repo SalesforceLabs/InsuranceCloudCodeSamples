@@ -1,0 +1,79 @@
+/* SLDS 2 Checkbox-Toggle. SLDS 2 namespaces this `checkbox-toggle`. */
+.slds2-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3);
+  cursor: pointer;
+  user-select: none;
+  font-size: var(--slds-g-font-scale-base);
+}
+
+.slds2-toggle__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.slds2-toggle__track {
+  --slds-c-checkbox-toggle-color-background: var(--slds-g-color-neutral-base-90);
+  --slds-c-checkbox-toggle-color-background-hover: var(--slds-g-color-neutral-base-80);
+  --slds-c-checkbox-toggle-color-border: transparent;
+  --slds-c-checkbox-toggle-color-border-hover: transparent;
+  --slds-c-checkbox-toggle-radius-border: var(--slds-g-radius-border-pill);
+  --slds-c-checkbox-toggle-shadow: none;
+  --slds-c-checkbox-toggle-switch-color-background: var(--slds-g-color-surface-container-1);
+  --slds-c-checkbox-toggle-switch-color-background-checked: var(--slds-g-color-on-accent-1);
+
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  background: var(--slds-c-checkbox-toggle-color-background);
+  border: var(--slds-g-sizing-border-1) solid var(--slds-c-checkbox-toggle-color-border);
+  border-radius: var(--slds-c-checkbox-toggle-radius-border);
+  box-shadow: var(--slds-c-checkbox-toggle-shadow);
+  transition: background-color 200ms ease;
+  flex-shrink: 0;
+}
+.slds2-toggle:hover .slds2-toggle__track {
+  background: var(--slds-c-checkbox-toggle-color-background-hover);
+  border-color: var(--slds-c-checkbox-toggle-color-border-hover);
+}
+
+.slds2-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--slds-c-checkbox-toggle-switch-color-background);
+  border-radius: var(--slds-g-radius-border-circle);
+  box-shadow: var(--slds-g-shadow-1);
+  transition: transform 200ms ease, background-color 200ms ease;
+}
+
+.slds2-toggle__input:checked + .slds2-toggle__track {
+  background: var(--slds-g-color-accent-1);
+}
+.slds2-toggle__input:checked + .slds2-toggle__track .slds2-toggle__thumb {
+  background: var(--slds-c-checkbox-toggle-switch-color-background-checked);
+  transform: translateX(16px);
+}
+.slds2-toggle__input:focus-visible + .slds2-toggle__track {
+  box-shadow: 0 0 0 2px var(--slds-g-color-surface-1),
+              0 0 0 4px var(--slds-g-color-brand-base-15);
+}
+.slds2-toggle__input:disabled + .slds2-toggle__track {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slds2-toggle__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.slds2-toggle__hint {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}

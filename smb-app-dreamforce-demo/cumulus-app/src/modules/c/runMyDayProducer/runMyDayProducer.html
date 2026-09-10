@@ -1,0 +1,49 @@
+<template>
+  <section class="rmdp-strip" aria-label="Renewal pipeline">
+    <!-- SLDS 2 Agentic Card - the in-house c-agentic-card owns the title,
+         AI-generated pill, freshness, feedback, and sources chrome.
+         We only fill the body slot: a prose summary that weaves the
+         key numbers inline as <strong>, followed by the CTA into the
+         renewals deep-dive workspace. Sources open by default so the
+         accounts Agentforce reasoned over are visible on first view. -->
+    <c-agentic-card
+      title="Agentforce Summary"
+      timestamp={insightTimestamp}
+      sources={insightSources}
+      variant="standalone"
+      onrefresh={handleRefreshInsight}
+      onsources={handleToggleSources}
+      onfeedback={handleFeedback}
+    >
+      <template lwc:if={hasAtRisk}>
+        <p class="rmdp-insight__body">
+          <strong>{atRiskCountLabel}</strong> {atRiskNoun} your attention in
+          the next 60 days. Agentforce flagged
+          <template lwc:if={spikesCount}>
+            <strong>{spikesLabel}</strong> with premium spikes above 15%
+          </template>
+          <template lwc:if={hasBothSignals}> and </template>
+          <template lwc:if={claimsCount}>
+            <strong>{claimsLabel}</strong> with open claims
+          </template>
+          - the nearest expires in <strong>{nextExpirationLabel}</strong>.
+        </p>
+      </template>
+      <template lwc:else>
+        <p class="rmdp-insight__body">
+          Pipeline is clear - no risk flags in the next 60 days. Agentforce is
+          watching <strong>{watchingLabel}</strong> and will surface new
+          signals here as they appear.
+        </p>
+      </template>
+
+      <div class="rmdp-insight__actions">
+        <button
+          type="button"
+          class="slds-button slds-button_brand rmdp-insight__cta"
+          onclick={handleOpenWorkspace}
+        >Open Renewals Workspace</button>
+      </div>
+    </c-agentic-card>
+  </section>
+</template>

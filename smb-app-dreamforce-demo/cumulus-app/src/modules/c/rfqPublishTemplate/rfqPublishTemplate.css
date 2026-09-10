@@ -1,0 +1,186 @@
+/* c-rfq-publish-template - 5th substep under Product Catalog
+   Definition in the RFQ Setup Workspace. Mirrors the visual language
+   of c-agentforce-setup's Publish step so the workspace's Publish UI
+   reads as the same wizard concept, just standalone. All values use
+   --slds-g-* hooks with literal fallbacks. */
+
+:host {
+  display: block;
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.rpt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* Header */
+.rpt__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.rpt__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rpt__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* Card (Version & Validity / Activation) - SLDS 2 Card spec
+   (20px radius), aligned with every other container card in the
+   setup workspace. */
+.rpt-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+.rpt-card_row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  flex-wrap: wrap;
+}
+.rpt-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.rpt-card__head strong {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rpt-card__hint {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Field grid - Version Name spans full width, dates share a row. */
+.rpt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.rpt-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+.rpt-field_full {
+  grid-column: 1 / -1;
+}
+.rpt-field__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+/* Aligned to the app-wide Size L form-control standard (matches
+   c-picklist + .qcs-field__select): 2rem min-height, 20rem max-width,
+   0.75rem horizontal padding, 0.875rem font-size. See picklist.css
+   for the shared size system. */
+.rpt-field__input {
+  display: block;
+  width: 100%;
+  max-width: var(--slds-g-sizing-15, 20rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  box-sizing: border-box;
+}
+/* Width-S modifier - narrower cap only (height + font stay at L
+   form-control size). Apply on dates, version strings, numerics -
+   any field whose content never needs the 20rem L cap. The visual
+   stays consistent with neighbouring L inputs; only the horizontal
+   footprint shrinks. */
+.rpt-field__input_size_s {
+  max-width: 12rem;
+}
+.rpt-field__input:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.rpt-field__error {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-error-1, #b60554);
+}
+
+/* Toggle (Activation) */
+.rpt-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  padding: 0;
+}
+.rpt-toggle__caption {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rpt-toggle__track {
+  position: relative;
+  width: 2.5rem;
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.rpt-toggle__track.is-on {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+}
+.rpt-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.18);
+  transition: left 120ms ease;
+}
+.rpt-toggle__track.is-on .rpt-toggle__thumb {
+  left: calc(2.5rem - 1.125rem - 2px);
+}
+.rpt-toggle__status {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rpt-toggle:focus-visible .rpt-toggle__track {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}

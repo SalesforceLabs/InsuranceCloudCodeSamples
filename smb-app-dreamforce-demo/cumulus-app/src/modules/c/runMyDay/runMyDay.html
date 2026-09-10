@@ -1,0 +1,295 @@
+<template>
+  <div class="page awe-page">
+    <!-- ═══════════════════════════════════════════════════════════
+         Forced empty/error state - takes over the whole RMD surface
+         when `?forceEmpty=rmd@<code>` is set. Wired to the shared
+         SLDS 2 Empty State so the illustration is picked from the
+         official Cosmos catalog by `set:symbol`.
+         ═══════════════════════════════════════════════════════════ -->
+    <template lwc:if={hasForcedRmdState}>
+      <section class="rmd-forced-empty" aria-label="Run My Day state">
+        <c-empty-state
+          illustration-name={forcedRmdStateName}
+          title={forcedRmdStateTitle}
+          size="medium"
+        >
+          {forcedRmdStateDescription}
+          <template lwc:if={hasForcedRmdStateCta}>
+            <button
+              slot="cta"
+              type="button"
+              class="slds-button slds-button_brand"
+            >{forcedRmdStateCtaLabel}</button>
+          </template>
+        </c-empty-state>
+      </section>
+    </template>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         Principal-only tabstrip: My Renewals | Agency Revenue
+         Sits above the greeting banner so the tab lives *outside*
+         the banner card, matching Salesforce navigation grammar.
+         ═══════════════════════════════════════════════════════════ -->
+    <template lwc:if={isTabbedHome}>
+      <div class="rmd-htabstrip" role="tablist" aria-label="Home views">
+        <template for:each={tabs} for:item="t">
+          <button
+            key={t.id}
+            class={t.cls}
+            role="tab"
+            type="button"
+            aria-selected={t.selected}
+            data-tab={t.id}
+            onclick={handleTabClick}
+          >{t.label}</button>
+        </template>
+      </div>
+    </template>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         RENEWALS BODY - Producer default · Principal tab 1
+         ═══════════════════════════════════════════════════════════ -->
+    <template lwc:if={showRenewalsBody}>
+      <!-- ── Greeting banner ─────────────────────── -->
+      <!--
+        The "Run my day" eyebrow was retired 2026-07-23: RMD now
+        lives inside the SF shell as the Home workspace tab, and
+        the Home pill in the tab strip already labels the surface.
+        The kicker text on top of the greeting was redundant chrome.
+      -->
+      <section class="awe-banner">
+        <h1 class="awe-banner__title">{heroTitle}</h1>
+        <p class="awe-banner__copy">{bannerSubcopy}</p>
+        <p class="awe-banner__meta">{heroMeta}</p>
+      </section>
+
+      <!-- ── Meetings carousel ── -->
+      <section class="meetings-section" data-revision={meetingsRevision}>
+        <div class="meetings-header">
+          <!-- SLDS standard:event glyph. The symbol is authored on a
+               100x100 grid with its own padding baked in, so it renders
+               at the full 24px chip size rather than being inset. -->
+          <span class="meetings-event-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 100 100" fill="currentColor" focusable="false">
+              <path d="M76 42H24a2 2 0 00-2 2v30a6 6 0 006 6h44a6 6 0 006-6V44a2 2 0 00-2-2M40 70a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4c0-1.1.9-2 2-2h4a2 2 0 012 2zm0-14a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4c0-1.1.9-2 2-2h4a2 2 0 012 2zm14 14a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4c0-1.1.9-2 2-2h4a2 2 0 012 2zm0-14a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4c0-1.1.9-2 2-2h4a2 2 0 012 2zm14 14a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4c0-1.1.9-2 2-2h4a2 2 0 012 2zm0-14a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4c0-1.1.9-2 2-2h4a2 2 0 012 2zm4-30h-5v-2c0-2.2-1.8-4-4-4s-4 1.8-4 4v2H41v-2c0-2.2-1.8-4-4-4s-4 1.8-4 4v2h-5a6 6 0 00-6 6v2c0 1.1.9 2 2 2h52a2 2 0 002-2v-2a6 6 0 00-6-6"/>
+            </svg>
+          </span>
+          <div class="meetings-header__title">
+            <h2>{meetingsHeader}</h2>
+          </div>
+        </div>
+        <template lwc:if={hasNoMeetings}>
+          <p class="meetings-empty">{meetingsEmptyLabel}</p>
+        </template>
+        <template lwc:else>
+          <div class="meetings-carousel">
+            <template for:each={meetingsForCarousel} for:item="m">
+              <article
+                key={m.id}
+                class={m.cardClass}
+                role="button"
+                tabindex="0"
+                data-meeting-id={m.id}
+                onclick={handleMeetingCardClick}
+                onkeydown={handleMeetingCardKeydown}
+              >
+                <div class="meeting-card-header">
+                  <span class="meeting-card-name">{m.name}</span>
+                  <span class={m.badgeClass}>{m.status}</span>
+                </div>
+                <div class="meeting-card-timerange">{m.timeRange}</div>
+                <dl class="meeting-card-fields">
+                  <div class="meeting-card-field">
+                    <dt>Organizer:</dt>
+                    <dd>{m.organizer}</dd>
+                  </div>
+                  <div class="meeting-card-field">
+                    <dt>Related Record:</dt>
+                    <dd>
+                      <template lwc:if={m.hasRelatedLink}>
+                        <a
+                          href="#"
+                          class="meeting-card-account-link"
+                          data-account-id={m.accountId}
+                          onclick={handleOpenAccountLink}
+                        >{m.relatedRecord}</a>
+                      </template>
+                      <template lwc:else>{m.relatedRecord}</template>
+                    </dd>
+                  </div>
+                  <div class="meeting-card-field">
+                    <dt>Event:</dt>
+                    <dd>{m.eventSubject}</dd>
+                  </div>
+                </dl>
+              </article>
+            </template>
+          </div>
+        </template>
+      </section>
+
+      <!-- ── Insights (Figma: Groups | Insights | Details) ── -->
+      <section class="rmd-action-items">
+        <!-- 3-column body: Groups | Insights | Details -->
+        <div class="rmd-insights-shell">
+        <div class="rmd-action-items__body">
+          <div class="rmd-left-panel">
+          <nav class={verticalNavClass} aria-label="Groups">
+            <div class="rmd-column-head">
+              <h3 class="rmd-column-head__title">Groups</h3>
+            </div>
+            <ul class="rmd-vertical-nav__list" role="list">
+              <template for:each={verticalNavItems} for:item="n">
+                <li key={n.id} class="rmd-vertical-nav__item">
+                  <a
+                    href="#"
+                    class={n.cls}
+                    data-id={n.id}
+                    role="tab"
+                    onclick={handleVerticalNavClick}
+                  >
+                    <span class="rmd-vertical-nav__icon-wrap" aria-hidden="true">
+                      <c-run-my-day-nav-icon icon-key={n.iconKey}></c-run-my-day-nav-icon>
+                    </span>
+                    <span class="rmd-vertical-nav__text">{n.label}</span>
+                    <template lwc:if={n.hasAlert}>
+                      <span class={n.urgencyCls} aria-label="Has new unread items" title="Has new unread items">
+                        <svg width="8" height="8" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+                          <path d="M514 425L285 55a28 28 0 00-50 0L6 425c-14 23 0 55 25 55h458c25 0 40-32 25-55m-254-25c-17 0-30-13-30-30s13-30 30-30 30 13 30 30-13 30-30 30m30-90c0 6-4 10-10 10h-40c-6 0-10-4-10-10V180c0-6 4-10 10-10h40c6 0 10 4 10 10z"/>
+                        </svg>
+                      </span>
+                    </template>
+                    <span class="rmd-vertical-nav__count">{n.badge}</span>
+                  </a>
+                </li>
+              </template>
+            </ul>
+          </nav>
+
+          <div class="rmd-cards-column">
+            <h3 class="rmd-column-head__title rmd-column-head__title_padded">{insightsColumnTitle}</h3>
+            <template lwc:if={hasVisibleCards}>
+              <template for:each={visibleCards} for:item="c">
+                <button
+                  key={c.id}
+                  type="button"
+                  class={c.cls}
+                  data-card-id={c.id}
+                  onclick={handleCardClick}
+                >
+                  <div class="rmd-card__head">
+                    <span class="rmd-card__title">{c.titleWithCount}</span>
+                    <template lwc:if={c.hasAlert}>
+                      <span class={c.urgencyCls} aria-hidden="true">
+                        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
+                          <rect x="3.25" y="1" width="1.5" height="3.5" rx="0.4"/>
+                          <circle cx="4" cy="6" r="0.9"/>
+                        </svg>
+                      </span>
+                    </template>
+                  </div>
+                  <p class="rmd-card__summary">{c.summary}</p>
+                </button>
+              </template>
+            </template>
+            <template lwc:if={showInsightsEmpty}>
+              <c-empty-state
+                illustration-name="success:selfassigned"
+                title="No alerts in this group"
+                size="small"
+              >
+                You’ve cleared this insight queue. Switch a different
+                group on the left to see more, or check back later.
+              </c-empty-state>
+            </template>
+          </div>
+          </div>
+
+          <c-retention-alert-drawer
+            card-id={selectedCardId}
+            category-id={activeCategoryId}
+            onnavigate={handleChildNavigate}
+            ontoast={handleChildToast}
+          ></c-retention-alert-drawer>
+        </div>
+        </div>
+      </section>
+    </template>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         REVENUE BODY - Finance default, Principal tab 2
+         ═══════════════════════════════════════════════════════════ -->
+    <template lwc:if={showRevenueBody}>
+      <section class="rmd-kpis-banner" aria-label="Agency revenue snapshot">
+        <div class="banner-left">
+          <span class="banner-eyebrow">EXECUTIVE SNAPSHOT · {revenueAsOfLabel}</span>
+          <span class="banner-title">Agency revenue is tracking +10% ahead of last year</span>
+        </div>
+        <ul class="rmd-kpis">
+          <template for:each={revenueKpis} for:item="kpi">
+            <li key={kpi.id} class="rmd-kpi">
+              <span class="rmd-kpi__value">{kpi.value}</span>
+              <span class="rmd-kpi__label">{kpi.label}</span>
+              <template lwc:if={kpi.trend}>
+                <span class={kpi.trend.cls}>{kpi.trend.text}</span>
+              </template>
+            </li>
+          </template>
+        </ul>
+      </section>
+
+      <section class="rmd-revenue-split">
+        <article class="rmd-rev-card">
+          <header class="rmd-rev-card__head">
+            <div>
+              <h2 class="rmd-rev-card__title">Expected vs Received</h2>
+              <p class="rmd-rev-card__sub">Commission leakage by quarter · YTD</p>
+            </div>
+            <button
+              class="rmd-rev-card__cta"
+              type="button"
+              onclick={handleOpenFullRevenue}
+            >Open full dashboard →</button>
+          </header>
+          <ul class="rmd-leak">
+            <template for:each={expectedVsReceivedRows} for:item="row">
+              <li key={row.id} class="rmd-leak__row">
+                <span class="rmd-leak__period">{row.period}</span>
+                <div class="rmd-leak__bars">
+                  <div class="rmd-leak__bar rmd-leak__bar_expected" style={row.expectedWidth}>
+                    <span class="rmd-leak__bar-lbl">Expected {row.expected}</span>
+                  </div>
+                  <div class="rmd-leak__bar rmd-leak__bar_received" style={row.receivedWidth}>
+                    <span class="rmd-leak__bar-lbl">Received {row.received}</span>
+                  </div>
+                </div>
+                <span class={row.gapCls}>{row.gapLabel}</span>
+              </li>
+            </template>
+          </ul>
+        </article>
+
+        <article class="rmd-rev-card">
+          <header class="rmd-rev-card__head">
+            <div>
+              <h2 class="rmd-rev-card__title">Producer Leaderboard</h2>
+              <p class="rmd-rev-card__sub">Commission YTD by producer</p>
+            </div>
+          </header>
+          <ol class="rmd-lb">
+            <template for:each={producerLeaderboard} for:item="row">
+              <li key={row.id} class={row.rowCls}>
+                <span class="rmd-lb__rank">{row.rank}</span>
+                <span class="rmd-lb__name">{row.name}</span>
+                <div class="rmd-lb__bar-wrap">
+                  <div class="rmd-lb__bar" style={row.barWidth}></div>
+                </div>
+                <span class="rmd-lb__meta">{row.totalCommission} · {row.policyCount} policies · avg {row.avgPct}</span>
+              </li>
+            </template>
+          </ol>
+        </article>
+      </section>
+    </template>
+  </div>
+</template>

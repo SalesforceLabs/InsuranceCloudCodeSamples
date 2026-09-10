@@ -1,0 +1,1131 @@
+/* Integrations → Catalog. 20:80 split: providers (left) / templates
+ * (right). Provider rows show a logo tile + name + category. */
+
+.ic-split {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  align-items: stretch;
+  min-height: 480px;
+  gap: 0;
+  /* The hub's master/detail body (.tph__md-detail) adds spacing-4 padding
+   * on all sides. The catalog draws its own internal split + padding from
+   * edge to edge, so cancel the outer padding here so the left provider
+   * column lines up flush with the card's left edge — matching the right
+   * side which is already flush since the card has overflow: hidden. */
+  margin: calc(-1 * var(--slds-g-spacing-4));
+}
+
+.ic-providers {
+  display: flex;
+  flex-direction: column;
+  padding: var(--slds-g-spacing-3) var(--slds-g-spacing-2);
+  border-right: 1px solid var(--slds-g-color-border-1);
+  background: transparent;
+  min-width: 0;
+}
+.ic-providers__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--slds-g-spacing-2);
+}
+.ic-providers__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ic-providers__sub {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-providers__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.ic-provider-row {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease;
+  min-width: 0;
+}
+.ic-provider-row:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.ic-provider-row--focus {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.ic-provider-row:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+}
+
+.ic-provider-row__logo {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+  letter-spacing: -0.02em;
+  overflow: hidden;
+}
+/* Fallback (initials) logo tile uses an accent-tinted fill so it reads
+ * differently from a real provider logo on a white surface. */
+.ic-provider-row__logo--fallback {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-brand-base-90, var(--slds-g-color-border-1));
+  color: var(--slds-g-color-accent-1);
+}
+.ic-provider-row__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+.ic-provider-row__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.ic-provider-row__name {
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ic-provider-row__category {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-provider-row__count {
+  flex: 0 0 auto;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-provider-row__meta {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Status dot — provider governance lifecycle. */
+.ic-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--slds-g-radius-border-circle);
+  background: var(--slds-g-color-neutral-base-50);
+}
+.ic-dot--available {
+  background: var(--slds-g-color-success-1);
+}
+.ic-dot--proposed {
+  background: var(--slds-g-color-warning-1);
+}
+.ic-dot--inactive {
+  background: var(--slds-g-color-neutral-base-50);
+}
+
+/* ── Detail pane (provider → services) ───────────────────────────── */
+.ic-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4);
+  padding: var(--slds-g-spacing-4);
+  min-width: 0;
+  overflow-y: auto;
+}
+.ic-detail__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+}
+.ic-detail__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3);
+}
+.ic-detail__logo {
+  width: 44px;
+  height: 44px;
+}
+.ic-detail__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.2;
+}
+.ic-detail__category {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-detail__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  line-height: 1.5;
+}
+.ic-justification {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--slds-g-color-accent-1);
+  background: var(--slds-g-color-surface-container-1);
+  border-radius: var(--slds-g-radius-border-1);
+}
+.ic-justification__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-justification__text {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  line-height: 1.4;
+}
+.ic-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-warning-container-1);
+  color: var(--slds-g-color-on-warning-container-1, var(--slds-g-color-on-surface-3));
+  font-size: var(--slds-g-font-scale-neg-1);
+}
+
+/* Service cards. */
+.ic-services {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+}
+.ic-svc {
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+  background: var(--slds-g-color-surface-1);
+  padding: var(--slds-g-spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+}
+.ic-svc__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+.ic-svc__name {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ic-svc__desc {
+  margin: 2px 0 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+}
+.ic-svc__actions {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ic-svc__conn-count {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  white-space: nowrap;
+}
+/* Base URL shown as a grey rounded mono pill, matching the Connections
+ * list tile style. */
+.ic-svc__url {
+  min-width: 0;
+}
+.ic-svc__url-pill {
+  display: inline-block;
+  max-width: 100%;
+  padding: 3px 8px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-container-2);
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  word-break: break-all;
+}
+.ic-mono {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+}
+.ic-svc__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+}
+
+/* Service rendered as a Stage-Management-style compact tile. The status
+ * badge + actions menu sit in the top-right via .act-tile__actions; reserve
+ * right padding so the name/subline don't run beneath the menu. */
+.ic-svc-tile .act-tile__name,
+.ic-svc-tile .lob-stage-tile__sub {
+  padding-right: 132px;
+}
+.ic-svc-tile__desc {
+  margin: 2px 0 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+}
+.ic-svc-tile__cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-1);
+  margin-top: var(--slds-g-spacing-2);
+}
+
+/* Service detail modal — sized to match the Connect wizard (92vw / 92vh)
+ * so its embedded endpoint browser has the same room. Mirrors the
+ * .slds2-modal:has(.cw) rule in ConnectWizard.css. */
+.slds2-modal:has(.ic-svc__details) {
+  max-width: none;
+  max-height: 92vh;
+  width: 92vw;
+  height: 92vh;
+}
+.slds2-modal:has(.ic-svc__details) .slds2-modal__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.slds2-modal:has(.ic-svc__details) .slds2-modal__body > .ic-svc__details {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Service detail modal body — service metadata + endpoints. */
+.ic-svc__details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+}
+.ic-svc-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+.ic-svc-modal__head .ic-svc__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  line-height: 1.5;
+}
+.ic-svc__meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 20px;
+  margin: 0;
+}
+@media (max-width: 720px) {
+  .ic-svc__meta {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.ic-svc__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ic-svc__cell dt {
+  font-size: var(--slds-g-font-scale-neg-1);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-svc__cell dd {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  word-break: break-word;
+}
+.ic-svc__notes {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+}
+.ic-svc__docs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-accent-1);
+  text-decoration: none;
+}
+.ic-svc__docs:hover {
+  text-decoration: underline;
+}
+
+/* ── Service reference modal (read-only OpenAPI view) ──────────────── */
+.ic-ref__ops {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+}
+.ic-ref__ops-title {
+  margin: 0;
+  padding-bottom: var(--slds-g-spacing-2);
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ic-ref__op-path {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-5);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+}
+
+/* Top-level view switch (Structured field tree ↔ raw OpenAPI JSON). */
+.ic-ref__viewbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+/* Raw OpenAPI document dump under the JSON view. */
+.ic-ref__spec-json {
+  max-height: 60vh;
+}
+
+/* Syntax-highlighted JSON — light surface, monospace, colored tokens. */
+.ic-json {
+  margin: 0;
+  padding: var(--slds-g-spacing-4);
+  border: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-2);
+  color: var(--slds-g-color-on-surface-2);
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  line-height: var(--slds-g-font-lineheight-4, 1.6);
+  white-space: pre;
+  overflow: auto;
+  tab-size: 2;
+}
+.ic-json__key {
+  color: var(--slds-g-color-accent-2);
+  font-weight: var(--slds-g-font-weight-6);
+}
+.ic-json__str {
+  color: var(--slds-g-color-success-1);
+}
+.ic-json__num {
+  color: var(--slds-g-color-brand-base-40);
+}
+.ic-json__bool {
+  color: var(--slds-g-color-warning-1);
+  font-weight: var(--slds-g-font-weight-6);
+}
+.ic-json__null {
+  color: var(--slds-g-color-on-surface-3);
+  font-style: italic;
+}
+
+/* Responses — status left nav (cw-vtabs) narrower than the endpoint list. */
+.ic-ref__resp-vtabs {
+  min-height: 0;
+}
+.ic-ref__resp-vtabs.cw-vtabs {
+  grid-template-columns: 200px 1fr;
+}
+.ic-ref__resp-vtabs .cw-vpane {
+  padding: 14px 16px;
+}
+.ic-ref__resp-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.ic-ref__op-desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  line-height: 1.5;
+}
+.ic-ref__schema {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ic-ref__schema-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+.ic-ref__schema-mime {
+  font-family: var(--slds-g-font-family-monospace);
+  font-weight: var(--slds-g-font-weight-4);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-ref__status {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: var(--slds-g-radius-border-pill);
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-2);
+  font-family: var(--slds-g-font-family-monospace);
+  font-weight: var(--slds-g-font-weight-6);
+}
+.ic-ref__status--success {
+  background: var(--slds-g-color-success-container-1);
+  color: var(--slds-g-color-on-success-container-1, var(--slds-g-color-on-surface-3));
+}
+.ic-ref__status--info {
+  background: var(--slds-g-color-info-container-1, var(--slds-g-color-surface-container-2));
+  color: var(--slds-g-color-on-info-container-1, var(--slds-g-color-on-surface-2));
+}
+.ic-ref__status--warning {
+  background: var(--slds-g-color-warning-container-1);
+  color: var(--slds-g-color-on-warning-container-1, var(--slds-g-color-on-surface-2));
+}
+.ic-ref__status--error {
+  background: var(--slds-g-color-error-container-1);
+  color: var(--slds-g-color-on-error-container-1, var(--slds-g-color-on-surface-2));
+}
+
+/* Operation sub-section (Parameters / Request body / Responses). */
+.ic-ref__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ic-ref__section-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-1);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* One response (status + description + its media blocks). */
+.ic-ref__response {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--slds-g-spacing-2) 0;
+}
+.ic-ref__response + .ic-ref__response {
+  border-block-start: var(--slds-g-sizing-border-1) solid
+    var(--slds-g-color-border-1);
+}
+.ic-ref__response-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ic-ref__response-desc {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-2);
+}
+
+/* Parameter "in" pill (path / query / header). */
+.ic-ref__param-in {
+  padding: 0 6px;
+  border-radius: var(--slds-g-radius-border-pill);
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-2);
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-2);
+}
+/* Visual JSON-Schema field tree (Swagger "Model" style). */
+.ic-schema {
+  padding: var(--slds-g-spacing-2) var(--slds-g-spacing-3);
+  border: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-1);
+  overflow: auto;
+}
+.ic-schema__array-root {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ic-schema__array-tag {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ic-schema__array-badge {
+  padding: 1px 8px;
+  border-radius: var(--slds-g-radius-border-pill);
+  background: var(--slds-g-color-accent-container-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-size: var(--slds-g-font-scale-neg-2);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ic-schema__array-note {
+  font-size: var(--slds-g-font-scale-neg-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ic-schema__fields,
+.ic-schema__nested {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ic-schema__nested {
+  margin-block-start: 4px;
+  margin-inline-start: var(--slds-g-spacing-3);
+  padding-inline-start: var(--slds-g-spacing-3);
+  border-inline-start: var(--slds-g-sizing-border-2) solid
+    var(--slds-g-color-border-1);
+  gap: 2px;
+}
+.ic-schema__field {
+  padding-block: 5px;
+}
+.ic-schema__field + .ic-schema__field {
+  border-block-start: var(--slds-g-sizing-border-1) solid
+    var(--slds-g-color-border-1);
+}
+.ic-schema__nested .ic-schema__field + .ic-schema__field {
+  border-block-start: 0;
+}
+.ic-schema__row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ic-schema__name {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-schema__type {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-2);
+  color: var(--slds-g-color-accent-2);
+}
+.ic-schema__branch {
+  font-size: var(--slds-g-font-scale-neg-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.ic-schema__required {
+  font-size: var(--slds-g-font-scale-neg-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-error-1);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.ic-schema__desc {
+  margin: 2px 0 0;
+  font-size: var(--slds-g-font-scale-neg-2);
+  color: var(--slds-g-color-on-surface-2);
+  line-height: var(--slds-g-font-lineheight-2, 1.4);
+}
+.ic-schema__enum {
+  margin-block-start: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.ic-schema__enum-val {
+  padding: 1px 7px;
+  border-radius: var(--slds-g-radius-border-pill);
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-2);
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-2);
+}
+.ic-schema__empty {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-3);
+}
+/* Per-field annotations (example / default), shown after the description. */
+.ic-schema__meta {
+  margin-block-start: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.ic-schema__meta-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: var(--slds-g-font-scale-neg-2);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-schema__meta-key {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: var(--slds-g-font-weight-6);
+}
+.ic-schema__meta-val {
+  padding: 1px 6px;
+  border-radius: var(--slds-g-radius-border-1);
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-2);
+  font-family: var(--slds-g-font-family-monospace);
+}
+
+/* Endpoint list within a service card. */
+.ic-ep-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ic-ep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-container-1);
+  min-width: 0;
+}
+/* HTTP method pill — mirrors the wizard's .cw-method so the catalog
+ * stylesheet is self-contained (no dependency on ConnectWizard.css). */
+.cw-method {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  padding: 2px 6px;
+  border-radius: var(--slds-g-radius-border-1);
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: 11px;
+  font-weight: var(--slds-g-font-weight-7);
+  letter-spacing: 0.03em;
+  color: var(--slds-g-color-on-surface-inverse-1, white);
+  background: var(--slds-g-color-neutral-base-50);
+}
+.cw-method--get {
+  background: var(--slds-g-color-neutral-base-90);
+  color: var(--slds-g-color-on-surface-3);
+}
+.cw-method--post {
+  background: var(--slds-g-color-accent-1);
+}
+.cw-method--put {
+  background: var(--slds-g-color-warning-1);
+}
+.cw-method--delete {
+  background: var(--slds-g-color-error-1);
+}
+
+.ic-ep__name {
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-5);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+}
+.ic-ep__path {
+  flex: 1 1 auto;
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Right column header. Reuses .lob-activities__toolbar / __list / __empty
+ * for the search row, list spacing, and empty states. */
+.ic-templates {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  padding: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+.ic-templates__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+.ic-templates__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.25;
+}
+.ic-templates__sub {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* Tile description block — sits below the name/subline. The actions
+ * cluster (badge + Connect button + chevron) is absolutely positioned in
+ * the top-right via .act-tile__actions; reserve right padding so the
+ * description doesn't run beneath it. */
+.ic-template-tile__desc {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+  margin-right: 220px;
+}
+
+/* Standalone field label for Dropdowns (which have no built-in label),
+ * matching the Input/Textarea label typography. */
+.slds2-field-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+
+/* The provider rail toolbar (search + New Provider link) borrows the
+ * .lob-activities__toolbar layout; nudge its spacing to sit under the
+ * rail header. */
+.ic-providers .lob-activities__toolbar {
+  margin-bottom: var(--slds-g-spacing-2);
+  flex-wrap: wrap;
+}
+
+/* ── New Service wizard (RMD step-2 shape: mini-map + far-right form) ─
+ * The overlay/modal/preview/config-panel structure comes from
+ * PlaybookWizard.css; these rules only cover the service-specific bits. */
+.iws-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* Two-column variant — used in the Single Page service layout. Fields flow
+ * into a 2-col grid; .iws-form__full spans both columns (Description, Base
+ * URL, Notes). */
+.iws-form--cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+  align-items: start;
+}
+.iws-form--cols .iws-form__full {
+  grid-column: 1 / -1;
+}
+@media (max-width: 720px) {
+  .iws-form--cols {
+    grid-template-columns: 1fr;
+  }
+}
+.iws-ep-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  align-items: end;
+}
+.iws-mono textarea {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+}
+/* Method pill inside the endpoint mini-map card — reset the header's
+ * flex so the pill hugs its content rather than stretching. */
+.rmdw-prev-insight .rmdw-prev-insight-header .cw-method {
+  flex: 0 0 auto;
+}
+
+/* Service mini-map tile: name + description stacked next to the icon. The
+ * base .rmdw-prev-item centers its children; override to top-align so a
+ * two-line body reads cleanly. */
+.iws-prev-item {
+  align-items: flex-start;
+}
+.iws-prev-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.iws-prev-name {
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+/* Description under a service or endpoint tile — clamped to two lines. */
+.iws-prev-desc {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Service wizard header actions + layout toggle ─────────────────── */
+.iws-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3);
+}
+.iws-layout-toggle {
+  display: inline-flex;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-pill);
+  background: var(--slds-g-color-surface-container-1);
+  padding: 2px;
+}
+.iws-layout-toggle__btn {
+  border: 0;
+  background: none;
+  padding: 4px 12px;
+  border-radius: var(--slds-g-radius-border-pill);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-5);
+  color: var(--slds-g-color-on-surface-1);
+  cursor: pointer;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+.iws-layout-toggle__btn--active {
+  background: var(--slds-g-color-surface-1);
+  color: var(--slds-g-color-accent-1);
+  font-weight: var(--slds-g-font-weight-6);
+  box-shadow: var(--slds-g-shadow-1);
+}
+
+/* ── OpenAPI document editor (Single Page layout) ──────────────────── */
+.iws-openapi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+  height: 100%;
+  min-height: 0;
+}
+.iws-openapi__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+.iws-openapi__editor {
+  flex: 1 1 auto;
+  min-height: 320px;
+  width: 100%;
+  resize: none;
+  padding: var(--slds-g-spacing-3);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-neutral-base-15);
+  color: var(--slds-g-color-neutral-base-95);
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  line-height: var(--slds-g-font-lineheight-3, 1.5);
+  tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+}
+.iws-openapi__editor:focus {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 1px var(--slds-g-color-accent-1);
+}
+.iws-openapi__error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-error-container-1);
+  color: var(--slds-g-color-on-error-container-1, var(--slds-g-color-on-surface-3));
+  font-size: var(--slds-g-font-scale-neg-1);
+}
+
+/* Add-specification modal — standard SLDS visual picker.
+ * Structure/states come from the shipped .slds-visual-picker component CSS
+ * (imported in IntegrationsCatalogSection.tsx). These rules only lay the
+ * three tiles out in a row and format the icon + label + hint inside each. */
+.ic-vpicker {
+  display: flex;
+  gap: var(--slds-g-spacing-4);
+}
+.ic-vpicker .slds-visual-picker {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+}
+.ic-vpicker .slds-visual-picker > label {
+  display: block;
+  width: 100%;
+}
+.ic-vpicker .slds-visual-picker__figure,
+.ic-vpicker .slds-visual-picker__body {
+  width: 100%;
+  height: auto;
+}
+.ic-vpicker .slds-visual-picker__figure {
+  padding: var(--slds-g-spacing-4);
+}
+.ic-vpicker__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.ic-vpicker__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--slds-g-radius-border-circle);
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-accent-1);
+}
+.ic-vpicker .slds-visual-picker input:checked ~ label .ic-vpicker__glyph {
+  background: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-on-accent-1);
+}
+.ic-vpicker__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ic-vpicker__lines .slds-text-heading_small {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ic-vpicker__hint {
+  font-size: var(--slds-g-font-scale-neg-2);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: var(--slds-g-font-lineheight-2);
+}
+.ic-vpicker .slds-visual-picker__text-check {
+  color: var(--slds-g-color-on-accent-1);
+}
+.ic-spec__upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ic-spec__file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--slds-g-color-border-2);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  cursor: pointer;
+}
+.ic-spec__file-btn:hover {
+  background: var(--slds-g-color-surface-2);
+}
+.ic-spec__file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.ic-spec__file-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-2);
+}
+.ic-spec__file-hint {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ic-spec__code {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+}
+.ic-spec__error {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-error-container-1);
+  color: var(--slds-g-color-on-error-container-1, var(--slds-g-color-on-surface-3));
+  font-size: var(--slds-g-font-scale-neg-1);
+}
+
+@media (max-width: 720px) {
+  .ic-split {
+    grid-template-columns: 1fr;
+  }
+  .ic-providers {
+    border-right: 0;
+    border-bottom: 1px solid var(--slds-g-color-border-1);
+    max-height: 260px;
+  }
+  .ic-template-tile__desc {
+    margin-right: 0;
+  }
+}

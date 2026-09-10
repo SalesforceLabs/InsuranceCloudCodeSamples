@@ -1,0 +1,23 @@
+<template>
+  <div class="ask">
+    <!-- aria-controls is deliberately absent. The surface this opens is
+         mounted in the shell's shadow root, not this one, and an IDREF does
+         not resolve across a shadow boundary, so the attribute would dangle.
+         aria-haspopup plus aria-expanded is the pairing that carries here. -->
+    <button
+      type="button"
+      class="ask__btn"
+      aria-haspopup="dialog"
+      aria-expanded={ariaExpanded}
+      aria-describedby="ask-tooltip"
+      onclick={handleClick}
+    >
+      <c-ai-sparkle class="ask__spark"></c-ai-sparkle>
+      <span class="ask__label">{label}</span>
+    </button>
+
+    <!-- Kept in the a11y tree rather than hidden, so aria-describedby still
+         resolves while the popover is visually dismissed. -->
+    <span id="ask-tooltip" class="ask__tooltip" role="tooltip">{tooltip}</span>
+  </div>
+</template>

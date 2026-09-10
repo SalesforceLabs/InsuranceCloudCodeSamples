@@ -1,0 +1,1385 @@
+.page {
+  /* Gutters kept in sync with c-run-my-day's .page: full-bleed, no
+     centring ceiling, one spacing-4 gutter. Every workspace-tab-hosted
+     top-level page shares this so the content column doesn't shift when
+     a broker tabs between Home → Meeting → Mavericks Household on the
+     same viewport. Do NOT add a max-width here without also adding it
+     to RMD. */
+  max-width: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-4, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ── Header ──────────────────────────────── */
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.head-main {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.eyebrow {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.18em;
+  color: var(--atlas-muted);
+}
+
+/* Breadcrumb - the account this playbook references. It's a link out,
+   not a container: this page owns its own workspace tab. */
+.mc-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 4px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-breadcrumb__parent {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: underline;
+}
+
+.mc-breadcrumb__parent:hover,
+.mc-breadcrumb__parent:focus-visible {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+
+.mc-breadcrumb__parent-text {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-breadcrumb__sep {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-breadcrumb__current {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 6px 0 6px;
+  font-size: var(--atlas-type-title-size);
+  font-weight: var(--atlas-type-title-weight);
+  line-height: var(--atlas-type-title-lh);
+  color: var(--atlas-type-title-color);
+}
+
+/* Status pill. Neutral info tint by default; the three later stages
+   pick up their own feedback colour so the header reads at a glance. */
+.mc-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  font-size: var(--atlas-type-label-size);
+  font-weight: var(--atlas-type-label-weight);
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+  white-space: nowrap;
+}
+
+.mc-status_prep-complete,
+.mc-status_in-session {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-2, #023434);
+}
+
+.mc-status_post-meeting {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.mc-timerange {
+  margin: 0;
+  font-size: var(--atlas-type-label-size);
+  font-weight: var(--atlas-type-label-weight);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+/* Organizer / Related Record / Event. A row of stacked label-value
+   pairs, matching the org's highlights panel. */
+.mc-record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-6, 32px);
+  margin: var(--slds-g-spacing-3, 12px) 0 0;
+}
+
+.mc-record-meta__item {
+  min-width: 0;
+}
+
+.mc-record-meta dt {
+  font-size: var(--atlas-type-label-size);
+  font-weight: var(--atlas-type-label-weight);
+  line-height: var(--atlas-type-label-lh);
+  color: var(--atlas-type-label-color);
+}
+
+.mc-record-meta dd {
+  margin: 2px 0 0;
+  font-size: var(--atlas-type-body-size);
+  font-weight: var(--atlas-type-body-weight);
+  line-height: var(--atlas-type-body-lh);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.mc-record-meta__link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: underline;
+}
+
+.mc-record-meta__link:hover,
+.mc-record-meta__link:focus-visible {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 14px);
+  color: var(--atlas-muted);
+}
+
+.head-cta {
+  display: flex;
+  gap: 8px;
+}
+
+.ghost,
+.ghost-light {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 9px var(--slds-g-spacing-4, 16px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  cursor: pointer;
+}
+
+.ghost:hover { background: var(--slds-g-color-surface-container-2, #f3f3f3); }
+
+.ghost-light {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--slds-g-color-palette-cloud-blue-10, #001a28);
+}
+
+.brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 10px 20px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.brand:hover { background: var(--slds-g-color-accent-container-2, #0250d9); }
+
+.brand.wide { width: 100%; justify-content: center; }
+
+/* The gradient fill would swallow the sparkle's default brand blue. */
+.brand c-ai-sparkle { --c-ai-sparkle-color: currentColor; }
+
+/* SLDS solid brand - used for primary user actions (not Agentforce flows).
+   Gradient is reserved for agentic actions; this is the standard primary. */
+.brand.solid {
+  background: var(--atlas-brand);
+  box-shadow: none;
+}
+
+.brand.solid:hover {
+  background: var(--atlas-brand-dark);
+  filter: none;
+}
+
+/* ── Tabs ────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--atlas-divider);
+  padding-bottom: 0;
+}
+
+.tab {
+  position: relative;
+  background: transparent;
+  border: 0;
+  font-family: var(--atlas-font);
+  font-size: var(--atlas-type-tab-size);
+  font-weight: var(--atlas-type-tab-weight);
+  color: var(--atlas-type-tab-color);
+  padding: 14px 18px var(--slds-g-spacing-4, 16px);
+  cursor: pointer;
+}
+
+.tab:hover { color: var(--atlas-ink); }
+
+.tab.is-active {
+  color: var(--atlas-type-tab-color-active);
+}
+
+.tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -1px;
+  height: var(--slds-g-sizing-border-2, 2px);
+  background: var(--atlas-type-tab-color-active);
+  border-radius: var(--slds-g-sizing-1, 2px);
+}
+
+/* ── Draft Meeting Prep - body slotted into c-agentic-card ────────────
+   Prose stack (intro → book at a glance → why-it-matters → opener) plus
+   a right-aligned action row for Discard / Save to Record. Every value
+   flows through an SLDS 2 styling hook so the card automatically picks
+   up density + theme changes. */
+.mp-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+.mp-summary-intro {
+  margin: 0;
+  font-size: var(--atlas-type-body-size);
+  font-weight: var(--atlas-type-body-weight);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--atlas-type-body-lh);
+  text-wrap: pretty;
+}
+
+.mp-summary-heading {
+  margin: var(--slds-g-spacing-var-2, 0.5rem) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mp-summary-list {
+  margin: 0;
+  padding-left: var(--slds-g-spacing-5, 1.5rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--atlas-type-body-size);
+  line-height: var(--atlas-type-body-lh);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+
+.mp-summary-body {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  text-wrap: pretty;
+}
+
+/* Draft action row - outline Discard + brand-solid Save to Record.
+   Right-aligned so the primary CTA reads as the terminal step of
+   the pre-read. Sits inside the c-agentic-card body, above the
+   feedback + sources rows the card itself owns. */
+.mp-summary-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-top: var(--slds-g-spacing-3, 0.75rem);
+  padding-top: var(--slds-g-spacing-3, 0.75rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.mp-btn {
+  font-family: var(--atlas-font);
+  font-size: var(--atlas-type-body-size);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-4, 1rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  cursor: pointer;
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.mp-btn_outline {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.mp-btn_outline:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-on-surface-3, #03234d);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.mp-btn_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.mp-btn_brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-accent-container-2, #0250d9);
+}
+
+/* ── Post-save confirmation strip ─────────────────────────────────
+   Replaces the draft card once the broker commits the summary to the
+   record. Soft success surface + a checkmark mark so the state
+   change reads at a glance without adding a full toast. */
+.mp-saved-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-2, #023434);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.mp-saved-notice__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-success-1, #056764);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  flex: 0 0 auto;
+}
+.mp-saved-notice__mark svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.mp-saved-notice__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mp-saved-notice__title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-success-2, #023434);
+}
+.mp-saved-notice__meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-success-1, #056764);
+}
+
+/* ── Body layout ─────────────────────────────────────────────────
+   Stage card on the left, Slack rail on the right. Mirrors the org's
+   record page, where the three stages are one component in the `main`
+   region and Slack is its own component in `sidebar` - which is why
+   Slack persists across every stage change.
+
+   The rail width tracks the account record page's right rail
+   (`.sf-body-grid` in c-account-record-page: 480px, 420px under
+   1100px) so Slack and the Activity/Chatter panel read as the same
+   sidebar region when you move between the two screens. Keep the two
+   declarations in sync. */
+.mc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 480px;
+  gap: 20px;
+  align-items: start;
+}
+
+.mc-stage {
+  min-width: 0;
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: var(--atlas-shadow-card);
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-5, 24px)
+    var(--slds-g-spacing-5, 24px);
+}
+
+/* The org sizes the two stage columns differently per stage - the brief
+   gets the room on Pre Meeting, the notes panel splits evenly on In
+   Session, and the recap dominates Post Meeting. Each stage names its
+   own ratio rather than forcing one split on all three. */
+.mc-grid {
+  display: grid;
+  gap: 20px;
+  margin-top: var(--slds-g-spacing-5, 24px);
+}
+
+.mc-grid_brief {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+}
+
+.mc-grid_even {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.mc-grid_summary {
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+}
+
+.mc-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Pre Meeting (org meeting-prep-tab) ──────────────────────────
+   Full-width readiness, then 2/5 Client Summary + Documents and
+   3/5 Tasks + Brief + Generate. Card chrome is the org slds-card:
+   20px radius, no shadow, 20px title. */
+.mc-prep {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  column-gap: 1.5rem;
+  row-gap: 1rem;
+  margin-top: var(--slds-g-spacing-4, 1rem);
+  align-items: start;
+}
+
+.mc-prep__ready {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+
+.mc-prep__col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.mc-prep-ready {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  padding: var(--slds-g-spacing-3, 12px);
+}
+
+.mc-prep-ready__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--slds-g-spacing-2, 8px);
+}
+
+.mc-prep-ready__title {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 18px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-prep-ready__count {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  line-height: 18px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-prep-ready__bar {
+  height: 4px;
+  background: var(--slds-g-color-neutral-base-90, #e5e5e5);
+  overflow: hidden;
+}
+
+.mc-prep-ready__bar-value {
+  display: block;
+  width: 0%;
+  height: 4px;
+  background: var(--slds-g-color-accent-1, #066afe);
+}
+
+.slds-assistive-text {
+  position: absolute !important;
+  margin: -1px !important;
+  border: 0 !important;
+  padding: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+
+/* The org paints the container on the runtime_industries card host that
+   wraps each slds-card, not on the card itself: 2px #c9c9c9, 20px radius,
+   16px 16px 0 padding. The bottom padding is 0 because the last child
+   carries a 12px margin. */
+.mc-org-card.slds-card {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  box-shadow: none;
+  padding: var(--slds-g-spacing-4, 16px) var(--slds-g-spacing-4, 16px) 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.mc-org-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  margin-bottom: var(--slds-g-spacing-3, 12px);
+  min-height: 25px;
+}
+
+.mc-org-card__title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 8px);
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 25px;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.mc-org-card__title c-ai-sparkle {
+  --c-ai-sparkle-size: 1rem;
+  flex: 0 0 auto;
+}
+
+.mc-org-card__folder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: #faa05a;
+  flex: 0 0 auto;
+}
+
+.mc-org-card__folder svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mc-org-card__body {
+  margin: var(--slds-g-spacing-3, 12px) 0;
+}
+
+/* Card footer bleeds back out to the container edge the way the org
+   slds-card__footer does, so the divider spans the full card width. */
+.mc-org-card__foot {
+  display: flex;
+  justify-content: flex-end;
+  margin: var(--slds-g-spacing-3, 12px) calc(-1 * var(--slds-g-spacing-4, 16px)) 0;
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.mc-org-card__updated {
+  margin: 0 0 var(--slds-g-spacing-3, 12px);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-5, 500);
+  color: var(--slds-g-color-neutral-base-50, #747474);
+}
+
+.mc-org-card__chev {
+  width: 16px;
+  height: 16px;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  transition: transform 120ms ease;
+}
+
+.mc-org-card__chev.is-open {
+  transform: rotate(180deg);
+}
+
+.mc-summary__lead {
+  margin: 0 0 var(--slds-g-spacing-2, 8px);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.mc-summary__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 8px);
+}
+
+.mc-summary__list li {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-summary__list sup,
+.mc-org-sources__type sup {
+  font-size: 0.7em;
+}
+
+.mc-org-sources {
+  margin-top: var(--slds-g-spacing-3, 12px);
+}
+
+.mc-org-sources__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-family: inherit;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  cursor: pointer;
+}
+
+.mc-org-sources__toggle:hover {
+  text-decoration: underline;
+}
+
+.mc-org-sources__chev {
+  width: 14px;
+  height: 14px;
+  transform: rotate(0deg);
+  transition: transform 120ms ease;
+}
+
+.mc-org-sources__chev.is-open {
+  transform: rotate(90deg);
+}
+
+.mc-org-sources__heading {
+  margin: var(--slds-g-spacing-3, 12px) 0 0;
+  padding-left: var(--slds-g-spacing-3, 12px);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.mc-org-sources__list {
+  list-style: none;
+  margin: var(--slds-g-spacing-1, 4px) 0 0;
+  padding: 0 0 0 var(--slds-g-spacing-3, 12px);
+}
+
+.mc-org-sources__item {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 2px 0;
+  min-width: 0;
+}
+
+.mc-org-sources__item a {
+  min-width: 0;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mc-org-sources__item a:hover {
+  text-decoration: underline;
+}
+
+.mc-org-sources__type {
+  flex: 0 0 auto;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  white-space: nowrap;
+}
+
+.mc-docs-body {
+  text-align: center;
+}
+
+/* The dropzone and empty-state art are centred, but the file rows below
+   them read as a list and stay left-aligned. */
+.mc-docs-body .mc-doc-list {
+  text-align: start;
+}
+
+.mc-docs-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--slds-g-spacing-4, 16px);
+}
+
+.mc-prep .slds-file-selector {
+  display: inline-flex;
+}
+
+.mc-prep .slds-file-selector__dropzone {
+  border: 1px dashed var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: 4px;
+}
+
+.mc-prep .slds-file-selector__body {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  cursor: pointer;
+}
+
+.mc-prep .slds-file-selector__text {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-docs-upload-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+}
+
+.mc-docs-formats {
+  margin: var(--slds-g-spacing-2, 8px) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-docs-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--slds-g-spacing-5, 24px);
+}
+
+.mc-docs-empty__art {
+  display: block;
+  width: 184px;
+  height: auto;
+}
+
+.mc-docs-empty__sub {
+  margin: var(--slds-g-spacing-4, 16px) 0 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-align: center;
+}
+
+.mc-prep-tasks {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+}
+
+.mc-prep-tasks th {
+  text-align: left;
+  padding: var(--slds-g-spacing-2, 8px);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  white-space: nowrap;
+}
+
+.mc-prep-tasks th:first-child {
+  border-start-start-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+.mc-prep-tasks th:last-child {
+  border-start-end-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+.mc-prep-tasks th:last-child,
+.mc-prep-tasks td:last-child {
+  width: 44px;
+  text-align: center;
+  padding-right: 8px;
+}
+
+.mc-prep-tasks td {
+  padding: var(--slds-g-spacing-2, 8px);
+  border-bottom: 1px solid var(--slds-g-color-neutral-base-90, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mc-prep-tasks tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.mc-prep-tasks__th {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.mc-prep-tasks__sort {
+  width: 12px;
+  height: 12px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.mc-prep-tasks__name {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+
+.mc-prep-tasks__name:hover {
+  text-decoration: underline;
+}
+
+.mc-prep-tasks__owner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mc-prep-tasks__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-brand-base-90, #d6e6ff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-size: 10px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  flex: 0 0 auto;
+}
+
+.mc-prep-tasks__status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+.mc-brief {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.mc-brief__h {
+  margin: var(--slds-g-spacing-4, 16px) 0 var(--slds-g-spacing-2, 8px);
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.mc-brief__h:first-of-type {
+  margin-top: 0;
+}
+
+.mc-brief__p,
+.mc-brief__ol {
+  margin: 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.mc-brief__ol {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mc-prep .slds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 16px;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  cursor: pointer;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+.mc-prep .slds-button_neutral {
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.mc-prep .slds-button_neutral:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.mc-prep .slds-button_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+
+.mc-prep .slds-button_brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+
+.mc-prep .slds-button_icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.mc-prep .slds-button_icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mc-prep .slds-file-selector__button.slds-button {
+  height: 32px;
+}
+
+/* Terminal action for the stage - the generative handoff into the next
+   one. Right-aligned so it reads as the end of the column. */
+.mc-stage-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mc-card-foot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--slds-g-spacing-4, 16px);
+  padding-top: var(--slds-g-spacing-3, 12px);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+}
+
+.mc-lede {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  text-wrap: pretty;
+}
+
+.mc-ai-disclaimer {
+  margin: var(--slds-g-spacing-5, 24px) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Discussion guide ────────────────────────────────────────────
+   A timed run-of-show: each row pairs the clock window with the topic
+   and the prompt Agentforce wants the broker to open on. */
+.mc-guide {
+  list-style: none;
+  margin: var(--slds-g-spacing-4, 16px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 8px);
+}
+
+.mc-guide__item {
+  display: flex;
+  gap: var(--slds-g-spacing-3, 12px);
+  padding: var(--slds-g-spacing-3, 12px) 14px;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius);
+  background: var(--slds-g-color-surface-1, #fff);
+}
+
+.mc-guide__window {
+  flex: 0 0 auto;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  padding-top: 1px;
+  white-space: nowrap;
+}
+
+.mc-guide__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mc-guide__title {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+}
+
+.mc-guide__prompt {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--atlas-muted);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* ── Session notes ───────────────────────────────────────────────
+   Tinted panel, matching the org's Meeting Notes and Documents card,
+   which reads as an input surface rather than another content card. */
+.mc-notes {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-palette-electric-blue-80, #a8cbff);
+  border-radius: var(--atlas-radius-lg);
+  padding: 22px var(--slds-g-spacing-5, 24px);
+}
+
+.mc-notes__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+}
+
+.mc-notes__prompt {
+  margin: var(--slds-g-spacing-1, 4px) 0 var(--slds-g-spacing-4, 16px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.mc-notes__label {
+  display: block;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  margin-bottom: var(--slds-g-spacing-1, 4px);
+}
+
+.mc-notes__input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  background: var(--slds-g-color-surface-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--atlas-radius);
+  padding: var(--slds-g-spacing-3, 12px);
+  resize: vertical;
+}
+
+.mc-notes__input:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 1px;
+}
+
+.mc-notes__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: var(--slds-g-spacing-3, 12px);
+}
+
+/* ── Documents ───────────────────────────────────────────────────
+   Pinned to every stage in the org, so the same list renders three
+   times rather than once per stage. */
+.mc-doc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 8px);
+}
+
+.mc-doc {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  padding: 10px var(--slds-g-spacing-3, 12px);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius);
+  background: var(--slds-g-color-surface-1, #fff);
+}
+
+.mc-doc__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.mc-doc__name {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+  overflow-wrap: anywhere;
+}
+
+.mc-doc__meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--atlas-muted);
+}
+
+/* ── Slack rail ──────────────────────────────────────────────────── */
+.mc-rail {
+  min-width: 0;
+}
+
+.card-surface {
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius);
+  box-shadow: var(--atlas-shadow-card);
+  padding: 22px var(--slds-g-spacing-5, 24px);
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.card-head h2 {
+  margin: 0;
+  font-size: var(--atlas-type-section-size);
+  font-weight: var(--atlas-type-section-weight);
+  line-height: var(--atlas-type-section-lh);
+  color: var(--atlas-type-section-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  padding: var(--slds-g-spacing-1, 4px) 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--atlas-ink-2);
+  letter-spacing: 0.02em;
+}
+
+.badge.violet {
+  background: var(--atlas-purple-light);
+  color: var(--atlas-purple);
+}
+
+/* ── Summary metrics ─────────────────────── */
+/* auto-fit rather than a fixed 3-up: Client Summary sits in the narrow
+   stage column on Pre Meeting, where three tiles side by side would
+   wrap every label. */
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 12px;
+  margin-bottom: var(--slds-g-spacing-4, 16px);
+}
+
+.metric {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--atlas-radius);
+  padding: 14px;
+}
+
+.metric-lbl {
+  display: block;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.08em;
+  color: var(--atlas-muted);
+  text-transform: none;
+}
+
+.metric-val {
+  display: block;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: -0.01em;
+  color: var(--atlas-ink);
+  margin-top: var(--slds-g-spacing-1, 4px);
+}
+
+.metric-delta {
+  display: inline-block;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  margin-top: 6px;
+}
+
+.metric-delta.up { color: var(--atlas-warning); }
+.metric-delta.down { color: var(--atlas-danger); }
+
+.block-title {
+  margin: 18px 0 6px;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: var(--atlas-muted);
+}
+
+.bullet {
+  margin: 0;
+  padding-left: 18px;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--atlas-ink-2);
+  line-height: 1.6;
+}
+
+.bullet.checks {
+  padding-left: 0;
+  list-style: none;
+}
+
+.bullet.checks li {
+  display: flex;
+  gap: 8px;
+  padding: var(--slds-g-spacing-1, 4px) 0;
+}
+
+.check {
+  color: var(--atlas-success);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+}
+
+/* ── Action checklist ────────────────────── */
+.checklist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.check {
+  padding: 0;
+}
+
+.checklist .check {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius);
+  padding: var(--slds-g-spacing-3, 12px) 14px;
+  background: var(--slds-g-color-surface-1, #fff);
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.checklist .check label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.checklist input[type='checkbox'] {
+  margin-top: 3px;
+  accent-color: var(--atlas-brand);
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+}
+
+.check-label {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+}
+
+.check-detail {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--atlas-muted);
+  margin-top: 2px;
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.checklist .is-checked {
+  background: var(--atlas-brand-light);
+  border-color: var(--slds-g-color-palette-electric-blue-50, rgba(6,106,254,0.3));
+}
+
+.actions-foot {
+  margin-top: 14px;
+}
+
+/* ── Placeholder tabs ────────────────────── */
+.placeholder {
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) dashed var(--slds-g-color-palette-purple-40, rgba(124,58,237,0.3));
+  border-radius: var(--atlas-radius-lg);
+  padding: 60px var(--slds-g-spacing-5, 24px);
+  text-align: center;
+  color: var(--atlas-muted);
+}
+
+.placeholder h2 {
+  margin: var(--slds-g-spacing-3, 12px) 0 var(--slds-g-spacing-2, 8px);
+  color: var(--atlas-type-section-color);
+  font-size: var(--atlas-type-section-size);
+  font-weight: var(--atlas-type-section-weight);
+  line-height: var(--atlas-type-section-lh);
+}
+
+.placeholder p {
+  margin: 0;
+  max-width: var(--slds-g-sizing-16, 480px);
+  margin-inline: auto;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  line-height: 1.6;
+}
+
+.ph-icon {
+  width: var(--slds-g-sizing-10, 48px);
+  height: var(--slds-g-sizing-10, 48px);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--atlas-purple-light);
+  color: var(--atlas-purple);
+  font-size: var(--slds-g-font-scale-3, 20px);
+}
+
+@media (max-width: 1100px) {
+  .mc-layout { grid-template-columns: minmax(0, 1fr) 420px; }
+}
+
+@media (max-width: 900px) {
+  .mc-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 960px) {
+  .mc-grid_brief,
+  .mc-grid_even,
+  .mc-grid_summary { grid-template-columns: minmax(0, 1fr); }
+  .mc-prep { grid-template-columns: minmax(0, 1fr); }
+  .metric-row { grid-template-columns: 1fr 1fr; }
+}

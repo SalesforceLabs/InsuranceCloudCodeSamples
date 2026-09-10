@@ -1,0 +1,26 @@
+{
+  "name": "atlas-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5175",
+    "build": "vite build",
+    "build:multi-loc": "node scripts/build-multi-loc.mjs",
+    "publish:preview": "vite build && node scripts/publish-preview.mjs",
+    "preview": "vite preview --port 5175",
+    "lint:slds": "slds-linter lint --directory src/modules"
+  },
+  "dependencies": {
+    "@lwc/engine-dom": "^8.12.1",
+    "date-fns": "^3.6.0",
+    "lwc": "^8.12.1"
+  },
+  "devDependencies": {
+    "@salesforce-ux/eslint-plugin-slds": "^1.2.1",
+    "@salesforce-ux/slds-linter": "^1.2.1",
+    "vite": "^5.4.11",
+    "vite-plugin-lwc": "^2.0.0",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}

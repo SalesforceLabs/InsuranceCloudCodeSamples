@@ -1,0 +1,169 @@
+/* c-eb-coverage-setup - Plan Coverages widget for the EB blueprint
+   inside c-rfq-playbook-setup. Native SLDS tablist + attribute grid. */
+
+:host {
+  display: block;
+}
+
+.eb-cs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  font-family: var(--atlas-font);
+}
+
+/* ── Tabs (one per Root Product) ─────────────────────────────── */
+.eb-cs__tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.eb-cs__tab {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.eb-cs__tab:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-cs__tab_active {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.eb-cs__tab:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ── Panel ───────────────────────────────────────────────────── */
+.eb-cs__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.eb-cs__empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* ── Grid header + rows ──────────────────────────────────────── */
+.eb-cs__grid-head,
+.eb-cs__row {
+  display: grid;
+  grid-template-columns: auto 2fr 1.4fr;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-inline-4, 1rem);
+  padding: var(--slds-g-spacing-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+}
+.eb-cs__grid-head {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-transform: none;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.eb-cs__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.eb-cs__row {
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.eb-cs__row:last-child {
+  border-bottom: 0;
+}
+.eb-cs__col_include {
+  justify-self: start;
+}
+
+.eb-cs__row-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* ── Data-type picker + hint ─────────────────────────────────── */
+/* Uses c-picklist (the custom SLDS 2 combobox) so the OPEN menu is
+   styled too - a native <select> would fall back to the OS-native
+   (Apple/Windows) dark dropdown. Width is set on the picklist host
+   here so the row layout doesn't shift between attributes. */
+.eb-cs__type-picklist {
+  display: inline-block;
+  width: 11rem;
+  margin-right: var(--slds-g-spacing-2, 0.5rem);
+}
+.eb-cs__type-hint {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Checkbox (native input with a styled faux box) ──────────── */
+.eb-cs__check {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+.eb-cs__check input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+/* SLDS 2 standard checkbox geometry - 1rem (16px) square with a 1px
+   border so this faux box matches the size + visual weight of the
+   native + accent-color checkboxes used elsewhere in setup (Playbook
+   attribute rows, QCS summary/metric rows). */
+.eb-cs__check-faux {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  position: relative;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.eb-cs__check input:checked + .eb-cs__check-faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+}
+/* Checkmark - re-centered for the 1rem (16px) faux box. The 4px x
+   8px tick keeps SLDS proportions and reads cleanly at 100% zoom. */
+.eb-cs__check input:checked + .eb-cs__check-faux::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: var(--slds-g-sizing-3, 8px);
+  border: solid var(--slds-g-color-on-accent-1, #fff);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+.eb-cs__check input:focus-visible + .eb-cs__check-faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}

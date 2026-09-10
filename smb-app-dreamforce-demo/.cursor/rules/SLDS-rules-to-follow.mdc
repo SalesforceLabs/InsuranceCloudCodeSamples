@@ -1,0 +1,3150 @@
+---
+alwaysApply: true
+---
+
+Borders and Radius - ---
+title: Borders and Radius
+description: Borders styled with color, width, and radius.
+---
+
+# Overview
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6116:103601">
+
+![Border Banner](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/de6c5724d37e81464dd6f6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145103Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f9800d485d99e3e3f934655304dea7f1906c7b1e728d01dce642f75bc37ee9df)
+
+**Border Banner**
+
+</design>
+
+## About
+
+Borders and radiuses are basic visual design elements that help create clarity, hierarchy, and a consistent look. In the Salesforce Lightning Design System (SLDS), borders and radiuses help create a cohesive look while improving the user experience.
+
+### Why Borders and Radiuses Matter
+
+Borders and radiuses are more than just visual elements. They play an important role in defining spaces, drawing attention to important features, and creating balanced interfaces. In SLDS, the use of borders and radiuses can add these benefits to the user interface. 
+
+* Improve clarity by delineating components and sections for better readability and navigation.
+* Support hierarchy and differentiate elements to show importance or interactivity.
+* Reflect brand identity and maintain a consistent, polished, professional look.
+* Foster accessibility by using subtle but effective visual cues to support usability for all users.
+
+#### **Theming Considerations**
+
+SLDS 2 allows for customizable theming. Make sure that any changes you make to borders or radiuses align with brand guidelines and maintain contrast ratios for accessibility.
+
+## **Borders**
+
+Borders outline elements and provide structure, serving as visual separators, indicators of interactivity, or highlights for active or selected states. For example, borders can separate content areas like cards and panels, indicate clickable elements like buttons and form fields, or highlight tabs and list items to show that they are active.
+
+### **Best Practices for Borders**
+
+* Less is Best-Apply borders sparingly to avoid visual clutter.
+* Consistency-Use consistent thickness and color across similar elements.
+* Subtlety-Use light or subtle borders to create separation without overwhelming the interface.
+
+## Radius
+
+The radius defines how rounded the corners are on elements. Borders have a radius, and container elements such as cards and buttons have a radius too. Rounded corners soften the visual appearance and create a more approachable design style. To keep your interface cohesive, apply a consistent radius across related elements. Elements with dense content, such as buttons and input fields, work better with a smaller radius. Elements that take up more space, such as cards and modals, work well with a larger radius. Don't mix sharp and rounded corners within the same component to keep your design looking polished and cohesive.
+
+### **Best Practices for Radius**
+
+* Consistency-Apply the same radius to similar elements for a cohesive design style throughout the interface.
+* Harmony-Don't mix sharp and rounded corners. Mixing these styles within the same component can create a visually jarring experience and reduce design harmony.
+* Branding-Use the radius to reflect the brand's personality. Whether you want the brand to be approachable, professional, or bold, use the SLDS 2 design guidelines to choose the right radius for the elements in your project.
+* Usability-Confirm through testing that rounded corners don't detract from clarity or usability, especially for focus and hover states in interactive elements.
+
+Borders and radius are subtle yet powerful tools in a design system. By adhering to these guidelines, you can create interfaces that are both visually appealing and functionally effective. 
+
+# Color
+
+## Border Color
+
+Borders are a vital part of user interfaces, helping to visually separate, highlight, and structure content. In the Salesforce Lightning Design System (SLDS 2), border colors are carefully chosen to align with the system's visual design, ensuring clarity and usability across all products. 
+
+SLDS 2 uses these common colors for borders.
+
+* **Neutral grays** create subtle separation and structure.
+* **Dark blue** shows an element has focus.
+* **Red** indicates an error state.
+* **Yellow** indicates a warning state.
+* **Transparent or white** maintains visual balance in lighter or less prominent elements.
+
+To create visually unified designs, these colors are applied consistently across all SLDS components. For example, in Sales Cloud and Service Cloud, a light gray border distinguishes content sections and a bold blue border highlights active elements such as tabs or form fields.
+
+### **Where to Use Border Colors**
+
+* Separate content using neutral gray borders to divide sections or groups of related content.
+* Highlight elements by applying accent colors like blue to indicate interaction states, or dark blue for focus.
+* Communicate component states with context-appropriate colors like red for error states or lighter shades for disabled components.
+
+### **Customize Borders with Styling Hooks**
+
+Styling hooks can be used to customize while maintaining the design system’s standards. [Border and Radius styling hooks](https://www.lightningdesignsystem.com/2e1ef8501/p/7770b4-borders-and-radius/b/111c1f) provide a way to manage border colors to make borders consistent, yet adaptable through themes. 
+
+# Width
+
+## Border Width
+
+Border width, sometimes called stroke width, refers to the thickness of the lines that define the edges of components, containers, and other visual elements. Border width is a key aspect of the design system that ensures clarity, structure, and visual balance across all interfaces.
+
+Border width helps you with these design aspects.
+
+* Differentiate between various UI elements, such as cards, panels, or input fields.
+* Highlight important information and de-emphasize less important information.
+* Make content more accessible by ensuring that borders are always visible and easy to read on all screen sizes and resolutions.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6115:102857">
+
+![Border Width](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/471e2968dbbbd15123e884?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145103Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=00e6a8983f4ecac3902f624b8da09b8e81b705b74cb84c23da16109fd03e29d9)
+
+**Border Width**
+
+</design>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ SLDS 2 doesn't use borders around cards and components, unlike SLDS 1.
+
+</callout>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6116:103091">
+
+![Border Card Example](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/98c78237ff69f5af75653f?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145103Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=9c636d69f318fa24ae9800a159a6942123b1ecea08c5fdc5d0b6fdcd370770ac)
+
+**Border Card Example**
+
+</design>
+
+## Border Width in Figma
+
+Figma variables aren't currently supported for stroke width. Use this chart to align with your developers on the exact styling hook to use.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6030:3184">
+
+![Global Boarders](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/03e3c33ad048391f34a4db?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145103Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=630eab33acc83a5561dae6a0cec3998e310645358f3427b537a7a772b4cf0b1c)
+
+**Global Boarders**
+
+</design>
+
+# Radius
+
+## Border Radius
+
+**Radius** defines the curvature of corners on borders and containers across products that use a design system. It ensures consistency in the look and feel of components, creating a unified and polished user experience.
+
+Border radius contributes to the design in these ways.
+
+* Establish a consistent style for rounded corners across components such as cards, modals, and buttons.
+* Create a modern, approachable aesthetic that aligns with the brand identity.
+* Improve usability by subtly guiding users’ focus to key interface elements.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=233:26878">
+
+![Border Radius](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a0eed7a803d58abdf46409?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145103Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b400e11f2fde6ba7378731383d4efcf025ce2f79c60460b49ac692ef69d8413e)
+
+**Border Radius**
+
+</design>
+
+## Border Radius in Figma
+
+1. Select your layer. In the right sidebar, hover over the Width or Height fields and click the gear icon to open the variable menu.
+2. Scroll or search for radius in the dropdown menu. The predefined `radius-border` variables are displayed in the dropdown. Choose your preferred variable.
+3. When a variable is set, there's a lighter gray box around the numeral in the selection box.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=233:28005">
+
+![Applying Radius Variables](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/8fc850134c0ac25ce94666?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145103Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=7b99b1134e974ef963c19d450ce5f550cb381527a60afa16d88258e43917b399)
+
+**Applying Radius Variables**
+
+</design>
+
+# Styling Hooks
+
+## Border Styling Hooks
+
+All border styling hooks are prefixed with `--slds-g-` and are followed by a border name property. For example, --slds-g-sizing-border-1 (1px) is the styling hook for a border width of 1 px.
+
+### Width Hooks
+
+Use these styling hooks to specify the pixel width of a border.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6030:3184">
+
+![Global Boarders](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/03e3c33ad048391f34a4db?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145103Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=630eab33acc83a5561dae6a0cec3998e310645358f3427b537a7a772b4cf0b1c)
+
+**Global Boarders**
+
+<notes>
+
+SLDS border width examples showing squares with increasing border thickness. Styling Hooks: --slds-g-sizing-border-1, -2, -3, -4.
+
+</notes>
+
+</design>
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-sizing-border-1 | 1px | Border Width 1 | 1px. |
+| --slds-g-sizing-border-2 | 2px | Border Width 2 | 2px. |
+| --slds-g-sizing-border-3 | 3px | Border Width 3 | 3px. |
+| --slds-g-sizing-border-4 | 4px | Border Width 4 | 4px. |
+
+### Radius Hooks
+
+These properties manage the curvature of UI elements' corners, impacting the perceived softness or hardness of components.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6030:127793">
+
+![Global Radius](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/951ed516ca42a67de758e5?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145103Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ac6089cb5169259ad0cc8ede6dbc1944b8757d1e45449ae8f1ae8e963c0bf54d)
+
+**Global Radius**
+
+<notes>
+
+SLDS border radius examples showing shapes with increasing corner roundness. Styling Hooks: --slds-g-radius-border-1, -2, -3, -4, and examples for circle and pill shapes.
+
+</notes>
+
+</design>
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-radius-border-1 | 0.25rem | Radius Border 1 | 4px. |
+| --slds-g-radius-border-2 | 0.5rem | Radius Border 2 | 8px. |
+| --slds-g-radius-border-3 | 0.75rem | Radius Border 3 | 12px. |
+| --slds-g-radius-border-4 | 1.25rem | Radius Border 4 | 20px. |
+| --slds-g-radius-border-circle | 100% | Radius Border Circle | 100% 100px. |
+| --slds-g-radius-border-pill | 15rem | Radius Border Pill. |
+
+### Border Colors
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-border-1 | #C9C9C9 | Borders for decorative components or divider lines between content. |
+| --slds-g-color-border-2 | #5C5C5C | Border for functional or interactive components. |
+| --slds-g-color-border-accent-1 | #066AFE | Border color for branded containers. |
+| --slds-g-color-border-accent-2 | #0250D9 | Border color for branded containers. |
+| --slds-g-color-border-accent-3 | #022AC0 | Hover border color for branded containers. |
+| --slds-g-color-border-disabled-1 | #757575 | Border color for disabled containers (border-2 becomes border-disabled-1 for disabled states). |
+| --slds-g-color-border-error-1 | #B60554 | Border color for error containers such as destructive buttons. |
+| --slds-g-color-border-error-2 | #8A033E | Hover border color for error containers such as destructive buttons. |
+| --slds-g-color-border-inverse-1 | #F3F3F3 | Border for functional or interactive components on dark backgrounds. |
+| --slds-g-color-border-inverse-2 | #032D60 | Borders for decorative components or divider lines between content on dark backgrounds. |
+| --slds-g-color-border-success-1 | #056764 | Step 1 in the Border Success scale for colors that define the borders of success containers. |
+| --slds-g-color-border-success-2 | #056764 | Step 2 in the Border Success scale for colors that define the borders of success containers. |
+| --slds-g-color-border-warning-1 | #DD7A01 | Step 1 in the Border Warning scale for colors that define the borders of warning containers. |
+
+
+Display Density - ---
+title: Display Density
+description: Create consistent user experiences across display density settings.
+---
+
+# Overview
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6348:3016">
+
+![Density Banner](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/b3a8742439b40d9a4b8db7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145119Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=e351b5e266971c9b0bfa095ecbdebd19febdd6e57a3de232d0f1bd53a1aaa92b)
+
+**Density Banner**
+
+<notes>
+
+An artistic depiction of display density.
+
+</notes>
+
+</design>
+
+## About
+
+Display density controls the spacing and layout of interface elements within a given screen area. Salesforce Lightning Design System 2 (SLDS 2) offers two density settings, comfy and compact. Comfy, the default setting, places the labels on top of the fields and adds more space between page elements. The compact setting increases visual density with labels on the same line as the fields and less space between lines.
+
+Display density is a user preference setting. Because users select which display density setting to use, Salesforce interfaces are designed to work well in both. Here’s how you can design with display density in mind too.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6348:3208">
+
+![Density About](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a3f121d681fb2082aee91d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145119Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=170ab65d362ca6180f31617006994c2c641549df02dca855b15177112a6f3c3f)
+
+**Density About**
+
+<notes>
+
+Side-by-side comparison showing the same interface in comfy and compact
+
+</notes>
+
+</design>
+
+## Comfy
+
+Comfy is the default density setting in Salesforce. The comfy setting offers a spacious view with increased vertical and horizontal spacing, and vertically stacked [form elements](https://www.lightningdesignsystem.com/2e1ef8501/p/96252b-form-element/t/c02eea1705).
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6348:3152">
+
+![Comfy](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/033cb2e939fd2085914839?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145119Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=9c963660af93f80bd71d24b7e7bb72e5916c55f3b05184bfa17e4eded6a19b91)
+
+**Comfy**
+
+<notes>
+
+An interface set to comfy with callouts that highlight key spacing characteristics
+
+</notes>
+
+</design>
+
+### **Comfy setting benefits:**
+
+* Better accommodation for localized content with longer text
+* Enhanced visual separation for improved accessibility
+* Reduced cognitive load and better scannability, particularly for new users
+
+### **Comfy setting considerations:**
+
+* Make sure that critical information remains prominent despite additional whitespace.
+* Test with localized content to verify that the spacing accommodates longer text.
+* Consider vertical scrolling requirements, as elements use more vertical space.
+
+## Compact
+
+Compact mode creates a denser view with reduced spacing between elements, more information visibility in the viewport, and horizontally stacked [form elements](https://www.lightningdesignsystem.com/2e1ef8501/p/96252b-form-element/t/8bccc5eb64).
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6348:3178">
+
+![Compact](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/b771c3cf05a4929248010b?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145119Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=247f115eb06e8089ec4b9fae7a9fb255c3ed248260c470123b8e87d8407e444a)
+
+**Compact**
+
+<notes>
+
+An interface set to compact with callouts that highlight key spacing characteristics
+
+</notes>
+
+</design>
+
+###  **Compact setting benefits:**
+
+* Improved efficiency if working with large data sets
+* Reduced scrolling for data-heavy screens
+* More information is visible simultaneously
+
+### **Compact setting considerations:**
+
+* Verify that touch targets remain large enough for comfortable interaction.
+* Make sure that text remains readable with the reduced spacing.
+* Test how horizontal layouts behave in narrower viewports.
+
+## User Control of Density
+
+To personalize the look of Lightning Experience, a user clicks their profile image at the top of a Salesforce page, and then selects a display density. After a user changes their display density setting, the page automatically refreshes. Salesforce admins can also set org-wide defaults. As you design and develop, make sure that the interface adapts appropriately to both density settings.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6348:3116">
+
+![User Control of Density](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/b1988dc9f3d06e8ebb1bfc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145119Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ca2cdb31507aca0a9dbb8beb5c075a8185642e7e765a3f56c53be87ffeebba55)
+
+**User Control of Density**
+
+<notes>
+
+Illustration of the user display density menu where density settings are set
+
+</notes>
+
+</design>
+
+## Density-Aware Styling Hooks
+
+Use density-aware styling hooks if specific areas, components, spacing, and typographical elements require the ability to adapt or respond to a user’s density setting. 
+
+**Elements that typically benefit from density-aware styling hooks:**
+
+* Data-dense components like tables, lists, and grids
+* Form layouts and field arrangements
+* Card and container padding
+* Navigation and toolbar spacing
+
+### Considerations
+
+If you use density-aware styling hooks, make sure that you match the styling hooks with the appropriate properties. 
+
+* For top-bottom-left-right spacing: `--slds-g-spacing-var-[size]`
+* For horizontal spacing:  `--slds-g-spacing-var-inline-[size]`
+* For vertical spacing: `--slds-g-spacing-var-block-[size]`
+* For font sizes: `--slds-g-font-scale-var-[size]`
+* For font line height:  `--slds-g-font-lineheight-var-base`
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6348:3074">
+
+![Considerations](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/5a7280aae12ed43feffdc4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145119Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=e8c45ba454dacb60f6b0f81d18abe4fd7d07627862cefd5103a9267080524061)
+
+**Considerations**
+
+<notes>
+
+Proper styling hook implementation with each element type annotated
+
+</notes>
+
+</design>
+
+## SLDS Components with Built-in Density Support
+
+SLDS includes several components with built-in density adaptation that automatically respond to density changes through variable styling hooks.
+
+The following components include density-aware styling hooks, which enable automatic adjustments for different display densities.
+
+* [Cards](https://www.lightningdesignsystem.com/2e1ef8501/p/33cd77-cards)
+* [File selector](https://www.lightningdesignsystem.com/2e1ef8501/p/77d584-file-selector)
+* [Tabs](https://www.lightningdesignsystem.com/2e1ef8501/p/1152cf-tabs)
+
+When using component blueprints, make sure that you use the standard SLDS markup patterns and CSS classes. The following component blueprints include density-aware styling hooks that can be configured:
+
+* [Cards](https://www.lightningdesignsystem.com/2e1ef8501/p/33cd77-cards)
+* [Feed](https://v1.lightningdesignsystem.com/components/feeds/)
+* [File selector](https://www.lightningdesignsystem.com/2e1ef8501/p/77d584-file-selector)
+* [Page header](https://v1.lightningdesignsystem.com/components/page-headers/)
+* [Path](https://v1.lightningdesignsystem.com/components/path/)
+* [Split view](https://v1.lightningdesignsystem.com/components/split-view/)
+* [Tabs](https://www.lightningdesignsystem.com/2e1ef8501/p/1152cf-tabs)
+
+To reference component blueprints, see the [Salesforce Lightning Design System 1](https://v1.lightningdesignsystem.com/) website.
+
+# Custom Configurations
+
+## Responsive Density
+
+Density settings control global spacing, but different screen sizes require additional responsive adjustments.
+
+1. Use SLDS's standard CSS media queries (30em, 48em, 64em, 80em).
+2. Apply appropriate SLDS var styling hooks within each media query breakpoint.
+3. Test thoroughly across device sizes in both density settings.
+
+Here’s an example of cell padding for a responsive table.
+
+```css
+css
+/* Default (Mobile-first) padding */
+.my-custom-table td,
+.my-custom-table th {
+  padding: var(--slds-g-spacing-var-1); /* Smallest padding for narrow screens */
+}
+/* Medium screens and up (768px+) */
+@media (min-width: 48em) {
+  .my-custom-table td,
+  .my-custom-table th {
+    /* Increase padding for tablets / small laptops */
+    padding: var(--slds-g-spacing-var-3);
+  }
+}
+/* Large screens and up (1024px+) */
+@media (min-width: 64em) {
+  .my-custom-table td,
+  .my-custom-table th {
+    /* Use larger padding for standard desktops */
+    padding: var(--slds-g-spacing-var-4);
+  }
+}
+
+```
+
+### Custom Component Considerations
+
+Keep these considerations in mind as you build custom components that you want to respond to density.
+
+* **Analyze similar SLDS components:** See how they adapt and follow similar patterns.
+* **Identify which elements need to adapt:** Not everything needs to respond to density changes.
+* **Use appropriate styling hooks:** Select hooks that match the property's purpose.
+* **Test in both density settings:** Verify that your component works well in comfy and compact.
+
+### Test Your Custom Density Implementation
+
+**Make sure that your interfaces work well across display density settings.**
+
+* Test the same screens in both comfy and compact settings.
+* Check the rendering in different screen regions and viewports.
+* Verify that touch targets remain accessible in compact setting.
+* Confirm that text remains readable and the hierarchy is maintained.
+* Verify that localized content displays properly in both density settings.
+
+# Styling Hooks
+
+## Density-Aware Styling Hooks
+
+Density-aware styling hooks in SLDS 2 automatically adjust spacing and typography based on the user's density preference. Density-aware styling hooks are denoted by "var" in the naming convention, for example, --slds-g-spacing-var-1 (0.25rem), and act as responsive variables that change their values when the density setting changes. 
+
+In this example, when the system detects a density change, the padding that uses --slds-g-spacing-var-4 (1rem)automatically adapts with the appropriate values.
+
+```css
+css
+/* This hook provides different values based on density setting */
+.my-component {
+  padding: var(--slds-g-spacing-var-4);
+}
+```
+
+### Density-Aware Spacing
+
+These density-aware styling hooks control spacing that’s applied equally to all sides of an element when the system switches between comfy and compact display density settings. The spacing corresponds to the top, bottom, left, and right margins or paddings. To learn how display density works in SLDS, see [Display Density](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)[.](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-spacing-var-1 | 0.25rem | Comfy (default) = 0.25rem | Compact = 0.125rem. |
+| --slds-g-spacing-var-2 | 0.5rem | Comfy (default) = 0.5rem | Compact = 0.125rem. |
+| --slds-g-spacing-var-3 | 0.75rem | Comfy (default) = 0.75rem | Compact = 0.25rem. |
+| --slds-g-spacing-var-4 | 1rem | Comfy (default) = 1rem | Compact = 0.5rem. |
+| --slds-g-spacing-var-5 | 1.5rem | Comfy (default) = 1.5rem | Compact = 0.75rem. |
+| --slds-g-spacing-var-6 | 2rem | Comfy (default) = 2rem | Compact = 1rem. |
+| --slds-g-spacing-var-7 | 2.5rem | Comfy (default) = 2.5rem | Compact = 1.5rem. |
+| --slds-g-spacing-var-8 | 3rem | Comfy (default) = 3rem | Compact = 2rem. |
+| --slds-g-spacing-var-9 | 3.5rem | Comfy (default) = 3.5rem | Compact = 2.5rem. |
+| --slds-g-spacing-var-10 | 4rem | Comfy (default) = 4rem | Compact = 3rem. |
+| --slds-g-spacing-var-11 | 4.5rem | Comfy (default) = 4.5rem | Compact = 3.5rem. |
+| --slds-g-spacing-var-12 | 5rem | Comfy (default) = 5rem | Compact = 4rem. |
+
+### Density-Aware Vertical Spacing
+
+These density-aware styling hooks control spacing along the vertical (block) axis when the system switches between comfy and compact display density settings. This spacing corresponds to the top and bottom margins or paddings. To learn how display density works in SLDS, see [Display Density](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)[.](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-spacing-var-block-1 | 0.25rem | Comfy (default) = 0.25rem | Compact = 0.125rem. |
+| --slds-g-spacing-var-block-2 | 0.5rem | Comfy (default) = 0.5rem | Compact = 0.25rem. |
+| --slds-g-spacing-var-block-3 | 0.75rem | Comfy (default) = 0.75rem | Compact = 0.5rem. |
+| --slds-g-spacing-var-block-4 | 1rem | Comfy (default) = 1rem | Compact = 0.5rem. |
+| --slds-g-spacing-var-block-5 | 1.5rem | Comfy (default) = 1.5rem | Compact = 0.75rem. |
+| --slds-g-spacing-var-block-6 | 2rem | Comfy (default) = 2rem | Compact = 1rem. |
+| --slds-g-spacing-var-block-7 | 2.5rem | Comfy (default) = 2.5rem | Compact = 1.5rem. |
+| --slds-g-spacing-var-block-8 | 3rem | Comfy (default) = 3rem | Compact = 2rem. |
+| --slds-g-spacing-var-block-9 | 3.5rem | Comfy (default) = 3.5rem | Compact = 2.5rem. |
+| --slds-g-spacing-var-block-10 | 4rem | Comfy (default) = 4rem | Compact = 3rem. |
+| --slds-g-spacing-var-block-11 | 4.5rem | Comfy (default) = 4.5rem | Compact = 3.5rem. |
+| --slds-g-spacing-var-block-12 | 5rem | Comfy (default) = 5rem | Compact = 4rem. |
+
+### Density-Aware Horizontal Spacing
+
+These density-aware styling hooks control spacing along the horizontal (inline) axis when the system switches between comfy and compact display density settings. This spacing corresponds to left and right margins or paddings. To learn how display density works in SLDS, see [Display Density](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)[.](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-spacing-var-inline-1 | 0.25rem | Comfy (default) = 0.25rem | Compact = 0.125rem. |
+| --slds-g-spacing-var-inline-2 | 0.5rem | Comfy (default) = 0.5rem | Compact = 0.25rem. |
+| --slds-g-spacing-var-inline-3 | 0.75rem | Comfy (default) = 0.75rem | Compact = 0.5rem. |
+| --slds-g-spacing-var-inline-4 | 1rem | Comfy (default) = 1rem | Compact = 0.75rem. |
+| --slds-g-spacing-var-inline-5 | 1.5rem | Comfy (default) = 1.5rem | Compact = 0.75rem. |
+| --slds-g-spacing-var-inline-6 | 2rem | Comfy (default) = 2rem | Compact = 1rem. |
+| --slds-g-spacing-var-inline-7 | 2.5rem | Comfy (default) = 2.5rem | Compact = 1.5rem. |
+| --slds-g-spacing-var-inline-8 | 3rem | Comfy (default) = 3rem | Compact = 2rem. |
+| --slds-g-spacing-var-inline-9 | 3.5rem | Comfy (default) = 3.5rem | Compact = 2.5rem. |
+| --slds-g-spacing-var-inline-10 | 4rem | Comfy (default) = 4rem | Compact = 3rem. |
+| --slds-g-spacing-var-inline-11 | 4.5rem | Comfy (default) = 4.5rem | Compact = 3.5rem. |
+| --slds-g-spacing-var-inline-12 | 5rem | Comfy (default) = 5rem | Compact = 4rem. |
+
+### Density-Aware Line Height
+
+This density-aware styling hook controls the line height when the system switches between comfy and compact display density settings. To learn how display density works in SLDS, see Display Density.
+
+|   | **Comfy  (default)** | **Compact ** |
+| --- | --- | --- |
+| **--slds-g-font-lineheight-var-base** | 1.5x | Normal (~1.2x) |
+
+### Density-aware Font Scale
+
+These density-aware styling hooks control the font scale when the system switches between comfy and compact display density settings. To learn how display density works in SLDS, see [Display Density](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe).
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-font-scale-var-neg-1 | 0.75rem | Comfy (default) = 0.75rem | Compact = 0.75rem. |
+| --slds-g-font-scale-var-neg-2 | 0.625rem | Comfy (default) = 0.625rem | Compact = 0.625rem. |
+| --slds-g-font-scale-var-neg-3 | 0.625rem | Comfy (default) = 0.625rem | Compact = 0.625rem. |
+| --slds-g-font-scale-var-neg-4 | 0.625rem | Comfy (default) = 0.625rem | Compact = 0.625rem. |
+| --slds-g-font-scale-var-1 | 0.875rem | Comfy (default) = 0.875rem | Compact = 0.875rem. |
+| --slds-g-font-scale-var-2 | 1rem | Comfy (default) = 1rem | Compact = 0.875rem. |
+| --slds-g-font-scale-var-3 | 1.25rem | Comfy (default) = 1.25rem | Compact = 1rem. |
+| --slds-g-font-scale-var-4 | 1.5rem | Comfy (default) = 1.5rem | Compact = 1.25rem. |
+| --slds-g-font-scale-var-5 | 1.75rem | Comfy (default) = 1.75rem | Compact = 1.75rem. |
+| --slds-g-font-scale-var-6 | 2rem | Comfy (default) = 2rem | Compact = 2rem. |
+| --slds-g-font-scale-var-7 | 2.5rem | Comfy (default) = 2.5rem | Compact = 2.5rem. |
+| --slds-g-font-scale-var-8 | 3rem | Comfy (default) = 3rem | Compact = 3rem. |
+| --slds-g-font-scale-var-9 | 3rem | Comfy (default) = 3rem | Compact = 3rem. |
+| --slds-g-font-scale-var-10 | 3rem | Comfy (default) = 3rem | Compact = 3rem. |
+
+
+Spacing & Sizing - ---
+title: Spacing and Sizing
+description: Establish harmony and hierarchy through deliberate spacing and sizing.
+---
+
+# Overview
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6110:101933">
+
+![Spacing - banner](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/d0511ec89dd444a8b4a1c6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145142Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c4bec39f702d1123bcd3682b2edd67320b1df5f53d9d137a8dd50bf37a904af2)
+
+**Spacing - banner**
+
+</design>
+
+## About
+
+Spacing and sizing are basic principles that establish visual consistency, create balance, and guide user focus. By defining the size of components and the space between them, the Salesforce Lightning Design System ensures a harmonious and scalable user interface that adapts seamlessly across devices and screen sizes.
+
+### Spacing
+
+Spacing controls the empty areas around or within components, such as margins, padding, and gaps between elements. Effective spacing improves readability, reduces visual clutter, and enhances usability. 
+
+Spacing defines these visual aspects of a page.
+
+* Proper alignment of components.
+* Clear differentiation of grouped and unrelated elements.
+* White space that directs user attention to key content or actions.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6114:102372">
+
+![Overview-spacing](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/3dbfc0c6648842bdef4454?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145142Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5cae34ef1b31fcaf8f46333c2527dba70e6330bb8ee453ac860fc3bbd51af2a0)
+
+**Overview-spacing**
+
+<notes>
+
+Spacing in styling hooks refers to padding or margins around an element. 
+
+</notes>
+
+</design>
+
+### Sizing
+
+Sizing refers to the dimensions of a component, such as height, width, or size variants. When sizes are consistent, it's easier for users to predict where things will be on the page. This predictability makes the interface easier to use.
+
+A design system applies sizing in a few key ways.
+
+* Defines the physical dimensions of elements like buttons, icons, and cards.
+* Provides scalable size options (small, medium, large) to accommodate different contexts.
+* Supports responsiveness to make sure that designs function well on all screen sizes.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6114:102405">
+
+![Overview-Sizing](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/059ec345dab6eb13c85b74?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145142Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ab6e35d075b2a98a5f47d56b383ff5b0c9f9cfd33bfffdb20362398b907d548a)
+
+**Overview-Sizing**
+
+<notes>
+
+Sizing within the styling hooks refers to the fixed height or width of an element. 
+
+</notes>
+
+</design>
+
+# Spacing
+
+## About
+
+Spacing controls the empty areas around or within components, such as margins, padding, and gaps between elements. Effective spacing improves readability, reduces visual clutter, and enhances usability. 
+
+Spacing defines these visual aspects of a page.
+
+* Proper alignment of components.
+* Clear differentiation of grouped and unrelated elements.
+* White space that directs user attention to key content or actions.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6114:102372">
+
+![Overview-spacing](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/3dbfc0c6648842bdef4454?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145142Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5cae34ef1b31fcaf8f46333c2527dba70e6330bb8ee453ac860fc3bbd51af2a0)
+
+**Overview-spacing**
+
+<notes>
+
+Spacing in styling hooks refers to padding or margins around an element. 
+
+</notes>
+
+</design>
+
+## Spacing Scale
+
+The spacing values create space between elements. The styling hook values are relative to the root font size and follow a modular scale of 4. Use `spacing` styling hooks to set values for margins and padding, for example.
+
+Don't use spacing properties to establish dimensions of an element targeting width and height. Use the sizing properties for this purpose.
+
+SLDS 2 uses the same spacing values as SLDS, with multiples of 4 to align with the 4-point grid system.
+
+## Understanding Padding and Margin
+
+Padding and margin are two different design elements. Padding controls the internal spacing within a component, while the margin defines the external spacing around it. Design systems follow a consistent margin strategy so that components interact predictably and maintain harmonious spacing throughout the interface. 
+
+# Sizing
+
+## About
+
+Sizing refers to the dimensions of a component, such as height, width, or size variants. When sizes are consistent, it's easier for users to predict where things will be on the page. This predictability makes the interface easier to use.
+
+A design system applies sizing in a few key ways.
+
+* Defines the physical dimensions of elements like buttons, icons, and cards.
+* Provides scalable size options (small, medium, large) to accommodate different contexts.
+* Supports responsiveness to make sure that designs function well on all screen sizes.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6114:102405">
+
+![Overview-Sizing](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/059ec345dab6eb13c85b74?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145142Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ab6e35d075b2a98a5f47d56b383ff5b0c9f9cfd33bfffdb20362398b907d548a)
+
+**Overview-Sizing**
+
+<notes>
+
+Sizing within the styling hooks refers to the fixed height or width of an element. 
+
+</notes>
+
+</design>
+
+## Sizing Scale
+
+The `sizing` values are used to create dimensions of an element, like using height and width-based properties. This is our defined sizing scale tied to styling hooks. Sizing in SLDS 2 uses the same values as SLDS, with multiples of 8 to align with the 8-point grid system.
+
+### Dimensions
+
+Use these styling hooks for elements such as icons to set their height and width relative to the root element's font-size.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6168:48427">
+
+![sizing-scale - px](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/fd45932186460710220aec?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145142Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5910c95e9851945280942d7774155490bc60af2c8bd669f79ddcdf6b6e7e3fbe)
+
+**sizing-scale - px**
+
+</design>
+
+# Styling Hooks
+
+## Spacing
+
+All spacing uses the namespace `--slds-g-` and are followed by the spacing name. For example, --slds-g-spacing-1 (0.25rem) is the styling hook for a spacing of 1 px.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6168:48374">
+
+![Spacing Hooks](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/20e01a4178a9f3e329a881?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145142Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=48535c178b44f033c30dc51414383230f1d1a12c8b82ef63ef1de18dc1c47b48)
+
+**Spacing Hooks**
+
+<notes>
+
+SLDS global spacing examples showing twelve dark blue rectangles increasing in width from spacing 1 to spacing 12, each labeled with their corresponding --slds-g-spacing styling hook.
+
+</notes>
+
+</design>
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-spacing-1 | 0.25rem | Spacing 1 | 4px. |
+| --slds-g-spacing-2 | 0.5rem | Spacing 2 | 8px. |
+| --slds-g-spacing-3 | 0.75rem | Spacing 3 | 12px. |
+| --slds-g-spacing-4 | 1rem | Spacing 4 | 16px. |
+| --slds-g-spacing-5 | 1.5rem | Spacing 5 | 24px. |
+| --slds-g-spacing-6 | 2rem | Spacing 6 | 32px. |
+| --slds-g-spacing-7 | 2.5rem | Spacing 7 | 40px. |
+| --slds-g-spacing-8 | 3rem | Spacing 8 | 48px. |
+| --slds-g-spacing-9 | 3.5rem | Spacing 9 | 56px. |
+| --slds-g-spacing-10 | 4rem | Spacing 10 | 64px. |
+| --slds-g-spacing-11 | 4.5rem | Spacing 11 | 72px. |
+| --slds-g-spacing-12 | 5rem | Spacing 12 | 80px. |
+
+### Density-Aware Spacing
+
+These density-aware styling hooks control spacing that’s applied equally to all sides of an element when the system switches between comfy and compact display density settings. The spacing corresponds to the top, bottom, left, and right margins or paddings. To learn how display density works in SLDS, see [Display Density](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)[.](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)
+
+Density-aware styling hooks are available for several categories of styling properties. Use these hooks to ensure your components adapt correctly to the user's chosen density setting.
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/591960-global-styling-hooks/t/d5f0e5fb26">
+**Density-Aware Spacing**
+
+Controls spacing that is applied equally to all sides of an element, such as padding or margins.
+</shortcut_tile>
+
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/591960-global-styling-hooks/t/bd9e8e4385">
+**Density-Aware Vertical Spacing**
+
+Manages spacing along the vertical (block) axis, corresponding to top and bottom margins or paddings.
+</shortcut_tile>
+
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/591960-global-styling-hooks/t/46a5c48134">
+**Density-Aware Horizontal Spacing**
+
+Adjusts spacing along the horizontal (inline) axis, corresponding to left and right margins or paddings.
+</shortcut_tile>
+</shortcut_tiles>
+
+## Sizing
+
+All sizing styling hooks are prefixed with `--slds-g-` and are followed by the sizing name. For example, --slds-g-sizing-1 (0.125rem) is the styling hook for a sizing of 2 px.
+
+### Dimensions
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6170:48497">
+
+![sizing-scale - 2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/97469ba275d8a2637984e6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145142Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=53db66ff05b59b11fe1c64dfe19d8aca2074a4b6fea0939d58d30deb1e7c868c)
+
+**sizing-scale - 2**
+
+<notes>
+
+SLDS global sizing examples showing sixteen dark blue rectangles increasing in width from sizing 1 to sizing 16, each labeled with their corresponding --slds-g-sizing styling hook.
+
+</notes>
+
+</design>
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-sizing-1 | 0.125rem | Sizing 1 | 2px. |
+| --slds-g-sizing-2 | 0.25rem | Sizing 2 | 4px. |
+| --slds-g-sizing-3 | 0.5rem | Sizing 3 | 8px. |
+| --slds-g-sizing-4 | 0.75rem | Sizing 4 | 12px. |
+| --slds-g-sizing-5 | 1rem | Sizing 5 | 16px. |
+| --slds-g-sizing-6 | 1.25rem | Sizing 6 | 20px. |
+| --slds-g-sizing-7 | 1.5rem | Sizing 7 | 24px. |
+| --slds-g-sizing-8 | 1.75rem | Sizing 8 | 28px. |
+| --slds-g-sizing-9 | 2rem | Sizing 9. |
+| --slds-g-sizing-10 | 3rem | Sizing 10 | 48px. |
+| --slds-g-sizing-11 | 4rem | Sizing 11 | 64px. |
+| --slds-g-sizing-12 | 5rem | Sizing 12 | 80px. |
+| --slds-g-sizing-13 | 10rem | Sizing 13 | 160px. |
+| --slds-g-sizing-14 | 15rem | Sizing 14 | 240px. |
+| --slds-g-sizing-15 | 20rem | Sizing 15 | 320px. |
+| --slds-g-sizing-16 | 30rem | Sizing 16 | 480px. |
+
+Typography - ---
+title: Typography
+description: Leverage system fonts of a device's operating system. 
+---
+
+# Overview
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6110:89257">
+
+![Banner](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/4a19b8cb028422bb356cf6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=01a1af21362a3a9df3f450843b97ecaf2bac310adfa6ac37164fac51feccdca7)
+
+**Banner**
+
+</design>
+
+## About
+
+Typography is a cornerstone of any design system, shaping how users consume and understand content. In the Salesforce Lightning Design System (SLDS), typography is standardized to create a consistent, readable, and accessible experience across all products. SLDS uses a predefined set of font sizes, weights, and styles that adapt to various screen sizes and contexts.
+
+### **Best Practices**
+
+* **Legibility**. To make text readable across devices, use appropriate font sizes and weights. Avoid using overly light or small text for essential content.
+* **Hierarchy**. To guide users through the content, consistently apply heading styles and text colors. Stick to the predefined SLDS scale to maintain visual balance.
+* **Customization**. To customize typography, use SLDS styling hooks instead of hardcoding styles. Styling hooks automatically receive SLDS updates and provide consistency and resilience for your styling.
+* **Accessibility**. To make content accessible, provide proper contrast between text and background colors, especially for critical content like error messages or buttons.
+
+## Fonts
+
+The design system uses system fonts provided by a user device's operating system. The system font varies across devices. The Figma library for SLDS 2 uses SF Pro as its primary typeface. SF Pro is a variant of the San Francisco typeface and is used as the system font on Apple devices.
+
+### Download System Fonts
+
+<shortcut_tiles>
+<shortcut_tile url="https://devimages-cdn.apple.com/design/resources/download/SF-Pro.dmg">
+![Download SF Pro](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/ePREEgsUWMRf-6UCsFdzPA.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f3c88674d96a7e7e3fbd50f32a1f96eee08923446614b69882e5143a6bbe28d7)
+
+**Download SF Pro**
+
+MacOS, iOS
+</shortcut_tile>
+
+<shortcut_tile url="https://aka.ms/WebFluentFonts">
+![Download Segoe UI](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/aL8eR-ykSqQ3b7eIoxCKuA.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5edb228fe2d691d7bce575633e038eca21a05b99e28d14d18c5dd3a85c174a79)
+
+**Download Segoe UI**
+
+Windows
+</shortcut_tile>
+
+<shortcut_tile url="https://fonts.google.com/specimen/Roboto">
+![Download Roboto](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/uZGK3HGaMKkcmhu3nKc-bw.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=cbe16baf8a98fafef9a2e9b46a69941c7ea396073f3483aa1cff9dd9888d273c)
+
+**Download Roboto**
+
+Android
+</shortcut_tile>
+</shortcut_tiles>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ All font weights and sizes remain the same in any system font.
+
+</callout>
+
+## Font scale
+
+The font scale uses the property`font-scale` and ranges in size from --slds-g-font-scale-2 (1rem)to --slds-g-font-scale-8 (3rem). Set font sizes within your code using`--slds-g-font-scale-*` styling hooks.
+
+<callout background="2" fullWidth="true">
+
+ℹ️ In SLDS 2, font sizes differ slightly from the original Salesforce Lightning Design System (SLDS 1). If you're using SLDS 2, review your components to see if there's a new type scale specification. Most components have minor font changes when viewed in SLDS 2 compared to SLDS 1.
+
+</callout>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=228:352">
+
+![Type Scale](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/8bd0ad269899a50a703681?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0995756bd8396bb30cf42441fffd48fb8d8d6916c12d6ade1916d754ed71499b)
+
+**Type Scale**
+
+</design>
+
+## Font weight
+
+SLDS 2 uses only light, regular, semibold, and bold font weights. 
+
+Font weights uses the property --slds-g-font-weight-3 (300) through --slds-g-font-weight-7 (700). Set font weights within your code using`--slds-g-font-weight-*` styling hooks.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=228:42129">
+
+![Font Weight](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/31d4f610b826c6e3b59c49?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=213262580fd9af3d4ac77ee786f25951acbfb89b8a6632b1e634b7c3e10cf9fe)
+
+**Font Weight**
+
+</design>
+
+| **Weight** | **Styling Hook** | **Value** | **Used For** |
+| :--- | --- | --- | :--- |
+| Light | --slds-g-font-weight-3 (300) | 300 | Display text |
+| Regular | --slds-g-font-weight-4 (400) | 400 | Titles and body text |
+| Semibold | --slds-g-font-weight-6 (600) | 600 | Buttons and smaller body titles |
+| Bold | --slds-g-font-weight-7 (700) | 700 | Emphasize text where needed, use sparingly |
+
+## Font color
+
+On light backgrounds, you can apply these colors to text.
+
+* --slds-g-color-on-surface-1 (#5C5C5C) (lightest text)
+* --slds-g-color-on-surface-2 (#2E2E2E)(darker text)
+* --slds-g-color-on-surface-3 (#03234D) (titles)
+
+On dark backgrounds, you can apply `on-surface-inverse`.
+
+![Example of text color applied using styling hooks on-surface-1 with a background of neutral-40.](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/ApMHKpShM-e7vgY0TDa0fw.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a6bc1e2364a120149413aeab404492e094cd7af9b8d5acaf44e9c3f7e2d85e58)
+
+![Example of text color applied using styling hooks on-surface-2 with a background of neutral-20.](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/ExbUMjxK4FL5dMVJ-5q1IQ.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=4de6b46355129158fb2a3ec9c3d928d3c56d85fba389221ed10fb2cd9d41e4bb)
+
+![Example of text color applied using styling hooks on-surface-3 with a background of neutral-15.](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/p-xpdHI9u6R4iivSgzvm6w.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0ca33b67099ea0936d55f7ad9790c3b7b9b50fc0c361010af45a9ed471a15182)
+
+![Example of text color applied using styling hooks on-surface-inverse with a background of neutral-100.](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/SuUKtChcFnlGsyhipRgPjg.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6beb8dae266ef36fa39f8076416151e14701ba12a11dfe2856a5c1892d8dc410)
+
+<callout background="2" fullWidth="true">
+
+* Text links use --slds-g-color-accent-1 (#066AFE) (electric blue 40)
+* Feedback text can use the appropriate alert color, such as --slds-g-color-error-1 (#B60554) or --slds-g-color-on-error-1 (#B60554)
+
+</callout>
+
+# Type Styles
+
+A type style is a combination of font scale, weight, and line height. SLDS has three type styles: body, title, and display. Each type style serves a specific purpose.
+
+## Body Type
+
+Text that conveys details in the form of phrases, labels, sentences, or blocks of copy.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=235:28658">
+
+![Body Type Scale](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/4495292afb0a9623a3a8d6?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b330cdbafb7ffa5430d053b159e3a0f3b34669c2fc613dbf1e5af638026d807b)
+
+**Body Type Scale**
+
+</design>
+
+<callout background="2" fullWidth="true">
+
+* Bold weight is used for emphasis only, not headings.
+* --slds-g-color-on-surface-3 (#03234D) is only used for headings and titles.
+* All font weights and sizes remain the same in any system font.
+
+</callout>
+
+## Title Type
+
+Headings of components or body content.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=235:28774">
+
+![Title Type Scale](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a1789604dfd36ce461957f?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ef622c3dbd97525d5f90ddc531691cf6fab5df2b368a49ba345d6689ea810870)
+
+**Title Type Scale**
+
+</design>
+
+## Display Type
+
+Short titles in banners or prominent sections to make a bold visual statement.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=235:28890">
+
+![Display Type Scale](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/0f52477105359498f474b7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8c0d8497877e0bb160987897066a49de7b047df75edcd4463f71e1bc60866c37)
+
+**Display Type Scale**
+
+</design>
+
+# Usage
+
+## Type Styles in Figma
+
+In the Figma library, you can find all SLDS type styles in the **Text styles** menu in the properties panel. 
+
+1. To apply a type style, highlight your text or select your text box. In the Text section of the right sidebar, click the Styles icon.
+2. Choose the appropriate style. Text styles have labels based on their`font-scale` styling hook names and are listed with the available weights for each size. 
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=228:41969">
+
+![Applying Type Styles](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/883cb1f31d293cdbf42979?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d2d0d4011e4d5c229e3fc922d91a00e92a13b91ca8970a5d9322689408d2eb7a)
+
+**Applying Type Styles**
+
+</design>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ Learn more about how to apply [Type Styles in Figma](https://help.figma.com/hc/en-us/articles/360039957034-Create-and-apply-text-styles#apply).
+
+</callout>
+
+### Type styles tips
+
+* All SLDS type styles are tied to Figma variables, which surface in code as style hooks. 
+* Don't use the Variable options to change your type selection.
+* Hover over a text style to see a description of where it’s used.
+
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6110:90115">
+
+![Type Variables](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/5462a0c90edbb17a9f270e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0378e53810cce3c218e69c495a372479acb0ab5eed6a8717be56786e21b303f1)
+
+**Type Variables**
+
+</design>
+
+### Do’s and Don’ts
+
+| Rule | Image | Caption | Description |
+| :--- | :--- | :--- | :--- |
+| Don't | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a1d28186ca4636f16e47d3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=067bede3fd8bddf936567f1f98a052efa38e72197d9b7d950aa93f0d6a0ce428) |   | Do not use ALL CAPS for any text or labels. |
+| Don't | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/796b9cdf73334707ce303b?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=63f2470a2debcae4cedccac0cd72c65ad1e2ab2eec5f1985ece91fccbf5657ed) |   | Do not use different sizes, weights, or combinations of size and weight other than what is provided in our text styles. |
+
+# Styling Hooks
+
+## Font Scale
+
+Font sizes are scaled based on the --slds-g-font-size-base (0.8125rem) property that sets the default font size of the application.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6031:144474">
+
+![Global Type Scale](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/9b91fb2f498cf0cd8e2cca?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145151Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fd666ce2d5cb1edd6eb3d63d03385ddf669a8739b7d26e831d39f15557817ce1)
+
+**Global Type Scale**
+
+<notes>
+
+SLDS font scale examples showing 'The quick brown fox jumps over the lazy dog' at different sizes. Styling Hooks: --slds-g-font-scale-neg-2, -neg-1, base, 1, 2, 3, 4, 5, 6, 7, 8, increasing in size.
+
+</notes>
+
+</design>
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-font-scale-neg-2 | 0.625rem | Font Scale Neg 2 | 10px. |
+| --slds-g-font-scale-neg-1 | 0.75rem | Font Scale Neg 1 | 12px. |
+| --slds-g-font-size-base | 0.8125rem | Font Size Base | 13px. |
+| --slds-g-font-scale-1 | 0.875rem | Font Scale 1 | 14px. |
+| --slds-g-font-scale-2 | 1rem | Font Scale 2 | 16px. |
+| --slds-g-font-scale-3 | 1.25rem | Font Scale 3 | 20px. |
+| --slds-g-font-scale-4 | 1.5rem | Font Scale 4 | 24px. |
+| --slds-g-font-scale-5 | 1.75rem | Font Scale 5 | 28px. |
+| --slds-g-font-scale-6 | 2rem | Font Scale 6 | 32px. |
+| --slds-g-font-scale-7 | 2.5rem | Font Scale 7 | 40px. |
+| --slds-g-font-scale-8 | 3rem | Font Scale 8 | 48px. |
+
+## Font Weight
+
+Font weights are available in a range where  --slds-g-font-weight-4 (400)is the default weight.
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-font-weight-1 | 100 | Font Weight 1 | 100. |
+| --slds-g-font-weight-2 | 200 | Font Weight 2 | 200. |
+| --slds-g-font-weight-3 | 300 | Light | 300. |
+| --slds-g-font-weight-4 | 400 | Regular | 400. |
+| --slds-g-font-weight-5 | 500 | Font Weight 5 | 500. |
+| --slds-g-font-weight-6 | 600 | SemiBold | 600. |
+| --slds-g-font-weight-7 | 700 | Bold | 700. |
+
+## Line Height
+
+Line height values are set to unitless numbers, which are multiplied by the font size used in the element to obtain the desired line height.
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-font-lineheight-1 | 1 | Font Lineheight 1 | 16px. |
+| --slds-g-font-lineheight-2 | 1.25 | Font Lineheight 2 | 20px. |
+| --slds-g-font-lineheight-3 | 1.375 | Font Lineheight 3 | 22px. |
+| --slds-g-font-lineheight-4 | 1.5 | Font Lineheight 4 | 24px. |
+| --slds-g-font-lineheight-5 | 1.75 | Font Lineheight 5 | 28px. |
+| --slds-g-font-lineheight-6 | 2 | Font Lineheight 6 | 32px. |
+
+## Content Hooks
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-sizing-content-1 | 20ch | Sizing Content 1. |
+| --slds-g-sizing-content-2 | 45ch | Sizing Content 2. |
+| --slds-g-sizing-content-3 | 60ch | Sizing Content 3. |
+
+## Heading Hooks
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-sizing-heading-1 | 20ch | Sizing Heading 1. |
+| --slds-g-sizing-heading-2 | 25ch | Sizing Heading 2. |
+| --slds-g-sizing-heading-3 | 35ch | Sizing Heading 3. |
+
+## Density-Aware Typography
+
+These density-aware styling hooks control spacing that’s applied equally to all sides of an element when the system switches between comfy and compact display density settings. The spacing corresponds to the top, bottom, left, and right margins or paddings. To learn how display density works in SLDS, see [Display Density](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)[.](https://www.lightningdesignsystem.com/2e1ef8501/p/805bbe)
+
+Density-aware styling hooks are available for several categories of styling properties. Use these hooks to ensure your components adapt correctly to the user's chosen density setting.
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/591960-global-styling-hooks/t/ab8bd2871d">
+**Density-Aware Font Scale**
+
+Controls the font size of text elements.
+</shortcut_tile>
+
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/591960-global-styling-hooks/t/806336498c">
+**Density-Aware Line Height**
+
+Manages the line height of text.
+</shortcut_tile>
+</shortcut_tiles>
+
+Colour ----
+title: Color
+description: Color establishes hierarchy, enhances branding, and fosters cohesion.
+---
+
+# Overview
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6104:57797">
+
+![Color Banner](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/84600a8cfa9e6cd14f8417?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=58463f08a3cb109dcd7bc457b83b97e87e0264c1e6eb5d71007051026100f6bb)
+
+**Color Banner**
+
+</design>
+
+## About
+
+Color is a foundational element in design that conveys meaning, improves usability, and builds a consistent brand identity. In the Salesforce Lightning Design System (SLDS), colors are carefully selected to support accessibility, maintain consistency, and align with Salesforce’s visual identity.
+
+### **Principles of Color Usage in SLDS**
+
+* **Accessibility First**Colors in SLDS meet or exceed [Web Content Accessibility Guidelines (WCAG) 2.1 AA](https://www.w3.org/TR/WCAG21/) standards for contrast. The color choices make it easy for everyone to read our content, including people with visual impairments. Always test color combinations to make sure that they meet contrast requirements, especially for text on backgrounds. 
+* **Consistency Across Experiences**Use SLDS styling hooks consistently to customize your styling. Styling hooks help to create a unified appearance across all Salesforce products and customizations. Avoid hardcoding colors so you can adapt to different themes.
+* **Communicating Status and Meaning**SLDS uses specific colors to represent different states, such as success, error, or warning. Styling hooks for these colors have semantic names that make it easy to understand their purpose. To align with Salesforce standards, always use these styling hooks instead of custom colors. 
+
+## Color Theory
+
+### Color is intentional
+
+Our color palette relies on white surfaces with intentional pops of bright color. These bold colors draw your attention to the most important information without overwhelming you.
+
+### Color provides meaning
+
+Consistent use of color styling hooks helps users easily associate colors with specific meanings.
+
+### Color is a guide
+
+Color choices in the user interface help users focus on important tasks, navigate the journey with ease, and complete tasks efficiently.
+
+### Color sparks joy
+
+The vibrant color pairs and gradients are meant to be delightful, but are used minimally within our system to make interfaces with lots of information easier to understand.
+
+## Foundational Color
+
+Foundational colors give meaning to specific UI elements.
+
+Use foundational colors only for their intended purpose. Customers can use a product more easily if a specific color is associated with a consistent meaning throughout the product.
+
+Foundational colors consist of: 
+
+* **[Semantically-named colors:](https://www.lightningdesignsystem.com/2e1ef8501/p/655b28-color/b/25b51f)** Used for building components and UI page elements such as backgrounds, borders, and fills. Use these colors only for their respective locations. For example, --slds-g-color-border-1 (#C9C9C9)is meant for borders, strokes, or divider lines. Don’t use this color for the background of a container.
+* **[System palette:](https://www.lightningdesignsystem.com/2e1ef8501/p/655b28-color/b/129096)** Colors with no semantic assignment, but are commonly used by semantic hooks for elements throughout the UI.
+* **[Color palette:](https://www.lightningdesignsystem.com/2e1ef8501/p/655b28-color/b/04fb5f)** Full spectrum of colors that aren't assigned to specific elements, and can be used for undefined situations.
+
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=80:9993">
+
+![functional](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/9d12a6b9f43cdf8319fb74?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=1ad45a10440f71021240ab6f1259a659b1900c8e7b6c68ee5117f9c3f40ab451)
+
+**functional**
+
+</design>
+
+## Color Density
+
+For consistency across all pages, consider using a specific color palette to maintain the look and feel of the SLDS 2 visual design. 
+
+* **UI:** Use clean, light backgrounds to create a sense of simplicity and elegance. The foundational colors are white and light grays, with dark grays and dark blue to create contrast for text and interactive elements.
+* **Accents:** Use bright hues strategically with the accent palette (electric blue) and feedback palettes (pink, yellow, teal, blue), to draw attention to specific elements and guide users to finish tasks. 
+* **Expressive colors****:** Use the expressive palette for customized experiences with your app. The colors complement the palettes for the UI and accents. 
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=80:9954">
+
+![density](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a579ce5c3052aebf80a0a2?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fd47e7971b11ff146f13fb0622af61fdc22f53c402e0ea6984cc1741adb597f6)
+
+**density**
+
+</design>
+
+## General Concepts
+
+As you read, keep these key concepts in mind.
+
+* **Semantic UI Colors:** A set of semantically-named styling hooks to represent the design properties that express the SLDS visual design. The styling hook names indicate where or how the colors are meant to be used. These styling hooks are mutable, so their values can change with the theme selected. 
+    * **Surface:** Colors used for backgrounds and large areas of the application that create visual depth with a new visual stacking context.
+    * **Accent:** Colors, typically brand colors, used to draw the user's attention to a particular area.
+    * **Container:** The fill color for elements that contain text or icons.
+    * **On:** Colors to use for text or icons that are placed on a colored container. Each surface, accent, and feedback color has a paired color that's designed to be used with it. For example, an on-accent color is paired with an accent-container color.
+    * **Feedback:** Colors to indicate the status of Create, Read, Update, and Delete (CRUD) actions. The colors can represent success, error, warning, information, and disabled.
+* **System Colors:** A set of accessible colors that are used throughout the user interface. These styling hooks contain the complete set of color values and have names to indicate their intended use. The set includes brand, neutral, and feedback colors. These styling hooks are mutable, so their values can change with the theme selected. Use them only in edge cases where semantic UI colors, such as those for surfaces and accents, don't make sense. 
+* **Color Palettes:** A range of accessible color palettes. These styling hooks are named after the colors they represent, rather than their intended use. They can be used anywhere within the user interface. These values are constant and won't change, regardless of the theme selected.
+* **Ranges:** Every global styling hook set uses names that end in a numerical range, starting at 1 and ending at 100. The lowest number is always the lightest color of a color range or the lowest value of a property range. The highest number x is the darkest color of a color range or the largest value of a property range.
+
+# Semantic Color
+
+## Understand the SLDS color system
+
+The Salesforce Lightning Design System (SLDS) color system gives you a flexible framework for building consistent and beautiful designs across your products. It includes derived color values for primary key colors and UI "surfaces," as well as explicit color values.
+
+[Styling hooks](https://www.lightningdesignsystem.com/2e1ef8501/p/319e5f) manage visual styles. In Figma, styling hooks appear as variables and are applied through style properties. In code, styling hooks are expressed as CSS variables. We organize and name styling hooks so you can quickly understand where and how to use them.  
+
+## Categories
+
+| **Category** | **Description** |
+| :--- | :--- |
+| `color, fill` | The default base color value. |
+| `surface` | Applied only to the background of pages bottom layers of specific elements. |
+| `surface-container` | Applied only to the background of elements that sit on top of a surface, and contain other UI elements or artifacts, such as text or icons. |
+| `on-surface`, `on-feedback`, `on-accent` | Applied to the content (text or icons) that sits on top of a surface or a surface container such as a button. |
+| `border` | Used for borders around containers, strokes, or divider lines. |
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=270:194">
+
+![Color Styling Hooks](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/9568bbed47b79b46ecc840?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=2e0e584cac8d7966ddd182938127135be2be4291d2fa22cbed0fb95eaf8e6735)
+
+**Color Styling Hooks**
+
+**Annotations**
+
+<annotations data-image-width="1440" data-image-height="1022">
+
+1. <annotation data-marker-x="0.969" data-marker-y="0.220">surface-2</annotation>
+2. <annotation data-marker-x="0.836" data-marker-y="0.038">surface-container-1</annotation>
+3. <annotation data-marker-x="0.949" data-marker-y="0.145">surface-container-1</annotation>
+4. <annotation data-marker-x="0.051" data-marker-y="0.300">surface-container-1</annotation>
+5. <annotation data-marker-x="0.122" data-marker-y="0.043">accent-2</annotation>
+6. <annotation data-marker-x="0.035" data-marker-y="0.237">accent-2</annotation>
+7. <annotation data-marker-x="0.866" data-marker-y="0.454">accent-2</annotation>
+8. <annotation data-marker-x="0.041" data-marker-y="0.146">surface-3</annotation>
+9. <annotation data-marker-x="0.201" data-marker-y="0.043">surface-3</annotation>
+10. <annotation data-marker-x="0.929" data-marker-y="0.343">on-surface-3</annotation>
+11. <annotation data-marker-x="0.644" data-marker-y="0.467">border-1</annotation>
+12. <annotation data-marker-x="0.580" data-marker-y="0.596">on-accent-1</annotation>
+13. <annotation data-marker-x="0.636" data-marker-y="0.598">accent-1</annotation>
+
+</annotations>
+
+</design>
+
+### Surface
+
+A surface is a canvas that UI elements sit on. Surface colors express the visual stacking context of an app. Surface colors work together to enable sweeping changes, like dark mode.
+
+Surface colors are reserved for the bottom layer of a surface. These elements are surfaces:
+
+* Application background
+* Panels
+* Modals
+* Docked containers
+* Popovers
+
+Anything that comes into the application's view and has a higher stacking context than a previous surface ultimately establishes a new surface.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6107:67780">
+
+![surface](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/da925b1052c510989a8ddc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=11635d405f7b4f4ada91e43a8f746f4aa75d19fc238a21ddebcd9a34c308a590)
+
+**surface**
+
+</design>
+
+<callout background="2" fullWidth="true">
+
+**ℹ️** Don't apply any decoration, brand bands, or textures to an application background.
+
+</callout>
+
+### Surface-container
+
+Surface container colors are reserved for the elements that sit on top of a surface and contain other UI elements or artifacts, such as text or icons. These elements are surface containers:
+
+* Cards or containers
+* Buttons
+* Button icons
+* Tabsets
+
+One of the clearest signals that something is a surface container is if it contains text or icons.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6107:61571">
+
+![container](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/1d172c3c39bb8c58fac5af?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c38e18218dcdaacfa26b475708f435e2dc8ae80b4787db7dbc41f0be81d4a9f7)
+
+**container**
+
+</design>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ **WCAG 2.1 color contrast requirements**
+
+To ensure proper WCAG 2.1 color contrast requirements, pair the text that sits on top of a surface with an `on` surface value. It's valid to use any of the accent or feedback colors that are used for text or icons on top of a surface color, for example, --slds-g-color-accent-1 (#066AFE).
+
+</callout>
+
+### On-Surface
+
+Use the `on-surface` color value for text or icons that appear on top of a surface or surface container. This practice ensures that your content meets the color contrast requirements set by the Web Content Accessibility Guidelines (WCAG) 2.1.
+
+For example, if a surface container is --slds-g-color-surface-container-3 (#E5E5E5) it will use --slds-g-color-on-surface-3 (#03234D)for the text on it.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6107:63726">
+
+![on-surface](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/ed523166627e25ac451a69?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=725beda6afa83dcaacf4ebcaad699182935046e10ec134544eca79bb85804573)
+
+**on-surface**
+
+</design>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ Text links --slds-g-color-accent-2 (#0250D9),  disabled text --slds-g-color-on-disabled-2 (#757575), and feedback text colors --slds-g-color-on-error-1 (#B60554) are available and can be found in those sections.
+
+</callout>
+
+### Borders
+
+Used for borders around containers, strokes, or divider lines. There are two border colors available on light and dark backgrounds.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6104:58464">
+
+![border](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/38297db4e7614b5530a1b2?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=e490f62cb59e4560dfcb9593bc4bb594d66a4dffbf3e5f44432d7e51f4e8838a)
+
+**border**
+
+</design>
+
+<callout background="2" fullWidth="true">
+
+#### **ℹ️ WCAG 2.1 color contrast requirements**
+
+For compliance with WCAG 2.1 color contrast guidelines, if your component is an interactive element like a `button` or `input`, use --slds-g-color-border-2 (#5C5C5C). If your component is a non-interactive, presentational element like a divider line, use --slds-g-color-border-1 (#C9C9C9).
+
+</callout>
+
+### Feedback
+
+Feedback or alert colors provide visual feedback to the user regarding the status of an action or event. These colors are intentionally reserved to convey specific associations throughout the Salesforce UI.
+
+| **Color** | **Meaning** |
+| :--- | :--- |
+| ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/SsjvxnYG_CdHSLJP7LwMVQ.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=311ba87d4acb4259238075714d221325ebb919b4b7969a5466f2acad7da46392) | An error that needs to be addressed before progressing |
+| ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/fu18z_GSRNRxVVzbDdq4nA.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=1c6a3785105b2e3de091d1b2e041fb9ae694536204b02969e32c45fa910ae638) | A warning of potential issues the user needs to be aware of |
+| ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/8x-YsPgsdzUzyuiIL14OQA.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d4ad525d29aa8db38f4a0ee5c50dee5e057c367d64f0b4f8be20886a07aa5974) | A positive or successful action or outcome |
+| ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/gvl2-JXX6Wu5Mp4I2-6PzQ.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b8daf1acb26a2b9306322c63b31ed9066a51a4d2f0a037e3852f6d05c69765f5) | Convey non-critical information to users |
+| ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/SjIY_9jid591i-y6EwIM3A.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b3257e1f3ded734edbaa2ca78cb98ffcfc461dc702055128019f4da04a824481) | Indicates that a component is unavailable |
+
+<callout background="2" fullWidth="true">
+
+ℹ️ Only use feedback colors for their intended meaning so users have clear color associations throughout all of Salesforce products.
+
+</callout>
+
+### Accent
+
+Accent colors express a brand's accent color throughout the user interface or to draw attention to an action.
+
+Brand colors highlight actions on the page through buttons and links.
+
+* **accent-1, 2**, and **3** are used for color files like text or icons
+* **accent-container-1, 2**, and **3** are for containers such as the brand buttons and hover and active states
+* **border-accent-1, 2,** and **3** are reserved for button outlines
+* **brand-base-90** and **80** are used for backgrounds and hover states for menu type components using the brand-base styling hooks
+
+Accents can be used when no text or icon is on top of the accent color. Typically, accents are used to draw attention to something, and as a text color to indicate that an element is active or selected. 
+
+These elements can use accent colors:
+
+* Links
+* Icons
+
+<callout background="2" fullWidth="true">
+
+ℹ️ **electric blue-50**, **electric blue-40**, and **electric blue-30** are reserved for buttons, hover states, and selected or active states. Do not use them for decorative purposes.
+
+</callout>
+
+#### Border
+
+The border accent color is reserved for adding borders or outlines that render the brand's accent color. You can use this independently or pair it with an accent container color.
+
+## Do's and Don'ts
+
+| Rule | Image | Caption | Description |
+| :--- | :--- | :--- | :--- |
+| Do | ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/DnoA04JuEI64AF6n0ijKXw.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f2a90eb46ea79b4168bfb999cb20f74f12327f870eab49503e786d348f486992) |   | Always use an on color with a container color to ensure WCAG 2.1 color contrast requirements. |
+| Don't | ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/Ktmnpw5Rp8_Qy809tnGFgQ.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=e92f6e17be3460bf79ae74784be9cfafa6edaf04a23b7ff4832d0eb1950df6b9) |   | Do not use system colors or colors from another group like surface colors in combination with accent containers. |
+| Do | ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/45GLoHnkxBTNapKu--E2xA.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=253d9566ed46a7524baded38fa3cc2cabc17e2aabcd0ba6e4b23e79c7ea458f0) |   | Feel free to use accent/feedback colors to express your brand's accent or intent on top of surface and surface container colors only. |
+| Don't | ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/aWac6KSW5fkiRJxSEvL83w.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=162579746dc2a040051d33114966eeda0058b5ccebedea2847c51ba2b4b41180) |   | Do not use accent/feedback colors if text or icons sit on top of the accent color. To ensure correct WCAG 2.1 color contrast, use accent/feedback container color for this scenario. |
+| Do | ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/WN8QOO2CDwGrL_OV4dbtkw.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8776c81ae8c726214fc392e1681ceb6cacb80b9480d8b48cf3bc3e040c5a3675) |   | Always use the appropriate border color for borders or outlines, if necessary.
+ |
+| Don't | ![](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/JcxvGbW2r-mSaXYjuLG8nA.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145208Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=e1f2eecf15908eacf4954f1f32808e17b355f14fcfc7a6b21533d9691f2ba3f8) |   | Do not use non-border accent colors on borders to achieve a border with an accent color. |
+
+## Semantic Styling Hooks
+
+### Surface Colors
+
+Used for backgrounds and large areas of the application that express a new visual stacking context to create visual depth.
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-surface-1 | #FFFFFF | Color surface used for page backgrounds. |
+| --slds-g-color-surface-2 | #F3F3F3 | Color surface used for darker page backgrounds. |
+| --slds-g-color-surface-3 | #F3F3F3 | Color surface used for containers. |
+| --slds-g-color-surface-inverse-1 | #032D60 | Inverse page background. Always pair with on-surface-inverse-1. |
+| --slds-g-color-surface-inverse-2 | #03234D | Darker inverse page background. Always pair with on-surface-inverse-2. |
+
+### On Surface
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-on-surface-1 | #5C5C5C | Lightest text and icon fill. Used for body text, placeholder text, field labels, sub-headings, and taglines. |
+| --slds-g-color-on-surface-2 | #2E2E2E | Darker text and icon fills used for secondary and tertiary headings, dark body copy, and filled input fields. |
+| --slds-g-color-on-surface-3 | #03234D | Darkest text and icon fill used for title and pages or components. |
+| --slds-g-color-on-surface-inverse-1 | #FFFFFF | Lightest text and icon fill on dark backgrounds. Always pair with surface-inverse-1 or surface-container-inverse-1. |
+| --slds-g-color-on-surface-inverse-2 | #A8CBFF | Darker text and icon fill on dark backgrounds (50 to 100). Always pair with surface-inverse-2 or surface-container-inverse-2. |
+
+### Container
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-surface-container-1 | #FFFFFF | Default container background fill for components such as cards and modals. |
+| --slds-g-color-surface-container-2 | #F3F3F3 | Darker color for container background fill for components. |
+| --slds-g-color-surface-container-3 | #E5E5E5 | Darkest color for container background fill for components. |
+| --slds-g-color-surface-container-inverse-1 | #032D60 | Inverse color container background fill for components. Always pair with on-surface-inverse-1. |
+| --slds-g-color-surface-container-inverse-2 | #03234D | Inverse darker color container background fill for components. Always pair with on-surface-inverse-2. |
+
+### Accent Colors
+
+Accent colors, typically brand colors, to emphasize areas that you want to draw attention to.
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-accent-1 | #066AFE | Emphasis color for large text and icon fills. |
+| --slds-g-color-accent-2 | #0250D9 | Emphasis color for text, links, and icon color fills. Hover state color for interactive elements. |
+| --slds-g-color-accent-3 | #022AC0 | Emphasis color for text, links, and icon alternative colors. Hover state color for interactive elements. |
+| --slds-g-color-accent-container-1 | #066AFE | Background fill for containers that emphasize branded component and interactive elements such as Brand buttons. Always pair with on-accent-1. |
+| --slds-g-color-accent-container-2 | #0250D9 | Background fill on hover state for containers that emphasize branded component and interactive elements such as Brand buttons. Always pair with on-accent-2. |
+| --slds-g-color-accent-container-3 | #022AC0 | Alternative background fill on hover state for containers that emphasize branded component and interactive elements such as Brand buttons. Always pair with on-accent-3. |
+| --slds-g-color-border-accent-1 | #066AFE | Border color for branded containers. |
+| --slds-g-color-border-accent-2 | #0250D9 | Border color for branded containers. |
+| --slds-g-color-border-accent-3 | #022AC0 | Hover border color for branded containers. |
+| --slds-g-color-on-accent-1 | #FFFFFF | Text and icon fill color displayed on branded containers. Always pair with on-accent-container-1. |
+| --slds-g-color-on-accent-2 | #FFFFFF | Text and icon fill color displayed on branded containers. Always pair with on-accent-container-2. |
+| --slds-g-color-on-accent-3 | #FFFFFF | Text and icon fill color displayed on branded containers. Always pair with on-accent-container-3. |
+
+# System Palette
+
+## System Palette
+
+These styling hooks contain the complete set of values based on their semantics, brand, neutral, and feedback colors. Only use in edge cases where a semantic UI color does not make sense. 
+
+* `--slds-g-color-neutral-base`is used for various UI elements such as text, surfaces, and non-functional UI.
+* `--slds-g-color-brand-base` (electric-blue) is used for buttons, hover states, and selected or active states. Do not use for decorative purpose.
+* `--slds-g-color-error-base` (pink), `--slds-g-color-warning-base` (yellow), `--slds-g-color-success-base` (teal), and `--slds-g-color-blue` is only to be used for those feedback or alert states.
+
+### Neutral Colors
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-neutral-base-10 | #181818 | Step 10 in the Neutral color scale. |
+| --slds-g-color-neutral-base-15 | #242424 | Step 15 in the Neutral color scale. |
+| --slds-g-color-neutral-base-20 | #2E2E2E | Step 20 in the Neutral color scale. |
+| --slds-g-color-neutral-base-30 | #444444 | Step 30 in the Neutral color scale. |
+| --slds-g-color-neutral-base-40 | #5C5C5C | Step 40 in the Neutral color scale. |
+| --slds-g-color-neutral-base-50 | #747474 | Step 50 in the Neutral color scale. |
+| --slds-g-color-neutral-base-60 | #939393 | Step 60 in the Neutral color scale. |
+| --slds-g-color-neutral-base-65 | #A0A0A0 | Step 65 in the Neutral color scale. |
+| --slds-g-color-neutral-base-70 | #AEAEAE | Step 70 in the Neutral color scale. |
+| --slds-g-color-neutral-base-80 | #C9C9C9 | Step 80 in the Neutral color scale. |
+| --slds-g-color-neutral-base-90 | #E5E5E5 | Step 90 in the Neutral color scale. |
+| --slds-g-color-neutral-base-95 | #F3F3F3 | Step 95 in the Neutral color scale. |
+| --slds-g-color-neutral-base-100 | #FFFFFF | Step 100 in the Neutral color scale. |
+
+### **Brand Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-brand-base-10 | #001642 | Step 10 in the Brand color scale. |
+| --slds-g-color-brand-base-15 | #001E5B | Step 15 in the Brand color scale. |
+| --slds-g-color-brand-base-20 | #002775 | Step 20 in the Brand color scale. |
+| --slds-g-color-brand-base-30 | #022AC0 | Step 30 in the Brand color scale. |
+| --slds-g-color-brand-base-40 | #0250D9 | Step 40 in the Brand color scale. |
+| --slds-g-color-brand-base-50 | #066AFE | Step 50 in the Brand color scale. |
+| --slds-g-color-brand-base-60 | #4992FE | Step 60 in the Brand color scale. |
+| --slds-g-color-brand-base-65 | #5F9FFE | Step 65 in the Brand color scale. |
+| --slds-g-color-brand-base-70 | #7CB1FE | Step 70 in the Brand color scale. |
+| --slds-g-color-brand-base-80 | #A8CBFF | Step 80 in the Brand color scale. |
+| --slds-g-color-brand-base-95 | #EDF4FF | Step 95 in the Brand color scale. |
+| --slds-g-color-brand-base-90 | #D6E6FF | Step 90 in the Brand color scale. |
+| --slds-g-color-brand-base-100 | #FFFFFF | Step 100 in the Brand color scale. |
+
+### **Error Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-error-base-10 | #370114 | Step 10 in the Error color scale. |
+| --slds-g-color-error-base-20 | #61022A | Step 20 in the Error color scale. |
+| --slds-g-color-error-base-30 | #8A033E | Step 30 in the Error color scale. |
+| --slds-g-color-error-base-40 | #B60554 | Step 40 in the Error color scale. |
+| --slds-g-color-error-base-50 | #E3066A | Step 50 in the Error color scale. |
+| --slds-g-color-error-base-60 | #FF538A | Step 60 in the Error color scale. |
+| --slds-g-color-error-base-70 | #FE8AA7 | Step 70 in the Error color scale. |
+| --slds-g-color-error-base-80 | #FDB6C5 | Step 80 in the Error color scale. |
+| --slds-g-color-error-base-90 | #FDDDE3 | Step 90 in the Error color scale. |
+| --slds-g-color-error-base-95 | #FEF0F3 | Step 95 in the Error color scale. |
+| --slds-g-color-error-base-100 | #FFFFFF | Step 100 in the Error color scale. |
+
+### **Warning Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-warning-base-10 | #281202 | Step 10 in the Warning color scale. |
+| --slds-g-color-warning-base-20 | #4F2100 | Step 20 in the Warning color scale. |
+| --slds-g-color-warning-base-30 | #6F3400 | Step 30 in the Warning color scale. |
+| --slds-g-color-warning-base-40 | #8C4B02 | Step 40 in the Warning color scale. |
+| --slds-g-color-warning-base-50 | #A86403 | Step 50 in the Warning color scale. |
+| --slds-g-color-warning-base-60 | #CA8501 | Step 60 in the Warning color scale. |
+| --slds-g-color-warning-base-70 | #E4A201 | Step 70 in the Warning color scale. |
+| --slds-g-color-warning-base-80 | #FCC003 | Step 80 in the Warning color scale. |
+| --slds-g-color-warning-base-90 | #F9E3B6 | Step 90 in the Warning color scale. |
+| --slds-g-color-warning-base-95 | #FBF3E0 | Step 95 in the Warning color scale. |
+| --slds-g-color-warning-base-100 | #FFFFFF | Step 100 in the Warning color scale. |
+
+### **Success Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-success-base-10 | #071B12 | Step 10 in the Success color scale. |
+| --slds-g-color-success-base-20 | #023434 | Step 20 in the Success color scale. |
+| --slds-g-color-success-base-30 | #024D4C | Step 30 in the Success color scale. |
+| --slds-g-color-success-base-40 | #056764 | Step 40 in the Success color scale. |
+| --slds-g-color-success-base-50 | #0B827C | Step 50 in the Success color scale. |
+| --slds-g-color-success-base-60 | #06A59A | Step 60 in the Success color scale. |
+| --slds-g-color-success-base-70 | #01C3B3 | Step 70 in the Success color scale. |
+| --slds-g-color-success-base-80 | #04E1CB | Step 80 in the Success color scale. |
+| --slds-g-color-success-base-90 | #ACF3E4 | Step 90 in the Success color scale. |
+| --slds-g-color-success-base-95 | #DEF9F3 | Step 95 in the Success color scale. |
+| --slds-g-color-success-base-100 | #FFFFFF | Step 100 in the Success color scale. |
+
+# Color Palette
+
+## Color Palette
+
+Expressive palettes offer a wider range of colors than our System palette. Although their use varies, they can be useful for displaying data or highlighting important areas in your user experience.
+
+Color palettes consist of cloud blue, purple, indigo, violet, orange, hot orange, red, and green.
+
+* We recommend the use of mostly cool tones within your page designs. 
+* Indigo is similar to the brand blue (electric blue) color palette. Use it intentionally so that it does not interrupt the established button hierarchy. 
+* Warmer colors like orange, red, and green are only to be used to draw the user's attention to issues or important information.
+* Use expressive colors sparingly to avoid confusion with the feedback colors: pink for errors, yellow for warnings, teal for success, and blue for info.
+
+### Neutral
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-neutral-10 | #181818 | Step 10 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-15 | #242424 | Step 15 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-20 | #2E2E2E | Step 20 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-30 | #444444 | Step 30 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-40 | #5C5C5C | Step 40 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-50 | #747474 | Step 50 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-60 | #939393 | Step 60 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-65 | #A0A0A0 | Step 65 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-70 | #AEAEAE | Step 70 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-80 | #C9C9C9 | Step 80 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-90 | #E5E5E5 | Step 90 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-95 | #F3F3F3 | Step 95 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-100 | #FFFFFF | Step 100 in the palette Neutral scale. |
+
+### Blue
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-blue-10 | #001639 | Step 10 in the palette Blue scale. |
+| --slds-g-color-palette-blue-15 | #03234D | Step 15 in the palette Blue scale. |
+| --slds-g-color-palette-blue-20 | #032D60 | Step 20 in the palette Blue scale. |
+| --slds-g-color-palette-blue-30 | #014486 | Step 30 in the palette Blue scale. |
+| --slds-g-color-palette-blue-40 | #0B5CAB | Step 40 in the palette Blue scale. |
+| --slds-g-color-palette-blue-50 | #0176D3 | Step 50 in the palette Blue scale. |
+| --slds-g-color-palette-blue-60 | #1B96FF | Step 60 in the palette Blue scale. |
+| --slds-g-color-palette-blue-65 | #57A3FD | Step 65 in the palette Blue scale. |
+| --slds-g-color-palette-blue-70 | #78B0FD | Step 70 in the palette Blue scale. |
+| --slds-g-color-palette-blue-80 | #AACBFF | Step 80 in the palette Blue scale. |
+| --slds-g-color-palette-blue-90 | #D8E6FE | Step 90 in the palette Blue scale. |
+| --slds-g-color-palette-blue-95 | #EEF4FF | Step 95 in the palette Blue scale. |
+
+### Cloud Blue
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-cloud-blue-10 | #001A28 | Step 10 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-15 | #0A2636 | Step 15 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-20 | #023248 | Step 20 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-30 | #084968 | Step 30 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-40 | #05628A | Step 40 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-50 | #107CAD | Step 50 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-60 | #0D9DDA | Step 60 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-65 | #08ABED | Step 65 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-70 | #1AB9FF | Step 70 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-80 | #90D0FE | Step 80 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-90 | #CFE9FE | Step 90 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-95 | #EAF5FE | Step 95 in the palette Cloud Blue scale. |
+
+### Electric Blue
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-electric-blue-10 | #001642 | Step 10 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-15 | #001E5B | Step 15 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-20 | #002775 | Step 20 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-30 | #022AC0 | Step 30 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-40 | #0250D9 | Step 40 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-50 | #066AFE | Step 50 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-60 | #4992FE | Step 60 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-65 | #5F9FFE | Step 65 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-70 | #7CB1FE | Step 70 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-80 | #A8CBFF | Step 80 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-90 | #D6E6FF | Step 90 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-95 | #EDF4FF | Step 95 in the palette Electric Blue scale. |
+
+### Indigo
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-indigo-10 | #200647 | Step 10 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-15 | #1F0974 | Step 15 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-20 | #321D71 | Step 20 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-30 | #2F2CB7 | Step 30 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-40 | #3A49DA | Step 40 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-50 | #5867E8 | Step 50 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-60 | #7F8CED | Step 60 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-65 | #8E9BEF | Step 65 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-70 | #9EA9F1 | Step 70 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-80 | #BEC7F6 | Step 80 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-90 | #E0E5F8 | Step 90 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-95 | #F1F3FB | Step 95 in the palette Indigo scale. |
+
+### Purple
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-purple-10 | #240643 | Step 10 in the palette Purple scale. |
+| --slds-g-color-palette-purple-15 | #300B60 | Step 15 in the palette Purple scale. |
+| --slds-g-color-palette-purple-20 | #401075 | Step 20 in the palette Purple scale. |
+| --slds-g-color-palette-purple-30 | #5A1BA9 | Step 30 in the palette Purple scale. |
+| --slds-g-color-palette-purple-40 | #7526E3 | Step 40 in the palette Purple scale. |
+| --slds-g-color-palette-purple-50 | #9050E9 | Step 50 in the palette Purple scale. |
+| --slds-g-color-palette-purple-60 | #AD7BEE | Step 60 in the palette Purple scale. |
+| --slds-g-color-palette-purple-65 | #B78DEF | Step 65 in the palette Purple scale. |
+| --slds-g-color-palette-purple-70 | #C29EF1 | Step 70 in the palette Purple scale. |
+| --slds-g-color-palette-purple-80 | #D7BFF2 | Step 80 in the palette Purple scale. |
+| --slds-g-color-palette-purple-90 | #ECE1F9 | Step 90 in the palette Purple scale. |
+| --slds-g-color-palette-purple-95 | #F6F2FB | Step 95 in the palette Purple scale. |
+
+### Red
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-red-10 | #300C01 | Step 10 in the palette Red scale. |
+| --slds-g-color-palette-red-15 | #4A0C04 | Step 15 in the palette Red scale. |
+| --slds-g-color-palette-red-20 | #640103 | Step 20 in the palette Red scale. |
+| --slds-g-color-palette-red-30 | #8E030F | Step 30 in the palette Red scale. |
+| --slds-g-color-palette-red-40 | #BA0517 | Step 40 in the palette Red scale. |
+| --slds-g-color-palette-red-50 | #EA001E | Step 50 in the palette Red scale. |
+| --slds-g-color-palette-red-60 | #FE5C4C | Step 60 in the palette Red scale. |
+| --slds-g-color-palette-red-65 | #FE7765 | Step 65 in the palette Red scale. |
+| --slds-g-color-palette-red-70 | #FE8F7D | Step 70 in the palette Red scale. |
+| --slds-g-color-palette-red-80 | #FEB8AB | Step 80 in the palette Red scale. |
+| --slds-g-color-palette-red-90 | #FEDED8 | Step 90 in the palette Red scale. |
+| --slds-g-color-palette-red-95 | #FEF1EE | Step 95 in the palette Red scale. |
+
+### Pink
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-pink-10 | #370114 | Step 10 in the palette Pink scale. |
+| --slds-g-color-palette-pink-15 | #4B0620 | Step 15 in the palette Pink scale. |
+| --slds-g-color-palette-pink-20 | #61022A | Step 20 in the palette Pink scale. |
+| --slds-g-color-palette-pink-30 | #8A033E | Step 30 in the palette Pink scale. |
+| --slds-g-color-palette-pink-40 | #B60554 | Step 40 in the palette Pink scale. |
+| --slds-g-color-palette-pink-50 | #E3066A | Step 50 in the palette Pink scale. |
+| --slds-g-color-palette-pink-60 | #FF538A | Step 60 in the palette Pink scale. |
+| --slds-g-color-palette-pink-65 | #FE7298 | Step 65 in the palette Pink scale. |
+| --slds-g-color-palette-pink-70 | #FE8AA7 | Step 70 in the palette Pink scale. |
+| --slds-g-color-palette-pink-80 | #FDB6C5 | Step 80 in the palette Pink scale. |
+| --slds-g-color-palette-pink-90 | #FDDDE3 | Step 90 in the palette Pink scale. |
+| --slds-g-color-palette-pink-95 | #FEF0F3 | Step 95 in the palette Pink scale. |
+
+### Hot Orange
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-hot-orange-10 | #281202 | Step 10 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-15 | #421604 | Step 15 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-20 | #4A2413 | Step 20 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-30 | #7E2600 | Step 30 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-40 | #AA3001 | Step 40 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-50 | #D83A00 | Step 50 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-60 | #FF5D2D | Step 60 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-65 | #FF784F | Step 65 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-70 | #FF906E | Step 70 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-80 | #FEB9A5 | Step 80 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-90 | #FFDED5 | Step 90 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-95 | #FEF1ED | Step 95 in the palette Hot Orange scale. |
+
+### Orange
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-orange-10 | #201600 | Step 10 in the palette Orange scale. |
+| --slds-g-color-palette-orange-15 | #371E03 | Step 15 in the palette Orange scale. |
+| --slds-g-color-palette-orange-20 | #3E2B02 | Step 20 in the palette Orange scale. |
+| --slds-g-color-palette-orange-30 | #5F3E02 | Step 30 in the palette Orange scale. |
+| --slds-g-color-palette-orange-40 | #825101 | Step 40 in the palette Orange scale. |
+| --slds-g-color-palette-orange-50 | #A96404 | Step 50 in the palette Orange scale. |
+| --slds-g-color-palette-orange-60 | #DD7A01 | Step 60 in the palette Orange scale. |
+| --slds-g-color-palette-orange-65 | #F38303 | Step 65 in the palette Orange scale. |
+| --slds-g-color-palette-orange-70 | #FE9339 | Step 70 in the palette Orange scale. |
+| --slds-g-color-palette-orange-80 | #FFBA90 | Step 80 in the palette Orange scale. |
+| --slds-g-color-palette-orange-90 | #FEDFD0 | Step 90 in the palette Orange scale. |
+| --slds-g-color-palette-orange-95 | #FFF1EA | Step 95 in the palette Orange scale. |
+
+### Yellow
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-yellow-10 | #281202 | Step 10 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-15 | #2E2204 | Step 15 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-20 | #4F2100 | Step 20 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-30 | #6F3400 | Step 30 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-40 | #8C4B02 | Step 40 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-50 | #A86403 | Step 50 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-60 | #CA8501 | Step 60 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-65 | #D79304 | Step 65 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-70 | #E4A201 | Step 70 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-80 | #FCC003 | Step 80 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-90 | #F9E3B6 | Step 90 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-95 | #FBF3E0 | Step 95 in the palette Yellow scale. |
+
+### Teal
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-teal-10 | #071B12 | Step 10 in the palette Teal scale. |
+| --slds-g-color-palette-teal-15 | #072825 | Step 15 in the palette Teal scale. |
+| --slds-g-color-palette-teal-20 | #023434 | Step 20 in the palette Teal scale. |
+| --slds-g-color-palette-teal-30 | #024D4C | Step 30 in the palette Teal scale. |
+| --slds-g-color-palette-teal-40 | #056764 | Step 40 in the palette Teal scale. |
+| --slds-g-color-palette-teal-50 | #0B827C | Step 50 in the palette Teal scale. |
+| --slds-g-color-palette-teal-60 | #06A59A | Step 60 in the palette Teal scale. |
+| --slds-g-color-palette-teal-65 | #03B4A7 | Step 65 in the palette Teal scale. |
+| --slds-g-color-palette-teal-70 | #01C3B3 | Step 70 in the palette Teal scale. |
+| --slds-g-color-palette-teal-80 | #04E1CB | Step 80 in the palette Teal scale. |
+| --slds-g-color-palette-teal-90 | #ACF3E4 | Step 90 in the palette Teal scale. |
+| --slds-g-color-palette-teal-95 | #DEF9F3 | Step 95 in the palette Teal scale. |
+
+### Green
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-green-10 | #071B12 | Step 10 in the palette Green scale. |
+| --slds-g-color-palette-green-15 | #0C2912 | Step 15 in the palette Green scale. |
+| --slds-g-color-palette-green-20 | #1C3326 | Step 20 in the palette Green scale. |
+| --slds-g-color-palette-green-30 | #194E31 | Step 30 in the palette Green scale. |
+| --slds-g-color-palette-green-40 | #396547 | Step 40 in the palette Green scale. |
+| --slds-g-color-palette-green-50 | #2E844A | Step 50 in the palette Green scale. |
+| --slds-g-color-palette-green-60 | #3BA755 | Step 60 in the palette Green scale. |
+| --slds-g-color-palette-green-65 | #41B658 | Step 65 in the palette Green scale. |
+| --slds-g-color-palette-green-70 | #45C65A | Step 70 in the palette Green scale. |
+| --slds-g-color-palette-green-80 | #91DB8B | Step 80 in the palette Green scale. |
+| --slds-g-color-palette-green-90 | #CDEFC4 | Step 90 in the palette Green scale. |
+| --slds-g-color-palette-green-95 | #EBF7E6 | Step 95 in the palette Green scale. |
+
+# Styling Hooks
+
+## About
+
+This section lists the available global styling hooks and their values. Use the global styling hooks to apply Salesforce Lightning Design System values correctly to style your components. The design system determines the values of global styling hooks. Salesforce can change these values at any time and announce the changes in release notes. We don't support overriding the values of global styling hooks in your customizations.
+
+### Semantic UI Color System
+
+All color styling hooks are prefixed with `--slds-g-color-` and are followed by the color name. For example, --slds-g-color-accent-1 (#066AFE) is the styling hook for the accent color.
+
+#### Exceptions
+
+These global styling hooks are available in SLDS 1 but not in SLDS 2.
+
+| `--slds-g-color-border-base-1` `--slds-g-color-border-base-2` `--slds-g-color-border-base-3` `--slds-g-color-border-base-4` `--slds-g-color-border-brand-1` `--slds-g-color-border-brand-2` `--slds-g-link-color` `--slds-g-link-color-hover` `--slds-g-link-color-focus` `--slds-g-link-color-active` | `--slds-g-color-neutral-10-opacity-10` `--slds-g-color-neutral-10-opacity-25` `--slds-g-color-neutral-10-opacity-50` `--slds-g-color-neutral-10-opacity-75` `--slds-g-color-neutral-100-opacity-10` `--slds-g-color-neutral-100-opacity-25` `--slds-g-color-neutral-100-opacity-50` `--slds-g-color-neutral-100-opacity-75` `--slds-g-shadow-outset-focus-1` `--slds-g-shadow-inset-focus-1` `--slds-g-shadow-inset-inverse-focus-1` `--slds-g-shadow-outline-focus-1` |
+| :--- | --- |
+
+All other system color styling hooks in this table are compatible with Lightning UI and Enhanced Lightning UI.
+
+#### Surface Colors
+
+Used for backgrounds and large areas of the application that express a new visual stacking context to create visual depth.
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-surface-1 | #FFFFFF | Color surface used for page backgrounds. |
+| --slds-g-color-surface-2 | #F3F3F3 | Color surface used for darker page backgrounds. |
+| --slds-g-color-surface-3 | #F3F3F3 | Color surface used for containers. |
+| --slds-g-color-surface-inverse-1 | #032D60 | Inverse page background. Always pair with on-surface-inverse-1. |
+| --slds-g-color-surface-inverse-2 | #03234D | Darker inverse page background. Always pair with on-surface-inverse-2. |
+
+#### On Surface
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-on-surface-1 | #5C5C5C | Lightest text and icon fill. Used for body text, placeholder text, field labels, sub-headings, and taglines. |
+| --slds-g-color-on-surface-2 | #2E2E2E | Darker text and icon fills used for secondary and tertiary headings, dark body copy, and filled input fields. |
+| --slds-g-color-on-surface-3 | #03234D | Darkest text and icon fill used for title and pages or components. |
+| --slds-g-color-on-surface-inverse-1 | #FFFFFF | Lightest text and icon fill on dark backgrounds. Always pair with surface-inverse-1 or surface-container-inverse-1. |
+| --slds-g-color-on-surface-inverse-2 | #A8CBFF | Darker text and icon fill on dark backgrounds (50 to 100). Always pair with surface-inverse-2 or surface-container-inverse-2. |
+
+#### Container
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-surface-container-1 | #FFFFFF | Default container background fill for components such as cards and modals. |
+| --slds-g-color-surface-container-2 | #F3F3F3 | Darker color for container background fill for components. |
+| --slds-g-color-surface-container-3 | #E5E5E5 | Darkest color for container background fill for components. |
+| --slds-g-color-surface-container-inverse-1 | #032D60 | Inverse color container background fill for components. Always pair with on-surface-inverse-1. |
+| --slds-g-color-surface-container-inverse-2 | #03234D | Inverse darker color container background fill for components. Always pair with on-surface-inverse-2. |
+
+#### Accent Colors
+
+Accent colors, typically brand colors, to emphasize areas that you want to draw attention to.
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-accent-1 | #066AFE | Emphasis color for large text and icon fills. |
+| --slds-g-color-accent-2 | #0250D9 | Emphasis color for text, links, and icon color fills. Hover state color for interactive elements. |
+| --slds-g-color-accent-3 | #022AC0 | Emphasis color for text, links, and icon alternative colors. Hover state color for interactive elements. |
+| --slds-g-color-accent-container-1 | #066AFE | Background fill for containers that emphasize branded component and interactive elements such as Brand buttons. Always pair with on-accent-1. |
+| --slds-g-color-accent-container-2 | #0250D9 | Background fill on hover state for containers that emphasize branded component and interactive elements such as Brand buttons. Always pair with on-accent-2. |
+| --slds-g-color-accent-container-3 | #022AC0 | Alternative background fill on hover state for containers that emphasize branded component and interactive elements such as Brand buttons. Always pair with on-accent-3. |
+| --slds-g-color-border-accent-1 | #066AFE | Border color for branded containers. |
+| --slds-g-color-border-accent-2 | #0250D9 | Border color for branded containers. |
+| --slds-g-color-border-accent-3 | #022AC0 | Hover border color for branded containers. |
+| --slds-g-color-on-accent-1 | #FFFFFF | Text and icon fill color displayed on branded containers. Always pair with on-accent-container-1. |
+| --slds-g-color-on-accent-2 | #FFFFFF | Text and icon fill color displayed on branded containers. Always pair with on-accent-container-2. |
+| --slds-g-color-on-accent-3 | #FFFFFF | Text and icon fill color displayed on branded containers. Always pair with on-accent-container-3. |
+
+### Feedback Colors
+
+#### **Error Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-error-1 | #B60554 | Fill color for text and icons displaying an error. |
+| --slds-g-color-on-error-1 | #B60554 | Fill color for text and icons displayed within an error container. Always pair with error-container-1. |
+| --slds-g-color-on-error-2 | #8A033E | Fill color for text and icons displayed within an error container. Always pair with error-container-2. |
+| --slds-g-color-error-container-1 | #FDDDE3 | Container background fill for error components such as toast or alerts. Always pair with on-error-1. |
+| --slds-g-color-error-container-2 | #FDB6C5 | Container background fill for error components such as destructive buttons. Always pair with on-error-2. |
+| --slds-g-color-border-error-1 | #B60554 | Border color for error containers such as destructive buttons. |
+| --slds-g-color-border-error-2 | #8A033E | Hover border color for error containers such as destructive buttons. |
+
+#### Warning Colors
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-warning-1 | #8C4B02 | Color Warning 1. |
+| --slds-g-color-on-warning-1 | #8C4B02 | Step 1 in the On Warning scale. |
+| --slds-g-color-warning-container-1 | #F9E3B6 | Color Warning Container 1. |
+| --slds-g-color-border-warning-1 | #DD7A01 | Step 1 in the Border Warning scale for colors that define the borders of warning containers. |
+
+#### Success Colors
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-success-1 | #056764 | Color Success 1. |
+| --slds-g-color-on-success-1 | #056764 | Step 1 in the On Success scale for colors that define the on success colors. |
+| --slds-g-color-on-success-2 | #023434 | Step 2 in the On Success scale for colors that define the on success colors. |
+| --slds-g-color-border-success-1 | #056764 | Step 1 in the Border Success scale for colors that define the borders of success containers. |
+| --slds-g-color-border-success-2 | #056764 | Step 2 in the Border Success scale for colors that define the borders of success containers. |
+| --slds-g-color-success-container-1 | #ACF3E4 | Color Success Container 1. |
+| --slds-g-color-success-container-2 | #04E1CB | Color Success Container 2. |
+
+#### Info Colors
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-info-1 | #0B5CAB | Step 1 in the Info scale for colors that define the info colors. |
+| --slds-g-color-info-container-1 | #D8E6FE | Step 1 in the Info Container scale for colors that define the info containers. |
+| --slds-g-color-on-info-1 | #0B5CAB | Step 1 in the On Info scale for colors that define the on info colors. |
+
+#### Disabled Colors
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-disabled-1 | #757575 | Fill color fo text and icons in disabled components or with disabled content. |
+| --slds-g-color-on-disabled-1 | #757575 | Fill color for text and icons displayed within disabled-container-1 (netural-100). Always pair with disabled-container-1. |
+| --slds-g-color-on-disabled-2 | #757575 | Fill color for text and icons displayed within disabled-container-2 (neutral-80). Always pair with disabled-container-2. |
+| --slds-g-color-disabled-container-1 | #E5E5E5 | Disabled container background fill for white components. Always pair with on-disabled-1. |
+| --slds-g-color-disabled-container-2 | #C9C9C9 | Disabled container background fill for grey components. Always pair with on-disabled-2. |
+| --slds-g-color-border-disabled-1 | #757575 | Border color for disabled containers (border-2 becomes border-disabled-1 for disabled states). |
+
+### System Colors
+
+A set of accessible colors that are used throughout the user interface. They define visual intents like *brand*, *error*, *warning*, and *success*, without being tied to specific UI elements or components. Only use in edge cases where a semantic UI color does not make sense.
+
+#### Neutral Colors
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-neutral-base-10 | #181818 | Step 10 in the Neutral color scale. |
+| --slds-g-color-neutral-base-15 | #242424 | Step 15 in the Neutral color scale. |
+| --slds-g-color-neutral-base-20 | #2E2E2E | Step 20 in the Neutral color scale. |
+| --slds-g-color-neutral-base-30 | #444444 | Step 30 in the Neutral color scale. |
+| --slds-g-color-neutral-base-40 | #5C5C5C | Step 40 in the Neutral color scale. |
+| --slds-g-color-neutral-base-50 | #747474 | Step 50 in the Neutral color scale. |
+| --slds-g-color-neutral-base-60 | #939393 | Step 60 in the Neutral color scale. |
+| --slds-g-color-neutral-base-65 | #A0A0A0 | Step 65 in the Neutral color scale. |
+| --slds-g-color-neutral-base-70 | #AEAEAE | Step 70 in the Neutral color scale. |
+| --slds-g-color-neutral-base-80 | #C9C9C9 | Step 80 in the Neutral color scale. |
+| --slds-g-color-neutral-base-90 | #E5E5E5 | Step 90 in the Neutral color scale. |
+| --slds-g-color-neutral-base-95 | #F3F3F3 | Step 95 in the Neutral color scale. |
+| --slds-g-color-neutral-base-100 | #FFFFFF | Step 100 in the Neutral color scale. |
+
+#### **Brand Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-brand-base-10 | #001642 | Step 10 in the Brand color scale. |
+| --slds-g-color-brand-base-15 | #001E5B | Step 15 in the Brand color scale. |
+| --slds-g-color-brand-base-20 | #002775 | Step 20 in the Brand color scale. |
+| --slds-g-color-brand-base-30 | #022AC0 | Step 30 in the Brand color scale. |
+| --slds-g-color-brand-base-40 | #0250D9 | Step 40 in the Brand color scale. |
+| --slds-g-color-brand-base-50 | #066AFE | Step 50 in the Brand color scale. |
+| --slds-g-color-brand-base-60 | #4992FE | Step 60 in the Brand color scale. |
+| --slds-g-color-brand-base-65 | #5F9FFE | Step 65 in the Brand color scale. |
+| --slds-g-color-brand-base-70 | #7CB1FE | Step 70 in the Brand color scale. |
+| --slds-g-color-brand-base-80 | #A8CBFF | Step 80 in the Brand color scale. |
+| --slds-g-color-brand-base-90 | #D6E6FF | Step 90 in the Brand color scale. |
+| --slds-g-color-brand-base-95 | #EDF4FF | Step 95 in the Brand color scale. |
+| --slds-g-color-brand-base-100 | #FFFFFF | Step 100 in the Brand color scale. |
+
+#### **Error Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-error-base-10 | #370114 | Step 10 in the Error color scale. |
+| --slds-g-color-error-base-20 | #61022A | Step 20 in the Error color scale. |
+| --slds-g-color-error-base-30 | #8A033E | Step 30 in the Error color scale. |
+| --slds-g-color-error-base-40 | #B60554 | Step 40 in the Error color scale. |
+| --slds-g-color-error-base-50 | #E3066A | Step 50 in the Error color scale. |
+| --slds-g-color-error-base-60 | #FF538A | Step 60 in the Error color scale. |
+| --slds-g-color-error-base-70 | #FE8AA7 | Step 70 in the Error color scale. |
+| --slds-g-color-error-base-80 | #FDB6C5 | Step 80 in the Error color scale. |
+| --slds-g-color-error-base-90 | #FDDDE3 | Step 90 in the Error color scale. |
+| --slds-g-color-error-base-95 | #FEF0F3 | Step 95 in the Error color scale. |
+| --slds-g-color-error-base-100 | #FFFFFF | Step 100 in the Error color scale. |
+
+#### **Warning Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-warning-base-10 | #281202 | Step 10 in the Warning color scale. |
+| --slds-g-color-warning-base-20 | #4F2100 | Step 20 in the Warning color scale. |
+| --slds-g-color-warning-base-30 | #6F3400 | Step 30 in the Warning color scale. |
+| --slds-g-color-warning-base-40 | #8C4B02 | Step 40 in the Warning color scale. |
+| --slds-g-color-warning-base-50 | #A86403 | Step 50 in the Warning color scale. |
+| --slds-g-color-warning-base-60 | #CA8501 | Step 60 in the Warning color scale. |
+| --slds-g-color-warning-base-70 | #E4A201 | Step 70 in the Warning color scale. |
+| --slds-g-color-warning-base-80 | #FCC003 | Step 80 in the Warning color scale. |
+| --slds-g-color-warning-base-90 | #F9E3B6 | Step 90 in the Warning color scale. |
+| --slds-g-color-warning-base-95 | #FBF3E0 | Step 95 in the Warning color scale. |
+| --slds-g-color-warning-base-100 | #FFFFFF | Step 100 in the Warning color scale. |
+
+#### **Success Colors**
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-success-base-10 | #071B12 | Step 10 in the Success color scale. |
+| --slds-g-color-success-base-20 | #023434 | Step 20 in the Success color scale. |
+| --slds-g-color-success-base-30 | #024D4C | Step 30 in the Success color scale. |
+| --slds-g-color-success-base-40 | #056764 | Step 40 in the Success color scale. |
+| --slds-g-color-success-base-50 | #0B827C | Step 50 in the Success color scale. |
+| --slds-g-color-success-base-60 | #06A59A | Step 60 in the Success color scale. |
+| --slds-g-color-success-base-70 | #01C3B3 | Step 70 in the Success color scale. |
+| --slds-g-color-success-base-80 | #04E1CB | Step 80 in the Success color scale. |
+| --slds-g-color-success-base-90 | #ACF3E4 | Step 90 in the Success color scale. |
+| --slds-g-color-success-base-95 | #DEF9F3 | Step 95 in the Success color scale. |
+| --slds-g-color-success-base-100 | #FFFFFF | Step 100 in the Success color scale. |
+
+### Color Palette
+
+A range of accessible color palettes. These colors hold no semantics and can be used within the user interface. These values are immutable and will not change.
+
+#### Neutral
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-neutral-10 | #181818 | Step 10 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-15 | #242424 | Step 15 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-20 | #2E2E2E | Step 20 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-30 | #444444 | Step 30 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-40 | #5C5C5C | Step 40 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-50 | #747474 | Step 50 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-60 | #939393 | Step 60 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-65 | #A0A0A0 | Step 65 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-70 | #AEAEAE | Step 70 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-80 | #C9C9C9 | Step 80 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-90 | #E5E5E5 | Step 90 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-95 | #F3F3F3 | Step 95 in the palette Neutral scale. |
+| --slds-g-color-palette-neutral-100 | #FFFFFF | Step 100 in the palette Neutral scale. |
+
+#### Blue
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-blue-10 | #001639 | Step 10 in the palette Blue scale. |
+| --slds-g-color-palette-blue-15 | #03234D | Step 15 in the palette Blue scale. |
+| --slds-g-color-palette-blue-20 | #032D60 | Step 20 in the palette Blue scale. |
+| --slds-g-color-palette-blue-30 | #014486 | Step 30 in the palette Blue scale. |
+| --slds-g-color-palette-blue-40 | #0B5CAB | Step 40 in the palette Blue scale. |
+| --slds-g-color-palette-blue-50 | #0176D3 | Step 50 in the palette Blue scale. |
+| --slds-g-color-palette-blue-60 | #1B96FF | Step 60 in the palette Blue scale. |
+| --slds-g-color-palette-blue-65 | #57A3FD | Step 65 in the palette Blue scale. |
+| --slds-g-color-palette-blue-70 | #78B0FD | Step 70 in the palette Blue scale. |
+| --slds-g-color-palette-blue-80 | #AACBFF | Step 80 in the palette Blue scale. |
+| --slds-g-color-palette-blue-90 | #D8E6FE | Step 90 in the palette Blue scale. |
+| --slds-g-color-palette-blue-95 | #EEF4FF | Step 95 in the palette Blue scale. |
+
+#### Cloud Blue
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-cloud-blue-10 | #001A28 | Step 10 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-15 | #0A2636 | Step 15 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-20 | #023248 | Step 20 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-30 | #084968 | Step 30 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-40 | #05628A | Step 40 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-50 | #107CAD | Step 50 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-60 | #0D9DDA | Step 60 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-65 | #08ABED | Step 65 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-70 | #1AB9FF | Step 70 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-80 | #90D0FE | Step 80 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-90 | #CFE9FE | Step 90 in the palette Cloud Blue scale. |
+| --slds-g-color-palette-cloud-blue-95 | #EAF5FE | Step 95 in the palette Cloud Blue scale. |
+
+#### Electric Blue
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-electric-blue-10 | #001642 | Step 10 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-15 | #001E5B | Step 15 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-20 | #002775 | Step 20 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-30 | #022AC0 | Step 30 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-40 | #0250D9 | Step 40 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-50 | #066AFE | Step 50 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-60 | #4992FE | Step 60 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-65 | #5F9FFE | Step 65 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-70 | #7CB1FE | Step 70 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-80 | #A8CBFF | Step 80 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-90 | #D6E6FF | Step 90 in the palette Electric Blue scale. |
+| --slds-g-color-palette-electric-blue-95 | #EDF4FF | Step 95 in the palette Electric Blue scale. |
+
+#### Indigo
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-indigo-10 | #200647 | Step 10 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-15 | #1F0974 | Step 15 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-20 | #321D71 | Step 20 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-30 | #2F2CB7 | Step 30 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-40 | #3A49DA | Step 40 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-50 | #5867E8 | Step 50 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-60 | #7F8CED | Step 60 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-65 | #8E9BEF | Step 65 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-70 | #9EA9F1 | Step 70 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-80 | #BEC7F6 | Step 80 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-90 | #E0E5F8 | Step 90 in the palette Indigo scale. |
+| --slds-g-color-palette-indigo-95 | #F1F3FB | Step 95 in the palette Indigo scale. |
+
+#### Purple
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-purple-10 | #240643 | Step 10 in the palette Purple scale. |
+| --slds-g-color-palette-purple-15 | #300B60 | Step 15 in the palette Purple scale. |
+| --slds-g-color-palette-purple-20 | #401075 | Step 20 in the palette Purple scale. |
+| --slds-g-color-palette-purple-30 | #5A1BA9 | Step 30 in the palette Purple scale. |
+| --slds-g-color-palette-purple-40 | #7526E3 | Step 40 in the palette Purple scale. |
+| --slds-g-color-palette-purple-50 | #9050E9 | Step 50 in the palette Purple scale. |
+| --slds-g-color-palette-purple-60 | #AD7BEE | Step 60 in the palette Purple scale. |
+| --slds-g-color-palette-purple-65 | #B78DEF | Step 65 in the palette Purple scale. |
+| --slds-g-color-palette-purple-70 | #C29EF1 | Step 70 in the palette Purple scale. |
+| --slds-g-color-palette-purple-80 | #D7BFF2 | Step 80 in the palette Purple scale. |
+| --slds-g-color-palette-purple-90 | #ECE1F9 | Step 90 in the palette Purple scale. |
+| --slds-g-color-palette-purple-95 | #F6F2FB | Step 95 in the palette Purple scale. |
+
+#### Violet
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-violet-10 | #2E0039 | Step 10 in the palette Violet scale. |
+| --slds-g-color-palette-violet-15 | #3D0157 | Step 15 in the palette Violet scale. |
+| --slds-g-color-palette-violet-20 | #481A54 | Step 20 in the palette Violet scale. |
+| --slds-g-color-palette-violet-30 | #730394 | Step 30 in the palette Violet scale. |
+| --slds-g-color-palette-violet-40 | #9602C7 | Step 40 in the palette Violet scale. |
+| --slds-g-color-palette-violet-50 | #BA01FF | Step 50 in the palette Violet scale. |
+| --slds-g-color-palette-violet-60 | #CB65FF | Step 60 in the palette Violet scale. |
+| --slds-g-color-palette-violet-65 | #D17DFE | Step 65 in the palette Violet scale. |
+| --slds-g-color-palette-violet-70 | #D892FE | Step 70 in the palette Violet scale. |
+| --slds-g-color-palette-violet-80 | #E5B9FE | Step 80 in the palette Violet scale. |
+| --slds-g-color-palette-violet-90 | #F2DEFE | Step 90 in the palette Violet scale. |
+| --slds-g-color-palette-violet-95 | #F9F0FF | Step 95 in the palette Violet scale. |
+
+#### Red
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-red-10 | #300C01 | Step 10 in the palette Red scale. |
+| --slds-g-color-palette-red-15 | #4A0C04 | Step 15 in the palette Red scale. |
+| --slds-g-color-palette-red-20 | #640103 | Step 20 in the palette Red scale. |
+| --slds-g-color-palette-red-30 | #8E030F | Step 30 in the palette Red scale. |
+| --slds-g-color-palette-red-40 | #BA0517 | Step 40 in the palette Red scale. |
+| --slds-g-color-palette-red-50 | #EA001E | Step 50 in the palette Red scale. |
+| --slds-g-color-palette-red-60 | #FE5C4C | Step 60 in the palette Red scale. |
+| --slds-g-color-palette-red-65 | #FE7765 | Step 65 in the palette Red scale. |
+| --slds-g-color-palette-red-70 | #FE8F7D | Step 70 in the palette Red scale. |
+| --slds-g-color-palette-red-80 | #FEB8AB | Step 80 in the palette Red scale. |
+| --slds-g-color-palette-red-90 | #FEDED8 | Step 90 in the palette Red scale. |
+| --slds-g-color-palette-red-95 | #FEF1EE | Step 95 in the palette Red scale. |
+
+#### Pink
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-pink-10 | #370114 | Step 10 in the palette Pink scale. |
+| --slds-g-color-palette-pink-15 | #4B0620 | Step 15 in the palette Pink scale. |
+| --slds-g-color-palette-pink-20 | #61022A | Step 20 in the palette Pink scale. |
+| --slds-g-color-palette-pink-30 | #8A033E | Step 30 in the palette Pink scale. |
+| --slds-g-color-palette-pink-40 | #B60554 | Step 40 in the palette Pink scale. |
+| --slds-g-color-palette-pink-50 | #E3066A | Step 50 in the palette Pink scale. |
+| --slds-g-color-palette-pink-60 | #FF538A | Step 60 in the palette Pink scale. |
+| --slds-g-color-palette-pink-65 | #FE7298 | Step 65 in the palette Pink scale. |
+| --slds-g-color-palette-pink-70 | #FE8AA7 | Step 70 in the palette Pink scale. |
+| --slds-g-color-palette-pink-80 | #FDB6C5 | Step 80 in the palette Pink scale. |
+| --slds-g-color-palette-pink-90 | #FDDDE3 | Step 90 in the palette Pink scale. |
+| --slds-g-color-palette-pink-95 | #FEF0F3 | Step 95 in the palette Pink scale. |
+
+#### Hot Orange
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-hot-orange-10 | #281202 | Step 10 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-15 | #421604 | Step 15 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-20 | #4A2413 | Step 20 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-30 | #7E2600 | Step 30 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-40 | #AA3001 | Step 40 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-50 | #D83A00 | Step 50 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-60 | #FF5D2D | Step 60 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-65 | #FF784F | Step 65 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-70 | #FF906E | Step 70 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-80 | #FEB9A5 | Step 80 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-90 | #FFDED5 | Step 90 in the palette Hot Orange scale. |
+| --slds-g-color-palette-hot-orange-95 | #FEF1ED | Step 95 in the palette Hot Orange scale. |
+
+#### Orange
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-orange-10 | #201600 | Step 10 in the palette Orange scale. |
+| --slds-g-color-palette-orange-15 | #371E03 | Step 15 in the palette Orange scale. |
+| --slds-g-color-palette-orange-20 | #3E2B02 | Step 20 in the palette Orange scale. |
+| --slds-g-color-palette-orange-30 | #5F3E02 | Step 30 in the palette Orange scale. |
+| --slds-g-color-palette-orange-40 | #825101 | Step 40 in the palette Orange scale. |
+| --slds-g-color-palette-orange-50 | #A96404 | Step 50 in the palette Orange scale. |
+| --slds-g-color-palette-orange-60 | #DD7A01 | Step 60 in the palette Orange scale. |
+| --slds-g-color-palette-orange-65 | #F38303 | Step 65 in the palette Orange scale. |
+| --slds-g-color-palette-orange-70 | #FE9339 | Step 70 in the palette Orange scale. |
+| --slds-g-color-palette-orange-80 | #FFBA90 | Step 80 in the palette Orange scale. |
+| --slds-g-color-palette-orange-90 | #FEDFD0 | Step 90 in the palette Orange scale. |
+| --slds-g-color-palette-orange-95 | #FFF1EA | Step 95 in the palette Orange scale. |
+
+#### Yellow
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-yellow-10 | #281202 | Step 10 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-15 | #2E2204 | Step 15 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-20 | #4F2100 | Step 20 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-30 | #6F3400 | Step 30 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-40 | #8C4B02 | Step 40 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-50 | #A86403 | Step 50 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-60 | #CA8501 | Step 60 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-65 | #D79304 | Step 65 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-70 | #E4A201 | Step 70 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-80 | #FCC003 | Step 80 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-90 | #F9E3B6 | Step 90 in the palette Yellow scale. |
+| --slds-g-color-palette-yellow-95 | #FBF3E0 | Step 95 in the palette Yellow scale. |
+
+#### Teal
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-teal-10 | #071B12 | Step 10 in the palette Teal scale. |
+| --slds-g-color-palette-teal-15 | #072825 | Step 15 in the palette Teal scale. |
+| --slds-g-color-palette-teal-20 | #023434 | Step 20 in the palette Teal scale. |
+| --slds-g-color-palette-teal-30 | #024D4C | Step 30 in the palette Teal scale. |
+| --slds-g-color-palette-teal-40 | #056764 | Step 40 in the palette Teal scale. |
+| --slds-g-color-palette-teal-50 | #0B827C | Step 50 in the palette Teal scale. |
+| --slds-g-color-palette-teal-60 | #06A59A | Step 60 in the palette Teal scale. |
+| --slds-g-color-palette-teal-65 | #03B4A7 | Step 65 in the palette Teal scale. |
+| --slds-g-color-palette-teal-70 | #01C3B3 | Step 70 in the palette Teal scale. |
+| --slds-g-color-palette-teal-80 | #04E1CB | Step 80 in the palette Teal scale. |
+| --slds-g-color-palette-teal-90 | #ACF3E4 | Step 90 in the palette Teal scale. |
+| --slds-g-color-palette-teal-95 | #DEF9F3 | Step 95 in the palette Teal scale. |
+
+#### Green
+
+| Token | Value | Description |
+| --- | --- | --- |
+| --slds-g-color-palette-green-10 | #071B12 | Step 10 in the palette Green scale. |
+| --slds-g-color-palette-green-15 | #0C2912 | Step 15 in the palette Green scale. |
+| --slds-g-color-palette-green-20 | #1C3326 | Step 20 in the palette Green scale. |
+| --slds-g-color-palette-green-30 | #194E31 | Step 30 in the palette Green scale. |
+| --slds-g-color-palette-green-40 | #396547 | Step 40 in the palette Green scale. |
+| --slds-g-color-palette-green-50 | #2E844A | Step 50 in the palette Green scale. |
+| --slds-g-color-palette-green-60 | #3BA755 | Step 60 in the palette Green scale. |
+| --slds-g-color-palette-green-65 | #41B658 | Step 65 in the palette Green scale. |
+| --slds-g-color-palette-green-70 | #45C65A | Step 70 in the palette Green scale. |
+| --slds-g-color-palette-green-80 | #91DB8B | Step 80 in the palette Green scale. |
+| --slds-g-color-palette-green-90 | #CDEFC4 | Step 90 in the palette Green scale. |
+| --slds-g-color-palette-green-95 | #EBF7E6 | Step 95 in the palette Green scale. |
+
+
+Icons - ---
+title: Icons
+description: Icons are symbols used to represent features, functionality, or content. 
+---
+
+# Overview
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6110:102038">
+
+![Icon_banner](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/d07519083e68854c043236?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=4d4abdeab67e6790ab31a6f2640a6f14228e9160108cc794918c997ba1d4a6ee)
+
+**Icon_banner**
+
+</design>
+
+## About
+
+Icons are symbols used to represent features, functionality, or content. Visit the [icon page](https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-icons/b/586464) to see a library of all icons and the [icon component](https://www.lightningdesignsystem.com/2e1ef8501/p/19e451) for implementation details.
+
+Several types of icons communicate information within Salesforce, each with variations based on what they represent and their use case. Here are the icon types, in order of most use to least use.
+
+<shortcut_tiles>
+<shortcut_tile url="https://v1.lightningdesignsystem.com/assets/downloads/salesforce-lightning-design-system-icons.zip">
+![Get Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/8Gdd6zQVI6wNCL3dP4zVqA.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=92989ba44673e7fdb8cd20d915916ae110785f197ed7bc479034f0025630dc64)
+
+**Get Icons**
+
+Download the SLDS Icons zip folder with both svg and png file types.
+</shortcut_tile>
+
+<shortcut_tile url="https://www.figma.com/community/file/854597149359643291">
+![Icons for Figma](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/efk-Hpt-zyFAI0edzcBhOA.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5f3d57ac97ec190bad86d2f87a39563af6a235a7f639d835f4b9cd88ae0f8f85)
+
+**Icons for Figma**
+
+Access the SLDS icons in the Figma UI Kit.
+</shortcut_tile>
+
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-iconography/b/586464">
+![Browse Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/u6eikR0AX1gbjOPqf_ZlOg.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=68d2c6db3d27f5d295bdf9386b507cdb8e3cea0d8a6bfa596fc0ca8537a7abb0)
+
+**Browse Icons**
+
+Browse the SLDS icon library
+</shortcut_tile>
+</shortcut_tiles>
+
+### Icon Types
+
+#### Utility Icons
+
+Utility icons are simple single-color glyphs that identify labels and actions. You can use them across all device types. These icons don't have a background shape and can be any color. You can use them on their own or paired with text. If you pair them with text, make sure the icon color matches the text color. For example, if an icon sits next to a title, use the same `on-surface-3` (blue 15) color.
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-iconography/b/875c85">
+![Utility Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/ClpgGULJP-KlSodJntYNDw.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a02289e335d63363009c1c4d3996e1dd434433d3548aa1ff45bb2c05d4530d2d)
+
+**Utility Icons**
+
+Example: File
+</shortcut_tile>
+</shortcut_tiles>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ Utility icons haven't changed in SLDS 2.
+
+</callout>
+
+#### Object Icons (Standard and Custom)
+
+Object icons fall into two categories, standard and custom. Standard object icons represent objects (such as Accounts, Leads, Opportunities, and Cases) and related entities that come with Salesforce. Custom object icons are a unique set of icons used to represent custom objects that customers create. Both types of object icons feature a white glyph against a solid background color. Object icons use a specific limited color palette.
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-iconography/b/51fcff">
+![Object Icons \(Standard and Custom\)](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/faFlGSh1_jgSIBpu8CwemA.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=1de09ba16ffa9d533a8441fb2044b6d6791020342073dc17faff263dac195c03)
+
+**Object Icons (Standard and Custom)**
+
+Example: Account
+</shortcut_tile>
+</shortcut_tiles>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ SLDS 2 updates the background shape of standard icons to a circle.
+
+</callout>
+
+#### Doctype Icons
+
+Doctype icons represent document file formats. Each doctype icon features a white glyph representing its file type, on a background resembling a piece of paper with a folded corner.
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-iconography/b/09f294">
+![Doctype Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/sh5q26tP409oozRvp6DvtQ.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a4b4286d7edf6583118d4ad66d172ab2232ef300612821c8f14b660db655825b)
+
+**Doctype Icons**
+
+Example: MS Word
+</shortcut_tile>
+</shortcut_tiles>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ Doctype icons haven't changed in SLDS 2.
+
+</callout>
+
+#### Action Icons
+
+Action icons are touch-device-specific icons that appear next to an item-for example, a page header or card-so users can take action in a specific context. Each action icon features a white glyph on a colored circle. Action icons use a specific limited color palette.
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-iconography/b/74a6f0">
+![Action Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/QnKjl2Kr3G4nt1qXauUgvw.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d091d4fd712c2ceae2045739ac2e8c65ed254349bc2be56c9d53d8446336b4f7)
+
+**Action Icons**
+
+Example: Email
+</shortcut_tile>
+</shortcut_tiles>
+
+<callout background="2" fullWidth="true">
+
+ℹ️ Action icons haven't changed in SLDS 2. 
+
+</callout>
+
+#### Product Icons
+
+Product icons represent Salesforce applications and feature the product branding. On the desktop, they’re used only in the App Launcher and at the top left of each Salesforce application window. On mobile device home screens, they launch the corresponding mobile app. Product icons are two-color and use official product color palettes.
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-iconography/b/568217">
+![Product Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/OW1gkuFiSzQ1VSzuJxs2Uw.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=628bbe9d2d74b7347be562675a05055e0d3579b3439995ab6c94196dfe9080f9)
+
+**Product Icons**
+
+Example: Sales Cloud
+</shortcut_tile>
+</shortcut_tiles>
+
+## Design Principles
+
+Salesforce icon design is a blend of professional and playful. Our icons are simple, approachable, and legible. Icons should be recognizable and easy to remember.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6146:24100">
+
+![Design Principles](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a12ee1efe9ef6af0a78293?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=9d3ae8702c97be290f97ecef82f491a1b67a87683888809fd85a87ed419c859d)
+
+**Design Principles**
+
+</design>
+
+## Accessibility
+
+Screen readers handle icons in two different ways. If an icon is informational, the screen reader reads it out loud. If an icon is decorative, the screen reader ignores it. Choose the right icon type for your use case. If you're using an informational icon, write an accessible label for it. 
+
+For more information on icon accessibility, see the [Icon](https://www.lightningdesignsystem.com/2e1ef8501/p/19e451) component.
+
+### Informational Icons
+
+Informational icons-for example, button icons and standalone avatars-convey important information that the surrounding text doesn’t. Each icon requires either assistive text or an `aria-label` attribute (a code string that labels the element). Each image requires an `alt` description. In the `alt` description, briefly describe the purpose of the  icon or image, not what it looks like (for example "Upload File" instead of "paperclip").
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:48275">
+
+![Overview-Informational](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/dd920fabbf1f73f26040c9?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=86d3fd82a6c1349f34bb4a69a7b2c36a34abf509d05f69dc38b2d5e0a7d7deca)
+
+**Overview-Informational**
+
+<notes>
+
+Users click the X icon within a toast message to dismiss the message. Screen readers should read this icon as “Close.”
+
+</notes>
+
+</design>
+
+### Decorative Icons
+
+Decorative icons and images don't add relevant information or functionality. Icons and images that reinforce the meaning of adjacent text but don't add new information, fall into this category. Screen readers skip decorative icons. For images, use an empty `alt` tag to force screen readers to skip them.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:48890">
+
+![Overview-Decorative](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/d6091ae159d0a10adeea50?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=59c424a1db445248d71529fff1a960761e8e280726d503e591f25de2e787f024)
+
+**Overview-Decorative**
+
+<notes>
+
+These object icons are decorative; the visible text next to them reiterates their new information.
+
+</notes>
+
+</design>
+
+## Grid System and Keyline Shapes
+
+Icons are based on an 8pt grid system and come in four keyline shapes-circle, square, vertical rectangle, and horizontal rectangle. These shapes are created using business process model and notation ([BPMN](https://www.omg.org/spec/BPMN/2.0.2/)) diagram conventions.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:47864">
+
+![Overview-Grid](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/3bea1fc9b88d51574fb93b?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=53acfa3080565dc0ba41869f03c17e8b9b72b10a959c292d992bcbc53d323f08)
+
+**Overview-Grid**
+
+<notes>
+
+Four keyline shapes-circle, square, vertical rectangle, and horizontal rectangle.
+
+</notes>
+
+</design>
+
+## Mobile Tap Targeting
+
+When designing for mobile, add space around each icon to make it easier to select.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:47852">
+
+![Overview-Mobile 1](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a9f5bb511ec1da366b8ca8?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f1fc04b6c962414498711bdeb9eb042db85f0dd22263e532e45880c0709ea68c)
+
+**Overview-Mobile 1**
+
+<notes>
+
+On Android, set mimimum tap target at baseline to 48px    |    On iOS, set minimum tap target at 1x size to 44px
+
+</notes>
+
+</design>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:47860">
+
+![Overview-Mobile 2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/4d4c061617c5c6c72e0f77?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=7a75a361a1fa00e066c199c3813d516819430271a28b80069125d01aecd11e4e)
+
+**Overview-Mobile 2**
+
+<notes>
+
+Keep 8px padding between adjacent icons.
+
+</notes>
+
+</design>
+
+## Anatomy
+
+* Based on a 60x60px grid
+* 6px stroke weight
+* 6px corner radius
+* 6px negative space
+
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:49347">
+
+![Overview-Anatomy](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a30180289904a578c582d0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=eeee3fce6bde741c5cf38cd9f0160fb187bd1ee0554d046473a8fc5c9f129a56)
+
+**Overview-Anatomy**
+
+<notes>
+
+Speaker icon with anatomy elements highlighted
+
+</notes>
+
+</design>
+
+### Artboard
+
+* Recommended canvas size for setting up Illustrator or Figma files: 100x100px
+* Live area of 60x60px, with 20px padding on each side
+
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:49352">
+
+![Overview-Artboard](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/0b824428ce593d37601dcc?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=767a2e0c3690a09a690b004ec0af63da84df490ced1c238583115ccced76bf13)
+
+**Overview-Artboard**
+
+<notes>
+
+Object address icon artboard.
+
+</notes>
+
+</design>
+
+# Utility
+
+## Utility Icons
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-icons/b/586464">
+![Browse Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/u6eikR0AX1gbjOPqf_ZlOg.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=68d2c6db3d27f5d295bdf9386b507cdb8e3cea0d8a6bfa596fc0ca8537a7abb0)
+
+**Browse Icons**
+
+Browse the SLDS icon library
+</shortcut_tile>
+</shortcut_tiles>
+
+**Utility icons** are simple, single-color images representing UI-specific actions such as closing a dialog, searching, opening a menu, and sharing a feed post. These actions can be either generic or Salesforce specific. Utility icons do not have keyline shape backgrounds.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:49466">
+
+![Utility-Utility](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/d4f56bf87a02ece3be9368?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=1d688d75401cf51a2899eac3b9f547b4313ac57cee8354e349de9d07389ba698)
+
+**Utility-Utility**
+
+<notes>
+
+Utility icons-email, camera, palette, page, print, connected apps, chart, color swatch
+
+</notes>
+
+</design>
+
+Utility icons appear in both mobile and desktop environments-including in feeds, global headers, navigation, docked composers, button groups, alerts, and toasts.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6110:102106">
+
+![Utility-Utility2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/82dbc33c2609b06ae42273?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=357238deb4b0f3e1cf120cde7c19bbcca9daad5f344fe5a1f760c66803e120ec)
+
+**Utility-Utility2**
+
+<notes>
+
+Placement of utility icons in the docked composer
+
+</notes>
+
+</design>
+
+Utility icons can include text describing their functions. Text and image are center-aligned.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6110:102110">
+
+![Utility-Centered](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/6092410e74b0af3de6dafe?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d742679f37228fab0d3735caac007991bbd66677c792477e520ef21695313216)
+
+**Utility-Centered**
+
+<notes>
+
+Icon and text are center aligned.
+
+</notes>
+
+</design>
+
+### Anatomy
+
+* Based on a 16x16px grid
+* 1px stroke weight
+* 1px corner radius
+* 1px negative space
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:49478">
+
+![Utility-Anatomy 1](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/b84b0ebb8c71675202fad7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=266a2e625375a7056529382bd62720b1306fd783ee579374e1d321b03a456c1c)
+
+**Utility-Anatomy 1**
+
+<notes>
+
+16px utility icon with anatomy elements highlighted
+
+</notes>
+
+</design>
+
+* Based on a 24x24px grid
+* 2px stroke weight
+* 2px corner radius
+* 2px negative space
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6099:49488">
+
+![Utility-Anatomy 2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/06a3e26592ac9851139b7d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=55c4ab8aca2a4585c415b0e176eb441f41259e7816a807db1b657fbae5530b09)
+
+**Utility-Anatomy 2**
+
+<notes>
+
+24px utility icon with anatomy elements highlighted
+
+</notes>
+
+</design>
+
+When scaling icons larger than 24px, increase the stroke and spacing: 32px icon (2px stroke weight), 48px icon (4px stroke weight), and 60px icon (6px stroke weight).
+
+### Keyline Shapes
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6097:49372">
+
+![Utility-Keyline 1](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/42ad6fda1e1591df0c116e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=bd66e4c89ae57c088e5112e57727e43f5abdb5586af708890efe052273f0ce03)
+
+**Utility-Keyline 1**
+
+<notes>
+
+Circle (24px or 16px diameter)  |  Square (24x24px or 16x16px)
+
+</notes>
+
+</design>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6099:49499">
+
+![Utility-Keyline 2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/08e9566e07d7e98e223836?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8389621d4433f2db0d37faaeac7651c78c47fe19d3ef99adc90ec6c65d35e451)
+
+**Utility-Keyline 2**
+
+<notes>
+
+Vertical Rectangle (20x24px or 12x16px)  |  Horizontal Rectangle (24x20px or16x12px)
+
+</notes>
+
+</design>
+
+### Artboard
+
+* Recommended canvas size for setting up Illustrator or Figma files: 52x52px
+* Live area of 48px, with 2px padding on each side
+
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6099:49508">
+
+![Utility-Artboard](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/88b9aacce1fe1eddb9cb60?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ba465c4266e0c22b97e32e6341a1f61d02c18f136e8c2a63f130857600f2413b)
+
+**Utility-Artboard**
+
+<notes>
+
+Utility icon artboard
+
+</notes>
+
+</design>
+
+### Dos and Don’ts
+
+| Rule | Image | Caption | Description |
+| :--- | :--- | :--- | :--- |
+| Do | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/8da6da0ed01eacb8440c4f?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=cde21d94ba25d8d857f5a6f37d7929c2888ec607a4d388a1ac4db161cfed0cc4) |   | Do scale icons to standard sizes: 16x16px, 24x24pxc, 32x32px, 48x48px, and 60x60px.  |
+| Don't | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/fee05d5c16840c4cf103e0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=9d6628a418f3a9f0f8d87cb7379bd28df09adaefec568aae8db3ed5d9d4c343e) |   | Don’t scale icons outside the standard sizes. |
+| Do | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/f96a19c4bbc4328df5ab84?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=78a2e97d99278e76d596bada6ceee82d5a7a2c7925ebe6d9982c9d16119431f3) |   | Do use front-facing solid shapes. |
+| Don't | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/dd5d6dc853db555fc1af14?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=bd3e30ab2a91b5b7c1c7e95a84c17af94d411f117732f272ac815c624d9804b7) |   | Don't use outlines or angled/dimensional views. |
+| Do | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/f752f345e4d863ab766305?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b1ae02085b60bc06468cb8f48b4db890ba222851c00b3d6dcb8c1e2f568014db) |   | Do keep icons simple and clear, for legibility at multiple sizes. |
+| Don't | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/fde005ff42f3b0c9a7b6b3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c6d4b6e8a841617e470824b37d437d6adc33b9504335786fb3a520f995394385) |   | Don’t make icons overly complicated. |
+
+# Object
+
+## Object Icons
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-icons/b/586464">
+![Browse Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/u6eikR0AX1gbjOPqf_ZlOg.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=68d2c6db3d27f5d295bdf9386b507cdb8e3cea0d8a6bfa596fc0ca8537a7abb0)
+
+**Browse Icons**
+
+Browse the SLDS icon library
+</shortcut_tile>
+</shortcut_tiles>
+
+Object icons fall into two categories, standard and custom. Object icons are used for both mobile and desktop applications. They consist of white images on colored shapes.
+
+* **Standard object icons** represent Salesforce objects and entities that come with the product (for example, Account or Contact records).
+* **Custom object icons** represent custom objects that customers create in Salesforce to meet their business needs.
+
+<callout background="1" fullWidth="true">
+
+⚠️ Note: Not all custom object icons meet [WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/) color contrast guidelines. Only use them as decorative elements paired with text.
+
+</callout>
+
+### Standard Object Icons
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6110:102212">
+
+![Object-Object](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/af2fe78dde8a345a43d4ef?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=887ff794664a755bb181a288ed07eeb2450d9639a8cb35f018f0bebc3374a1e8)
+
+**Object-Object**
+
+<notes>
+
+Object icons-task, dashboard, opportunity, knowledge, drafts, and call
+
+</notes>
+
+</design>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6111:102231">
+
+![Object-Object2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/3a0c40cc8fbf1f9e6f2bb5?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fd0e255501d589007276f28608a695aea3bcaf1bacbf6c444f646b67d82c3927)
+
+**Object-Object2**
+
+<notes>
+
+Placement of an object icon in the page header
+
+</notes>
+
+</design>
+
+### Anatomy
+
+* Based on a 60x60px grid
+* 6px stroke weight
+* 6px corner radius
+* 6px negative space
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6117:104088">
+
+![Object-Anatomy](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/a6274f5d13dfb3cc279090?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=4c1a8fc1cb6721aeb15bc080973cba33786942ffa34563e10ec4685d79379bf7)
+
+**Object-Anatomy**
+
+<notes>
+
+Speaker icon with anatomy elements highlighted
+
+</notes>
+
+</design>
+
+### Keyline Shapes
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6147:24118">
+
+![Object-Keyline 1](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/bb5473af99bec7963b3e23?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f5887d4c90defb778f910a240afe6562e767f48ed14724fbe61b8c1cb1ff740b)
+
+**Object-Keyline 1**
+
+<notes>
+
+Circle (60px diameter)  |  Square (56x56px)
+
+</notes>
+
+</design>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6147:24124">
+
+![Object-Keyline 2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/f45ea63b7e622545286aca?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=83f6a3a769a284ff0343d0117a21de44ceb9200ebcd682d42952b620731a746a)
+
+**Object-Keyline 2**
+
+<notes>
+
+Vertical Rectangle (48x60px)  |  Horizontal Rectangle (60x48px)
+
+</notes>
+
+</design>
+
+ 
+
+### Artboard
+
+* Recommended canvas size for setting up Illustrator or Figma files: 100x100px
+* Live area of 60x60px, with 20px padding on each side
+
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6117:104085">
+
+![Object-Artboard](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/fb83b2cc3775721638e937?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5a868b2f673ea8b322118687efb22a0cd375063001dd07d3aed96d0899b07268)
+
+**Object-Artboard**
+
+<notes>
+
+Object address icon artboard
+
+</notes>
+
+</design>
+
+### Dos and Don’ts
+
+| Rule | Image | Caption | Description |
+| :--- | :--- | :--- | :--- |
+| Do | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/d36b724d18e97e0a4636fa?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=4399d6223b13a334f2f4fde20001022482e778350c296d1a8b092b5ae2e6cc60) |   | Do use white icon glyphs in object icons. |
+| Don't | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/606350cdcfc76ca5be584b?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c62b55bffd3d28b7b751e3471280a76e1ebcb30acd92af7beb2b3713bf2e7673) |   | Don’t use non-white icon glyphs in object icons. |
+| Do | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/3c0f5505c8a6eef9f175c7?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=9b144e08ed1493e47dca6616c091183593872a7c5f48d7a5531f096da5f1067d) |   | Do use approved business process model and notation diagram (BPMN) keyline shapes. |
+| Don't | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/5791204ddd352ac56fca5d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=4d112c2163d733e28b2b542bfdd4eb5230b8022cd04ba5a8e9266ee9e2c53a85) |   | Don’t use unapproved shapes. |
+
+# Action
+
+## Action Icons
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-icons/b/586464">
+![Browse Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/u6eikR0AX1gbjOPqf_ZlOg.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=68d2c6db3d27f5d295bdf9386b507cdb8e3cea0d8a6bfa596fc0ca8537a7abb0)
+
+**Browse Icons**
+
+Browse the SLDS icon library
+</shortcut_tile>
+</shortcut_tiles>
+
+Action icons represent actions that users can take within an app on a touch device. These important icons, which represent the main ways Salesforce users accomplish tasks, appear only in the **mobile action bar**.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102240">
+
+![Actions-Action1](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/46981855fe4f99d49083ef?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=7459505b765f414411c0f139d833c7b0d5afd59ca138e858beee3745c9f826c9)
+
+**Actions-Action1**
+
+<notes>
+
+Action icons-close, submit for approval, filter, share post, new lead, fallback
+
+</notes>
+
+</design>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102264">
+
+![Actions-Action Example](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/8832f361c5bdcf3577ab2c?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=df231b8e22f345909e756a992d1b0b775177c213fbed2b1f62d12e17a141e143)
+
+**Actions-Action Example**
+
+<notes>
+
+Placement of action icons in the mobile action bar
+
+</notes>
+
+</design>
+
+### Anatomy
+
+* Based on a grid of 48x48px
+* 4px stroke weight
+* 4px corner radius
+* 4px negative space
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102258">
+
+![Actions-Anatomy](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/9d36241eb807b68e030683?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=24a65699bb145d8fe0da37cff24ff41af71fec1545c6d41e23db078841a3a249)
+
+**Actions-Anatomy**
+
+<notes>
+
+48px action icon with anatomy elements highlighted
+
+</notes>
+
+</design>
+
+### Keyline Shapes
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6147:24118">
+
+![Object-Keyline 1](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/bb5473af99bec7963b3e23?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f5887d4c90defb778f910a240afe6562e767f48ed14724fbe61b8c1cb1ff740b)
+
+**Object-Keyline 1**
+
+<notes>
+
+Circle (48px diameter) | Square (44x44px)
+
+</notes>
+
+</design>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6147:24124">
+
+![Object-Keyline 2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/f45ea63b7e622545286aca?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=83f6a3a769a284ff0343d0117a21de44ceb9200ebcd682d42952b620731a746a)
+
+**Object-Keyline 2**
+
+<notes>
+
+Vertical Rectangle (36x48px) | Horizontal Rectangle (48x36px)
+
+</notes>
+
+</design>
+
+### Artboard
+
+* Recommended canvas size for setting up Illustrator or Figma files: 52x52px
+* Live area of 48x48px, with 2px padding on each side
+* Circle background: Live area of 52x52px (circle), 32x32px (icon), with 10px padding on each side
+
+
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102249">
+
+![Actions-Artboard](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/ab65064d698bbdf524749e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=ae14fb9768c13d15cac12fe6c0e87699b516627ee4898feff5a468b213f40037)
+
+**Actions-Artboard**
+
+<notes>
+
+Action icon artboard    |   Action icon with circle background
+
+</notes>
+
+</design>
+
+# Doctype
+
+## Doctype Icons
+
+<shortcut_tiles>
+<shortcut_tile url="https://www.lightningdesignsystem.com/2e1ef8501/v/0/p/83309d-icons/b/586464">
+![Browse Icons](https://zeroheight-user-uploads.s3.eu-west-1.amazonaws.com/images/u6eikR0AX1gbjOPqf_ZlOg.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=68d2c6db3d27f5d295bdf9386b507cdb8e3cea0d8a6bfa596fc0ca8537a7abb0)
+
+**Browse Icons**
+
+Browse the SLDS icon library
+</shortcut_tile>
+</shortcut_tiles>
+
+Doctype icons represent file types, and are often used when a file preview is unavailable. Use a recognizable white glyph inside these icons if a familiar visual metaphor is available; otherwise, use a text abbreviation of the corresponding file extension.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102242">
+
+![Doctype](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/c13c60ba105850089dca22?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=1f19d89053572437ba1c510939adbaf84f97b8939fd98108e990b34b6d347fe1)
+
+**Doctype**
+
+<notes>
+
+Doctype icons-Google Sheets, PowerPoint, Google Slides, pages, link, html
+
+</notes>
+
+</design>
+
+Doctype icons are used in both mobile and desktop environments, including inside feeds, publishers, cards, and related lists.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102269">
+
+![Doctype-Example](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/83bc9ca045809ceb6e5b46?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=9571055d4a73d4b9c74fcc4ad50a05e830fc8adf008dadc5924e1a7c5e700993)
+
+**Doctype-Example**
+
+<notes>
+
+Placement of doctype icons in related lists
+
+</notes>
+
+</design>
+
+### Anatomy
+
+* Based on a grid of 56x64px
+* Live area of 36x12px (letter) or 36x22px (icon), with 10px padding
+* 6px corner radius
+* Icon: color #fff
+* Text: Proxima Nova Soft, Regular 18 pt, color #fff
+* Flap: color #fff with opacity of 50%; drop shadow: color #000 with opacity of 10%
+* Add a background color
+
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102277">
+
+![Doctype - Anatomy](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/11e5d85ab87f2238425e79?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6c955bd23fc799baaa0a64a2c4f1df25d706c703c8e9027810c2171885ffb788)
+
+**Doctype - Anatomy**
+
+<notes>
+
+Doctype (icon) with anatomy elements highlighted
+
+</notes>
+
+</design>
+
+### Keyline Shape
+
+Vertical Rectangle (56x64px)
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102299">
+
+![Doctype-Keyline](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/3ce053cc533d6655cd9908?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8236d49a51a96abe2b4d5384743caedceacc3dc9352bdeb9e03a2d794ed4d1e9)
+
+**Doctype-Keyline**
+
+<notes>
+
+Vertical rectangle keyline shape
+
+</notes>
+
+</design>
+
+### Artboard
+
+* Recommended canvas size for setting up Illustrator or Figma files: 56x64px
+* Live area of 36x12px (letter) or 36x22px (icon), with 10px padding
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102287">
+
+![Doctype - Artboard 1](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/055c1dc5cd13a8e42b1e48?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=52695f816b6a7aa16b09c8253e07b45807b3b86f51c31d64ee214ae9bfcdc43d)
+
+**Doctype - Artboard 1**
+
+<notes>
+
+Doctype icon artboard
+
+</notes>
+
+</design>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102282">
+
+![Doctype - Artboard 2](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/e596098757848261a2f0f9?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=26d5000b9e08f376fc258a07069b10df3e1605942d38136364a8913967cdaec4)
+
+**Doctype - Artboard 2**
+
+<notes>
+
+Doctype icon (icon) artboard   |   Doctype icon (text) artboard
+
+</notes>
+
+</design>
+
+### Dos and Don’ts
+
+| Rule | Image | Caption | Description |
+| :--- | :--- | :--- | :--- |
+| Do | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/5c3bd500821f36a5c3ac42?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=eb0b11d7163a148b7bf15c6fe7a7c15597aed47983bae91ddf60e74528887f2a) |   | Do represent a doctype icon’s earflap without a gap. |
+| Don't | ![](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/50128bb026b53fc48c117e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=3414d614f4660e9ad292b5cfd1e07b4a83a425da8f08eef5676b519e45c9fa39) |   | Don’t add a gap to an icon’s earflap. |
+
+# Product
+
+## Product Icons
+
+Product icons use the branding for Salesforce products. Each product icon is made up of a two-color glyph with a 4px rounded stroke on a white background. These are used as mobile application icons. In Salesforce, product icons represent each official Salesforce application in the [App Launcher](https://v1.lightningdesignsystem.com/components/app-launcher/) as a 48x48px icon.
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102244">
+
+![Product - Product](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/c609b1ed47c1be1a751547?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5ee80f915496cffb2118043070f53532f1296a91054e7aa4b8fc396927898d3b)
+
+**Product - Product**
+
+<notes>
+
+Product icons-quip, sales, social studio, analytics, industries, field service
+
+</notes>
+
+</design>
+
+<design figma-url="https://www.figma.com/design/tLYtw0hYKA22PTU3TH2r7r/?node-id=6112:102273">
+
+![Product-Example](https://zeroheight-uploads.s3.eu-west-1.amazonaws.com/e433e9efcb407d0ad7d522?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3AVNYHQKYPFHNVW5%2F20260530%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260530T145223Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5ff64f64579f0c3f5b09888c585c815dd14abbe0eca9bfc96d9c4b7529f94a69)
+
+**Product-Example**
+
+<notes>
+
+Placement of product icons in the app launcher
+
+</notes>
+
+</design>
+
+# Icon Library
+
+[https://slds2-site-icons-bb73f6083c96.herokuapp.com/all-icons.html](https://slds2-site-icons-bb73f6083c96.herokuapp.com/all-icons.html)
+
+[https://slds2-site-icons-bb73f6083c96.herokuapp.com/all-icons.html](https://slds2-site-icons-bb73f6083c96.herokuapp.com/all-icons.html)

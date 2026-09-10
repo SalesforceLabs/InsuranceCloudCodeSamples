@@ -1,0 +1,95 @@
+# Base Date
+
+> **15 September 2026 is "today" for every date-dependent calculation in this app.**
+> Resolve it through `today()` / `todayIso()` from `data/dates`. Never read the system clock for a calendar date.
+
+The demo has to tell the same story whichever day it is shown on. A meeting carousel built from `new Date()` drifts every morning, a "live since" stamp reads as today forever, and a calendar highlights whichever square the laptop happens to be on. Pinning one base date makes every date-driven surface deterministic and rehearsable.
+
+## The single source
+
+`cumulus-app/src/modules/data/dates/dates.js`
+
+```javascript
+export const BASE_DATE_ISO = '2026-09-15';
+
+// Fresh Date at local midnight on the base date. New instance each
+// call, because Date is mutable and callers advance it with setDate().
+export function today() { … }
+
+// The base date as YYYY-MM-DD.
+export function todayIso() { … }
+```
+
+Change the demo's date by editing `BASE_DATE_ISO` and nothing else.
+
+## Do
+
+```javascript
+import { today, todayIso } from 'data/dates';
+
+const d = today();                 // calendar maths, offsets, comparisons
+d.setDate(d.getDate() + 2);
+
+const liveSince = todayIso();      // YYYY-MM-DD stamps
+const stamp = formatUsDate(today());
+```
+
+When a local variable is already called `today`, alias the import rather than renaming the local:
+
+```javascript
+import { today as baseToday } from 'data/dates';
+```
+
+## Don't
+
+```javascript
+// ❌ Reads the machine's clock - drifts daily.
+const d = new Date();
+const today = new Date().toISOString().slice(0, 10);
+const stamp = formatUsDate(new Date());
+if (isSameDay(selected, new Date())) { … }
+```
+
+## What the base date does NOT cover
+
+Two categories legitimately stay on the system clock. Pinning them would break things rather than stabilise them.
+
+**Unique ids, cache hashes, and version stamps.** `Date.now()` here is an entropy source, not a date. Pinning it collides ids.
+
+```javascript
+// ✅ Correct as-is.
+const id = `veh-new-${Date.now()}`;
+const parentId = `rfq-bundle-${Date.now()}`;
+hash = String(Date.now());
+```
+
+**Elapsed time and time-of-day.** Relative maths needs both sides on the same moving clock, and the hour of day should match the room the demo is in.
+
+```javascript
+// ✅ Correct as-is - relative age, both sides on the real clock.
+const secs = Math.round((Date.now() - timestamp) / 1000);
+
+// ✅ Correct as-is - time of day, not a date.
+const h = new Date().getHours();          // c-run-my-day greeting
+new Date().toLocaleTimeString(…)          // c-slack-drawer message stamp
+```
+
+The distinction is **calendar date vs moment**. If the value would appear on a calendar or in a `MM/DD/YYYY` field, it comes from `today()`. If it measures a duration, orders events, or seeds an id, it comes from the real clock.
+
+Both intentional exceptions carry an inline comment saying so; add one to any new exception rather than leaving a bare `new Date()` that reads as an oversight.
+
+## Enforcement
+
+A bare `new Date()` or `.toISOString().slice(0, 10)` in a date context is a bug. To audit:
+
+```bash
+rg -n "new Date\(\)" cumulus-app/src
+```
+
+Everything that turns up should either route through `data/dates` or carry a comment explaining why it is a moment rather than a date.
+
+## Notes
+
+- The year matters. All the fixture data (renewals on 10/13/2026 and 12/01/2026, policy terms, prior-policy chains) is 2026, so the base date sits inside that story rather than ahead of or behind it.
+- `data/mockData`'s relative meeting keys (`_rmdDateKey`) build off `today()`, so "today / tomorrow / day after" content lands on the base date and the two days following it.
+- Prior-policy term maths (`nextTermFromPriorEnd`, `addIsoDays`, `addIsoYears`) is driven by policy dates in the fixtures, not by today, and is unaffected.

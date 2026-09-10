@@ -1,0 +1,14 @@
+/* Stage configuration tile — extends .act-tile.--compact with a status
+ * badge + kebab cluster in the top-right and a "X Stages · Y Tasks" subline. */
+
+.lob-stage-tile__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lob-stage-tile__sub {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+}

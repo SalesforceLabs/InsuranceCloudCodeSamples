@@ -1,0 +1,72 @@
+---
+description: Description / subtitle / helper text must stretch to its container width, not clamp mid-sentence
+alwaysApply: true
+---
+
+# Description Text Width
+
+> **Description texts should stretch across the width & not wrap in between suddenly for the entire app.**
+
+Subtitles, section descriptions, eyebrow-lead paragraphs, helper text, and `__sub` copy must flow to the full width of their parent container. Do **not** add artificial `max-width` clamps (e.g. `64ch`, `48ch`, `56ch`, `520px`, `40rem`) that force the line to break early while the container still has room.
+
+## Rationale
+
+The container **is** the readable measure. Panels, cards, and wizards in this app are wide by design — a `.qcs-wizard__panel-sub { max-width: 64ch; }` on a 900 px panel produces awkward mid-sentence wraps like
+
+> Configure how the broker sees quotes side by side — pick a
+> summary widget and up to eight highlight tiles.
+
+when there's still 300 px of empty room on the right. The `ch`-based clamps predate the current wide layout and no longer serve the narrow-column reflow they were sized for.
+
+## Do
+
+```css
+.qcs-wizard__panel-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  /* no max-width — the panel is the measure */
+}
+```
+
+- Let the parent panel / card / section govern width.
+- If a subtitle sits next to an inline widget in a flex row and needs a `min-width` guard so it doesn't collapse below the widget, that's fine.
+
+## Don't
+
+```css
+/* ❌ Don't clamp description copy to a character measure. */
+.qcs-wizard__panel-sub { max-width: 64ch; }
+.dh__subtitle          { max-width: 40rem; }
+.submitted-sub         { max-width: 520px; }
+.eih__panel-sub        { max-width: 64ch; }
+```
+
+```html
+<!-- ❌ Don't inline-clamp either. -->
+<p class="section-sub" style="max-width: 56ch;">…</p>
+```
+
+Also don't add `max-width` on the base `-sub` / `-desc` / `-hint` selector "for one specific placement" — the base class stays uncapped and the scoped call site opts into a narrower measure (see escape hatch below).
+
+## Legitimate exceptions
+
+Leave these alone — do **not** strip the `max-width` from them:
+
+- **Body-prose blocks** explicitly intended as long-form reading passages (recognisable by `line-height` ≥ 1.6, multi-paragraph copy, and a dedicated typography class like `-body`, `-prose`, or `-longform`). Rare in this app.
+- **Toast body copy** — already bounded by `c-toast`'s shell; see [`toast-notifications.mdc`](toast-notifications.mdc).
+- **Empty-state text inside `c-empty-state`** — the shared component (`.es__description`) already handles its own measure. Component-local empty states (`.sb-empty__sub`, `.lrp-empty__sub`, `.afs-setup__empty-sub`, `.ctl__empty-sub`, `.rtl__empty-sub`, …) fall under the base rule and must stretch.
+
+Actual **container** widths — cards (`.qcs-card`, `.sb-card`), modals (`.slds-modal_medium .slds-modal__container`, `.p15-delete-modal__container`), dialog containers, form grids (`.qcs-init-grid`, `.afs-version-grid`), preview surfaces — are outside the scope of this rule. Keep those caps.
+
+## Escape hatch (rare — prefer removing the clamp)
+
+If one specific placement of a subtitle legitimately needs a narrower reading measure (e.g. a two-column layout where the sub sits next to a wide illustration), keep the base class uncapped and add a scoped modifier that opts **in** to the cap:
+
+```css
+.qcs-wizard__panel-sub          { /* no cap — default */ }
+.qcs-wizard__panel-sub_narrow   { max-width: 56ch; }   /* opt-in */
+```
+
+Never do the inverse (base class capped, `_wide` modifier removing the cap) — the default must be "stretch". Document the reason next to the modifier.

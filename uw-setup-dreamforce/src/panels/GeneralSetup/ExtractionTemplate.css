@@ -1,0 +1,69 @@
+/* New Extraction Template inline form. Reuses .rmdw-config-panel +
+ * .act-editor-panel chrome from the LOB Stage Management form. */
+
+.ext-form__section-head {
+  margin: 8px 0 12px;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ext-form__section-head:first-child {
+  margin-top: 0;
+}
+
+.ext-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+  margin-bottom: 16px;
+  align-items: start;
+}
+.ext-form__row:last-of-type {
+  margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  .ext-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Detail page ────────────────────────────────────────────────── */
+
+.ext-detail__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.ext-detail__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.ext-detail__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  border: 1px dashed var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--slds-g-color-on-surface-1);
+  background: var(--slds-g-color-surface-container-1);
+}
+.ext-detail__placeholder-title {
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ext-detail__placeholder-sub {
+  font-size: var(--slds-g-font-scale-base);
+  max-width: 56ch;
+  line-height: 1.5;
+}

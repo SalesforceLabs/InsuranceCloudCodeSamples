@@ -1,0 +1,271 @@
+/* ═══════════════════════════════════════════════════════════════
+   c-retention-alert-drawer
+   ─────────────────────────────────────────────────────────────
+   Inline insight details column - third child of the RMD insights
+   grid. Matches Advisor Home: title, person tiles, Attention Needed
+   badges, circular chevron overflow. Empty chrome is the org info
+   banner. No AI summary card.
+   =============================================================== */
+
+:host {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 432px;
+}
+
+/* Agentic glow layered over the canonical AI wash. Both come from
+   tokens.css so this panel and every other AI-marked surface share one
+   signature. The parent .rmd-action-items__body clips to
+   --atlas-radius-lg, so no radius is set here. */
+.af-drawer {
+  background: var(--atlas-agentic-glow), var(--atlas-agentic-wash);
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: var(--slds-g-spacing-3, 12px);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  overflow: hidden;
+}
+
+/* Empty state - org info banner, centered. Intentionally drops the
+   agentic glow: the glow marks an opened insight, so an unselected
+   column stays neutral. */
+.af-drawer--empty {
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 432px;
+  background: transparent;
+  padding: var(--slds-g-spacing-6, 32px) var(--slds-g-spacing-4, 16px);
+}
+.af-drawer__empty-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  font-size: var(--atlas-type-body-size);
+  font-weight: var(--atlas-type-body-weight);
+  line-height: var(--atlas-type-body-lh);
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+}
+.af-drawer__empty-icon {
+  display: inline-flex;
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+  flex-shrink: 0;
+}
+
+/* ── Drawer chrome ─────────────────────────────────────────── */
+.af-drawer__header {
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.af-drawer__body {
+  padding: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.af-drawer__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-palette-neutral-10, #181818);
+  line-height: 1.25;
+}
+
+/* ── Person tiles ─────────────────────────────────────────── */
+.af-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 12px);
+}
+.af-row {
+  padding: var(--slds-g-spacing-3, 12px);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-3, 12px);
+  align-items: start;
+}
+.af-row__info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.af-row__name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-2, 8px);
+}
+.af-row__name-link {
+  color: var(--slds-g-color-accent-1, #066afe);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  text-decoration: none;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  padding-bottom: 2px;
+}
+.af-row__name-link:hover {
+  text-decoration: underline;
+}
+.af-row__name-text {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  padding-bottom: 2px;
+}
+.af-row__detail {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-neutral-base-50, #747474);
+  line-height: 1.25;
+  padding-bottom: 2px;
+}
+
+.rmd-name-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 1.4;
+}
+.rmd-name-badge__icon {
+  flex-shrink: 0;
+}
+.rmd-name-badge.hni {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-warning-1, #8c4b02);
+}
+.rmd-name-badge.attention {
+  background: var(--slds-g-color-warning-base-80, #fcc003);
+  color: var(--slds-g-color-warning-base-30, #6f3400);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.af-escalation {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-on-error-1, #b60554);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+/* SLDS's own utility classes do not pierce this component's shadow root, so
+   the ones the Menus and Button Icons blueprints rely on are redeclared here:
+   the visually-hidden accessible name, the button icon sizing, and the
+   dropdown list reset that suppresses the UA bullet and indent. */
+.slds-assistive-text {
+  position: absolute;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.af-action-btn .slds-button__icon {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.rmd-action-dropdown .slds-dropdown__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Row menu trigger, Button Icons "Bare" variant, which the blueprint defines
+   as "no background or border" and "transparent with icon only, no visual
+   container". That holds in every state, so hover and open shift only the
+   glyph colour: no ring, no filled plate. */
+.af-action-menu {
+  position: relative;
+}
+.af-action-btn {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: 0;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.af-action-btn:hover,
+.af-action-btn[aria-expanded='true'] {
+  background: transparent;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.af-action-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.rmd-action-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  min-width: 160px;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+  z-index: 10;
+  padding: 4px 0;
+}
+.rmd-action-dropdown.open {
+  display: block;
+}
+.rmd-row-action {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-3, 12px);
+  background: transparent;
+  border: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  /* Menu item labels are single-line in the blueprint, which wraps each one in
+     slds-truncate. The dropdown is right-anchored, so it grows leftward to fit
+     rather than breaking a label across two lines. */
+  white-space: nowrap;
+}
+.rmd-row-action:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+/* Arrow keys move focus between items, so that focus has to be visible. */
+.rmd-row-action:focus-visible {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: calc(-1 * var(--slds-g-sizing-border-2, 2px));
+}
+/* No per-item colour or weight variants: the Menus blueprint exposes only
+   slds-dropdown__item plus the is-open and is-selected states, and carries no
+   destructive menu-item treatment. Every item shares one colour. */

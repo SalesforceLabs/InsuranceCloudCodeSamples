@@ -1,0 +1,457 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(150%) blur(14px);
+  -webkit-backdrop-filter: saturate(150%) blur(14px);
+  border-bottom: 1px solid var(--atlas-divider);
+  box-shadow: var(--atlas-shadow-nav);
+}
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 60px;
+  padding: 0 var(--slds-g-spacing-5, 24px);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.brand-logo {
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand-logo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.brand-name {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: var(--slds-g-font-scale-2, 16px);
+  letter-spacing: -0.01em;
+  color: var(--atlas-ink);
+}
+
+.primary {
+  display: flex;
+  gap: 4px;
+  margin-left: 20px;
+}
+
+.nav-link {
+  border: 0;
+  background: transparent;
+  padding: var(--slds-g-spacing-2, 8px) 14px;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-5, 500);
+  color: var(--atlas-muted);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.nav-link:hover {
+  color: var(--atlas-ink);
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.nav-link.is-active {
+  color: var(--atlas-ink);
+  background: rgba(15, 23, 42, 0.06);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+.utility {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  /* SLDS 2 mobile tap-target - 44px min on iOS, 48px on Android.
+     Visual size stays 36px on desktop; on touch devices we bump to 44. */
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  border: 0;
+  background: transparent;
+  color: var(--atlas-ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease;
+}
+
+@media (pointer: coarse) {
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+.icon-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.icon-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+.icon-btn.is-open {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* Icon size scales with type - 1.125rem matches the SLDS 2 type rhythm and
+   responds to the density-aware font-scale tokens. */
+.icon-btn svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* ── Global search dropdown ──────────────────────────────────
+   Search button is wrapped in a positioning container so the panel
+   can float beneath it without affecting top-nav layout. Click-
+   outside scrim catches dismissal without a document listener. */
+.tn-search {
+  position: relative;
+  display: inline-flex;
+}
+.tn-search__scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 9100;
+}
+.tn-search-panel {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-2, 0.5rem));
+  right: 0;
+  z-index: 9101;
+  width: min(22rem, calc(100vw - 2rem));
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+}
+.tn-search__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.tn-search__input-icon {
+  position: absolute;
+  left: var(--slds-g-spacing-var-3, 0.75rem);
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  pointer-events: none;
+}
+.tn-search__input {
+  width: 100%;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-3, 0.75rem) 0
+    calc(var(--slds-g-sizing-5, 1rem) + var(--slds-g-spacing-var-4, 1rem));
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  box-sizing: border-box;
+}
+.tn-search__input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.tn-search__input:focus,
+.tn-search__input:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.tn-search__section-label {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.tn-search__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 22rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.tn-search__result {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.tn-search__result:hover,
+.tn-search__result:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  outline: none;
+}
+.tn-search__result-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  flex-shrink: 0;
+}
+.tn-search__result-mark svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.tn-search__result-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.tn-search__result-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tn-search__result-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tn-search__empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-align: center;
+}
+
+/* SLDS 2 density toggle (Comfy ↔ Compact) - pill button with label. */
+.density-toggle {
+  width: auto;
+  padding: 0 var(--slds-g-spacing-var-3, 0.75rem) 0
+    var(--slds-g-spacing-var-2, 0.5rem);
+  gap: 6px;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.density-toggle:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.density-toggle svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.density-toggle__label {
+  display: inline-block;
+}
+@media (max-width: 640px) {
+  /* Hide the label on narrow screens - icon alone communicates state. */
+  .density-toggle__label {
+    display: none;
+  }
+}
+
+.bell .bell-dot {
+  position: absolute;
+  top: var(--slds-g-spacing-2, 8px);
+  right: 9px;
+  width: var(--slds-g-sizing-3, 8px);
+  height: var(--slds-g-sizing-3, 8px);
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: var(--atlas-danger);
+  border: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-surface-1, #fff);
+}
+
+.avatar {
+  margin-left: 6px;
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  border: 0;
+  background: linear-gradient(135deg, #066afe, #7c3aed);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+/* ── Persona menu (demo Profile-based Home assignment) ──────
+   Avatar is the opener; menu drops below the utility bar with
+   the same scrim pattern as the search panel. */
+.tn-persona {
+  position: relative;
+  display: inline-flex;
+}
+.tn-persona__scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 9100;
+}
+.tn-persona-menu {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-2, 0.5rem));
+  right: 0;
+  z-index: 9101;
+  width: 18rem;
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+}
+.tn-persona-menu__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 var(--slds-g-spacing-var-2, 0.5rem);
+}
+.tn-persona-menu__eyebrow {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.tn-persona-menu__name {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.tn-persona-menu__section-label {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  padding: 0 var(--slds-g-spacing-var-2, 0.5rem);
+}
+.tn-persona-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tn-persona-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.tn-persona-option:hover,
+.tn-persona-option:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  outline: none;
+}
+.tn-persona-option.is-active {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+.tn-persona-option__avatar {
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border-radius: 999px;
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tn-persona-option__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.tn-persona-option__name {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tn-persona-option__role {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tn-persona-option__check {
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+  color: var(--atlas-brand, #066afe);
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .primary { display: none; }
+}

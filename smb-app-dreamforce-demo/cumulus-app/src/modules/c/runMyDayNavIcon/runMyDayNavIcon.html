@@ -1,0 +1,39 @@
+<template>
+  <!-- Filled SLDS utility glyphs (x-small / 16px). Paths are copied from the
+       utility sprite; viewBox stays 520 unless the symbol itself is 52. -->
+  <template lwc:if={isUsers}>
+    <svg class="rmd-nav-icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M500 430v22c0 26-22 48-48 48H68a49 49 0 01-48-48v-22c0-58 68-94 132-122l6-3c5-2 10-2 15 1a155 155 0 00172 0c5-3 10-3 15-1l6 3c66 28 134 63 134 122M260 20c66 0 119 59 119 132s-53 132-119 132-119-59-119-132S194 20 260 20"/>
+    </svg>
+  </template>
+  <template lwc:if={isGrowth}>
+    <svg class="rmd-nav-icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M82 496l315-315c9-9 23-2 23 9v182c0 11 9 20 20 20h42a20 20 0 0020-20l-2-331a20 20 0 00-20-20H148a20 20 0 00-20 20v40c0 11 9 20 20 20h182c12 1 19 15 10 24L26 439c-8 8-9 20-1 27l28 28c8 8 21 10 29 2"/>
+    </svg>
+  </template>
+  <template lwc:if={isChat}>
+    <svg class="rmd-nav-icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M500 280c0-39-25-73-60-85a180.2 180.2 0 00-360 0 90 90 0 007 172c22 77 91 133 173 133s151-56 173-133c38-10 67-45 67-87m-100-90l-1-1 4 1zM260 460c-77 0-140-65-140-144 0-20 4-50 12-68 1-3 3-6 4-9 30-12 56-33 73-60 35 44 90 74 151 74 21 0 27 1 29 0 4 13 8 29 9 45-6 25-45 49-100 52-2-5-8-10-14-10h-50c-8 0-14 8-14 16v30c0 8 6 14 14 14h50c7 0 12-3 14-9 36-1 68-11 93-26-19 55-70 95-131 95"/>
+    </svg>
+  </template>
+  <template lwc:if={isShield}>
+    <svg class="rmd-nav-icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M48 140h424c10 0 18-10 15-20-10-33-24-63-43-90-6-8-17-9-23-2a108 108 0 01-74 28c-30 0-57-12-77-32-6-6-16-6-22 0-20 20-47 32-77 32-28 0-54-10-74-28-7-6-18-5-23 2-19 26-34 57-43 90-1 10 7 20 17 20m452 64c0-9-7-14-16-14H36c-9 0-16 5-16 14v3c0 150 104 274 240 293 136-19 240-143 240-292z"/>
+    </svg>
+  </template>
+  <template lwc:if={isGrid}>
+    <svg class="rmd-nav-icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M13 4H7a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3V7a3 3 0 00-3-3m0 32H7a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3v-6a3 3 0 00-3-3m0-16H7a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3v-6a3 3 0 00-3-3M29 4h-6a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3V7a3 3 0 00-3-3m0 32h-6a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3v-6a3 3 0 00-3-3m0-16h-6a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3v-6a3 3 0 00-3-3M45 4h-6a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3V7a3 3 0 00-3-3m0 32h-6a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3v-6a3 3 0 00-3-3m0-16h-6a3 3 0 00-3 3v6a3 3 0 003 3h6a3 3 0 003-3v-6a3 3 0 00-3-3"/>
+    </svg>
+  </template>
+  <template lwc:if={isSparkle}>
+    <svg class="rmd-nav-icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M349 272l-69 34a105 105 0 00-47 47l-33 67c-5 10-19 10-24 0l-34-68a105 105 0 00-47-47l-68-34a13 13 0 010-24l68-34a105 105 0 0047-47l34-68a13 13 0 0124 0l34 68a105 105 0 0047 47l68 34c10 5 10 19 0 24zm148 150l-30-14a45 45 0 01-20-20l-14-30a6 6 0 00-10 0l-15 30a45 45 0 01-20 20l-30 15c-3 2-3 8 0 10l30 15a45 45 0 0120 20l15 29c2 4 8 4 10 0l14-30a45 45 0 0120-20l30-14c4-2 4-8 0-10zm0-335l-30-15a45 45 0 01-20-20l-14-29a6 6 0 00-10 0l-15 30a45 45 0 01-20 20l-30 14c-3 2-3 8 0 10l30 15a45 45 0 0120 20l15 29c2 4 8 4 10 0l15-30a45 45 0 0120-20l29-14c4-2 4-8 0-10"/>
+    </svg>
+  </template>
+  <template lwc:if={isFallback}>
+    <svg class="rmd-nav-icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M260 40c121 0 220 99 220 220S381 480 260 480 40 381 40 260 139 40 260 40"/>
+    </svg>
+  </template>
+</template>

@@ -1,0 +1,383 @@
+/* c-attribute-picker - shared setup-list primitive. Header carries
+   the tri-state Select-all checkbox (with an inline "N of M" count)
+   and a Show all / Hide toggle. The list itself is hidden until the
+   admin expands it, then renders in full (no chunked lazy loading).
+   Values pull from SLDS 2 global styling hooks so consumers can
+   theme via `--slds-g-*` tokens. */
+
+:host {
+  display: block;
+}
+
+.ap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* ── Header row ───────────────────────────────────────────────
+   Single strip: [✓] Select all (N of M)  ····  [Show all]
+   No divider below - the picker sits inside a wizard card that
+   already provides its own container chrome. */
+.ap__header {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-3, 0.75rem)
+           var(--slds-g-spacing-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+.ap__header-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  cursor: pointer;
+  user-select: none;
+  min-width: 0;
+}
+.ap__header-label {
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ap__header-spacer { flex: 1 1 auto; }
+
+/* Show all / Hide - ghost/text button. Transparent surface, no
+   border, accent-blue text; hover switches to underline + darker
+   accent (not a fill pill) so the affordance never shifts the
+   button width or feels "jumpy" as the label swaps between
+   "Show all" and "Hide". Fixed min-width keeps the button
+   geometry stable across label changes so hover, focus, and
+   active states never resize the header row. Kept intentionally
+   lightweight so the only solid blue button on the page is the
+   wizard footer's Next CTA - button hierarchy: primary (footer
+   Next) > ghost (toggle). */
+.ap__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.75rem;
+  min-width: 4.5rem;
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.125rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 120ms ease;
+  white-space: nowrap;
+}
+.ap__toggle:hover,
+.ap__toggle:focus-visible {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+.ap__toggle:active {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.ap__toggle:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ── Search (inline in header, centred between select-all and Show all)
+   Fixed preferred width of 20rem; can shrink down to 12rem on narrow
+   panels. The flex-1 spacers on either side (see attributePicker.html)
+   consume all remaining width equally, so the search is visually
+   centred and the Show all / Hide toggle stays pinned flush right
+   regardless of expand state. */
+.ap__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 1 20rem;
+  min-width: 12rem;
+  max-width: 20rem;
+}
+.ap__search-icon {
+  position: absolute;
+  left: 0.5rem;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  pointer-events: none;
+}
+.ap__search-input {
+  width: 100%;
+  height: 2rem;
+  padding: 0 2rem 0 2rem;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.ap__search-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.ap__search-input:focus {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.ap__search-clear {
+  position: absolute;
+  right: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+}
+.ap__search-clear svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+.ap__search-clear:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* ── Empty state under filter ──────────────────────────────── */
+.ap__empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-4, 1rem) var(--slds-g-spacing-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-align: center;
+}
+.ap__empty-link {
+  padding: 0;
+  margin-left: var(--slds-g-spacing-1, 0.25rem);
+  background: transparent;
+  border: 0;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.ap__empty-link:hover {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+/* Collapsed-empty variant - shown when the picker is collapsed
+   and nothing has been selected yet. Lighter than the filter-
+   empty state; no top divider so the hint reads as a soft
+   continuation of the header, not a separate section. */
+.ap__empty_hint {
+  padding-block: var(--slds-g-spacing-3, 0.75rem);
+  font-style: italic;
+}
+
+/* ── List + rows ───────────────────────────────────────────── */
+.ap__list,
+.ap__tree,
+.ap__tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ap__row {
+  display: flex;
+  align-items: center;
+  /* Match the header check gap (0.75rem) so the checkbox lines up
+     vertically with the header's Select-all checkbox. Padding-left
+     also mirrors the header (1rem) for the same reason. */
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  min-height: 2rem;
+  padding: var(--slds-g-spacing-1, 0.25rem)
+           var(--slds-g-spacing-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  transition: background 120ms ease;
+}
+.ap__row:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.ap__row.is-ordered {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.ap__row-main {
+  display: inline-flex;
+  align-items: center;
+  /* Gap between checkbox and label matches the header's
+     ap__header-check gap (0.75rem) so the label text left-edge
+     aligns column-wise with the "Select all" label above. */
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  cursor: pointer;
+  user-select: none;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ap__row-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ap__row-label_parent {
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.ap__row-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  height: 1rem;
+  border-radius: 999px;
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-size: var(--slds-g-font-scale-neg-2, 0.6875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+/* ── Checkbox faux (shared with header + rows) ─────────────── */
+.ap__check-input {
+  position: absolute;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.ap__check-faux {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: transparent;
+  flex-shrink: 0;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.ap__check-icon {
+  position: absolute;
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.ap__check-faux.is-on {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.ap__check-faux.is-on .ap__check-icon_tick { opacity: 1; }
+.ap__check-faux.is-mixed {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.ap__check-faux.is-mixed .ap__check-icon_minus { opacity: 1; }
+.ap__check-input:focus-visible ~ .ap__check-faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ── Reorder affordances ───────────────────────────────────── */
+.ap__grip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: grab;
+  flex-shrink: 0;
+}
+.ap__grip svg { width: 1rem; height: 1rem; }
+.ap__grip_placeholder { pointer-events: none; visibility: hidden; }
+.ap__row-actions {
+  display: inline-flex;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  align-items: center;
+  flex-shrink: 0;
+}
+.ap__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.ap__icon-btn svg { width: 1rem; height: 1rem; }
+.ap__icon-btn:hover:not(:disabled) {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.ap__icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.ap__icon-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ── Tree variant ──────────────────────────────────────────── */
+.ap__row_lvl-1 { padding-left: var(--slds-g-spacing-8, 3rem); }
+.ap__tree-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ap__tree-chevron:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+.ap__tree-chevron_placeholder {
+  cursor: default;
+  pointer-events: none;
+}
+.ap__tree-chevron-icon {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  transition: transform 120ms ease;
+}
+.ap__tree-chevron-icon.is-open {
+  transform: rotate(90deg);
+}

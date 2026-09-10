@@ -1,0 +1,96 @@
+<template>
+  <div class={rootClass}>
+    <div class="date-input__control">
+      <input
+        type="text"
+        id={resolvedInputId}
+        class="date-input__text"
+        value={displayValue}
+        placeholder={placeholder}
+        disabled={disabled}
+        autocomplete="off"
+        inputmode="numeric"
+        aria-label={accessibleLabel}
+        aria-expanded={ariaExpanded}
+        aria-haspopup="dialog"
+        aria-controls={pickerId}
+        onfocus={handleTextFocus}
+        oninput={handleTyped}
+        onblur={handleTextBlur}
+        onkeydown={handleTextKeydown}
+      />
+      <button
+        type="button"
+        class="date-input__cal"
+        disabled={disabled}
+        tabindex="-1"
+        aria-label="Select a date"
+        aria-expanded={ariaExpanded}
+        aria-haspopup="dialog"
+        onmousedown={handlePickerMouseDown}
+        onclick={handleToggle}
+      >
+        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+          <path d="M46.5 10.3h-5.8v-2.2c0-1.1-.9-2-2-2s-2 .9-2 2v2.2H15.3v-2.2c0-1.1-.9-2-2-2s-2 .9-2 2v2.2H5.5C3.6 10.3 2 11.9 2 13.8v32.4c0 1.9 1.6 3.5 3.5 3.5h41c1.9 0 3.5-1.6 3.5-3.5V13.8c0-1.9-1.6-3.5-3.5-3.5zM45 43.7c0 .8-.7 1.5-1.5 1.5h-35c-.8 0-1.5-.7-1.5-1.5V22.3h38V43.7z" />
+        </svg>
+      </button>
+    </div>
+
+    <template lwc:if={isOpen}>
+      <div class="date-input__scrim" onclick={handleScrim}></div>
+      <div
+        class="date-input__picker"
+        id={pickerId}
+        role="dialog"
+        aria-label="Date picker"
+        style={menuStyle}
+        onmousedown={handlePickerMouseDown}
+      >
+        <div class="date-input__nav">
+          <button
+            class="date-input__nav-btn"
+            type="button"
+            aria-label="Previous month"
+            onclick={handlePrevMonth}
+          >
+            <svg viewBox="0 0 52 52" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M33.8 49c.6-.6.6-1.6 0-2.2L13.6 26.6c-.4-.4-.4-1 0-1.4L33.8 5.1c.6-.6.6-1.6 0-2.2l-2.2-2.2c-.6-.6-1.6-.6-2.2 0L4.8 24.9c-.6.6-.6 1.6 0 2.2l24.6 24.1c.6.6 1.6.6 2.2 0L33.8 49z" />
+            </svg>
+          </button>
+          <span class="date-input__month" aria-live="polite">{monthLabel}</span>
+          <button
+            class="date-input__nav-btn"
+            type="button"
+            aria-label="Next month"
+            onclick={handleNextMonth}
+          >
+            <svg viewBox="0 0 52 52" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M18.2 3c-.6.6-.6 1.6 0 2.2l20.2 20.2c.4.4.4 1 0 1.4L18.2 46.9c.6.6-.6 1.6 0 2.2l2.2 2.2c.6.6 1.6.6 2.2 0l24.6-24.2c.6-.6.6-1.6 0-2.2L22.6.8c-.6-.6-1.6-.6-2.2 0L18.2 3z" />
+            </svg>
+          </button>
+        </div>
+        <div class="date-input__dow" aria-hidden="true">
+          <template for:each={weekdayLabels} for:item="w">
+            <span class="date-input__dow-cell" key={w.key}>{w.short}</span>
+          </template>
+        </div>
+        <div class="date-input__grid" role="grid">
+          <template for:each={calendarGrid} for:item="c">
+            <button
+              class={c.cls}
+              type="button"
+              key={c.id}
+              data-key={c.key}
+              disabled={c.disabled}
+              aria-label={c.label}
+              aria-selected={c.ariaSelected}
+              onclick={handleSelectDay}
+            >
+              {c.day}
+            </button>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>

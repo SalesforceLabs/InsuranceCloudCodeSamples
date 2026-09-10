@@ -1,0 +1,690 @@
+<template>
+  <div class="qcs-setup">
+    <!-- ═══════════════════════════════════════════════════════
+         Dashboard view - header + template grid. Wizard modal
+         (below) overlays this when wizardOpen is true.
+         Hidden in embedded mode (workspace hosts its own
+         Templates dashboard section and supplies activeWizardStep).
+         ═══════════════════════════════════════════════════════ -->
+    <template lwc:if={isDashboardVisible}>
+    <header class="qcs-setup__header">
+      <div class="qcs-setup__header-row">
+        <div class="qcs-setup__header-title">
+          <h1 class="qcs-setup__title">Quote Comparison Setup</h1>
+          <p class="qcs-setup__sub">
+            Configure comparison matrices brokers use when evaluating carrier
+            market quotes. Templates dynamically adapt the comparison engine
+            layout based on selected fields and business rules.
+          </p>
+        </div>
+        <!-- CTA moved below the template grid (see qcs-setup__cta-row
+             after the template list) so the header reads as a clean
+             title + description without an action competing for it. -->
+      </div>
+    </header>
+
+    <template lwc:if={hasTemplates}>
+      <c-template-list-toolbar
+        lob={filterLob}
+        loc={filterLoc}
+        sort-by={sortBy}
+        lob-options={lobFilterOptions}
+        loc-options={locFilterOptions}
+        sort-options={sortOptions}
+        match-count={visibleCount}
+        total-count={totalCount}
+        onlobchange={handleFilterLob}
+        onlocchange={handleFilterLoc}
+        onsortchange={handleFilterSort}
+        onclear={handleClearFilters}
+      ></c-template-list-toolbar>
+
+      <template lwc:if={hasVisibleTiles}>
+      <ul class="qcs-setup__templates">
+        <template for:each={templateTiles} for:item="t">
+          <li class={t.tileClass} key={t.id}>
+            <header class="qcs-template__head">
+              <span class="qcs-template__mark" aria-hidden="true">{t.initial}</span>
+              <div class="qcs-template__meta">
+                <h2 class="qcs-template__name">{t.name}</h2>
+                <div class="qcs-template__badges">
+                  <span class="qcs-template__badge">{t.badge}</span>
+                  <span class={t.statusBadgeClass}>{t.statusBadge}</span>
+                </div>
+              </div>
+              <div class="qcs-menu-anchor">
+                <button
+                  type="button"
+                  class={t.moreBtnClass}
+                  aria-label="More actions"
+                  aria-haspopup="menu"
+                  aria-expanded={t.isOpen}
+                  data-id={t.id}
+                  onclick={handleToggleTemplateMenu}
+                >
+                  <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M20 44c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z"/></svg>
+                </button>
+
+                <template lwc:if={t.isOpen}>
+                  <ul class="qcs-menu" role="menu" aria-label="Template actions">
+                    <li role="none">
+                      <button
+                        class="qcs-menu__item"
+                        type="button"
+                        role="menuitem"
+                        data-id={t.id}
+                        onclick={handleActivateTemplate}
+                      >
+                        <svg class="qcs-menu__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+                        {t.activateLabel}
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button
+                        class="qcs-menu__item"
+                        type="button"
+                        role="menuitem"
+                        data-id={t.id}
+                        onclick={handleEditTemplate}
+                      >
+                        <svg class="qcs-menu__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><g ><path d="M9.5 33.4l8.9 8.9c.4.4 1 .4 1.4 0L42 20c.4-.4.4-1 0-1.4l-8.8-8.8c-.4-.4-1-.4-1.4 0L9.5 32.1c-.4.4-.4 1 0 1.3zM36.1 5.7c-.4.4-.4 1 0 1.4l8.8 8.8c.4.4 1 .4 1.4 0l2.5-2.5c1.6-1.5 1.6-3.9 0-5.5l-4.7-4.7c-1.6-1.6-4.1-1.6-5.7 0l-2.3 2.5zM2.1 48.2c-.2 1 .7 1.9 1.7 1.7l10.9-2.6c.4-.1.7-.3.9-.5l.2-.2c.2-.2.3-.9-.1-1.3l-9-9c-.4-.4-1.1-.3-1.3-.1l-.2.2c-.3.3-.4.6-.5.9L2.1 48.2z"/></g></svg>
+                        Edit
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button
+                        class="qcs-menu__item"
+                        type="button"
+                        role="menuitem"
+                        data-id={t.id}
+                        onclick={handleCloneTemplate}
+                      >
+                        <svg class="qcs-menu__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M44 2H18c-2.2 0-4 1.8-4 4v2h24c2.2 0 4 1.8 4 4v28h2c2.2 0 4-1.8 4-4V6c0-2.2-1.8-4-4-4z"/><path  d="M38 16c0-2.2-1.8-4-4-4H8c-2.2 0-4 1.8-4 4v30c0 2.2 1.8 4 4 4h26c2.2 0 4-1.8 4-4V16zm-18 7c0 .6-.4 1-1 1h-8c-.6 0-1-.4-1-1v-2c0-.6.4-1 1-1h8c.6 0 1 .4 1 1v2zm8 16c0 .6-.4 1-1 1H11c-.6 0-1-.4-1-1v-2c0-.6.4-1 1-1h16c.6 0 1 .4 1 1v2zm4-8c0 .6-.4 1-1 1H11c-.6 0-1-.4-1-1v-2c0-.6.4-1 1-1h20c.6 0 1 .4 1 1v2z"/></svg>
+                        Clone
+                      </button>
+                    </li>
+                    <li role="none" class="qcs-menu__sep" aria-hidden="true"></li>
+                    <li role="none">
+                      <button
+                        class="qcs-menu__item qcs-menu__item_destructive"
+                        type="button"
+                        role="menuitem"
+                        data-id={t.id}
+                        onclick={handleDeleteTemplate}
+                      >
+                        <svg class="qcs-menu__icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path fill="currentColor" d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Delete
+                      </button>
+                    </li>
+                  </ul>
+                </template>
+              </div>
+            </header>
+            <p class="qcs-template__meta-line">{t.metaLine}</p>
+          </li>
+        </template>
+      </ul>
+      </template>
+      <template lwc:else>
+        <div class="qcs-setup__empty" role="status">
+          <c-empty-state
+            illustration-name="noresults:filter"
+            title="No templates match these filters"
+            size="small"
+          >
+            Try a different Line of Business or Line of Coverage, or
+            clear the filters to see every template.
+            <button
+              slot="cta"
+              type="button"
+              class="qcs-button qcs-button_neutral"
+              onclick={handleClearFilters}
+            >Clear filters</button>
+          </c-empty-state>
+        </div>
+      </template>
+    </template>
+    <template lwc:else>
+      <div class="qcs-setup__empty">
+        <c-empty-state
+          illustration-name="success:new"
+          title="No comparison templates configured"
+          size="medium"
+        >
+          Create your first template to configure highlights
+          (pinned KPI cards) and body fields for the broker
+          side-by-side view.
+          <button
+            slot="cta"
+            type="button"
+            class="qcs-button qcs-button_brand"
+            aria-label="Add new comparison template"
+            onclick={handleNewTemplate}
+          >Add New</button>
+        </c-empty-state>
+      </div>
+    </template>
+
+    <!-- CTA lives below the grid when templates exist. Empty view
+         uses the slotted Add New inside c-empty-state only. -->
+    <template lwc:if={hasTemplates}>
+    <div class="qcs-setup__cta-row">
+      <button
+        class="qcs-button qcs-button_brand qcs-setup__cta"
+        type="button"
+        aria-label="Add new comparison template"
+        onclick={handleNewTemplate}
+      >
+        Add New
+      </button>
+    </div>
+    </template>
+
+    <template lwc:if={openMenuId}>
+      <div class="qcs-menu-scrim" onclick={handleCloseMenu}></div>
+    </template>
+    </template>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Wizard modal - chrome (backdrop, header, sidebar, footer)
+         hides in embedded mode; only the step body renders.
+         ═══════════════════════════════════════════════════════ -->
+    <template lwc:if={wizardOpen}>
+      <div
+        class={wizardWrapperClass}
+        role={wizardRole}
+        aria-modal={wizardAriaModal}
+        aria-labelledby={wizardLabelledBy}
+      >
+        <template lwc:if={showModalChrome}>
+          <div class="qcs-wizard__backdrop" onclick={handleWizardClose}></div>
+        </template>
+        <div class={wizardContainerClass}>
+          <template lwc:if={showModalChrome}>
+            <header class="qcs-wizard__head">
+              <h2 id="qcs-wizard-title" class="qcs-wizard__title">{wizardTitle}</h2>
+              <button
+                class="qcs-wizard__close"
+                type="button"
+                onclick={handleWizardClose}
+                aria-label="Close"
+                title="Close"
+              >
+                <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+              </button>
+            </header>
+          </template>
+
+          <div class={wizardBodyClass}>
+            <template lwc:if={showWizardChrome}>
+            <!-- ── Vertical SLDS-style stepper ───────────────── -->
+            <aside class="qcs-wizard__nav" aria-label="Comparison Template setup steps">
+              <div class="qcs-wizard__progress">
+                <header class="qcs-wizard__progress-head">
+                  <span class="qcs-wizard__progress-eyebrow">Comparison Setup Progress</span>
+                </header>
+                <ol class="qcs-wizard__nav-list">
+                  <template for:each={wizardSteps} for:item="s">
+                    <li class={s.cls} key={s.id} aria-current={s.ariaCurrent}>
+                      <span class="qcs-wizard__nav-mark-wrap" aria-hidden="true">
+                        <span class={s.markCls}>
+                          <template lwc:if={s.isDone}>
+                            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+                          </template>
+                          <template lwc:else>{s.index}</template>
+                        </span>
+                      </span>
+                      <span class="qcs-wizard__nav-text">
+                        <span class="qcs-wizard__nav-label">{s.label}</span>
+                        <span class="qcs-wizard__nav-sub">{s.sub}</span>
+                      </span>
+                    </li>
+                  </template>
+              </ol>
+            </div>
+          </aside>
+            </template>
+
+            <!-- ── Step bodies ─────────────────────────────────
+                 On Stage 1 + Stage 2 a Live Preview banner mounts at
+                 the top of the panel (via the qcs-wizard__panel_split
+                 modifier marker). Existing step content lives inside
+                 .qcs-panel__main so the panel can stack preview +
+                 editor without affecting non-split stages. The preview
+                 template appears BEFORE .qcs-panel__main below so it
+                 renders above the editor under the panel's column flex. -->
+            <section class={panelClass}>
+              <template lwc:if={showCanvasHead}>
+                <div class="qcs-wizard__canvas-head">
+                  <button
+                    class="qcs-wizard__back"
+                    type="button"
+                    onclick={handleWizardClose}
+                  >
+                    <svg viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false"><path d="M380 83v354c0 10-13 17-22 9L146 273c-8-6-8-19 0-25L358 73c9-7 22-1 22 10"/></svg>
+                    Back to Templates
+                  </button>
+                </div>
+              </template>
+
+              <!-- Live-preview asides (Stage 1 + Stage 2) now live
+                   INSIDE each stage's own template below the title
+                   row, so toggling the preview on one stage doesn't
+                   affect the other and the preview visually drops
+                   beneath the stage header it belongs to. -->
+
+              <div class="qcs-panel__main">
+
+              <!-- Stage 0: Initialize -->
+              <template lwc:if={isStepInit}>
+                <template lwc:if={showPanelTitle}>
+                  <h3 class="qcs-wizard__panel-title">Initialize Comparison Template</h3>
+                </template>
+                <p class="qcs-wizard__panel-sub">
+                  Pick LOB, then LOC, then Root Product to scope this template.
+                </p>
+
+                <!-- LOB + LOC row - 2-column grid matching the RFQ
+                     Setup .rps-scope-grid layout.
+
+                     Hidden when the workspace's pre-builder modal
+                     already captured both picks; a compact summary
+                     chip renders in its place. -->
+                <template lwc:if={showWizardPickers}>
+                  <div class="qcs-init-grid">
+                    <!-- Step 1 - LOB. Always unlocked. -->
+                    <div class="qcs-field">
+                      <span class="qcs-field__label">
+                        Line of Business <abbr class="slds-required" title="required">*</abbr>
+                      </span>
+                      <c-picklist
+                        options={lobOptions}
+                        value={wizardLob}
+                        placeholder="Select Line of Business..."
+                        accessible-label="Line of Business"
+                        onchange={handleLobChange}
+                      ></c-picklist>
+                    </div>
+
+                    <!-- Step 2 - LOC. Disabled until LOB is picked; options
+                         narrow on the picked LOB. Changing LOB resets LOC. -->
+                    <div class="qcs-field">
+                      <span class="qcs-field__label">
+                        Line of Coverage <abbr class="slds-required" title="required">*</abbr>
+                      </span>
+                      <c-picklist
+                        options={locOptions}
+                        value={wizardLoc}
+                        placeholder="Select Line of Coverage..."
+                        accessible-label="Line of Coverage"
+                        disabled={isLocDisabled}
+                        onchange={handleLocChange}
+                      ></c-picklist>
+                    </div>
+                  </div>
+                </template>
+                <template lwc:if={hideWizardPickers}>
+                  <div class="qcs-scope-summary" aria-label="Template scope">
+                    <span class="qcs-scope-summary__row">
+                      <span class="qcs-scope-summary__label">Line of Business</span>
+                      <span class="qcs-scope-summary__value">{seededLobLabel}</span>
+                    </span>
+                    <span class="qcs-scope-summary__sep" aria-hidden="true">·</span>
+                    <span class="qcs-scope-summary__row">
+                      <span class="qcs-scope-summary__label">Line of Coverage</span>
+                      <span class="qcs-scope-summary__value">{seededLocLabel}</span>
+                    </span>
+                  </div>
+                </template>
+
+                <!-- Step 3 - Root Product. Lives in its own block below
+                     the LOB/LOC grid (mirrors the RFQ Setup pattern
+                     where Root Product is separate from .rps-scope-grid).
+                     Disabled until LOC is picked; options narrow on the
+                     LOB+LOC pair. Changing LOB or LOC resets Root Product. -->
+                <div class="qcs-field qcs-field_root-product">
+                  <span class="qcs-field__label">
+                    Root Product <abbr class="slds-required" title="required">*</abbr>
+                  </span>
+                  <c-picklist
+                    options={rootProductOptions}
+                    value={wizardRootProduct}
+                    placeholder="Select Root Product..."
+                    accessible-label="Root Product"
+                    disabled={isRootProductDisabled}
+                    onchange={handleRootProductChange}
+                  ></c-picklist>
+                </div>
+
+              </template>
+
+              <!-- Stage 1: Fixed Summary Widgets -->
+              <template lwc:if={isStepSummary}>
+                <div class="qcs-panel__title-row">
+                  <template lwc:if={showPanelTitle}>
+                    <h3 class="qcs-wizard__panel-title">Fixed Summary Widgets</h3>
+                  </template>
+                  <template lwc:else>
+                    <span aria-hidden="true"></span>
+                  </template>
+                  <template lwc:if={showPreviewToggle}>
+                    <div class="qcs-live-toggle">
+                      <button
+                        type="button"
+                        role="switch"
+                        class={livePreviewToggleClass}
+                        aria-checked={livePreviewAriaChecked}
+                        onclick={handleLivePreviewToggle}
+                      >
+                        <span class="qcs-live-toggle__track" aria-hidden="true">
+                          <span class="qcs-live-toggle__thumb"></span>
+                        </span>
+                        <span class="qcs-live-toggle__label">{livePreviewLabel}</span>
+                      </button>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- Stage 1's live-preview aside. Rendered below the
+                     stage header when the summary toggle is on;
+                     eyebrow header removed - the toggle label
+                     already says what this panel is. -->
+                <template lwc:if={showSummaryPreview}>
+                  <aside class="qcs-preview" aria-label="Comparison preview">
+                    <div class="qcs-preview__region">
+                      <template lwc:if={showHighlightsDetail}>
+                        <div class="qcs-preview__viz">
+                          <span class="qcs-preview__region-tag qcs-preview__region-tag_highlights">Highlights</span>
+                          <div class="qcs-preview__highlights" role="group" aria-label="Pinned highlight widgets">
+                            <template for:each={previewHighlights} for:item="h">
+                              <span key={h.slotIdx} class={h.cls} title={h.label}>{h.label}</span>
+                            </template>
+                          </div>
+                        </div>
+                        <p class="qcs-preview__copy">
+                          <strong>Highlights</strong> are the <strong>fixed metrics</strong> -
+                          the 4 selected widgets render as prominent pinned cards at
+                          the top of the broker&rsquo;s detail panel.
+                        </p>
+                      </template>
+                      <template lwc:else>
+                        <div class="qcs-preview__chip">
+                          <span class="qcs-preview__region-tag qcs-preview__region-tag_highlights">Highlights</span>
+                          <span class="qcs-preview__chip-meta">{highlightsChipLabel}</span>
+                        </div>
+                      </template>
+                    </div>
+
+                    <hr class="qcs-preview__divider" aria-hidden="true" />
+
+                    <div class="qcs-preview__region">
+                      <div class="qcs-preview__chip">
+                        <span class="qcs-preview__region-tag qcs-preview__region-tag_body">Body Fields</span>
+                        <span class="qcs-preview__chip-meta">{bodyChipLabel}</span>
+                      </div>
+                    </div>
+                  </aside>
+                </template>
+
+                <c-attribute-picker
+                  attributes={summaryPickerAttributes}
+                  selected-ids={summaryPickerSelectedIds}
+                  onattrtoggle={handleSummaryPickerToggle}
+                  onselectallchange={handleSummaryPickerSelectAll}
+                ></c-attribute-picker>
+              </template>
+
+              <!-- Stage 2: Metric Selection & Order -->
+              <template lwc:if={isStepMetrics}>
+                <div class="qcs-panel__title-row">
+                  <template lwc:if={showPanelTitle}>
+                    <h3 class="qcs-wizard__panel-title">Metric Selection &amp; Order</h3>
+                  </template>
+                  <template lwc:else>
+                    <span aria-hidden="true"></span>
+                  </template>
+                  <template lwc:if={showPreviewToggle}>
+                    <div class="qcs-live-toggle">
+                      <button
+                        type="button"
+                        role="switch"
+                        class={livePreviewToggleClass}
+                        aria-checked={livePreviewAriaChecked}
+                        onclick={handleLivePreviewToggle}
+                      >
+                        <span class="qcs-live-toggle__track" aria-hidden="true">
+                          <span class="qcs-live-toggle__thumb"></span>
+                        </span>
+                        <span class="qcs-live-toggle__label">{livePreviewLabel}</span>
+                      </button>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- Stage 2's live-preview aside. Rendered below the
+                     stage header when the metrics toggle is on;
+                     Body Fields region is expanded, Highlights
+                     collapse to a chip. -->
+                <template lwc:if={showMetricsPreview}>
+                  <aside class="qcs-preview" aria-label="Comparison preview">
+                    <div class="qcs-preview__region">
+                      <div class="qcs-preview__chip">
+                        <span class="qcs-preview__region-tag qcs-preview__region-tag_highlights">Highlights</span>
+                        <span class="qcs-preview__chip-meta">{highlightsChipLabel}</span>
+                      </div>
+                    </div>
+
+                    <hr class="qcs-preview__divider" aria-hidden="true" />
+
+                    <div class="qcs-preview__region">
+                      <template lwc:if={showBodyDetail}>
+                        <div class="qcs-preview__viz">
+                          <span class="qcs-preview__region-tag qcs-preview__region-tag_body">Body Fields</span>
+                          <ul class="qcs-preview__body">
+                            <template lwc:if={previewBodyEmpty}>
+                              <li class="qcs-preview__body-empty">
+                                Pick metrics on the next step to populate Body Fields.
+                              </li>
+                            </template>
+                            <template for:each={previewBodyFields} for:item="r">
+                              <li key={r.id} class={r.cls}>
+                                <span class="qcs-preview__dot" aria-hidden="true"></span>
+                                <span class="qcs-preview__label">{r.label}</span>
+                              </li>
+                            </template>
+                          </ul>
+                        </div>
+                        <p class="qcs-preview__copy">
+                          <strong>Body Fields</strong> are the <strong>scrolling metrics</strong> -
+                          all remaining selections render as labelled rows below the
+                          Highlights, scrolling vertically as the broker reviews them.
+                        </p>
+                      </template>
+                      <template lwc:else>
+                        <div class="qcs-preview__chip">
+                          <span class="qcs-preview__region-tag qcs-preview__region-tag_body">Body Fields</span>
+                          <span class="qcs-preview__chip-meta">{bodyChipLabel}</span>
+                        </div>
+                      </template>
+                    </div>
+                  </aside>
+                </template>
+
+                <div class="qcs-metrics">
+                  <div class="qcs-metrics__panel">
+                    <ul class="qcs-tabs" role="tablist" aria-label="Metric layers">
+                      <template for:each={metricsTabs} for:item="t">
+                        <li class="qcs-tabs__li" role="presentation" key={t.id}>
+                          <button
+                            type="button"
+                            role="tab"
+                            class={t.cls}
+                            aria-selected={t.ariaSelected}
+                            data-id={t.id}
+                            onclick={handleMetricsTabSelect}
+                          >
+                            {t.label}
+                          </button>
+                        </li>
+                      </template>
+                    </ul>
+
+                    <c-attribute-picker
+                      attributes={currentTabAttributes}
+                      selected-ids={currentTabSelectedIds}
+                      ordering={currentTabOrdering}
+                      enable-reorder
+                      onattrtoggle={handleAttrPickerToggle}
+                      onselectallchange={handleAttrPickerSelectAll}
+                      onattrreorder={handleAttrPickerReorder}
+                      onattrreordermove={handleAttrPickerReorderMove}
+                    ></c-attribute-picker>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Stage 3: Logic & Publish -->
+              <template lwc:if={isStepLogic}>
+                <template lwc:if={showPanelTitle}>
+                  <h3 class="qcs-wizard__panel-title">Logic &amp; Publish</h3>
+                </template>
+
+                <div class="qcs-logic-stack">
+                  <template lwc:if={hasCrossReadWarning}>
+                    <div class="qcs-banner qcs-banner_warning" role="alert">
+                      <span class="qcs-banner__icon" aria-hidden="true">
+                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M51.4 42.5l-22.9-37c-1.2-2-3.8-2-5 0L.6 42.5C-.8 44.8.6 48 3.1 48h45.8c2.5 0 4-3.2 2.5-5.5zM26 40c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm3-9c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1V18c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v13z"/></svg>
+                      </span>
+                      <span class="qcs-banner__copy">
+                        <strong>Configuration alert.</strong>
+                        {crossReadMismatchSubject} inactive in the linked
+                        RFQ template; those columns will be empty at
+                        runtime unless fixed.
+                        <button
+                          type="button"
+                          class="qcs-banner__link"
+                          onclick={handleOpenRfqSetup}
+                        >Open RFQ Setup to fix</button>
+                      </span>
+                    </div>
+                  </template>
+
+                  <div class="qcs-logic-grid">
+                    <div class="qcs-logic-card qcs-logic-card_columns">
+                      <header class="qcs-logic-card__head">
+                        <strong class="qcs-logic-card__title">Quotes shown at once</strong>
+                        <span class="qcs-logic-card__sub">
+                          Start with 2 quote columns, or show every quote received.
+                        </span>
+                      </header>
+                      <div class="qcs-column-picker">
+                        <c-picklist
+                          options={columnLimitOptions}
+                          value={columnLimitValue}
+                          accessible-label="Number of quote columns shown at once"
+                          onchange={handleColumnLimitChange}
+                        ></c-picklist>
+                      </div>
+                    </div>
+
+                    <div class="qcs-logic-card">
+                      <header class="qcs-logic-card__head">
+                        <strong class="qcs-logic-card__title">Attach Agentforce Comparison Analyst Role</strong>
+                        <span class="qcs-logic-card__sub">
+                          When on, Agentforce summarises carrier deltas and
+                          flags anomalies inside the broker comparison view.
+                        </span>
+                      </header>
+                      <button
+                        type="button"
+                        class="qcs-toggle"
+                        role="switch"
+                        aria-checked={agentforceOn}
+                        onclick={handleAgentforceToggle}
+                      >
+                        <template lwc:if={agentforceOn}>
+                          <span class="qcs-toggle__track is-on" aria-hidden="true">
+                            <span class="qcs-toggle__thumb"></span>
+                          </span>
+                          <span class="qcs-toggle__state">On</span>
+                        </template>
+                        <template lwc:else>
+                          <span class="qcs-toggle__track" aria-hidden="true">
+                            <span class="qcs-toggle__thumb"></span>
+                          </span>
+                          <span class="qcs-toggle__state">Off</span>
+                        </template>
+                      </button>
+                    </div>
+
+                    <template lwc:if={agentforceOn}>
+                      <div class="qcs-logic-card">
+                        <header class="qcs-logic-card__head">
+                          <strong class="qcs-logic-card__title">Select Active Agent Module</strong>
+                          <span class="qcs-logic-card__sub">
+                            Routes Agentforce traffic for this template to the
+                            selected agent profile.
+                          </span>
+                        </header>
+
+                        <div class="qcs-field">
+                          <c-picklist
+                            options={agentModuleOptions}
+                            value={agentforceModule}
+                            placeholder="Select agent module..."
+                            accessible-label="Agent module"
+                            onchange={handleAgentModuleChange}
+                          ></c-picklist>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+
+                <!-- The embedded-mode save affordance now lives in the
+                     host workspace footer (Cancel / Previous / Save &
+                     Activate on the final step), which calls this
+                     component's @api save(). -->
+              </template>
+              </div>
+            </section>
+          </div>
+
+          <template lwc:if={showWizardChrome}>
+            <footer class="qcs-wizard__foot">
+              <template lwc:if={showCanvasHead}>
+                <button class="qcs-button qcs-button_neutral" type="button" onclick={handleWizardClose}>
+                  Cancel
+                </button>
+                <span class="qcs-wizard__foot-spacer"></span>
+              </template>
+              <template lwc:if={showPreviousSlot}>
+                <button
+                  class="qcs-button qcs-button_neutral"
+                  type="button"
+                  onclick={handlePrevious}
+                  disabled={previousDisabled}
+                >
+                  Previous
+                </button>
+              </template>
+              <template lwc:if={showModalChrome}>
+                <span class="qcs-wizard__foot-spacer"></span>
+              </template>
+              <button
+                class="qcs-button qcs-button_brand"
+                type="button"
+                onclick={handleNext}
+                disabled={nextDisabled}
+              >
+                {nextLabel}
+              </button>
+            </footer>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>

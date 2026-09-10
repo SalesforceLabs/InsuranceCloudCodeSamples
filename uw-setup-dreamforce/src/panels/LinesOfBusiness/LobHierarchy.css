@@ -1,0 +1,582 @@
+/* LOB → Reconciliation and Normalization → Hierarchy. */
+
+.lob-hier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+
+.lob-hier__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+.lob-hier__head-titles {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.lob-hier__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.25;
+}
+.lob-hier__sub {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+.lob-hier__split {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) 1fr;
+  align-items: stretch;
+  min-height: 480px;
+  gap: var(--slds-g-spacing-4);
+}
+
+.lob-hier__tree {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  border-right: 1px solid var(--slds-g-color-border-1);
+  background: transparent;
+  overflow-x: auto;
+  overflow-y: auto;
+  min-width: 0;
+  padding-right: var(--slds-g-spacing-3);
+}
+.lob-hier__attrs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+  padding: 0;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+/* Read-only attribute tiles in the hierarchy node detail: same visual as the
+ * Line Types & Coverages attribute tiles, but not interactive — no pointer,
+ * no hover fill, no menu. */
+.act-tile--static {
+  cursor: default;
+}
+.act-tile--static:hover {
+  background: transparent;
+  border-color: transparent;
+  border-bottom-color: var(--slds-g-color-border-1);
+}
+
+.lob-hier__col-label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+  padding: 0 4px 4px;
+}
+
+/* Pane header: column label on the left, text-only action on the right.
+ * Used by the Hierarchy and Attributes panes. */
+.lob-hier__pane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  margin-bottom: 4px;
+}
+.lob-hier__pane-head .lob-hier__col-label {
+  padding-bottom: 0;
+}
+
+/* Text-only accent button — same look as .lob-activities__new-btn, but
+ * scoped here so we don't pull in the LOB activities CSS. */
+.lob-hier__text-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.lob-hier__text-btn:hover {
+  color: var(--slds-g-color-accent-2);
+  text-decoration: underline;
+}
+.lob-hier__text-btn:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: 2px;
+}
+
+/* Two-line table header for "Duplication Check". */
+.lob-hier__col-wrap {
+  display: inline-block;
+  line-height: 1.2;
+}
+
+.lob-hier__node-list,
+.lob-hier__node-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Children sit under a guideline that runs from the parent down past
+ * the last child. Each child draws an L-shaped connector that meets the
+ * parent's row. The horizontal stub starts at 16px (matches the
+ * per-depth padding step). */
+.lob-hier__node-children {
+  position: relative;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid var(--slds-g-color-border-1);
+}
+.lob-hier__node-children > li {
+  position: relative;
+}
+.lob-hier__node-children > li::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 0;
+  width: 16px;
+  height: 18px;
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+/* The trunk stops at the last child so it doesn't dangle past the
+ * bottom of the subtree. */
+.lob-hier__node-children > li:last-child::after {
+  content: '';
+  position: absolute;
+  left: -17px;
+  top: 18px;
+  bottom: 0;
+  width: 1px;
+  background: var(--slds-g-color-surface-container-1, white);
+}
+.lob-hier__empty {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+  padding: 12px 4px;
+}
+
+.lob-hier__node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease;
+  min-width: 0;
+}
+.lob-hier__node:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.lob-hier__node--focus {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.lob-hier__node-label {
+  flex: 1 1 auto;
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Single chevron trigger + dropdown menu per node. */
+.lob-hier__node-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+.lob-hier__node-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: var(--slds-g-color-brand-base-95);
+  border: 1px solid var(--slds-g-color-brand-base-90, var(--slds-g-color-border-1));
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  transition: background-color 100ms ease, color 100ms ease,
+    border-color 100ms ease;
+}
+.lob-hier__node-menu-trigger:hover {
+  background: var(--slds-g-color-accent-1);
+  border-color: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-on-accent-1, white);
+}
+.lob-hier__node-menu-trigger:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15);
+}
+.lob-hier__node-menu-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 10;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  box-shadow: var(--slds-g-shadow-2);
+}
+.lob-hier__node-menu-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  text-align: left;
+  cursor: pointer;
+}
+.lob-hier__node-menu-item:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+.lob-hier__node-menu-item--destructive {
+  color: var(--slds-g-color-error-1);
+}
+.lob-hier__node-menu-item--destructive:hover {
+  background: var(--slds-g-color-error-container-1);
+  color: var(--slds-g-color-on-error-container-1);
+}
+
+.lob-hier__attrs-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+.lob-hier__attrs-title {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.lob-hier__attrs-sub {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+.lob-hier__attr-name {
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+/* ── Tree rows (Document-Classification .dc-row visual style) ──── */
+/* Rows stack tight; each .dc-row draws its own bottom rule. */
+.lob-hier__rows {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── Tree grid (Salesforce tree-grid style) ───────────────────── */
+.lob-hier__grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-base);
+}
+.lob-hier__grid thead th {
+  text-align: left;
+  padding: 6px 8px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+  white-space: nowrap;
+}
+.lob-hier__grid-date {
+  width: 92px;
+  color: var(--slds-g-color-on-surface-1);
+  white-space: nowrap;
+}
+.lob-hier__grow {
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+.lob-hier__grow > td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+  vertical-align: middle;
+}
+.lob-hier__grow:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.lob-hier__grow--focus {
+  background: var(--slds-g-color-brand-base-95);
+}
+.lob-hier__grow:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: -2px;
+}
+.lob-hier__gname {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.lob-hier__gname-text {
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lob-hier__gtoggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-on-surface-2);
+  cursor: pointer;
+}
+.lob-hier__gtoggle:hover {
+  background: var(--slds-g-color-surface-container-3);
+}
+.lob-hier__gtoggle--leaf {
+  cursor: default;
+}
+.lob-hier__grid-actions {
+  width: 36px;
+  text-align: right;
+}
+
+/* ── Attribute category sections (SLDS expandable-section) ─────── */
+/* Mirrors lightningdesignsystem.com/components/expandable-section:
+ * a light-grey rounded title bar with a chevron + title, and plain
+ * content below it — no outer border, no body border. */
+.lob-hier__cats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4);
+}
+.lob-hier__cat-head {
+  margin: 0;
+}
+.lob-hier__cat-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--slds-g-color-surface-container-2);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.lob-hier__cat-toggle:hover {
+  background: var(--slds-g-color-surface-container-3);
+}
+.lob-hier__cat-toggle:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: 2px;
+}
+.lob-hier__cat-chevron {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--slds-g-color-on-surface-2);
+  transition: transform 120ms ease;
+  transform: rotate(-90deg);
+}
+.lob-hier__cat--open .lob-hier__cat-chevron {
+  transform: rotate(0deg);
+}
+.lob-hier__cat-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-4);
+  color: var(--slds-g-color-on-surface-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lob-hier__cat-body {
+  padding: var(--slds-g-spacing-2) 2px 0;
+}
+
+/* ── Attribute list (right pane) ──────────────────────────────── */
+/* Activity-style tile grid for attributes. */
+.lob-hier__attr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--slds-g-spacing-2);
+}
+.lob-hier__field-label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+  margin-bottom: 8px;
+}
+.lob-hier__attr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lob-hier__attr-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  padding: 8px 10px;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-1);
+}
+.lob-hier__attr-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.lob-hier__attr-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: var(--slds-g-font-scale-neg-1);
+}
+.lob-hier__attr-alias {
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+.lob-hier__attr-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+.lob-hier__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-on-surface-2);
+  cursor: pointer;
+}
+.lob-hier__icon-btn:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+.lob-hier__icon-btn--destructive:hover {
+  background: var(--slds-g-color-error-container-1);
+  color: var(--slds-g-color-on-error-container-1);
+}
+
+/* ── Source-priority table ────────────────────────────────────── */
+.lob-hier__sources {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-container-1);
+}
+.lob-hier__sources-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+}
+.lob-hier__src-table {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lob-hier__src-row {
+  display: grid;
+  grid-template-columns: 28px minmax(120px, 0.8fr) minmax(0, 1.6fr) 32px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.lob-hier__src-row--head {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+  padding-bottom: 0;
+}
+.lob-hier__src-row--over {
+  background: var(--slds-g-color-brand-base-95);
+  outline: 1px dashed var(--slds-g-color-accent-1);
+}
+.lob-hier__src-grip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--slds-g-color-on-surface-1);
+  cursor: grab;
+}
+.lob-hier__src-grip:active {
+  cursor: grabbing;
+}
+.lob-hier__src-detail {
+  min-width: 0;
+}
+.lob-hier__src-doc {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  min-width: 0;
+}
+.lob-hier__src-muted {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}

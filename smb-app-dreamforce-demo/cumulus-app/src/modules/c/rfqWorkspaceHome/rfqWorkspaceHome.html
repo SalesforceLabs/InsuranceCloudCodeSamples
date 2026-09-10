@@ -1,0 +1,777 @@
+<template>
+  <div class="page" onlaunchagentforce={handleLaunchAgentforce}>
+    <header class="head">
+      <div>
+        <h1 class="title">{appName}</h1>
+        <p class="meta">
+          {accountName} · Effective {effectiveLabel} · Response by {deadlineLabel}
+        </p>
+      </div>
+    </header>
+
+    <!-- ── Global LOC session strip (Hybrid Flow) ─────────────────────
+         Sits between the workspace header and the layout grid so
+         swapping a pill flips BOTH the left-nav pipeline and the
+         main content (each c-rfq-workspace* panel owns its own
+         c-progress-path). Rendered only when 2+ LOC sessions
+         exist on this account bundle. -->
+    <template lwc:if={showSessionStrip}>
+      <ul
+        class="p15-sessions"
+        role="tablist"
+        aria-label="Lines of coverage on this bundle"
+      >
+        <template for:each={sessionTabDisplay} for:item="s">
+          <li
+            class={s.className}
+            key={s.id}
+            id={s.tabDomId}
+            data-id={s.id}
+            role="tab"
+            tabindex="0"
+            aria-selected={s.ariaSelected}
+            aria-controls={s.panelDomId}
+            onclick={handleSessionClick}
+          >
+            <span class="p15-sess__body">
+              <!-- Primary text of the pill (SLDS 2 spec:
+                   .slds-pill__label). State is carried by the pill's
+                   own tint rather than a status subtitle. -->
+              <span class="slds-pill__label p15-sess__loc" title={s.locLabel}>{s.locLabel}</span>
+            </span>
+            <!-- .slds-pill__remove - SLDS 2 pill remove control.
+                 Rendered as a bare SLDS icon-button per the
+                 blueprint's remove-button anatomy. stopPropagation
+                 in the JS handler keeps the parent <li> onclick
+                 (session swap) from firing before the confirm
+                 modal opens. -->
+            <template lwc:if={s.showClose}>
+              <button
+                class="slds-button slds-button_icon slds-button_icon-bare slds-pill__remove p15-sess__close"
+                type="button"
+                data-id={s.id}
+                title="Remove"
+                aria-label="Remove this line of coverage"
+                onclick={handleDeleteLocClick}
+              >
+                <svg class="slds-button__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+                <span class="slds-assistive-text">Remove</span>
+              </button>
+            </template>
+          </li>
+        </template>
+      </ul>
+    </template>
+
+    <div class="layout">
+      <c-progress-path
+        active-step={activeStep}
+        step-defs={homeStepDefs}
+        onstepselect={handleStepSelect}
+      ></c-progress-path>
+
+      <main
+        class="workspace"
+        id={workspacePanelId}
+        role={workspacePanelRole}
+        aria-labelledby={workspacePanelLabelledBy}
+      >
+        <!-- ── GUIDED RFQ WIZARD ──────────────────────────────────────── -->
+        <template lwc:if={isWizard}>
+          <!-- ── STEP 1: Property & Contents ──────────────────────────── -->
+          <template lwc:if={isOnPropertyStep}>
+            <section class={propertySectionClass} data-step="property">
+              <div class="card-surface">
+                <!-- Global action header: primary "Add Asset" CTA is
+                     pulled inline next to the title so the two read as a
+                     single "here is the section and here is the way to
+                     act on it" pair. Subtitle stays on the row below,
+                     aligned under the title. -->
+                <div class="asset-tree-head slds-p-bottom_medium">
+                  <div class="asset-tree-head__title-row">
+                    <h2>Schedule of Property ({dwellingsCount})</h2>
+                    <button
+                      class="slds-button slds-button_brand asset-tree-head__button"
+                      type="button"
+                      onclick={handleAddAsset}
+                    >
+                      Add Asset
+                    </button>
+                  </div>
+                  <p>{scheduleSubtitle}</p>
+                </div>
+
+                <div class="asset-tree-wrap">
+                  <c-hom-asset-tree
+                    mode="roster"
+                    dwellings={dwellingRows}
+                    scheduled-items={scheduledItemRows}
+                    homeowners={homeownerRows}
+                    onaddscheduleditemrequest={handleAddScheduledItem}
+                    oneditdwellingrequest={handleEditDwellingRequest}
+                    onremovedwellingrequest={handleRemoveDwellingRequest}
+                    oneditscheduleditemrequest={handleEditScheduledItemRequest}
+                    onremovescheduleditemrequest={handleRemoveScheduledItemRequest}
+                    onedithomeownerrequest={handleEditHomeownerRequest}
+                    onremovehomeownerrequest={handleRemoveHomeownerRequest}
+                  ></c-hom-asset-tree>
+                </div>
+
+                <footer class="continue-row">
+                  <template lwc:if={hasPreviousStep}>
+                    <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                      Previous
+                    </button>
+                  </template>
+                  <div class="continue-row__actions">
+                    <button class="ghost" onclick={handleSaveAsDraft} type="button">
+                      Save as Draft
+                    </button>
+                    <button class="ghost" onclick={handleClose} type="button">
+                      Close
+                    </button>
+                    <button
+                      class="continue"
+                      onclick={confirmProperty}
+                      type="button"
+                      disabled={continuePropertyDisabled}
+                    >
+                      Proceed
+                    </button>
+                  </div>
+                </footer>
+              </div>
+            </section>
+          </template>
+
+          <!-- ── STEP 2: Configure Coverages ─────────────────────────── -->
+          <template lwc:if={isOnCoveragesStep}>
+            <section class={coveragesSectionClass} data-step="coverages">
+              <div class="card-surface">
+                <header class="block-head">
+                  <div>
+                    <h2>
+                      <span class="step-mark">2</span>
+                      Configure Coverages
+                    </h2>
+                    <p>
+                      Dwelling, Personal Property and Loss of Use attach to
+                      the property and carry their own limit and deductible.
+                      Other Structures rides the dwelling deductible, so it
+                      takes a limit only. Personal Liability and Med Pay to
+                      Others are written at the policy level.
+                    </p>
+                  </div>
+                </header>
+
+                <c-hom-coverage-setup
+                  coverage-ranges={coverageRanges}
+                  oncoveragerangechange={handleCoverageRangeChange}
+                ></c-hom-coverage-setup>
+
+                <footer class="continue-row">
+                  <template lwc:if={hasPreviousStep}>
+                    <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                      Previous
+                    </button>
+                  </template>
+                  <div class="continue-row__actions">
+                    <button class="ghost" onclick={handleSaveAsDraft} type="button">
+                      Save as Draft
+                    </button>
+                    <button class="ghost" onclick={handleClose} type="button">
+                      Close
+                    </button>
+                    <button class="continue" onclick={confirmCoverages} type="button">
+                      Proceed
+                    </button>
+                  </div>
+                </footer>
+              </div>
+            </section>
+          </template>
+
+          <!-- ── STEP 3: Review & Submit ─────────────────────────────── -->
+          <template lwc:if={isOnReviewStep}>
+            <section class="block" data-step="review">
+              <div class="card-surface review-card">
+                <div class="review-head">
+                  <h2>
+                    <span class="step-mark">3</span>
+                    Review &amp; Submit
+                  </h2>
+                  <span class="status-pill ready">Ready</span>
+                </div>
+
+                <!-- Bundle Review tab bar: renders when the broker
+                     has 2+ LOCs on the same account. Reuses .p15-sess
+                     pill anatomy so the top-of-workspace strip and
+                     this Review-scoped strip visually rhyme. Click
+                     handling flips isReviewingSelf and swaps the
+                     card content below. -->
+                <template lwc:if={showBundleReviewTabs}>
+                  <ul class="bundle-review-tabs" role="tablist" aria-label="Bundle review">
+                    <template for:each={bundleReviewTabs} for:item="t">
+                      <li
+                        key={t.id}
+                        class={t.className}
+                        role="tab"
+                        aria-selected={t.isActive}
+                        tabindex="0"
+                        data-tab-id={t.id}
+                        onclick={handleReviewTabClick}
+                        onkeydown={handleReviewTabClick}
+                      >
+                        <span class="p15-sess__body">
+                          <span class="p15-sess__loc">{t.locLabel}</span>
+                        </span>
+                      </li>
+                    </template>
+                  </ul>
+                </template>
+
+                <!-- Local review content (self's LOC). Skipped when
+                     the broker is viewing a sibling in the tab bar
+                     above. -->
+                <template lwc:if={isReviewingSelf}>
+                <!--
+                  Quote Details - read-only summary rendered as a
+                  progressive-disclosure accordion so Review stays
+                  scannable on long RFQs. Each section carries a
+                  high-level count / rollup in the summary line and
+                  reveals the granular key/value pairs (or roster
+                  table) on expand. Application Details is open by
+                  default because it carries the highest-signal
+                  context (effective range + LOC); the rest surface
+                  just their count until the broker chooses to inspect.
+                -->
+                  <div class="review-accordion">
+                    <details
+                      class="review-acc"
+                      data-section="policyDetails"
+                      open={isPolicyDetailsOpen}
+                      ontoggle={handleReviewSectionToggle}
+                    >
+                      <summary class="review-acc__head">
+                        <svg
+                          class="review-acc__caret"
+                          viewBox="0 0 52 52"
+                          fill="currentColor"
+                          aria-hidden="true"
+                          focusable="false"
+                        ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+                        <span class="review-acc__title">Application Details</span>
+                        <span class="review-acc__meta">{policyDetailsSummary}</span>
+                      </summary>
+                      <div class="review-acc__body">
+                        <dl class="quote-details__highlights">
+                          <template for:each={quoteDetailsHighlights} for:item="h">
+                            <div key={h.key} class="quote-details__item">
+                              <dt class="quote-details__term">{h.label}</dt>
+                              <dd class="quote-details__value">
+                                <!--
+                                  Editable date rows: read-only text +
+                                  pencil, swapping to a native
+                                  <input type="date"> once the broker
+                                  clicks the pencil. Only Policy Start /
+                                  End carry `isEditable`; Application ID,
+                                  Application Name, Line of Coverage and
+                                  Prior Policy fall through to the plain
+                                  read-only branch below.
+                                -->
+                                <template lwc:if={h.isEditable}>
+                                  <template lwc:if={h.isEditing}>
+                                    <c-date-input
+                                      class="quote-details__date-input"
+                                      data-field={h.dateField}
+                                      value={h.dateInputValue}
+                                      size="s"
+                                      onchange={handlePolicyDateChange}
+                                      onblur={handlePolicyDateBlur}
+                                      onkeydown={handlePolicyDateKeydown}
+                                    ></c-date-input>
+                                  </template>
+                                  <template lwc:else>
+                                    <span class="quote-details__value-row">
+                                      <span class="quote-details__value-text">{h.value}</span>
+                                      <button
+                                        type="button"
+                                        class="quote-details__pencil"
+                                        data-field={h.dateField}
+                                        onclick={handleEditPolicyDate}
+                                        title="Edit"
+                                        aria-label="Edit"
+                                      >
+                                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                                      </button>
+                                    </span>
+                                  </template>
+                                </template>
+
+                                <template lwc:else>
+                                  <span class="quote-details__value-text">{h.value}</span>
+                                </template>
+                              </dd>
+                            </div>
+                          </template>
+                        </dl>
+                        <!--
+                          "See Base Policy" CTA. Deliberately a sibling
+                          of the <dl> rather than a child of the Prior
+                          Policy <dd>: inside the cell it inherits
+                          column 3's left edge and reads as a stray link
+                          floating at the card's right side. As a block
+                          under the grid it lines up with the grid's own
+                          left edge - the same edge as the Application
+                          ID / Policy Start column. Matches
+                          c-rfq-workspace.
+                        -->
+                        <template lwc:if={showBasePolicyCta}>
+                          <button
+                            type="button"
+                            class="base-policy-link"
+                            onclick={openBasePolicyModal}
+                          >See Base Policy</button>
+                        </template>
+                      </div>
+                    </details>
+
+                    <details
+                      class="review-acc"
+                      data-section="dwellings"
+                      open={isDwellingsSectionOpen}
+                      ontoggle={handleReviewSectionToggle}
+                    >
+                      <summary class="review-acc__head">
+                        <svg
+                          class="review-acc__caret"
+                          viewBox="0 0 52 52"
+                          fill="currentColor"
+                          aria-hidden="true"
+                          focusable="false"
+                        ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+                        <span class="review-acc__title">Schedule of Dwellings</span>
+                        <span class="review-acc__meta">{dwellingCountLabel}</span>
+                        <!-- Pencil-edit → goToStep('property'). -->
+                        <button
+                          type="button"
+                          class="review-acc__pencil"
+                          onclick={handleEditDwellings}
+                          title="Edit schedule of dwellings"
+                          aria-label="Edit schedule of dwellings"
+                        >
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                        </button>
+                      </summary>
+                      <div class="review-acc__body">
+                        <table class="quote-details__table">
+                          <thead>
+                            <tr>
+                              <th>Address</th>
+                              <th>Year Built</th>
+                              <th>Construction</th>
+                              <th>Replacement Cost</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <template for:each={quoteDetailsDwellings} for:item="d">
+                              <tr key={d.id}>
+                                <td>{d.address}</td>
+                                <td>{d.yearBuilt}</td>
+                                <td>{d.construction}</td>
+                                <td>{d.replacementCostDisplay}</td>
+                              </tr>
+                            </template>
+                          </tbody>
+                        </table>
+                      </div>
+                    </details>
+
+                    <template lwc:if={hasHomeownersForReview}>
+                      <details
+                        class="review-acc"
+                        data-section="homeowners"
+                        open={isHomeownersSectionOpen}
+                        ontoggle={handleReviewSectionToggle}
+                      >
+                        <summary class="review-acc__head">
+                          <svg
+                            class="review-acc__caret"
+                            viewBox="0 0 52 52"
+                            fill="currentColor"
+                            aria-hidden="true"
+                            focusable="false"
+                          ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+                          <span class="review-acc__title">Schedule of Homeowners</span>
+                          <span class="review-acc__meta">{homeownerCountLabel}</span>
+                          <!-- Pencil-edit → goToStep('property'). -->
+                          <button
+                            type="button"
+                            class="review-acc__pencil"
+                            onclick={handleEditHomeowners}
+                            title="Edit schedule of homeowners"
+                            aria-label="Edit schedule of homeowners"
+                          >
+                            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                          </button>
+                        </summary>
+                        <div class="review-acc__body">
+                          <table class="quote-details__table">
+                            <thead>
+                              <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>DOB</th>
+                                <th>Marital Status</th>
+                                <th>Prior Carrier</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <template for:each={quoteDetailsHomeowners} for:item="h">
+                                <tr key={h.id}>
+                                  <td>{h.firstName}</td>
+                                  <td>{h.lastName}</td>
+                                  <td>{h.dobDisplay}</td>
+                                  <td>{h.maritalStatus}</td>
+                                  <td>{h.priorCarrier}</td>
+                                </tr>
+                              </template>
+                            </tbody>
+                          </table>
+                        </div>
+                      </details>
+                    </template>
+
+                    <template lwc:if={hasScheduledItemsForReview}>
+                      <details
+                        class="review-acc"
+                        data-section="scheduledItems"
+                        open={isScheduledItemsSectionOpen}
+                        ontoggle={handleReviewSectionToggle}
+                      >
+                        <summary class="review-acc__head">
+                          <svg
+                            class="review-acc__caret"
+                            viewBox="0 0 52 52"
+                            fill="currentColor"
+                            aria-hidden="true"
+                            focusable="false"
+                          ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+                          <span class="review-acc__title">Scheduled Personal Property</span>
+                          <span class="review-acc__meta">{scheduledItemsCountLabel}</span>
+                          <!-- Pencil-edit → goToStep('property'). -->
+                          <button
+                            type="button"
+                            class="review-acc__pencil"
+                            onclick={handleEditScheduledItems}
+                            title="Edit scheduled personal property"
+                            aria-label="Edit scheduled personal property"
+                          >
+                            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                          </button>
+                        </summary>
+                        <div class="review-acc__body">
+                          <table class="quote-details__table">
+                            <thead>
+                              <tr>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Appraised Value</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <template for:each={quoteDetailsScheduledItems} for:item="s">
+                                <tr key={s.id}>
+                                  <td>{s.name}</td>
+                                  <td>{s.category}</td>
+                                  <td>{s.appraisedDisplay}</td>
+                                </tr>
+                              </template>
+                            </tbody>
+                          </table>
+                        </div>
+                      </details>
+                    </template>
+
+                    <details
+                      class="review-acc"
+                      data-section="coverages"
+                      open={isCoveragesSectionOpen}
+                      ontoggle={handleReviewSectionToggle}
+                    >
+                      <summary class="review-acc__head">
+                        <svg
+                          class="review-acc__caret"
+                          viewBox="0 0 52 52"
+                          fill="currentColor"
+                          aria-hidden="true"
+                          focusable="false"
+                        ><path d="M18 8l16.7 17c.4.4.4 1.1 0 1.5L18 43.5c-.4.4-1 .4-1.4 0l-1.9-1.9c-.4-.4-.4-1 0-1.4L28.7 26 14.7 11.8c-.4-.4-.4-1 0-1.4L16.6 8.5c.4-.5 1-.5 1.4-.5z"/></svg>
+                        <span class="review-acc__title">Policy Coverages</span>
+                        <span class="review-acc__meta">{coverageSectionSummary}</span>
+                        <!-- Pencil-edit → goToStep('coverages'). -->
+                        <button
+                          type="button"
+                          class="review-acc__pencil"
+                          onclick={handleEditPolicyCoverages}
+                          title="Edit policy coverages"
+                          aria-label="Edit policy coverages"
+                        >
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                        </button>
+                      </summary>
+                      <div class="review-acc__body">
+                        <ul class="review-cov-list">
+                          <template for:each={reviewPolicyCoverages} for:item="c">
+                            <li key={c.key} class={c.rowClass}>
+                              <span class="review-cov__name">{c.label}</span>
+                              <span class="review-cov__status">{c.statusLabel}</span>
+                              <template lwc:if={c.detailLine}>
+                                <span class="review-cov__detail">{c.detailLine}</span>
+                              </template>
+                            </li>
+                          </template>
+                        </ul>
+                      </div>
+                    </details>
+                  </div>
+                </template>
+
+                <!-- Sibling LOC preview (read-only). Renders when
+                     the broker clicked another LOC's pill in the
+                     tab bar above. Same c-loc-review-panel that
+                     Auto uses; switches layout on locKind. -->
+                <template lwc:if={activeSiblingPayload}>
+                  <c-loc-review-panel
+                    payload={activeSiblingPayload}
+                  ></c-loc-review-panel>
+                </template>
+
+                <!-- Target-market picker + Agentforce routing input used
+                     to live here so a broker could submit straight to
+                     carriers from Review. In the Multi-LOC bundle model
+                     those pickers now live on the Submission Board, where
+                     the broker chooses carriers per-bundle instead of per-
+                     RFQ. Review keeps the content read-only and branches
+                     the broker into "add another LOC" vs. "route the
+                     bundle" via the highlighted footer below. -->
+
+                <footer class="review-footer">
+                  <template lwc:if={hasPreviousStep}>
+                    <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                      Previous
+                    </button>
+                  </template>
+                  <div class="review-footer__actions">
+                    <button class="ghost" onclick={handleOpenAddLob} type="button">
+                      + Add Another Line of Coverage
+                    </button>
+                    <button class="continue solid" onclick={handleSaveToBoard} type="button">
+                      Add to Submission Board
+                    </button>
+                  </div>
+                </footer>
+              </div>
+            </section>
+          </template>
+        </template>
+
+        <!-- ── SUBMITTED VIEW ─────────────────────────────────────────── -->
+        <template lwc:if={isSubmitted}>
+          <section class="submitted-page">
+            <div class="submitted-check" aria-hidden="true">
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+            </div>
+            <div class="submitted-eyebrow">RFQ PUBLISHED · ASYNC RESPONSE</div>
+            <h2 class="submitted-title">RFQ Submitted successfully</h2>
+            <p class="submitted-sub">
+              You can safely close this window. Agentforce will notify you
+              via Slack when quotes are returned.
+            </p>
+            <div class="submitted-meta">
+              <span class="submitted-meta-row">
+                <strong>Application</strong> {appName}
+              </span>
+              <span class="submitted-meta-row">
+                <strong>Insured</strong> {accountName}
+              </span>
+              <span class="submitted-meta-row">
+                <strong>Sent to</strong> {selectedMarketsLabel}
+              </span>
+            </div>
+            <footer class="submitted-foot">
+              <button class="brand solid" type="button" onclick={handleReturnToDashboard}>
+                Return to Account
+              </button>
+            </footer>
+          </section>
+        </template>
+      </main>
+    </div>
+
+
+    <!-- Two-step Add Asset picker: Step 1 Property vs Homeowner cards,
+         Step 2 the matching form. Fired by the root-level "Add Asset"
+         button. -->
+    <c-hom-add-asset-modal
+      open={addAssetModalOpen}
+      options={assetPickerOptions}
+      available-dwellings={availableDwellingsForLookup}
+      available-homeowners={availableHomeownersForLookup}
+      onsave={handleAddAssetModalSave}
+      oncancel={handleAddAssetModalCancel}
+    ></c-hom-add-asset-modal>
+
+    <!-- Standalone dwelling modal - kept for the Edit Dwelling path
+         (row overflow menu). Add path routes through
+         c-hom-add-asset-modal above. -->
+    <c-hom-dwelling-modal
+      open={dwellingModalOpen}
+      dwelling={editingDwelling}
+      available-dwellings={availableDwellingsForLookup}
+      onsave={handleDwellingModalSave}
+      oncancel={handleDwellingModalCancel}
+    ></c-hom-dwelling-modal>
+
+    <!-- Standalone homeowner modal - kept for the Edit Homeowner path
+         (row overflow menu). Add path routes through
+         c-hom-add-asset-modal above. -->
+    <c-hom-homeowner-modal
+      open={homeownerModalOpen}
+      homeowner={editingHomeowner}
+      available-homeowners={availableHomeownersForLookup}
+      onsave={handleHomeownerModalSave}
+      oncancel={handleHomeownerModalCancel}
+    ></c-hom-homeowner-modal>
+
+    <!-- Add / Edit Scheduled Personal Property modal. -->
+    <c-hom-scheduled-item-modal
+      open={scheduledItemModalOpen}
+      item={editingScheduledItem}
+      dwelling-name={pendingScheduledDwellingName}
+      available-items={availableScheduledItemsForLookup}
+      onsave={handleScheduledItemModalSave}
+      oncancel={handleScheduledItemModalCancel}
+    ></c-hom-scheduled-item-modal>
+
+    <!-- See Base Policy modal - visibility gated by hasPriorPolicy. -->
+    <template lwc:if={basePolicyModalOpen}>
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="home-base-policy-heading"
+        class="slds-modal slds-fade-in-open slds-modal_medium"
+        onclick={handleBasePolicyBackdrop}
+      >
+        <div class="slds-modal__container base-policy-modal__container" onclick={stopBasePolicyPropagation}>
+          <header class="slds-modal__header base-policy-modal__head">
+            <button
+              class="slds-button slds-button_icon slds-modal__close"
+              type="button"
+              title="Close"
+              aria-label="Close this window"
+              onclick={closeBasePolicyModal}
+            >
+              <svg stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+            </button>
+            <h1 id="home-base-policy-heading" class="slds-modal__title base-policy-modal__title">Base Policy</h1>
+            <p class="base-policy-modal__meta">The incumbent homeowners policy used to create this RFQ</p>
+          </header>
+
+          <div class="slds-modal__content base-policy-modal__body">
+            <dl class="base-policy-modal__grid">
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Prior Carrier</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.carrier}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Policy Number</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.number}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Annual Premium</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.premium}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">{priorPolicyDetails.fourthLabel}</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.fourthValue}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <footer class="slds-modal__footer base-policy-modal__foot">
+            <button class="slds-button slds-button_neutral" type="button" onclick={closeBasePolicyModal}>
+              Close
+            </button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- ── Delete-LOC confirmation modal ─────────────────────────────
+         Fired by the × button on any pill in the session strip. Header
+         names the LOC, body prompts on tab closure and (when the LOC
+         has captured content) shows an SLDS warning banner summarizing
+         what will be discarded. Confirm dispatches `tabclose` which
+         c-app listens for via c-account-record-page; Cancel just
+         closes the modal without side effects. -->
+    <template lwc:if={_deleteLocOpen}>
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="home-delete-loc-heading"
+        class="slds-modal slds-fade-in-open slds-modal_small p15-delete-modal"
+        onclick={handleDeleteLocCancel}
+      >
+        <div class="slds-modal__container p15-delete-modal__container" onclick={stopDeleteLocPropagation}>
+          <header class="slds-modal__header p15-delete-modal__head">
+            <button
+              class="slds-button slds-button_icon slds-modal__close"
+              type="button"
+              title="Close"
+              aria-label="Close this window"
+              onclick={handleDeleteLocCancel}
+            >
+              <svg stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+            </button>
+            <h1 id="home-delete-loc-heading" class="slds-modal__title p15-delete-modal__title">{_deleteLocHeading}</h1>
+          </header>
+
+          <div class="slds-modal__content p15-delete-modal__body">
+            <template lwc:if={_deleteLocWarningText}>
+              <div class="p15-delete__warning" role="alert">
+                <span class="p15-delete__warning-icon" aria-hidden="true">
+                  <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M26 4L1.6 46.4c-.3.6.1 1.4.9 1.4h48.9c.7 0 1.2-.8.9-1.4L28.1 4c-.4-.8-1.5-.8-2.1 0zM28 40h-4v-4h4v4zm0-8h-4V20h4v12z"/></svg>
+                </span>
+                <span class="p15-delete__warning-text">{_deleteLocWarningText}</span>
+              </div>
+            </template>
+            <p class="p15-delete-modal__prompt">
+              Please confirm you wish to close this line of coverage. You can add a new line of coverage for this RFQ at any time from the RFQ tab in your account.
+            </p>
+          </div>
+
+          <footer class="slds-modal__footer p15-delete-modal__foot">
+            <button
+              class="slds-button slds-button_neutral"
+              type="button"
+              onclick={handleDeleteLocCancel}
+            >Cancel</button>
+            <button
+              class="slds-button slds-button_brand p15-delete-modal__confirm"
+              type="button"
+              onclick={handleDeleteLocConfirm}
+            >Confirm Delete</button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Docked Agentforce side panel. -->
+    <c-agentforce-panel lwc:ref="agentforcePanel"></c-agentforce-panel>
+  </div>
+</template>

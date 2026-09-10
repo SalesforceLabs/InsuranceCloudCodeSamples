@@ -1,0 +1,86 @@
+/* ============================================================
+ * SLDS 2 — Token Compatibility Shim
+ * ------------------------------------------------------------
+ * Real SLDS 2 globals + component hooks come from the package
+ * `@salesforce-ux/design-system-2`, imported once in main.tsx
+ * via `dist/css/bundled/slds2.cosmos.css`. That file defines
+ * every authoritative `--slds-g-*` and `--slds-c-*` value.
+ *
+ * This file only patches a handful of legacy names this app
+ * was built against before we switched to the real package.
+ * Do not add new tokens here — extend the SLDS 2 package or
+ * use the existing real tokens directly.
+ * ============================================================ */
+:root {
+  /* Border roles — real SLDS 2 names are border-1 / border-2
+   * (without -base). Map legacy names this app uses to those. */
+  --slds-g-color-border-base-1: var(--slds-g-color-border-1);
+  --slds-g-color-border-base-2: var(--slds-g-color-border-2);
+  --slds-g-color-border-base-3: var(--slds-g-color-border-2);
+
+  /* Accent role aliases used by older code. These DO exist in
+   * the package; left as no-ops via self-reference for clarity. */
+  /* --slds-g-color-accent-{1,2,3} — already defined upstream */
+  /* --slds-g-color-on-accent-1 — already defined upstream */
+  /* --slds-g-color-accent-container-1 — already defined upstream */
+  /* --slds-g-color-on-accent-container-1 — already defined upstream */
+
+  /* Status containers — real SLDS 2 names */
+  /* --slds-g-color-{success,warning,error,info}-container-1 — defined upstream */
+
+  /* Palette used by a few inline styles. Map to real palette. */
+  --slds-g-color-palette-neutral-100: var(--slds-g-color-neutral-base-100);
+  --slds-g-color-palette-neutral-95: var(--slds-g-color-neutral-base-95);
+  --slds-g-color-palette-neutral-97: #f3f3f3;
+  --slds-g-color-palette-neutral-90: var(--slds-g-color-neutral-base-90);
+  --slds-g-color-palette-neutral-70: var(--slds-g-color-neutral-base-70);
+  --slds-g-color-palette-cloud-blue-97: #eaf5ff;
+  --slds-g-color-palette-cloud-blue-95: var(--slds-g-color-brand-base-95);
+  --slds-g-color-palette-cloud-blue-90: var(--slds-g-color-brand-base-90);
+  --slds-g-color-palette-cloud-blue-20: var(--slds-g-color-brand-base-20);
+
+  /* Shadow + focus — real names are --slds-g-shadow-{1..6} (no
+   * built-in focus-ring shadow; focus styling is per-component). */
+  --slds-g-shadow-overlay-1: var(--slds-g-shadow-4);
+  --slds-g-shadow-focus-ring:
+    0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-accent-1);
+  --slds-g-color-focus-1: var(--slds-g-color-accent-1);
+  --slds-g-color-focus-2: var(--slds-g-color-accent-container-1);
+
+  /* Sizing controls used by component CSS. Real SLDS 2 uses
+   * `--slds-g-sizing-{N}` for control heights too. */
+  --slds-g-sizing-control-1: var(--slds-g-sizing-5);   /* 1.5rem  */
+  --slds-g-sizing-control-2: var(--slds-g-sizing-6);   /* 1.75rem */
+  --slds-g-sizing-control-3: var(--slds-g-sizing-7);   /* 2rem    */
+  --slds-g-sizing-control-4: var(--slds-g-sizing-9);   /* 2.5rem  */
+  --slds-g-sizing-control-5: var(--slds-g-sizing-11);  /* 3rem    */
+
+  /* Letter-spacing convenience tokens (not in package) */
+  --slds-g-font-letterspacing-wide: 0.04em;
+  --slds-g-font-letterspacing-wider: 0.06em;
+
+  /* Motion tokens (some in package, some app-local) */
+  --slds-g-duration-fast: 100ms;
+  --slds-g-duration-base: 200ms;
+  --slds-g-duration-slow: 320ms;
+  --slds-g-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --slds-g-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+
+  /* Z-index — defined locally; SLDS 2 leaves these to the app */
+  --slds-g-z-index-dropdown: 100;
+  --slds-g-z-index-sticky: 500;
+  --slds-g-z-index-overlay: 1000;
+  --slds-g-z-index-modal: 6000;
+  --slds-g-z-index-toast: 9000;
+
+  /* On-surface and disabled — defined upstream as
+   * --slds-g-color-on-surface-{1,2,3} and on-surface-disabled-1.
+   * Legacy alias we used: */
+  --slds-g-color-on-surface-disabled: var(--slds-g-color-disabled-1);
+
+  /* App-local: a couple of legacy spacing/font names this code
+   * referenced before the audit. Map to real SLDS 2 values. */
+  --slds-g-font-scale-neg-3: 0.6875rem;
+  --slds-g-font-family-display: var(--slds-g-font-family-base);
+}

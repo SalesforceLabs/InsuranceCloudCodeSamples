@@ -1,0 +1,271 @@
+/* Global-header notification tray - SLDS 2 Popover blueprint.
+   Placement is owned by the host page (it knows where the bell sits);
+   this sheet owns the popover's size and internals. */
+
+:host {
+  display: block;
+}
+
+/* Same reason as the popover anatomy below: the global sheet cannot reach
+   into this shadow root, so the visually-hidden utility is redeclared here. */
+.slds-assistive-text {
+  position: absolute;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+  white-space: nowrap;
+}
+
+/* SLDS 2 Popover anatomy, reimplemented locally. Components here render
+   into native shadow roots, so the global SLDS sheet does not reach the
+   markup and `slds-popover` carries intent only - same arrangement as
+   `slds-badge` in c-account-rfq-list. The shadow matches the sibling
+   Setup Menu popover so the two read as one family.
+
+   Width is set here rather than taking SLDS's 14rem default, which is
+   sized for tooltip-scale content: a notification needs room for a
+   title, a body line and a timestamp. */
+.nt {
+  position: relative;
+  width: 24rem;
+  max-width: calc(100vw - var(--slds-g-spacing-6, 2rem));
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  box-shadow: 0 2px 12px rgba(24, 24, 24, 0.16);
+}
+.nt:focus {
+  outline: none;
+}
+.nt:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+
+/* Nubbin. SLDS pins the top-right variant 1.5rem from the trailing edge;
+   the bell sits further in than that, so the host page passes the real
+   distance and the nubbin tracks it. */
+.nt.slds-nubbin_top-right::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: var(--nt-nubbin-inset, 1.5rem);
+  width: 8px;
+  height: 8px;
+  transform: translateX(50%) rotate(45deg);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-left: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+.nt__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.nt__heading {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.nt__mark {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+}
+
+.nt__mark:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.nt__mark:disabled {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: default;
+}
+
+/* Rows run edge to edge so the hover wash reads as a full-width target,
+   so the body's own padding is removed and rows carry it instead. */
+.nt__body {
+  padding: 0;
+  max-height: 26rem;
+  overflow-y: auto;
+  /* The last row's hover wash would otherwise square off the popover's
+     bottom corners, since it paints over the rounded border box. */
+  border-bottom-left-radius: var(--slds-g-radius-border-2, 0.5rem);
+  border-bottom-right-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+.nt__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nt__item + .nt__item {
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+/* Each <li> animates only on the render that creates it. Keyed
+   for:each reuses the DOM for items already in the list, so an
+   arriving quote slides in on its own without replaying the rest. */
+.nt__item {
+  animation: nt-item-in 240ms ease-out both;
+}
+
+@keyframes nt-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nt__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nt__row:focus {
+  outline: none;
+}
+.nt__row:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: -2px;
+}
+
+.nt__row:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.nt__item_unread .nt__row {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+
+.nt__item_unread .nt__row:hover {
+  background: var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+
+.nt__figure {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-10, 3rem);
+  height: var(--slds-g-sizing-10, 3rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+}
+
+.nt__glyph {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+}
+
+.nt__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.nt__title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.nt__text {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* SLDS 2 text link. slds-notification__target is the action inside
+   a notification; restyled locally because the global sheet does
+   not reach this shadow root. */
+.nt__cta {
+  align-self: flex-start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+}
+.nt__cta:hover {
+  text-decoration: underline;
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.nt__cta:focus {
+  outline: none;
+}
+.nt__cta:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 0.125rem;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+.nt__time {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.nt__dot {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-3, 0.5rem);
+  height: var(--slds-g-sizing-3, 0.5rem);
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-accent-1, #066afe);
+}
+
+.nt__empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-5, 1.5rem) var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nt__item {
+    animation: none;
+  }
+}

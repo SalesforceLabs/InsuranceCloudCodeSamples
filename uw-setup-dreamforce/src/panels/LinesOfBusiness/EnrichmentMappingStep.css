@@ -1,0 +1,552 @@
+/* Enrichment Definition wizard — Field Mapping step.
+ * Three columns: node tree · attribute · field. */
+
+.emap {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 0;
+  min-width: 0;
+  min-height: 420px;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-1);
+  overflow: hidden;
+}
+/* Request / Response mapping add an endpoint-selector column on the left. */
+.emap--with-endpoints {
+  grid-template-columns: 220px 280px 1fr;
+}
+
+/* ── Column 0: endpoint selector ─────────────────────────────────── */
+.emap__endpoints {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid var(--slds-g-color-border-1);
+  background: var(--slds-g-color-surface-container-1);
+}
+.emap__endpoint-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  overflow-y: auto;
+}
+.emap__endpoint-empty {
+  padding: 12px 8px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+  line-height: 1.4;
+}
+.emap__endpoint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  min-width: 0;
+  transition: background-color 100ms ease, border-color 100ms ease;
+}
+.emap__endpoint:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.emap__endpoint--active {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.emap__endpoint-name {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Step wrapper: "Map using" selector above the mapping body. */
+.emap-step {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.emap-mode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.emap-mode__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+.emap-mode__toggle {
+  display: inline-flex;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  overflow: hidden;
+}
+.emap-mode__opt {
+  padding: 6px 16px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-5);
+  color: var(--slds-g-color-on-surface-2);
+  background: var(--slds-g-color-surface-1);
+  border: none;
+  cursor: pointer;
+}
+.emap-mode__opt + .emap-mode__opt {
+  border-left: 1px solid var(--slds-g-color-border-1);
+}
+.emap-mode__opt--active {
+  color: var(--slds-g-color-on-accent-1);
+  background: var(--slds-g-color-accent-1);
+}
+
+/* Apex Class body — a single labelled dropdown in lieu of the mapping table. */
+.emap-apex {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 420px;
+  padding: 20px;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-1);
+}
+.emap-apex__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+.emap-apex .slds2-dropdown {
+  max-width: 360px;
+}
+.emap-apex__hint {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* ── Column 1: node tree ───────────────────────────────────────────── */
+.emap__tree {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid var(--slds-g-color-border-1);
+  background: var(--slds-g-color-surface-1);
+}
+.emap__tree-head {
+  padding: 12px 14px 8px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+.emap__tree-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 8px 8px;
+}
+
+.emap__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 12px 8px;
+  padding: 6px 10px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  color: var(--slds-g-color-on-surface-1);
+}
+.emap__search--inline {
+  margin: 0;
+  min-width: 200px;
+  background: var(--slds-g-color-surface-1);
+}
+.emap__search-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  outline: none;
+}
+
+/* Tree row — twistie + selectable label + count. */
+.emap-node {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 8px;
+  border-radius: var(--slds-g-radius-border-2);
+  min-width: 0;
+}
+.emap-node--selected {
+  background: var(--slds-g-color-brand-base-95);
+}
+.emap-node__twist {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1);
+  cursor: pointer;
+}
+.emap-node__twist:disabled {
+  cursor: default;
+}
+.emap-node__label {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.emap-node__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+}
+.emap-node--selected .emap-node__name {
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+}
+.emap-node__count {
+  flex: 0 0 auto;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* ── Columns 2 + 3: attribute → field ──────────────────────────────── */
+.emap__detail {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--slds-g-color-surface-container-1);
+}
+.emap__detail-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--slds-g-color-brand-base-95);
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+.emap__detail-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--slds-g-radius-border-circle);
+  background: var(--slds-g-color-surface-1);
+  color: var(--slds-g-color-accent-1);
+}
+.emap__detail-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.emap__detail-path {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-family: var(--slds-g-font-family-monospace);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+.emap__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+}
+.emap__chips {
+  display: inline-flex;
+  gap: 8px;
+}
+.emap__chip {
+  padding: 5px 12px;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-2);
+  border-radius: var(--slds-g-radius-border-pill);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+  cursor: pointer;
+  transition: background 100ms ease, border-color 100ms ease;
+}
+.emap__chip:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.emap__chip--active {
+  border-color: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-accent-1);
+}
+
+.emap__cols-head {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr;
+  gap: 12px;
+  padding: 4px 16px 8px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+
+.emap__rows {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 16px;
+}
+.emap__empty {
+  padding: 32px 20px;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+  text-align: center;
+}
+
+/* An attribute group = a name row + an indented value row. */
+.emap-attr {
+  padding: 8px 0;
+}
+
+.emap-row {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 3px 0;
+}
+/* Value row sits below the name row. Indent only the value box's left edge
+ * (via margin) so the arrow + Field columns and every right edge stay aligned
+ * with the name row above. */
+.emap-row--sub .emap-row__attr {
+  margin-left: 24px;
+}
+.emap-row__attr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 6px 12px;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+}
+/* Elbow connector joining the value row to the name row above it — drawn in
+ * the indent gap, outside the value box. */
+.emap-row__attr--sub {
+  position: relative;
+}
+.emap-row__connector {
+  position: absolute;
+  left: -14px;
+  bottom: 50%;
+  width: 12px;
+  height: 22px;
+  border-left: 1px solid var(--slds-g-color-border-2);
+  border-bottom: 1px solid var(--slds-g-color-border-2);
+  border-bottom-left-radius: 5px;
+}
+.emap-row__attr-icon {
+  flex: 0 0 auto;
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-1);
+}
+.emap-row__attr-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.emap-row__attr-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+}
+/* Muted qualifier ("Attribute Name" / "Attribute Value") — less significant,
+ * like the "root" path label in the header. */
+.emap-row__attr-qual {
+  flex: 0 0 auto;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.emap-row__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-accent-1);
+  transform: rotate(90deg);
+}
+.emap-row__editor {
+  min-width: 0;
+}
+
+/* ── Field picker — SLDS search-with-scope combobox ─────────────────── */
+.emap-fp {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-pill);
+  overflow: hidden;
+}
+.emap-fp:focus-within {
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 1px var(--slds-g-color-accent-1);
+}
+.emap-fp__scope {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 8px 10px 8px 14px;
+  border: 0;
+  border-right: 1px solid var(--slds-g-color-border-1);
+  background: transparent;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  cursor: pointer;
+}
+.emap-fp__scope:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.emap-fp__scope-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.emap-fp__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 14px;
+  color: var(--slds-g-color-on-surface-1);
+}
+.emap-fp__search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  outline: none;
+}
+.emap-fp__clear {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1);
+  cursor: pointer;
+  transition: background 100ms ease, color 100ms ease;
+}
+.emap-fp__clear:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+/* Portalled result / scope menu. */
+.emap-fp__menu {
+  z-index: 9000;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 4px;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  box-shadow: var(--slds-g-shadow-3);
+}
+.emap-fp__group + .emap-fp__group {
+  margin-top: 4px;
+  border-top: 1px solid var(--slds-g-color-border-1);
+  padding-top: 4px;
+}
+.emap-fp__group-label {
+  padding: 6px 10px 4px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+}
+.emap-fp__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1);
+  background: transparent;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  text-align: left;
+  cursor: pointer;
+}
+.emap-fp__option:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.emap-fp__option--selected {
+  color: var(--slds-g-color-accent-1);
+  font-weight: var(--slds-g-font-weight-6);
+}
+.emap-fp__option-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.emap-fp__empty {
+  padding: 12px 10px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}

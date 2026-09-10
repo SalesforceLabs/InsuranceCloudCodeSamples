@@ -1,0 +1,763 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-insurance-policy-record-page - LEX-style record page for a P&C
+   Insurance Policy: highlights panel, tab strip, Details field sections,
+   Related lists, and the Policy UI structure grid.
+   ════════════════════════════════════════════════════════════════════ */
+
+:host {
+  display: block;
+  min-height: 100%;
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  font-family: var(--atlas-font);
+}
+
+.ipr {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ── Record header / layout ───────────────────────────────────── */
+/* Lifted verbatim from c-account-record-page, which is traced from the
+   org's LEX page header, so the two record pages share one treatment. */
+.slds-page-header {
+  background: transparent;
+  border-bottom: 0;
+  /* LEX `div.highlights.slds-page-header` is a flat 16px box; the field
+     strip below cancels the bottom padding with a negative margin. The
+     side margin puts this box on the same left edge as the white panel
+     below, so the avatar and the tab strip share a baseline. */
+  margin: 0 var(--slds-g-spacing-4, 1rem);
+  padding: var(--slds-g-spacing-4, 1rem);
+}
+
+.slds-page-header__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-4, 1rem);
+  padding: 0;
+}
+
+.slds-page-header__col-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.slds-media { display: flex; align-items: center; gap: 12px; }
+.slds-media__figure { flex-shrink: 0; }
+.slds-media__body { min-width: 0; }
+
+/* SLDS 2 standard object icons are circular. Insurance Policy takes the
+   accent blue this app already uses for the policy node in c-pa-asset-tree. */
+.sf-record-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.sf-record-avatar svg { width: 20px; height: 20px; }
+
+.slds-page-header__name-meta {
+  margin: 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 13px;
+  color: var(--slds-g-color-palette-neutral-30, #444444);
+  letter-spacing: 0;
+}
+
+.slds-page-header__title.sf-record-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-5, 1.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 35px;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: 0;
+}
+
+.slds-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Action cluster: one joined group of neutral buttons closed by the caret.
+   The gap only matters if a standalone pill is ever added back alongside
+   the group, as the Account page does with Follow. */
+.slds-page-header__col-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+
+.slds-button-group.sf-action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  background: #fff;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  overflow: visible;
+}
+
+.slds-button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.slds-button_neutral.sf-record-btn {
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: 30px;
+  padding: 0 var(--slds-g-spacing-4, 1rem);
+  border-radius: 0;
+  border-right-width: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+}
+
+.slds-button_neutral.sf-record-btn:first-child {
+  border-radius: var(--slds-g-radius-border-pill, 9999px) 0 0 var(--slds-g-radius-border-pill, 9999px);
+}
+
+.slds-button_neutral.sf-record-btn:hover {
+  background: #f4f6f9;
+}
+
+.slds-dropdown-trigger {
+  position: relative;
+  display: inline-flex;
+}
+
+.sf-caret-btn {
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: 0 var(--slds-g-radius-border-pill, 15rem) var(--slds-g-radius-border-pill, 15rem) 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* SLDS scopes `.slds-button-group .slds-button:only-child` at 0,2,1 and forces
+   a uniform 0.25rem, which outranks the 0,1,0 rule above. The caret is the sole
+   child of its dropdown trigger, so it needs 0,3,0 to keep the right-hand cap of
+   the segmented pill. */
+.sf-action-group .slds-dropdown-trigger .sf-caret-btn {
+  border-radius: 0 var(--slds-g-radius-border-pill, 15rem)
+    var(--slds-g-radius-border-pill, 15rem) 0;
+}
+
+.sf-caret-btn svg { width: var(--slds-g-sizing-5, 1rem); height: var(--slds-g-sizing-5, 1rem); }
+.sf-caret-btn:hover { background: #f4f6f9; }
+
+.slds-is-open .sf-caret-btn {
+  background: #f4f6f9;
+}
+
+/* Dropdown menu */
+.slds-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  background: #ffffff;
+  border: var(--slds-g-sizing-border-1, 1px) solid #dddbda;
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+  z-index: 100;
+  min-width: var(--slds-g-sizing-14, 240px);
+  padding: 6px 0;
+  animation: sf-fade 140ms ease;
+}
+
+@keyframes sf-fade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.slds-dropdown_right { right: 0; }
+
+.slds-dropdown__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.slds-dropdown__item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-4, 16px);
+  color: #181818;
+  text-decoration: none;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.slds-dropdown__item a:hover {
+  background: #f4f6f9;
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+
+
+/* Field strip. */
+.sf-record-fields {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* Reset the .slds-page-header__row gap - spacing lives in each
+     field's own 32px side gutters, as in the org. */
+  gap: 0;
+  /* LEX `.slds-page-header__detail-row` clears the title block by 16px,
+     then adds another 16px of its own padding above the field items. The
+     negative bottom margin cancels the panel's bottom padding, so the
+     strip ends 16px below the values. */
+  margin: var(--slds-g-spacing-4, 1rem) 0 calc(-1 * var(--slds-g-spacing-4, 1rem));
+  padding: var(--slds-g-spacing-4, 1rem) 0;
+}
+
+.sf-record-field {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  min-width: 0;
+  min-height: var(--slds-g-sizing-10, 2.5rem);
+  padding: 0 var(--slds-g-spacing-6, 2rem);
+}
+
+.sf-record-field:first-child { padding-left: 0; }
+.sf-record-field:last-child { padding-right: 0; }
+
+.sf-record-field-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 15px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sf-record-field-value {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 21px;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-height: 21px;
+}
+
+.sf-record-field-link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-4, 400);
+  white-space: nowrap;
+}
+
+.sf-record-field-link:hover {
+  text-decoration: underline;
+}
+
+/* User avatars are 20px circles on cloud-blue in SLDS 2. */
+
+/* Tab strip + two-column body. */
+.sf-record-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #ffffff;
+  border-bottom: 1px solid #d8dde6;
+  padding: 0 var(--slds-g-spacing-4, 16px);
+  margin-top: var(--slds-g-spacing-4, 16px);
+}
+
+/* Traced from the org's `slds-tabs_default__link`: 16px/600, 40px tall
+   item with 12px inline padding, and a 3px accent-3 underline on the
+   active tab. */
+.sf-record-tab {
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  height: 40px;
+  /* LEX pads the link 8px at the bottom, lifting the label off the
+     underline; the 12px side gutters live on the list item. */
+  padding: 0 var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-2, 0.5rem);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: 40px;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sf-record-tab:hover { color: var(--slds-g-color-accent-3, #022ac0); }
+
+.sf-record-tab.is-active {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  border-bottom-color: var(--slds-g-color-accent-3, #022ac0);
+}
+
+/* ── Related lists ─────────────────────────────────────────── */
+.sf-body-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 480px;
+  gap: 16px;
+  padding: 12px 16px 16px;
+  align-items: flex-start;
+}
+
+.sf-body-grid_single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* The tab strip and everything under it live in ONE white panel on the
+   gray page canvas - the LEX `slds-tabs_card`. Measured in the org:
+   20px radius, 12px/16px padding, transparent border. The highlights
+   panel above stays transparent so it reads as gray. */
+.sf-body-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+}
+
+/* Tabs are the panel's own header row - no nested box, just the
+   hairline that separates them from the tab body. */
+.sf-body-main .sf-record-tabs {
+  margin-top: 0;
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: 0;
+  padding: 0;
+  /* LEX puts `margin-left: 24px` on every `slds-tabs_default__item`
+     after the first, on top of each item's 12px inline padding. */
+  gap: var(--slds-g-spacing-5, 1.5rem);
+}
+
+.sf-sidebar-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  min-width: 0;
+}
+
+/* ── Body ─────────────────────────────────────────────────────── */
+/* The tab body is a direct child of the white .sf-body-main panel, which
+   already supplies the 16px side gutter the tab strip sits on. Any
+   horizontal padding here would push the content past that gutter and
+   read as an indent. Matches .sf-record-details on the Account page. */
+.ipr__body {
+  flex: 1 1 auto;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0 0;
+}
+/* ── Details tab ──────────────────────────────────────────────── */
+.ipr-det {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-block-4, 1rem);
+}
+/* Detail sections aren't cards - they're headed bands on the tab panel,
+   the same treatment .sf-details-card gets on the Account page. The
+   section title's own hairline is what separates one from the next. */
+.ipr-det__card {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+.ipr-det__section-title {
+  margin: 0 0 var(--slds-g-spacing-var-block-4, 1rem);
+  padding-bottom: var(--slds-g-spacing-var-block-2, 0.5rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.ipr-det__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--slds-g-spacing-var-block-4, 1rem)
+    var(--slds-g-spacing-var-inline-8, 3rem);
+}
+.ipr-det__field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ipr-det__field_wide {
+  grid-column: 1 / -1;
+}
+.ipr-det__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.ipr-det__value {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  word-break: break-word;
+}
+.ipr-det__value_link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+}
+.ipr-det__value_link:hover {
+  text-decoration: underline;
+}
+
+/* ── Related tab ──────────────────────────────────────────────── */
+.ipr-rl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-block-4, 1rem);
+}
+/* A hairline rather than a drop shadow: these cards now sit on the white
+   .sf-body-main panel, where a shadow reads as a floating box. Same
+   border/radius the Account page's related-list cards carry. */
+.ipr-rl__card {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  overflow: hidden;
+}
+.ipr-rl__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+}
+.ipr-rl__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  flex-shrink: 0;
+  background: var(--slds-g-color-palette-blue-40, #0b5cab);
+}
+.ipr-rl__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+/* Object colour coding, matching the FSC standard-icon palette. */
+.ipr-rl__icon_policy {
+  background: var(--slds-g-color-success-base-40, #056764);
+}
+.ipr-rl__icon_surcharge {
+  background: var(--slds-g-color-palette-indigo-40, #3a49da);
+}
+.ipr-rl__icon_rateplan {
+  background: var(--slds-g-color-palette-teal-60, #06a59a);
+}
+.ipr-rl__icon_claim {
+  background: var(--slds-g-color-palette-green-50, #2e844a);
+}
+.ipr-rl__icon_coverage {
+  background: var(--slds-g-color-palette-neutral-40, #5c5c5c);
+}
+.ipr-rl__icon_billing {
+  background: var(--slds-g-color-palette-cloud-blue-50, #107cad);
+}
+.ipr-rl__label {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.ipr-rl__title-link {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  text-decoration: none;
+}
+.ipr-rl__title-link:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: underline;
+}
+.ipr-rl__count {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.ipr-rl__btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--slds-g-sizing-8, 1.75rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ipr-rl__btn:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.ipr-rl__menu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-8, 1.75rem);
+  height: var(--slds-g-sizing-8, 1.75rem);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ipr-rl__menu:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.ipr-rl__menu svg {
+  width: 12px;
+  height: 12px;
+}
+.ipr-rl__table-wrap {
+  overflow-x: auto;
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+.ipr-rl__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+.ipr-rl__table th,
+.ipr-rl__table td {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  white-space: nowrap;
+}
+.ipr-rl__table thead th {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.ipr-rl__table tbody tr + tr td {
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+.ipr-rl__table tbody td {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.ipr-rl__row-link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+}
+.ipr-rl__row-link:hover {
+  text-decoration: underline;
+}
+.ipr-rl__foot {
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  text-align: center;
+}
+.ipr-rl__view-all {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+}
+.ipr-rl__view-all:hover {
+  text-decoration: underline;
+}
+
+/* ── Policy UI - Insurance Policy Structure grid ──────────────── */
+.ipr-tree__card {
+  display: block;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  overflow: hidden;
+}
+.ipr-tree__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.ipr-tree__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-palette-hot-orange-50, #d83a00);
+  flex-shrink: 0;
+}
+.ipr-tree__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.ipr-tree__title {
+  margin: 0;
+  flex: 1 1 auto;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.ipr-tree__expand-all {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--slds-g-sizing-8, 1.75rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ipr-tree__expand-all:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.ipr-tree__table-wrap {
+  overflow-x: auto;
+}
+.ipr-tree__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+.ipr-tree__table th,
+.ipr-tree__table td {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  white-space: nowrap;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+.ipr-tree__table thead th {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  position: sticky;
+  top: 0;
+}
+.ipr-tree__table tbody td {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.ipr-tree__table tbody tr:hover td,
+.ipr-tree__table tbody tr:hover .ipr-tree__item-cell {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.ipr-tree__item-cell {
+  min-width: 280px;
+}
+.ipr-tree__item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.ipr-tree__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 120ms ease;
+}
+.ipr-tree__toggle:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+.ipr-tree__toggle:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 1px;
+}
+.ipr-tree__toggle svg {
+  width: 10px;
+  height: 10px;
+  transition: transform 120ms ease;
+}
+.ipr-tree__toggle_open svg {
+  transform: rotate(90deg);
+}
+.ipr-tree__toggle-spacer {
+  display: inline-block;
+  width: var(--slds-g-sizing-6, 1.25rem);
+  flex-shrink: 0;
+}
+.ipr-tree__link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+}
+.ipr-tree__link:hover {
+  text-decoration: underline;
+}
+.ipr-tree__amount {
+  font-variant-numeric: tabular-nums;
+}
+/* The policy root reads as the summary line for the whole term. */
+.ipr-tree__row_policy .ipr-tree__link {
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.ipr-tree__row_policy .ipr-tree__amount {
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+/* Covered assets anchor their own coverage + participant block. */
+.ipr-tree__row_asset .ipr-tree__link {
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.ipr-tree__row_participant .ipr-tree__link {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}

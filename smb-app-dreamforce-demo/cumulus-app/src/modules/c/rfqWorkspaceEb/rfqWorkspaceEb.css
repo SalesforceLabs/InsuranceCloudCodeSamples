@@ -1,0 +1,3060 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-rfq-workspace-eb - shares the same visual chrome as c-rfq-workspace
+   (page header / breadcrumb / layout grid / card-surface / continue
+   buttons / submitted view) but with EB-only step body styles for the
+   manual headcount grid and the range-based Medical Benefit Selection
+   Flex Card.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Shell (page / breadcrumb / header / layout) ──────────────── */
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--slds-g-spacing-6, 32px) var(--slds-g-spacing-5, 24px) var(--slds-g-spacing-7, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.sf-breadcrumbs {
+  margin: -16px -24px 0;
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-5, 24px);
+  background: #f3f3f3;
+  border-bottom: 1px solid #d8dde6;
+  font-family: var(--atlas-font);
+}
+.sf-breadcrumbs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+}
+.sf-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.sf-breadcrumb-link {
+  color: var(--slds-g-color-accent-1, #066afe);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.sf-breadcrumb-link:hover { text-decoration: underline; }
+.sf-breadcrumb-current { color: #3e3e3c; font-weight: var(--slds-g-font-weight-6, 600); }
+.sf-breadcrumb-sep { color: #b0adab; font-size: var(--slds-g-font-scale-1, 14px); padding: 0 2px; }
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.eyebrow {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.18em;
+  color: var(--atlas-muted);
+}
+.title {
+  margin: 6px 0;
+  font-size: var(--atlas-type-title-size);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: -0.02em;
+  color: var(--atlas-ink);
+}
+.meta {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--atlas-muted);
+}
+
+.head-cta { display: flex; gap: 8px; }
+
+/* ── Quote Details card (Review step) ────────────────────────────
+   Read-only summary that consolidates Policy Start/End + LOC + (when
+   linked) Prior Policy. The Rate Plans rollup table flattens to one
+   row per (plan, tier) so each saved plan reads as a grouped header
+   + N tier rows. Same visual language as the PA workspace's Quote
+   Details card so the two surfaces feel like one. */
+.quote-details {
+  margin: 0 0 var(--slds-g-spacing-var-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.quote-details__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.quote-details__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.005em;
+}
+.quote-details__highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-5, 1.5rem);
+  margin: 0;
+}
+.quote-details__item { margin: 0; min-width: 0; }
+.quote-details__term {
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.quote-details__value {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  word-break: break-word;
+}
+.quote-details__value-text { display: block; }
+
+/* Editable date row - horizontal pair of text + pencil button. */
+.quote-details__value-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+
+.quote-details__pencil {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-8, 1.75rem);
+  height: var(--slds-g-sizing-8, 1.75rem);
+  padding: 0;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease,
+    border-color 120ms ease;
+}
+.quote-details__pencil svg {
+  width: 14px;
+  height: 14px;
+}
+.quote-details__pencil:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.quote-details__pencil:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+.quote-details__date-input {
+  min-width: 10rem;
+  padding: var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-spacing-var-2, 0.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.quote-details__date-input:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+c-date-input.quote-details__date-input {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  min-width: 10rem;
+}
+c-date-input.quote-details__date-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.quote-details__roster {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.quote-details__sub {
+  margin: var(--slds-g-spacing-var-2, 0.5rem) 0 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.quote-details__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.quote-details__table th,
+.quote-details__table td {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+.quote-details__table th {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.quote-details__table tbody tr:last-child td { border-bottom: 0; }
+@media (max-width: 640px) {
+  .quote-details__highlights { grid-template-columns: 1fr; }
+}
+
+/* "See Base Policy" link CTA - text-button styled with the brand
+   accent so it reads as a link inside the Quote Details card. */
+.base-policy-link {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem) 0;
+  margin: 0;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  text-align: left;
+}
+.base-policy-link:hover,
+.base-policy-link:focus-visible {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+}
+.base-policy-link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ── Base Policy modal (Review "See Base Policy" CTA) ─────────────
+   Mirrors the PA workspace modal 1:1 so the broker sees a consistent
+   surface across product flows. Renders the 4 canonical prior-policy
+   fields (Carrier / Policy or Group Number / Annual Premium / Years
+   of Coverage or Term). */
+.base-policy-modal__container {
+  max-width: 32rem;
+}
+.base-policy-modal__head {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.base-policy-modal__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.base-policy-modal__meta {
+  margin: var(--slds-g-spacing-1, 0.25rem) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.base-policy-modal__body {
+  padding: var(--slds-g-spacing-var-5, 1.5rem) !important;
+}
+.base-policy-modal__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-5, 1.5rem);
+  margin: 0;
+}
+.base-policy-modal__item { margin: 0; }
+.base-policy-modal__term {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+}
+.base-policy-modal__value {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.base-policy-modal__foot {
+  display: flex;
+  justify-content: flex-end;
+}
+@media (max-width: 640px) {
+  .base-policy-modal__grid { grid-template-columns: 1fr; }
+}
+
+.ghost {
+  background: #fff;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 9px var(--slds-g-spacing-4, 16px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-size-base, 13px);
+  cursor: pointer;
+}
+.ghost:hover { background: var(--slds-g-color-surface-container-2, #f3f3f3); }
+
+/* SLDS 2 brand (primary) button - flat accent-container fill, on-accent
+   text, pill radius, no decorative gradient or glow. */
+.brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 10px 20px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.brand:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.brand:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.brand.solid {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+}
+.brand.solid:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.brand.solid:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.brand.wide { width: 100%; justify-content: center; }
+/* SLDS 2 agentic sparkle - flat (no glow) per SLDS 2 spec. */
+.spark { display: inline-flex; align-items: center; justify-content: center; }
+.spark-svg { width: 1.333em; height: 1.333em; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  align-items: flex-start;
+}
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Block / card-surface ───────────────────────────────────── */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+}
+/* Active-step card uses the same neutral card shadow as every other
+   panel in the app - the blue "current" halo was inconsistent with
+   the rest of the screens (2026-08-12). The step number badge in the
+   progress path still carries the active affordance. */
+.block.is-current > .card-surface {
+  box-shadow: var(--atlas-shadow-card);
+  border-radius: var(--atlas-radius-lg);
+}
+
+.card-surface {
+  background: var(--atlas-surface);
+  border: 0;
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: var(--atlas-shadow-card);
+  padding: var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-var-6, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+.block-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.block-head h2 {
+  margin: 0;
+  font-size: var(--atlas-type-subsection-size);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.step-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--atlas-ink-2);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.block.is-current .step-mark {
+  background: var(--atlas-brand);
+  color: #fff;
+  box-shadow: 0 0 0 3px var(--atlas-brand-light);
+}
+.block-head p {
+  margin: var(--slds-g-spacing-1, 4px) 0 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--atlas-muted);
+}
+.account-badge {
+  padding: 6px var(--slds-g-spacing-3, 12px);
+  border-radius: 999px;
+  background: var(--atlas-brand-light);
+  color: var(--atlas-brand);
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  white-space: nowrap;
+}
+
+.status-pill {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  padding: var(--slds-g-spacing-1, 4px) 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--atlas-ink-2);
+}
+.status-pill.ready {
+  background: var(--atlas-success-light);
+  color: var(--atlas-success);
+}
+
+/* The "step-back" pill that used to sit at the top of each step
+   was retired 2026-08-12 in favor of a "Previous" link CTA in the
+   step footer (see .prev-link below). Kept the class off the DOM,
+   dropped the rules to keep the stylesheet clean. */
+
+/* ── Continue row / continue button ─────────────────────────── */
+.continue-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px dashed var(--atlas-divider);
+  gap: 12px;
+}
+/* Action group inside the per-step footer - stacks (left → right)
+   "Save as Draft", "Close", and the primary "Proceed" brand button.
+   The "Previous" link CTA (see .prev-link below) is a sibling to
+   this group, not a child, so it can anchor at the far LEFT of the
+   footer while this group anchors at the far RIGHT. margin-left:auto
+   guarantees the right-alignment even when Previous is absent. */
+.continue-row__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--atlas-button-gap, 0.75rem);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* "Previous" link CTA - text-only, sits at the far LEFT of the
+   footer row (sibling of .continue-row__actions). Replaces the
+   earlier "Back to {step}" pill that used to hang above the step
+   card. */
+.prev-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-size-base, 13px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  transition: color 120ms ease;
+}
+.prev-link:hover {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+}
+.prev-link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.hint {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--atlas-success);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+/* .hint no longer emits a ::before checkmark - kept dropping in on
+   incomplete-state hints. Text alone signals status; .hint-muted still
+   emits its "info" glyph below. */
+.hint-muted {
+  color: var(--atlas-muted);
+}
+.hint-muted::before { content: 'ℹ'; }
+
+.continue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-size-base, 13px);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.continue:hover:not(:disabled):not(.is-disabled) {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.continue:disabled,
+.continue:disabled:hover,
+.continue.is-disabled,
+.continue.is-disabled:hover {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Review block ─────────────────────────────────────────────
+   Kept as its own selector so future review-only tweaks have a
+   hook. The base panel intentionally inherits `.card-surface`'s
+   plain white background - the earlier blue-tinted linear-gradient
+   (180deg #fff → #f7fbff) was retired to match the uniform card
+   chrome used on Steps 1 - 3 (parity with PA). */
+.review-card {
+  border-color: rgba(6, 106, 254, 0.25);
+}
+.review-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* Bring the "4" step-mark + h2 gap in line with .block-head h2.
+   Without inline-flex + gap the marker sits inline with collapsed
+   HTML whitespace, which reads visibly larger than the 10px gap
+   used on earlier step headers. */
+.review-head h2 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.review-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.review-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--atlas-ink-2);
+}
+.review-list .check {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--atlas-success);
+  color: #fff;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+}
+
+/* ── Step 2 - Employee Census ────────────────────────────────── */
+.eb-dropzone {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.slds-file-selector__dropzone {
+  position: relative;
+  border: 2px dashed rgba(124, 58, 237, 0.35);
+  border-radius: var(--atlas-radius-lg);
+  background: linear-gradient(135deg, #fafbff 0%, #f9f5ff 100%);
+  padding: var(--slds-g-spacing-5, 24px);
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.slds-file-selector__dropzone:hover {
+  border-color: rgba(124, 58, 237, 0.55);
+  background: #f5efff;
+}
+.slds-file-selector__input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.slds-file-selector__body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  pointer-events: none;
+  font-family: var(--atlas-font);
+}
+.eb-dropzone-icon {
+  width: var(--slds-g-sizing-10, 48px);
+  height: var(--slds-g-sizing-10, 48px);
+  border-radius: var(--slds-g-radius-border-3, 12px);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.eb-dropzone-icon svg { width: var(--slds-g-sizing-7, 1.5rem); height: var(--slds-g-sizing-7, 1.5rem); }
+.eb-dropzone-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.eb-dropzone-body strong {
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+}
+.eb-dropzone-body span {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--atlas-muted);
+}
+.eb-dropzone-body u {
+  text-decoration: underline;
+  color: var(--atlas-brand);
+}
+.eb-dropzone-help {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+}
+.link-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+}
+.link-btn:hover { color: var(--atlas-brand-dark); }
+
+/* Validation summary banners */
+.eb-census-summary {
+  display: flex;
+  gap: 12px;
+  padding: 14px var(--slds-g-spacing-4, 16px);
+  border-radius: var(--atlas-radius);
+  font-family: var(--atlas-font);
+}
+.eb-census-summary_warn {
+  background: #fff7d6;
+  border: var(--slds-g-sizing-border-1, 1px) solid #f5d76e;
+  color: #514f4d;
+}
+.eb-census-summary_ok {
+  background: var(--atlas-success-light);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-palette-green-50, rgba(46,132,74,0.32));
+  color: var(--atlas-success);
+}
+.eb-summary-icon {
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.eb-summary-icon svg { width: var(--slds-g-sizing-6, 1.25rem); height: var(--slds-g-sizing-6, 1.25rem); }
+.eb-census-summary strong { font-weight: var(--slds-g-font-weight-7, 700); color: var(--atlas-ink); }
+.eb-census-summary_ok strong { color: var(--atlas-success); }
+.eb-summary-warn { color: #b04e00; margin-left: 6px; }
+.eb-summary-meta {
+  margin: var(--slds-g-spacing-1, 4px) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+}
+
+/* Validation table */
+.eb-census-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  border-radius: var(--atlas-radius);
+  overflow: hidden;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-size-base, 13px);
+}
+.eb-census-table thead {
+  background: #fafbfc;
+}
+.eb-census-table th {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--atlas-muted);
+  border-bottom: 1px solid var(--atlas-divider);
+}
+.eb-census-table td {
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--atlas-divider);
+  color: var(--atlas-ink);
+  vertical-align: middle;
+}
+.eb-census-table tbody tr:last-child td { border-bottom: 0; }
+.eb-error-col { color: var(--atlas-warning); }
+.eb-required-tag {
+  font-size: var(--slds-g-font-scale-neg-2, 10px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--atlas-warning-light);
+  color: var(--atlas-warning);
+  letter-spacing: 0.04em;
+  margin-left: var(--slds-g-spacing-1, 4px);
+}
+
+.eb-error-row {
+  background: #fff8e8;
+}
+.eb-error-row.is-resolved {
+  background: #f4fbf5;
+}
+.eb-census-table .mono {
+  font-family: var(--atlas-mono);
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+}
+.tier-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--slds-g-spacing-2, 8px);
+  border-radius: 999px;
+  background: var(--atlas-brand-light);
+  color: var(--atlas-brand);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.eb-dob-input {
+  width: 100%;
+  max-width: 200px;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--atlas-ink);
+  background: var(--slds-g-color-surface-container-1, #fff);
+}
+.eb-dob-input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--atlas-brand);
+  box-shadow: 0 0 0 3px var(--atlas-brand-light);
+}
+.eb-error-row.is-resolved .eb-dob-input {
+  border-color: var(--slds-g-color-palette-green-50, rgba(46,132,74,0.5));
+  background: #fff;
+}
+
+/* ── Step 1 - headcount summary ────────────────────────────────── */
+.eb-headcount-card {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  border-radius: var(--atlas-radius);
+  overflow: hidden;
+}
+.eb-headcount-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  background: #fafbfc;
+  border-bottom: 1px solid var(--atlas-divider);
+}
+.eb-headcount-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+}
+.eb-headcount-total {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+}
+.eb-headcount-card .eb-census-table {
+  border: 0;
+  border-radius: 0;
+}
+.eb-count-col { text-align: right; }
+.eb-count-cell {
+  text-align: right;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  font-variant-numeric: tabular-nums;
+}
+.eb-headcount-foot td {
+  background: #fafbfc;
+  border-top: 1px solid var(--atlas-divider);
+  border-bottom: 0;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+}
+
+/* ── Step 1 - Manual Enrollment Headcount ────────────────────── */
+/* New Rate Plan action row - left-aligned so the CTA reads as the
+   "add" affordance for the rate-plan cards below (aligned to the
+   same left edge as the plan cards). The SLDS grid utility classes
+   don't pierce the shadow DOM, so the alignment is enforced here. */
+.eb-hc-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  margin-top: 0;
+  margin-bottom: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.eb-hc-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  text-align: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+.eb-hc-new-plan,
+.eb-hc-prior-plan {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+/* Prior-plan secondary CTA matches the ghost token stack but tightens
+   the icon+label rhythm to sit visually paired with the primary. */
+.eb-hc-prior-plan .eb-hc-new-plan-icon {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.eb-hc-new-plan-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: currentColor;
+  flex: 0 0 auto;
+}
+.eb-hc-new-plan-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* ── Manual FTE input grid - SLDS 2 data table ───────────────────
+   Tokens: surface-container-1 background, border-1 dividers (non-
+   interactive), border-radius-2 rounded corners, font-scale-1 type. */
+.eb-hc-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  overflow: hidden;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Header band - surface-container-2 to read as a subtle table eyebrow. */
+.eb-hc-table thead {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.eb-hc-table th {
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  white-space: nowrap;
+}
+/* Category column reads left-aligned; FTE column reads right-aligned so
+   the header sits directly over the right-aligned number input. */
+.eb-hc-table th.eb-hc-cat-col { text-align: left; }
+.eb-hc-table th.eb-hc-fte-col { text-align: right; }
+
+/* Body cells - block-spacing-4 (1rem comfy / 0.5rem compact) gives the
+   rows breathing room without inflating compact density. */
+.eb-hc-table td {
+  padding: var(--slds-g-spacing-var-block-4, 1rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  vertical-align: middle;
+}
+.eb-hc-table tbody tr:last-child td { border-bottom: 0; }
+.eb-hc-cat {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* Narrow FTE column so the header label and the input sit on the same
+   right edge - the column doesn't pad out the table unnecessarily. */
+.eb-hc-fte-col,
+.eb-hc-fte-cell {
+  text-align: right;
+  width: 9rem;
+}
+
+/* SLDS 2 number input - border-2 stroke, radius-border-2, font-scale-1,
+   accent-1 focus ring with the brand-base-90 halo. */
+.eb-hc-input {
+  width: 5.5rem;
+  height: var(--slds-g-sizing-9, 2rem);
+  margin-left: auto;
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.eb-hc-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-hc-input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-1, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+
+/* Total Enrolled footer row - eyebrow band that matches the header. */
+.eb-hc-foot td {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-bottom: 0;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Rate Plan modal (Enrollment Headcount step)
+   The configuration form now lives in an SLDS 2 modal - replaces the
+   inline accent-bordered card. After Save / Update the modal closes
+   and the inline status banner below renders a compact summary of
+   the saved plan with a pencil that reopens this modal in edit mode.
+   The shared form grid + multi-select chrome carries over unchanged.
+   ════════════════════════════════════════════════════════════════ */
+.eb-rp-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.eb-rp-field {
+  min-width: 0;
+}
+.eb-rp-field_full {
+  grid-column: 1 / -1;
+}
+.eb-rp-field .slds-form-element__label {
+  display: block;
+  margin-bottom: var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── SLDS 2 modal chrome (scoped to this component's shadow DOM) ── */
+.eb-rp-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  font-family: var(--atlas-font);
+}
+.eb-rp-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 8999;
+  background: rgba(15, 23, 42, 0.45);
+}
+.eb-rp-modal__container {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+  max-height: calc(100vh - 3rem);
+  display: flex;
+  flex-direction: column;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.32);
+  overflow: hidden;
+}
+.eb-rp-modal__header {
+  position: relative;
+  padding: var(--slds-g-spacing-var-5, 1.5rem)
+    var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.eb-rp-modal__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  padding-right: var(--slds-g-spacing-7, 2.5rem);
+}
+/* ── SLDS 2 progress indicator (modal footer stepper) ─────────────
+   Sits on the left of the modal footer alongside the action buttons
+   so the broker sees how far they are while the buttons stay
+   anchored to the right edge. Compact horizontal layout sized to
+   ~472px max. Numbered circle markers with labels, connected by a
+   track that fills success-green as the broker advances. Built on
+   SLDS 2 styling hooks - no hard-coded colors. The list also takes
+   the canonical SLDS `slds-progress__list` class for blueprint
+   compliance; the markers carry `slds-progress__marker`. */
+.eb-rp-modal__progress {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.eb-rp-modal__progress li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  white-space: nowrap;
+}
+/* Connector track to the left of every step after the first. Pure CSS
+   (no extra DOM); flips to success-green when the previous step is
+   marked done. Track length is intentionally compact (3rem) so the
+   2-step indicator + action buttons fit comfortably inside the modal
+   footer at 40rem without wrapping the "Enrollment Headcount" label. */
+.eb-rp-modal__progress li + li::before {
+  content: '';
+  display: inline-block;
+  width: var(--slds-g-sizing-10, 3rem);
+  height: var(--slds-g-sizing-1, 2px);
+  background: var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  margin: 0 var(--slds-g-spacing-var-2, 0.5rem);
+  transition: background 240ms ease;
+}
+.eb-rp-modal__progress li.is-done + li::before {
+  background: var(--slds-g-color-success-1, #056764);
+}
+/* Numbered circle marker - SLDS 2 sizing-7 (24px). */
+.eb-rp-modal__progress-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  transition: background 150ms ease, border-color 150ms ease,
+    color 150ms ease, box-shadow 150ms ease;
+}
+.eb-rp-modal__progress-marker svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.eb-rp-modal__progress-label {
+  /* Labels stay inline with the marker on the same baseline. */
+}
+/* Active step - brand accent fill + soft brand glow ring. */
+.eb-rp-modal__progress li.is-current {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eb-rp-modal__progress li.is-current .eb-rp-modal__progress-marker {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  box-shadow: 0 0 0 var(--slds-g-sizing-1, 0.125rem)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+/* Completed step - success fill, check glyph replaces the number. */
+.eb-rp-modal__progress li.is-done {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.eb-rp-modal__progress li.is-done .eb-rp-modal__progress-marker {
+  background: var(--slds-g-color-success-1, #056764);
+  border-color: var(--slds-g-color-success-1, #056764);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+
+/* Step 2 (Enrollment Headcount inside the modal). The table reuses
+   .eb-hc-table from below; this wrapper just supplies hint copy +
+   spacing. */
+.eb-rp-form__step2 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.eb-rp-form__step2-hint {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-rp-form__step2-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  border: var(--slds-g-sizing-border-1, 1px) dashed
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-rp-form__hc-table { margin: 0; }
+.eb-rp-modal__close {
+  position: absolute;
+  top: var(--slds-g-spacing-var-3, 0.75rem);
+  right: var(--slds-g-spacing-var-3, 0.75rem);
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+.eb-rp-modal__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eb-rp-modal__close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.eb-rp-modal__close .slds-button__icon {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.eb-rp-modal__body {
+  padding: var(--slds-g-spacing-var-5, 1.5rem) !important;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.eb-rp-modal__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+/* Action buttons live in their own flex row so the progress
+   indicator on the left and the buttons on the right both stay
+   together without flex-wrap surprises. */
+.eb-rp-modal__footer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  flex-shrink: 0;
+}
+
+/* ── Rate-plan cards (post-save receipt) ──────────────────────────
+   SLDS 2 nested card per saved plan. Header has the plan name + a
+   metadata line; right side carries an Edit pencil + a Preview
+   toggle that expands the card inline. Replaces the older success
+   banner so the surface reads as content rather than feedback. */
+.eb-rp-cards {
+  list-style: none;
+  margin: 0 0 var(--slds-g-spacing-var-4, 1rem);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.eb-rp-card {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.eb-rp-card.is-expanded {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-1, 1px)
+    var(--slds-g-color-border-accent-1, #066afe);
+}
+.eb-rp-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+}
+.eb-rp-card__title-block {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.eb-rp-card__title {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eb-rp-card__meta {
+  margin-top: 2px;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-rp-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  flex: 0 0 auto;
+}
+.eb-rp-card__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease,
+    border-color 120ms ease;
+}
+.eb-rp-card__action:not(.eb-rp-card__toggle) {
+  width: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+}
+.eb-rp-card__action svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.eb-rp-card__action:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-rp-card__action:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.eb-rp-card__toggle-chev {
+  transition: transform 150ms ease;
+}
+.eb-rp-card__toggle-chev.is-open {
+  transform: rotate(180deg);
+}
+.eb-rp-card__preview {
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-bottom-left-radius: var(--slds-g-radius-border-3, 0.75rem);
+  border-bottom-right-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+.eb-rp-card__preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-5, 1.5rem);
+  margin: 0;
+}
+.eb-rp-card__preview-item { margin: 0; }
+.eb-rp-card__preview-term {
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-rp-card__preview-value {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eb-rp-card__preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  overflow: hidden;
+}
+.eb-rp-card__preview-table th,
+.eb-rp-card__preview-table td {
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  text-align: left;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eb-rp-card__preview-table thead th {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.eb-rp-card__preview-table tfoot td {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  border-bottom: 0;
+}
+.eb-rp-card__preview-table-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Tier Structure multi-select (ported from the retired modal) ── */
+.eb-rate__multi {
+  position: relative;
+  width: 100%;
+}
+.eb-rate__multi-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  width: 100%;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  box-sizing: border-box;
+  padding: 0 var(--slds-g-spacing-var-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.eb-rate__multi-trigger:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.eb-rate__multi-trigger:focus,
+.eb-rate__multi-trigger:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.eb-rate__multi-trigger.is-open {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.eb-rate__multi-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eb-rate__multi-value.is-placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+.eb-rate__multi-chev {
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: transform 160ms ease;
+}
+.eb-rate__multi-trigger.is-open .eb-rate__multi-chev {
+  transform: rotate(180deg);
+}
+.eb-rate__multi-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  background: transparent;
+}
+.eb-rate__multi-menu {
+  position: fixed;
+  z-index: 9101;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  max-height: 18rem;
+  overflow-y: auto;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+}
+.eb-rate__multi-item {
+  margin: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.eb-rate__multi-item:hover,
+.eb-rate__multi-item.is-selected {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+.eb-rate__multi-item-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  cursor: pointer;
+}
+.eb-rate__multi-input {
+  position: absolute;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  opacity: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.eb-rate__multi-check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  position: relative;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.eb-rate__multi-input:checked + .eb-rate__multi-check {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+}
+.eb-rate__multi-input:checked + .eb-rate__multi-check::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: var(--slds-g-sizing-3, 8px);
+  border: solid var(--slds-g-color-on-accent-1, #fff);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+.eb-rate__multi-input:focus-visible + .eb-rate__multi-check {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Disabled state (SLDS 2 spec). Both checked + unchecked greyed. */
+.eb-rate__multi-input:disabled + .eb-rate__multi-check {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+}
+.eb-rate__multi-input:disabled:checked + .eb-rate__multi-check::after {
+  border-color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.eb-rate__multi-item-label {
+  flex: 1 1 auto;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* (Saved Rate Plans table lives on Account → Policies, not in the
+   RFQ flow - see c-account-record-page for the SLDS 2 table + form.) */
+
+@media (max-width: 640px) {
+  .eb-rp-form__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Step 2 - Benefit Selection accordion ────────────────────────
+   Chrome ported 1:1 from .pa-asset-tree__policy (the PA c-pa-asset-tree
+   Policy-Level Coverages card): white surface, soft drop shadow, large
+   radius corners, 1.5rem outer padding, no outer border. Three product
+   segments stack vertically; only one expands at a time. */
+.eb-seg-card {
+  display: block;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--atlas-radius);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  font-family: var(--atlas-font);
+}
+.eb-seg-card + .eb-seg-card {
+  margin-top: var(--slds-g-spacing-4, 1rem);
+}
+
+/* Clickable header - chevron + colored icon + title. Layout mirrors
+   .pa-asset-tree__policy-head_clickable so the two cards rhyme. */
+.eb-seg__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.eb-seg__head:hover .eb-seg__title {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-seg__head:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* Chevron wrap - sized like the PA chevron-btn (24x24). The svg sits
+   inside, rotating 90deg right→down when the segment expands. */
+.eb-seg__chev-wrap {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  flex-shrink: 0;
+}
+.eb-seg__chev {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 150ms ease;
+}
+.eb-seg__chev.is-open { transform: rotate(90deg); }
+
+/* Segment icon - 32x32 colored block matching .pa-asset-tree__policy-icon.
+   Per-segment colorways for at-a-glance product differentiation. */
+.eb-seg__icon {
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  flex-shrink: 0;
+}
+.eb-seg__icon svg { width: 18px; height: 18px; }
+.eb-seg__icon_medical {
+  background: var(--slds-g-color-success-base-50, #0b827c);
+}
+.eb-seg__icon_dental {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+}
+.eb-seg__icon_vision {
+  background: var(--slds-g-color-palette-purple-50, #9050e9);
+}
+
+/* Title typography matches .pa-asset-tree__policy-title (font-scale-2,
+   weight-7, on-surface-3) so the two cards read at the same hierarchy. */
+.eb-seg__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  flex: 1 1 auto;
+  min-width: 0;
+  transition: color 120ms ease;
+}
+
+/* Expanded body - same top-margin treatment as the PA card body,
+   no inner border (the soft shadow + radius do the framing). */
+.eb-seg__body {
+  margin-top: var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+
+/* Sub-section group - General Plan Information / Outpatient Services /
+   etc. Uppercase eyebrow above its benefit rows, with a top divider so
+   the broker can scan the segment's full PCM hierarchy at a glance. */
+.eb-seg__subsection {
+  display: flex;
+  flex-direction: column;
+}
+.eb-seg__subsection + .eb-seg__subsection {
+  padding-top: var(--slds-g-spacing-var-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.eb-seg__subsection-title {
+  margin: 0 0 var(--slds-g-spacing-var-2, 0.5rem) 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+/* Selection pill - soft chrome matching the PA driver badge so the
+   count reads as a quiet annotation, not a heavy CTA. Empty state =
+   neutral surface, selected state = light brand surface + accent-2
+   text (still legible, far softer than a solid blue pill). */
+.eb-bnf-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+}
+.eb-bnf-pill.is-selected {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+/* Benefit row - geometry copied from .pa-asset-tree__cov-range so the
+   EB rows sit at the same rhythm as the PA Policy-Level Coverages rows
+   (no horizontal padding inside the row - the outer .eb-seg-card 1.5rem
+   pad provides the gutter; vertical 1rem; gap 1.5rem; border-1 divider
+   between rows; last row drops the divider). */
+.eb-bnf-row {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  transition: opacity 120ms ease;
+}
+.eb-bnf-row:last-child { border-bottom: 0; }
+.eb-bnf-row.is-excluded { opacity: 0.5; }
+
+/* SLDS-2 visually-hidden utility - SLDS's own `slds-assistive-text`
+   class doesn't pierce the LWC shadow DOM, so we redeclare it here so
+   any screen-reader-only spans in this component stay invisible. */
+.slds-assistive-text {
+  position: absolute !important;
+  width: var(--slds-g-sizing-border-1, 1px) !important;
+  height: var(--slds-g-sizing-border-1, 1px) !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Checkbox + faux box (mirrors pa-asset-tree__cov-faux pattern). */
+.eb-bnf-check {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+  flex-shrink: 0;
+  /* Belt-and-braces: if any text leaks into this slot, clip it instead
+     of letting it push the benefit-name column. */
+  overflow: hidden;
+  cursor: pointer;
+}
+.eb-bnf-check input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+}
+.eb-bnf-faux {
+  width: 1rem;
+  height: 1rem;
+  position: relative;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+.eb-bnf-check input[type='checkbox']:checked + .eb-bnf-faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.eb-bnf-check input[type='checkbox']:checked + .eb-bnf-faux::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid var(--slds-g-color-on-accent-1, #ffffff);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+.eb-bnf-check input[type='checkbox']:focus-visible + .eb-bnf-faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* Benefit name - fixed 11rem column, identical to the PA
+   .pa-asset-tree__cov-include left rail so the input pair starts at
+   the same horizontal position. */
+.eb-bnf-name {
+  width: 11rem;
+  flex: 0 0 11rem;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* Value column - over-arching label stacked above the input pair. */
+.eb-bnf-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.eb-bnf-over {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Min/Max input pair - two inputs separated by an en-dash. */
+.eb-bnf-pair {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.eb-bnf-input {
+  width: 7rem;
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.eb-bnf-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-bnf-input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-1, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.eb-bnf-input:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.eb-bnf-dash {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Picklist variant (Virtual / Inpatient / Outpatient rows). */
+.eb-bnf-select-wrap {
+  position: relative;
+  display: inline-block;
+  min-width: 12rem;
+}
+.eb-bnf-select {
+  width: 100%;
+  height: var(--slds-g-sizing-9, 2rem);
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0 var(--slds-g-spacing-6, 2rem) 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background-color: var(--slds-g-color-surface-container-1, #ffffff);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%235c5c5c'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem 1rem;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.eb-bnf-select:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-1, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.eb-bnf-select:disabled {
+  background-color: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+
+/* Responsive: stack benefit rows under ~60em so the right column
+   doesn't crush against the fixed-width name rail. */
+@media (max-width: 60em) {
+  .eb-bnf-row { flex-wrap: wrap; }
+  .eb-bnf-name {
+    width: calc(100% - 2.25rem);
+    flex-basis: calc(100% - 2.25rem);
+  }
+  .eb-bnf-value { flex-basis: 100%; margin-left: 2.25rem; }
+}
+
+/* ── Agentforce Summary banner (Review step) ─────────────────── */
+.af-summary {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: linear-gradient(135deg, #f6f3ff 0%, var(--slds-g-color-brand-base-95, #edf4ff) 100%);
+  border: var(--slds-g-sizing-border-1, 1px) solid rgba(124, 58, 237, 0.18);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+.af-summary__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.af-summary__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  padding: var(--slds-g-spacing-1, 4px) 10px var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--atlas-purple-light, #f1ecff);
+  color: var(--atlas-purple, #7c3aed);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.af-summary__spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--atlas-purple, #7c3aed);
+}
+.af-summary__spark svg { width: 14px; height: 14px; }
+.af-summary__badge {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-purple, #7c3aed);
+  background: rgba(124, 58, 237, 0.1);
+  padding: 2px var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+}
+.af-summary__intro {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.af-summary__body {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.af-summary__body strong {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* ── Market selection - numbered, ordered carrier grid ───────────── */
+.market-select {
+  margin-top: var(--slds-g-spacing-4, 1rem);
+  padding-top: var(--slds-g-spacing-var-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.market-select__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--slds-g-spacing-4, 1rem);
+}
+.market-select__title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.market-select__hint {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+/* Real CSS grid - SLDS size classes don't penetrate the shadow DOM. */
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+.market-col {
+  display: flex;
+  min-width: 0;
+}
+.market-card {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+.market-card:hover {
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+.market-card:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.market-card.is-selected {
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+.market-card.is-selected .market-card__name {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.market-card__badge {
+  position: absolute;
+  top: var(--slds-g-spacing-2, 0.5rem);
+  right: var(--slds-g-spacing-2, 0.5rem);
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  line-height: var(--slds-g-font-line-height-1, 1);
+}
+.market-card__logo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.market-card__name {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.market-card__meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+@media (max-width: 64em) {
+  .market-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 30em) {
+  .market-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Agentforce Routing block (Review step) ──────────────────── */
+.routing-block {
+  margin-top: var(--slds-g-spacing-4, 1rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: linear-gradient(135deg, #f6f3ff 0%, var(--slds-g-color-brand-base-95, #edf4ff) 100%);
+  border: var(--slds-g-sizing-border-1, 1px) solid rgba(124, 58, 237, 0.18);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.routing-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.routing-af-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  padding: var(--slds-g-spacing-1, 4px) 10px var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--atlas-purple-light, #f1ecff);
+  color: var(--atlas-purple, #7c3aed);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.routing-af-pill .spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--atlas-purple, #7c3aed);
+}
+.routing-af-pill .spark-svg { width: 14px; height: 14px; }
+.routing-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: var(--atlas-font);
+}
+.optional-tag {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  padding: 2px var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+}
+.routing-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.routing-input::placeholder { color: var(--slds-g-color-on-surface-1, #5c5c5c); }
+.routing-input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-1, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.routing-help {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-style: italic;
+}
+.carrier-logos {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: var(--slds-g-spacing-3, 12px);
+  padding-top: var(--slds-g-spacing-3, 12px);
+  border-top: 1px dashed var(--atlas-divider);
+}
+.carrier-logos-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--atlas-muted);
+  margin-right: var(--slds-g-spacing-1, 4px);
+}
+.carrier-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px var(--slds-g-spacing-3, 12px) 6px 6px;
+  background: #fff;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-left: 3px solid var(--carrier-accent, var(--atlas-brand));
+  border-radius: 999px;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+}
+.carrier-logo-initial {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--carrier-accent, var(--atlas-brand));
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+
+/* ── Submitted view ──────────────────────────────────────────── */
+.submitted-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  background: linear-gradient(180deg, #f0fdf4 0%, #fff 70%);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-palette-green-50, rgba(46,132,74,0.22));
+  border-radius: var(--atlas-radius-lg);
+  padding: var(--slds-g-spacing-8, 48px) var(--slds-g-spacing-6, 32px) var(--slds-g-spacing-7, 40px);
+  box-shadow: var(--atlas-shadow-card);
+}
+.submitted-check {
+  width: var(--slds-g-sizing-11, 64px);
+  height: var(--slds-g-sizing-11, 64px);
+  border-radius: 999px;
+  background: var(--atlas-success);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 10px var(--atlas-success-light);
+  margin-bottom: var(--slds-g-spacing-1, 4px);
+}
+.submitted-check svg { width: var(--slds-g-sizing-9, 2rem); height: var(--slds-g-sizing-9, 2rem); }
+.submitted-eyebrow {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.18em;
+  color: var(--atlas-success);
+}
+.submitted-title {
+  margin: var(--slds-g-spacing-1, 4px) 0 0;
+  font-size: var(--atlas-type-title-size);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: -0.02em;
+  color: var(--atlas-ink);
+}
+.submitted-sub {
+  margin: 6px 0 var(--slds-g-spacing-1, 4px);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--atlas-ink-2);
+  line-height: 1.55;
+}
+.submitted-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fff;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  border-radius: var(--atlas-radius);
+  padding: 14px 22px;
+  margin-top: var(--slds-g-spacing-3, 12px);
+  width: 100%;
+  max-width: 560px;
+}
+.submitted-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  font-size: var(--slds-g-font-size-base, 13px);
+  color: var(--atlas-ink-2);
+}
+.submitted-meta-row strong {
+  color: var(--atlas-muted);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  text-transform: none;
+  letter-spacing: 0.06em;
+}
+.submitted-foot { margin-top: var(--slds-g-spacing-4, 16px); }
+
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .intake-locked-grid,
+  .cov-grid-2,
+  .eb-plan-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Insurance Rate Plans list (Step 1 in-flow) ───────────────────
+   Mirrors the related-list pattern from the EB Policy Plan tab so the
+   in-flow surface reads as the same standard SLDS card. */
+.eb-rate-plans {
+  margin-top: var(--slds-g-spacing-var-5, 1.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  overflow: hidden;
+}
+.eb-rate-plans__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.eb-rate-plans__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  min-width: 0;
+}
+.eb-rate-plans__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  flex: 0 0 auto;
+}
+.eb-rate-plans__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  display: block;
+}
+.eb-rate-plans__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eb-rate-plans__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.eb-rate-plans__table thead th {
+  text-align: left;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+.eb-rate-plans__table tbody td {
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.eb-rate-plans__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.eb-rate-plans__link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.eb-rate-plans__cell-muted {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-rate-plans__cell-amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.eb-rate-plans__empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Hybrid v2 Review styles - LOC session pills, bundle-review tab
+   bar, review accordions, and the two-CTA Review footer. Ported 1:1
+   from c-rfq-workspace.css so PA / Home / EB share the same visual
+   grammar. All values funnel through SLDS 2 hooks so theming
+   flows through the semantic layer.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── LOC pills · SLDS 2 Pills blueprint ────────────────────────
+   The LOC session strip is authored against the SLDS 2 Pills
+   blueprint (https://www.lightningdesignsystem.com/components/pills/).
+   The <li> carries `slds-pill` + local `p15-sess`; the anatomy
+   inside maps to the SLDS 2 slots:
+     · .slds-pill__icon_container  - LOC number/check badge
+     · .slds-pill__label           - LOC display name
+     · .slds-pill__remove          - × remove control
+   All colour / radius / border knobs are wired to the SLDS 2
+   pill styling hooks first (--slds-c-pill-color-background,
+   --slds-c-pill-color-border, --slds-c-pill-radius-border) with
+   SLDS 2 global tokens as fallback so a real SLDS 2 environment
+   or a themed shell can restyle the pill without touching this
+   file. */
+.p15-sessions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  flex-wrap: wrap;
+}
+
+.p15-sess {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  /* Padding stays stable whether or not the × is visually hovered, so
+     an .is-active pill does not shift size on interaction. The right
+     side is left tight because the × control carries its own 1.5rem
+     box; the left needs a real inset since the pill dropped its
+     leading badge and the label would otherwise sit on the border. */
+  padding: var(--slds-g-spacing-var-1, 0.25rem);
+  padding-inline-start: var(--slds-g-spacing-var-inline-3, 0.75rem);
+  background: var(
+    --slds-c-pill-color-background,
+    var(--slds-g-color-surface-container-1, #ffffff)
+  );
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(
+      --slds-c-pill-color-border,
+      var(--slds-g-color-border-1, #c9c9c9)
+    );
+  border-radius: var(--slds-c-pill-radius-border, 9999px);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* .slds-pill__remove - SLDS 2 pill remove control. Small circular
+   hover target, muted stroke by default, error tint on hover so it
+   stays visually secondary until the broker means to act on it. */
+.p15-sess__close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin-left: var(--slds-g-spacing-var-1, 0.25rem);
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.p15-sess__close svg,
+.p15-sess__close .slds-button__icon {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.p15-sess__close:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-error-1, #ba0517);
+}
+.p15-sess__close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-border-1, 1px);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-error-1, #ba0517);
+}
+/* On a selected pill the × sits on the light brand tint, so it
+   takes the darkest accent step to clear the 3:1 non-text contrast
+   floor. */
+.p15-sess.slds-is-selected .p15-sess__close,
+.p15-sess.is-active .p15-sess__close {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.p15-sess.slds-is-selected .p15-sess__close:hover,
+.p15-sess.slds-is-selected .p15-sess__close:focus-visible,
+.p15-sess.is-active .p15-sess__close:hover,
+.p15-sess.is-active .p15-sess__close:focus-visible {
+  background: var(--slds-g-color-brand-base-90, #d6e6ff);
+  color: var(--slds-g-color-error-1, #ba0517);
+}
+
+.p15-sess:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.p15-sess:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* Selected state - SLDS 2 spec uses `.slds-is-selected` for pills
+   in a selected state (mirrored in the sessionTabDisplay
+   className). Brand tint fill + 1px outer ring so the focused
+   LOC reads as decisively selected.
+   The fill is the light end of the brand ramp
+   (--slds-g-color-brand-base-95), not --slds-g-color-accent-container-1:
+   the accent-container hook is the bold brand fill that only pairs
+   with --slds-g-color-on-accent-1 (white), so it left the dark
+   label / status / × sitting on solid #066afe. */
+.p15-sess.slds-is-selected,
+.p15-sess.is-active {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-1, 1px)
+    var(--slds-g-color-accent-1, #066afe);
+}
+
+.p15-sess.slds-is-selected:hover,
+.p15-sess.is-active:hover {
+  background: var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+
+/* Status never tints the pill outline - selection owns the chrome
+   (border, tint, ring, label accent). */
+
+/* Text stack holding the LOC name. */
+.p15-sess__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* .slds-pill__label - Primary pill text (SLDS 2 spec). */
+.p15-sess__loc {
+  font-size: var(--slds-g-font-scale-var-1, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p15-sess.slds-is-selected .p15-sess__loc,
+.p15-sess.is-active .p15-sess__loc {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+
+/* ── Bundle Review tab bar ─────────────────────────────────────
+   Sits inside the Review card, above the quote-details accordions
+   or the sibling c-loc-review-panel. The <li>s carry `p15-sess` +
+   `bundle-review-tab` so we override the pill anatomy from the
+   session strip above into a flat, underline-tab treatment - the
+   right metaphor for a within-card tab selector. */
+.bundle-review-tabs {
+  list-style: none;
+  margin: 0 0 var(--slds-g-spacing-var-4, 1rem);
+  padding: 0;
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.bundle-review-tab.p15-sess {
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  margin-bottom: calc(-1 * var(--slds-g-sizing-border-1, 1px));
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  box-shadow: none;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+
+.bundle-review-tab.p15-sess:hover {
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  box-shadow: none;
+}
+
+.bundle-review-tab.p15-sess.is-active {
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: none;
+}
+
+.bundle-review-tab.p15-sess.is-done {
+  border-color: transparent;
+}
+.bundle-review-tab.p15-sess.is-done:hover {
+  border-bottom-color: var(--slds-g-color-border-1, #c9c9c9);
+}
+.bundle-review-tab.p15-sess.is-active.is-done {
+  border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+
+.bundle-review-tab.p15-sess:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+/* ── Review accordions ─────────────────────────────────────────
+   Native <details>/<summary> anatomy for progressive disclosure.
+   Each collapsed row shows title + rollup meta; the caret rotates
+   90° on open. Body reveals the granular payload (highlights dl
+   or roster table). */
+.review-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-top: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+.review-acc {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  border-radius: var(--atlas-radius);
+  background: #fafbfc;
+  overflow: hidden;
+  transition: background-color 160ms ease, border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.review-acc[open] {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-color: var(--atlas-border);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.review-acc__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  list-style: none;
+  user-select: none;
+}
+.review-acc__head::-webkit-details-marker { display: none; }
+.review-acc__head::marker { content: ''; }
+
+.review-acc__head:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: calc(var(--slds-g-sizing-1, 0.125rem) * -1);
+}
+
+.review-acc__caret {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  color: var(--atlas-muted);
+  transition: transform 220ms ease, color 120ms ease;
+}
+.review-acc[open] .review-acc__caret {
+  transform: rotate(90deg);
+  color: var(--atlas-brand);
+}
+
+.review-acc__title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.005em;
+}
+
+.review-acc__meta {
+  margin-left: auto;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.review-acc__body {
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem)
+    var(--slds-g-spacing-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+.review-acc__body .quote-details__highlights { margin-top: 0; }
+.review-acc__body .quote-details__table { margin-top: 0; }
+
+/* ── Review panel (always-visible sibling of .review-acc) ────────
+   Policy Details + domain sections flattened from <details>
+   accordions. Mimics the .review-acc[open] visual container. */
+.review-panel {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+}
+
+.review-panel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  font-family: var(--atlas-font);
+}
+
+.review-panel__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.005em;
+}
+
+.review-panel__pencil {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-8, 1.75rem);
+  height: var(--slds-g-sizing-8, 1.75rem);
+  padding: 0;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease,
+    border-color 120ms ease;
+  flex-shrink: 0;
+}
+.review-panel__pencil svg {
+  width: 14px;
+  height: 14px;
+}
+.review-panel__pencil:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  border-color: var(--atlas-divider);
+}
+.review-panel__pencil:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+.review-panel__body {
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem)
+    var(--slds-g-spacing-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+.review-panel__body .quote-details__highlights { margin-top: 0; }
+.review-panel__body .quote-details__table { margin-top: 0; }
+
+/* Parent→child groups inside Review panels (rate plan → tiers,
+   product root → coverage attrs, benefit category → attrs). */
+.review-group + .review-group {
+  margin-top: var(--slds-g-spacing-var-4, 1rem);
+  padding-top: var(--slds-g-spacing-var-3, 0.75rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+}
+.review-group__title {
+  margin: 0 0 var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.review-group__rows {
+  margin-top: 0;
+}
+
+/* ── Review footer: fork actions ─────────────────────────────────
+   Distinct from .continue-row on earlier steps because Review is a
+   decision point: the broker is choosing between "add another LOC"
+   (ghost) and "add to Submission Board" (brand solid). A subtle
+   top divider anchors it to the bottom of the card so the brand-
+   solid primary reads as the decisive next step. */
+.review-footer {
+  margin-top: var(--slds-g-spacing-var-5, 1.5rem);
+  padding-top: var(--slds-g-spacing-var-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+/* margin-left:auto pushes the action group to the far right of the
+   review footer so the sibling "Previous" link CTA can anchor left. */
+.review-footer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .review-footer__actions {
+    justify-content: stretch;
+  }
+  .review-footer__actions > button {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Delete-LOC confirmation modal
+   Fired by the × affordance on any session-strip pill. LWC OSS does not
+   pipe SLDS styles into shadow roots, so we recreate the canonical
+   .slds-modal / .slds-backdrop chrome locally (same pattern used by
+   c-eb-new-rate-plan-modal etc.). Scoped .slds-* is safe because
+   c-rfq-workspace-eb's own shadow root only contains the delete-LOC
+   modal - nested LWCs live inside their own shadow trees.
+   ══════════════════════════════════════════════════════════════════ */
+.slds-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 9000;
+}
+.slds-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-5, 24px);
+  z-index: 9001;
+  font-family: var(--atlas-font);
+}
+.slds-modal__container {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--slds-g-sizing-16, 30rem);
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  animation: p15-delete-modal-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes p15-delete-modal-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.slds-modal__header {
+  position: relative;
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-7, 2.5rem);
+  text-align: center;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.slds-modal__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.125rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.slds-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.slds-modal__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.slds-modal__close svg {
+  width: 14px;
+  height: 14px;
+}
+.slds-modal__content {
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  overflow-y: auto;
+}
+.slds-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--atlas-button-gap, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.slds-modal .slds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-4, 1rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border-width: var(--slds-g-sizing-border-1, 1px);
+  border-style: solid;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease;
+}
+.slds-modal .slds-button_neutral {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.slds-modal .slds-button_neutral:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.slds-modal .slds-button_destructive {
+  background: var(--slds-g-color-error-1, #ba0517);
+  border-color: var(--slds-g-color-error-1, #ba0517);
+  color: var(--slds-g-color-on-error-1, #ffffff);
+}
+.slds-modal .slds-button_destructive:hover,
+.slds-modal .slds-button_destructive:focus-visible {
+  background: var(--slds-g-color-error-container-2, #8e030f);
+  border-color: var(--slds-g-color-error-container-2, #8e030f);
+}
+.slds-modal .slds-button_icon {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.p15-delete-modal__container {
+  max-width: 560px;
+}
+.p15-delete-modal__title {
+  font-size: var(--slds-g-font-scale-3, 1.125rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.p15-delete-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4, 16px);
+  padding: var(--slds-g-spacing-5, 24px);
+}
+.p15-delete-modal__prompt {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.5);
+  color: var(--atlas-ink-2, #444444);
+}
+.p15-delete__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-3, 12px);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-warning-1, #dd7a01);
+  background: var(--slds-g-color-warning-container-1, #fff6df);
+  color: var(--slds-g-color-on-warning-1, #472c00);
+}
+.p15-delete__warning-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--slds-g-color-warning-1, #dd7a01);
+}
+.p15-delete__warning-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.p15-delete__warning-text {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.5);
+  /* Hard-clamp to 2 lines per Aug-12 spec so an unusually long
+     content-summary (e.g. "42 employees on the census, 3 plans
+     selected") never spills the banner to 3+ lines. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.p15-delete-modal__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-2, 8px);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-5, 24px);
+}
+/* Primary Confirm CTA - brand blue per Aug-12 spec (not destructive
+   red). Confirm Delete is the recommended action; users still have
+   the Cancel button + × close if they want to abort. */
+.p15-delete-modal__confirm.slds-button_brand,
+.p15-delete-modal__confirm {
+  background: var(--atlas-brand, #066afe);
+  border-color: var(--atlas-brand, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.p15-delete-modal__confirm:hover,
+.p15-delete-modal__confirm:focus-visible {
+  background: var(--atlas-brand-dark, #0250d9);
+  border-color: var(--atlas-brand-dark, #0250d9);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}

@@ -1,0 +1,197 @@
+<template>
+  <template lwc:if={isOpen}>
+    <section
+      role="dialog"
+      tabindex="-1"
+      aria-modal="true"
+      aria-labelledby="crm-heading"
+      class="slds-modal slds-fade-in-open slds-modal_medium crm-modal"
+      onclick={handleBackdrop}
+    >
+      <div class="slds-modal__container" onclick={stopPropagation}>
+        <header class="slds-modal__header">
+          <button
+            class="slds-button slds-button_icon slds-modal__close"
+            type="button"
+            title="Close"
+            aria-label="Close this window"
+            onclick={handleClose}
+          >
+            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+          </button>
+          <h1 id="crm-heading" class="slds-modal__title">{headingText}</h1>
+        </header>
+
+        <template lwc:if={isScheduling}>
+          <div class="slds-modal__content crm-modal__content">
+            <p class="crm-sched__lead">
+              {reply.fromName} offered to take a call. Pick a slot and the
+              invite goes out with the proposal attached.
+            </p>
+
+            <div class="crm-sched">
+              <!-- SLDS 2 Datepicker: month nav, day-of-week header row,
+                   padded six-week grid. Opens on the day the reply
+                   arrived, which is the day the client was talking
+                   about. -->
+              <div class="crm-field">
+                <span class="crm-field__label" id="crm-date-label">Date</span>
+                <div
+                  class="crm-datepicker"
+                  role="group"
+                  aria-labelledby="crm-date-label"
+                >
+                  <div class="crm-datepicker__nav">
+                    <button
+                      class="crm-datepicker__nav-btn"
+                      type="button"
+                      aria-label="Previous month"
+                      onclick={handlePrevMonth}
+                    >
+                      <svg viewBox="0 0 52 52" aria-hidden="true" focusable="false"><path fill="currentColor" d="M33.8 49c.6-.6.6-1.6 0-2.2L13.6 26.6c-.4-.4-.4-1 0-1.4L33.8 5.1c.6-.6.6-1.6 0-2.2l-2.2-2.2c-.6-.6-1.6-.6-2.2 0L4.8 24.9c-.6.6-.6 1.6 0 2.2l24.6 24.1c.6.6 1.6.6 2.2 0L33.8 49z"/></svg>
+                    </button>
+                    <span class="crm-datepicker__month" aria-live="polite">
+                      {monthLabel}
+                    </span>
+                    <button
+                      class="crm-datepicker__nav-btn"
+                      type="button"
+                      aria-label="Next month"
+                      onclick={handleNextMonth}
+                    >
+                      <svg viewBox="0 0 52 52" aria-hidden="true" focusable="false"><path fill="currentColor" d="M18.2 3c-.6.6-.6 1.6 0 2.2l20.2 20.2c.4.4.4 1 0 1.4L18.2 46.9c-.6.6-.6 1.6 0 2.2l2.2 2.2c.6.6 1.6.6 2.2 0l24.6-24.2c.6-.6.6-1.6 0-2.2L22.6.8c-.6-.6-1.6-.6-2.2 0L18.2 3z"/></svg>
+                    </button>
+                  </div>
+
+                  <div class="crm-datepicker__dow" aria-hidden="true">
+                    <template for:each={weekdayLabels} for:item="w">
+                      <span class="crm-datepicker__dow-cell" key={w.key}>
+                        {w.short}
+                      </span>
+                    </template>
+                  </div>
+
+                  <div class="crm-datepicker__grid">
+                    <template for:each={calendarGrid} for:item="c">
+                      <button
+                        class={c.cls}
+                        type="button"
+                        key={c.id}
+                        data-key={c.key}
+                        aria-pressed={c.isSelected}
+                        aria-label={c.label}
+                        onclick={handlePickDate}
+                      >{c.day}</button>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <div class="crm-field">
+                <label class="crm-field__label" for="crm-time">
+                  Start time
+                </label>
+                <select
+                  id="crm-time"
+                  class="crm-select"
+                  onchange={handleTimeChange}
+                >
+                  <template for:each={timeOptions} for:item="t">
+                    <option key={t.key} value={t.value} selected={t.isSelected}>
+                      {t.label}
+                    </option>
+                  </template>
+                </select>
+
+                <label class="crm-field__label" for="crm-duration">
+                  Duration
+                </label>
+                <select
+                  id="crm-duration"
+                  class="crm-select"
+                  onchange={handleDurationChange}
+                >
+                  <template for:each={durationOptions} for:item="d">
+                    <option key={d.key} value={d.value} selected={d.isSelected}>
+                      {d.label}
+                    </option>
+                  </template>
+                </select>
+              </div>
+            </div>
+
+            <p class="crm-sched__summary">{scheduleSummary}</p>
+          </div>
+
+          <footer class="slds-modal__footer crm-modal__footer">
+            <button
+              class="crm-btn-neutral"
+              type="button"
+              onclick={handleBackToReply}
+            >Back</button>
+            <button
+              class="crm-btn-brand"
+              type="button"
+              onclick={handleSendInvite}
+            >Send Invite</button>
+          </footer>
+        </template>
+
+        <template lwc:else>
+        <div class="slds-modal__content crm-modal__content">
+          <!-- Sender line, styled as a mail client's message header
+               rather than a form field: this is received mail, so
+               nothing here is editable. -->
+          <div class="crm-from">
+            <span class="crm-from__avatar" aria-hidden="true">
+              {reply.fromInitials}
+            </span>
+            <div class="crm-from__meta">
+              <span class="crm-from__name">{reply.fromName}</span>
+              <span class="crm-from__email">{reply.fromEmail}</span>
+            </div>
+            <span class="crm-from__time">{reply.receivedLabel}</span>
+          </div>
+
+          <div class="crm-body">
+            <template for:each={reply.paragraphs} for:item="p">
+              <p class="crm-body__para" key={p.key}>{p.text}</p>
+            </template>
+          </div>
+
+          <template lwc:if={reply.quotedSubject}>
+            <!-- The broker's own proposal, quoted beneath the reply the
+                 way a mail client threads it. -->
+            <div class="crm-quoted">
+              <span class="crm-quoted__label">
+                On {reply.quotedSentLabel}, you wrote:
+              </span>
+              <span class="crm-quoted__subject">{reply.quotedSubject}</span>
+            </div>
+          </template>
+        </div>
+
+        <footer class="slds-modal__footer crm-modal__footer">
+          <button
+            class="crm-btn-neutral"
+            type="button"
+            onclick={handleClose}
+          >Close</button>
+          <!-- Agentforce-suggested next step: the client asked for a
+               call, so the sparkle marks this as the assistant's read
+               of the message rather than a generic action. -->
+          <button
+            class="crm-btn-brand crm-btn-agentic"
+            type="button"
+            onclick={handleStartScheduling}
+          >
+            <c-ai-sparkle class="crm-spark"></c-ai-sparkle>
+            Schedule a Meeting
+          </button>
+        </footer>
+        </template>
+      </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+  </template>
+</template>

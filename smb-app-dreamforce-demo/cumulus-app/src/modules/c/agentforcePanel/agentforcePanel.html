@@ -1,0 +1,94 @@
+<template>
+  <!-- Backdrop scrim - dismiss on click -->
+  <div class={backdropClass} onclick={handleBackdropClick} aria-hidden="true"></div>
+
+  <!-- Docked side panel - slides in from the right -->
+  <aside
+    class={panelClass}
+    role="dialog"
+    aria-modal="false"
+    aria-label="Agentforce contextual chat"
+    onclick={handlePanelClick}
+    onkeydown={handleKeydown}
+  >
+    <header class="afp__head">
+      <span class="afp__spark" aria-hidden="true">
+        <svg aria-hidden="true" viewBox="0 0 13 13" focusable="false">
+          <path
+            fill="currentColor"
+            d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738ZM12.865 10.8392L12.0796 10.4465C11.8421 10.3308 11.6532 10.1372 11.5344 9.90313L11.1404 9.12035C11.0864 9.00737 10.9245 9.00737 10.8678 9.12035L10.4738 9.90313C10.3577 10.1398 10.1634 10.3281 9.92858 10.4465L9.1432 10.8392C9.02985 10.893 9.02985 11.0544 9.1432 11.1109L9.92858 11.5037C10.1661 11.6193 10.355 11.813 10.4738 12.047L10.8678 12.8298C10.9218 12.9428 11.0837 12.9428 11.1404 12.8298L11.5344 12.047C11.6505 11.8103 11.8448 11.622 12.0796 11.5037L12.865 11.1109C12.9783 11.0571 12.9783 10.8957 12.865 10.8392ZM12.865 1.80363L12.0796 1.41089C11.8421 1.29522 11.6532 1.10154 11.5344 0.867516L11.1404 0.0847341C11.0864 -0.0282447 10.9245 -0.0282447 10.8678 0.0847341L10.4738 0.867516C10.3577 1.10423 10.1634 1.29253 9.92858 1.41089L9.1432 1.80363C9.02985 1.85742 9.02985 2.01882 9.1432 2.07531L9.92858 2.46805C10.1661 2.58372 10.355 2.7774 10.4738 3.01142L10.8678 3.7942C10.9218 3.90718 11.0837 3.90718 11.1404 3.7942L11.5344 3.01142C11.6505 2.77471 11.8448 2.58641 12.0796 2.46805L12.865 2.07531C12.9783 2.02151 12.9783 1.86011 12.865 1.80363Z"
+          />
+        </svg>
+      </span>
+      <div class="afp__titles">
+        <span class="afp__eyebrow">Agentforce</span>
+        <span class="afp__context">{contextLabel}</span>
+      </div>
+      <button
+        type="button"
+        class="afp__close"
+        onclick={handleClose}
+        aria-label="Close Agentforce panel"
+      >
+        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+      </button>
+    </header>
+
+    <ul class="afp__messages">
+      <template lwc:if={hasMessages}>
+        <template for:each={messageRows} for:item="m">
+          <li key={m.id} class={m.cls}>
+            <span class="afp-bubble">{m.text}</span>
+          </li>
+        </template>
+      </template>
+      <template lwc:else>
+        <!-- Shown when the panel is opened without a seeded prompt, which is
+             how the global-header Ask pill opens it. Mirrors the greeting and
+             the trust notice on the org's Agentforce Coworker surface. -->
+        <li class="afp-empty">
+          <span class="afp-empty__title">What are you working on?</span>
+          <span class="afp-empty__sub">Let's tackle it together. Ask away.</span>
+          <span class="afp-empty__note">
+            Generative AI can produce inaccurate responses. Review responses
+            carefully.
+          </span>
+        </li>
+      </template>
+      <template lwc:if={agentTyping}>
+        <li class="afp-msg afp-msg_agent">
+          <span class="afp-bubble afp-typing" aria-label="Agentforce is typing">
+            <span></span><span></span><span></span>
+          </span>
+        </li>
+      </template>
+    </ul>
+
+    <form class="afp-pill" onsubmit={handleSubmit}>
+      <span class="afp-pill__spark" aria-hidden="true">
+        <svg aria-hidden="true" viewBox="0 0 13 13" focusable="false">
+          <path
+            fill="currentColor"
+            d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738ZM12.865 10.8392L12.0796 10.4465C11.8421 10.3308 11.6532 10.1372 11.5344 9.90313L11.1404 9.12035C11.0864 9.00737 10.9245 9.00737 10.8678 9.12035L10.4738 9.90313C10.3577 10.1398 10.1634 10.3281 9.92858 10.4465L9.1432 10.8392C9.02985 10.893 9.02985 11.0544 9.1432 11.1109L9.92858 11.5037C10.1661 11.6193 10.355 11.813 10.4738 12.047L10.8678 12.8298C10.9218 12.9428 11.0837 12.9428 11.1404 12.8298L11.5344 12.047C11.6505 11.8103 11.8448 11.622 12.0796 11.5037L12.865 11.1109C12.9783 11.0571 12.9783 10.8957 12.865 10.8392ZM12.865 1.80363L12.0796 1.41089C11.8421 1.29522 11.6532 1.10154 11.5344 0.867516L11.1404 0.0847341C11.0864 -0.0282447 10.9245 -0.0282447 10.8678 0.0847341L10.4738 0.867516C10.3577 1.10423 10.1634 1.29253 9.92858 1.41089L9.1432 1.80363C9.02985 1.85742 9.02985 2.01882 9.1432 2.07531L9.92858 2.46805C10.1661 2.58372 10.355 2.7774 10.4738 3.01142L10.8678 3.7942C10.9218 3.90718 11.0837 3.90718 11.1404 3.7942L11.5344 3.01142C11.6505 2.77471 11.8448 2.58641 12.0796 2.46805L12.865 2.07531C12.9783 2.02151 12.9783 1.86011 12.865 1.80363Z"
+          />
+        </svg>
+      </span>
+      <input
+        type="text"
+        class="afp-pill__input"
+        aria-label="Continue the conversation"
+        placeholder="Ask a follow-up question…"
+        value={chatInput}
+        oninput={handleInput}
+      />
+      <button
+        type="submit"
+        class="afp-pill__send"
+        aria-label="Send"
+        disabled={isSendDisabled}
+      >
+        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M2.1 44.5l4.4-16.3h18.6c.5 0 1-.5 1-1v-2c0-.5-.5-1-1-1H6.5l-4.3-16C2.1 8 2 7.7 2 7.4c0-.7.7-1.4 1.5-1.3.2 0 .3.1.5.1l45 18.5c.6.2 1 .8 1 1.4s-.4 1.1-.9 1.3L4 46.4c-.2.1-.4.1-.6.1-.8-.1-1.4-.7-1.4-1.5 0-.2 0-.3.1-.5z"/></svg>
+      </button>
+    </form>
+  </aside>
+</template>

@@ -1,0 +1,692 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-rfq-intake-modal - a standard Salesforce "New record" modal.
+   The project doesn't import the SLDS stylesheet into component shadow
+   roots, so the canonical slds-modal structure is recreated locally with
+   cumulus tokens. Class names match SLDS (slds-modal__container/header/
+   content/footer) so it stays visually indistinguishable from a native
+   Lightning create dialog and is a one-line swap to the real stylesheet.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Backdrop ─────────────────────────────────────────────────── */
+.slds-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 9000;
+}
+.slds-backdrop_open {
+  opacity: 1;
+}
+
+/* ── Modal shell ──────────────────────────────────────────────── */
+.slds-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-5, 24px);
+  z-index: 9001;
+  font-family: var(--atlas-font);
+}
+
+.slds-modal__container {
+  background: var(--atlas-surface);
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 40rem;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  animation: modal-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slds-modal_medium .slds-modal__container {
+  max-width: 40rem;
+}
+
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Header (centered title like the standard SF create modal) ─── */
+.slds-modal__header {
+  position: relative;
+  padding: 18px var(--slds-g-spacing-9, 56px);
+  text-align: center;
+  border-bottom: 1px solid var(--atlas-border);
+}
+
+.slds-modal__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 20px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+}
+
+/* Hybrid "Add Another LOC" subtitle - only rendered by the intake
+   modal when `context.isAddingLoc` is true. Sits directly under the
+   dynamic title ("Add Line of Coverage to <account>") and reminds
+   the broker that the previous LOC is already saved to the bundle. */
+.intake-modal__subtitle {
+  margin: var(--slds-g-spacing-1, 0.25rem) 0 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* Close (✕) - standard SLDS modal pattern: positioned at the top-right
+   of the header, inside the modal container so it's not clipped by
+   overflow:hidden. */
+.slds-modal__header .slds-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #706e6b);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+.slds-modal__header .slds-modal__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+.slds-modal__header .slds-modal__close:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1, var(--atlas-brand));
+  outline-offset: 2px;
+}
+.slds-modal__header .slds-modal__close .slds-button__icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Content ──────────────────────────────────────────────────── */
+.slds-modal__content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background: var(--atlas-surface);
+}
+.slds-p-around_medium {
+  padding: 20px var(--slds-g-spacing-5, 24px) var(--slds-g-spacing-5, 24px);
+}
+
+.required-legend {
+  margin: 0 0 14px;
+  text-align: right;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+}
+.slds-required {
+  color: var(--slds-g-color-error-1, var(--atlas-danger));
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-decoration: none;
+  margin-left: 2px;
+}
+
+/* SLDS 2 info badge / info-themed advisory - uses the info color triad:
+   info-container-1 background, on-info-1 text, info-1 icon. Per the SLDS 2
+   Badge spec, info variants render with the light-blue container and the
+   info-colored icon/text rather than a neutral grey fill. */
+.intake-context-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 18px;
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.25rem);
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.intake-context-banner .slds-media__figure {
+  display: flex;
+  flex-shrink: 0;
+}
+.intake-context-banner .slds-media__body {
+  min-width: 0;
+}
+.intake-context-banner .slds-media__body p {
+  margin: 0;
+}
+.intake-context-banner strong {
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+}
+.intake-banner-icon {
+  display: inline-flex;
+  color: var(--slds-g-color-info-1, #0b5cab);
+}
+.intake-banner-icon .slds-icon_small {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+
+/* ── Locked dropdown grid ─────────────────────────────────────── */
+.intake-locked-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-var-block-4, 1rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+}
+.intake-locked-grid .slds-col.slds-size_1-of-1 {
+  grid-column: 1 / -1;
+}
+
+/* ── Prior Policy detail card (Substep 2.1) ─────────────────────
+   Appears below the Policy Data dropdown once an option is picked.
+   Carrier / Policy # / Premium / Years of Coverage. */
+.intake-prior-detail {
+  margin-top: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+.intake-prior-detail-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.intake-prior-detail-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.intake-prior-detail-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.intake-prior-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+}
+.intake-prior-detail-grid {
+  margin: 0;
+}
+.intake-prior-detail-item {
+  margin: 0;
+}
+
+/* Read-only summary fields - SLDS static field display:
+   sentence-case term label + emphasized on-surface value. */
+.intake-prior-detail-term {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+}
+.intake-prior-detail-value {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+
+/* ── Account Name - SLDS resolved-lookup pill (name as link) ───── */
+.account-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px var(--slds-g-spacing-3, 12px);
+  background: var(--slds-g-color-disabled-container-1, #ecebea);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-disabled-1, #c9c7c5);
+  border-radius: var(--slds-g-radius-border-2, 0.25rem);
+  box-sizing: border-box;
+}
+
+/* The pill represents a LOCKED account selection - every interior element
+   uses the SLDS 2 disabled palette so the field reads as non-interactive,
+   matching its disabled container + lock icon. */
+.account-pill__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-on-disabled-2, #6b6e72);
+  color: var(--slds-g-color-disabled-container-1, #ecebea);
+  flex-shrink: 0;
+}
+.account-pill__icon svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.account-pill__action {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-decoration: none;
+  /* The anchor remains in the DOM (a11y for navigating to the record) but
+     visually the pill is disabled - no hover/focus affordance. */
+  cursor: default;
+}
+.account-pill__action .slds-pill__label {
+  color: var(--slds-g-color-on-disabled-2, #444);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-pill__action:hover .slds-pill__label,
+.account-pill__action:focus-visible .slds-pill__label {
+  text-decoration: none;
+}
+
+/* SLDS-style lock glyph - sized at slds-icon_x-small (14px) and tinted
+   neutral via the SLDS on-surface-1 hook so it inherits the disabled-input
+   palette. */
+.account-pill__lock {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--slds-g-color-on-surface-1, #706e6b);
+}
+.account-pill__lock svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  display: block;
+}
+
+.intake-form-element .slds-form-element__label {
+  display: block;
+  font-size: 11px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--slds-g-color-on-surface-1, var(--atlas-muted));
+  margin-bottom: var(--slds-g-spacing-1, 4px);
+}
+
+/* SLDS Select blueprint wrapper - layout passthrough; the chevron + locked
+   styling lives on .slds-select itself. */
+.intake-form-element .slds-select_container {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+/* Interactive SLDS Select (default) - Prior Policy is now actionable, so
+   the base select reads as a normal enabled input: surface fill, on-surface
+   text, pointer cursor, and the standard (non-disabled) border. */
+.intake-form-element .slds-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--slds-g-color-surface-container-1, #ffffff);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23706e6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c7c5);
+  border-radius: var(--slds-g-radius-border-2, 0.25rem);
+  padding: 10px var(--slds-g-spacing-6, 32px) 10px var(--slds-g-spacing-3, 12px);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, var(--atlas-ink));
+  font-family: var(--atlas-font);
+  cursor: pointer;
+  opacity: 1;
+}
+.intake-form-element .slds-select:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+  box-shadow: 0 0 0 1px var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+}
+
+/* Locked variant - LOB + LOC stay disabled, so they keep the SLDS 2
+   disabled input tokens: disabled container fill, disabled border,
+   readable on-disabled text, and a not-allowed cursor. */
+.intake-form-element .slds-select.slds-is-disabled,
+.intake-form-element .slds-select:disabled {
+  background-color: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+
+/* Native text/date inputs (Opportunity, Effective From/To). Mirrors
+   `.intake-form-element .slds-select` so the new fields read as the
+   same primitive as the picklists above them. */
+.intake-form-element .intake-input {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c7c5);
+  border-radius: var(--slds-g-radius-border-2, 0.25rem);
+  padding: 10px var(--slds-g-spacing-3, 12px);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-2, var(--atlas-ink));
+  font-family: var(--atlas-font);
+  box-sizing: border-box;
+}
+.intake-form-element .intake-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #706e6b);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+.intake-form-element .intake-input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+  box-shadow: 0 0 0 1px var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+}
+
+/* ── Start-method radio group (plain rows - no cards) ─────────── */
+.renewal-branch {
+  border: 0;
+  padding: 0;
+  margin: var(--slds-g-spacing-5, 1.5rem) 0 0;
+  display: flex;
+  flex-direction: column;
+}
+.renewal-branch-legend {
+  font-size: 11px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--atlas-muted);
+  margin-bottom: var(--slds-g-spacing-3, 0.75rem);
+  padding: 0;
+}
+.renewal-branch .slds-form-element__control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+
+/* Plain radio row: faux control + label body. No border, fill, or box. */
+.renewal-radio {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--atlas-font);
+}
+
+.renewal-radio input[type='radio'] {
+  position: absolute;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.renewal-radio-faux {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  border: 2px solid var(--atlas-muted);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  margin-top: 1px;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 140ms ease;
+}
+.renewal-radio:hover .renewal-radio-faux,
+.renewal-radio.is-selected .renewal-radio-faux {
+  border-color: var(--atlas-brand);
+}
+/* Keyboard focus ring on the faux radio when its sr-only native
+   input receives focus - keeps the radio reachable for keyboard
+   users without surfacing the OS-native control. */
+.renewal-radio input[type='radio']:focus-visible + .renewal-radio-faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.renewal-radio.is-selected .renewal-radio-faux::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--atlas-brand);
+}
+
+.renewal-radio-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.renewal-radio-title {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  font-size: 13.5px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+}
+.renewal-radio.is-selected .renewal-radio-title {
+  color: var(--atlas-brand-dark, var(--atlas-ink));
+}
+.renewal-radio-detail {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+  line-height: 1.5;
+}
+
+/* "Recommended" pill - the SLDS badge classes aren't loaded in this
+   shadow root, so style a small inline pill locally. */
+.renewal-radio-rec {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 999px);
+  background: var(--slds-g-color-brand-base-95, var(--atlas-brand-light, #edf4ff));
+  color: var(--atlas-brand, #066afe);
+  font-size: var(--slds-g-font-scale-neg-2, 10px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+/* Conditional Prior Policy dropdown - breathing room below the radios. */
+.intake-prior-select {
+  margin-top: var(--slds-g-spacing-4, 1rem);
+}
+
+/* ── Footer + SLDS buttons (scoped locally) ───────────────────── */
+.slds-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--atlas-button-gap, 0.75rem);
+  padding: 14px var(--slds-g-spacing-5, 24px);
+  border-top: 1px solid var(--atlas-border);
+  background: #fbfcfd;
+}
+
+/* SLDS 2 button system - radius / spacing / weight / colors via the
+   --slds-c-button-* component hooks. This app's SLDS 2 customization
+   uses the pill radius (--slds-g-radius-border-pill) across every
+   action button, matching ebNewRatePlanModal and the EB / PA
+   workspaces - kept consistent here so Save & Continue / Cancel read
+   the same as the rest of the surface. */
+.slds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--atlas-font);
+  font-weight: var(--slds-c-button-font-weight, 600);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-c-button-spacing-inline, 1rem);
+  border: var(--slds-c-button-sizing-border, 1px) solid transparent;
+  border-radius: var(--slds-c-button-radius-border, var(--slds-g-radius-border-pill, 9999px));
+  background: transparent;
+  color: var(--slds-c-button-text-color, var(--slds-g-color-accent-2, var(--atlas-brand)));
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.slds-button:hover {
+  text-decoration: underline;
+}
+
+/* Secondary (neutral) */
+.slds-button_neutral {
+  background: var(--slds-c-button-neutral-color-background, var(--slds-g-color-surface-container-1, #fff));
+  border-color: var(--slds-c-button-neutral-color-border, var(--slds-g-color-border-2, #5c5c5c));
+  color: var(--slds-g-color-on-surface-2, var(--atlas-ink));
+}
+.slds-button_neutral:hover {
+  background: var(--slds-c-button-neutral-color-background-hover, var(--slds-g-color-surface-container-2, #f3f3f3));
+  text-decoration: none;
+}
+
+/* Primary (brand) */
+.slds-button_brand {
+  background: var(--slds-c-button-brand-color-background, var(--slds-g-color-accent-container-1, var(--atlas-brand)));
+  border-color: var(--slds-c-button-brand-color-border, var(--slds-c-button-brand-color-background, var(--atlas-brand)));
+  color: var(--slds-c-button-brand-text-color, var(--slds-g-color-on-accent-1, #fff));
+}
+.slds-button_brand:hover {
+  background: var(--slds-c-button-brand-color-background-hover, var(--slds-g-color-accent-container-2, var(--atlas-brand-dark)));
+  border-color: var(--slds-c-button-brand-color-background-hover, var(--atlas-brand-dark));
+  text-decoration: none;
+}
+
+/* Disabled primary - Save & Continue stays locked until a prior policy is
+   chosen. SLDS 2 disabled button tokens: disabled container + on-disabled
+   text, no hover affordance. */
+.slds-button_brand:disabled,
+.slds-button_brand[disabled] {
+  background: var(--slds-g-color-disabled-container-1, #ecebea);
+  border-color: var(--slds-g-color-border-disabled-1, #c9c7c5);
+  color: var(--slds-g-color-on-disabled-2, #9a9a9a);
+  cursor: not-allowed;
+}
+.slds-button_brand:disabled:hover,
+.slds-button_brand[disabled]:hover {
+  background: var(--slds-g-color-disabled-container-1, #ecebea);
+  border-color: var(--slds-g-color-border-disabled-1, #c9c7c5);
+  text-decoration: none;
+}
+
+/* Link / tertiary button */
+.slds-button_link {
+  min-height: auto;
+  padding: 0 var(--slds-g-spacing-1, 0.25rem);
+  border-color: transparent;
+  background: transparent;
+  color: var(--slds-g-color-accent-2, var(--atlas-brand));
+}
+.slds-button_link:hover {
+  text-decoration: underline;
+}
+
+/* Icon-only button (modal close) - circular, no border/padding */
+.slds-button_icon {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: transparent;
+}
+.slds-button_icon:hover {
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .slds-modal {
+    padding: 0;
+  }
+  .slds-modal__container {
+    border-radius: 0;
+    max-width: 100%;
+    max-height: 100vh;
+    height: 100vh;
+  }
+  .slds-modal__close {
+    top: var(--slds-g-spacing-2, 8px);
+    right: var(--slds-g-spacing-2, 8px);
+  }
+  .intake-locked-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── No-template warning banner ────────────────────────────────────
+   Shown between the LOB/LOC row and Effective dates when the picked
+   LOB + LOC has no active RFQ template. Mirrors .rps-banner_warning
+   from rfqPlaybookSetup so the intake modal reads as part of the same
+   warning-banner family across the app. Uses SLDS 2 warning tokens so
+   contrast holds under themed / dark surfaces. */
+.intake-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  margin: var(--slds-g-spacing-3, 0.75rem) 0 var(--slds-g-spacing-2, 0.5rem);
+}
+.intake-banner_warning {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-on-warning-1, #8c4b02);
+}
+.intake-banner__icon {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.intake-banner__icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+.intake-banner__copy {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: 1.4;
+}
+.intake-banner__copy strong {
+  display: block;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  margin-bottom: 2px;
+}
+.intake-banner__copy em {
+  font-style: normal;
+  font-weight: var(--slds-g-font-weight-6, 600);
+}

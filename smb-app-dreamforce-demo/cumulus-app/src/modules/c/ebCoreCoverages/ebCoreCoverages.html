@@ -1,0 +1,167 @@
+<template>
+  <div class="ecv">
+    <template lwc:if={hasSegments}>
+      <template for:each={segments} for:item="seg">
+        <article class="ecv-seg" key={seg.id}>
+          <header
+            class="ecv-seg__head"
+            role="button"
+            tabindex="0"
+            aria-expanded={seg.ariaExpanded}
+            data-id={seg.id}
+            onclick={handleSegmentToggle}
+            onkeydown={handleSegmentKeydown}
+          >
+            <!-- Selectable-accordion header: coverage-level include
+                 checkbox flush-left (label onclick stops propagation so
+                 tapping the box only toggles inclusion), title in the
+                 middle, chevron flush-right. Clicking the header outside
+                 the checkbox toggles expand/collapse. Unchecking the
+                 box disables every attribute input under the segment
+                 (see ecv-row.is-excluded / r.disabled below). -->
+            <label class="ecv-seg__include" onclick={stopPropagation}>
+              <input
+                type="checkbox"
+                data-id={seg.id}
+                checked={seg.included}
+                aria-label={seg.includeLabel}
+                onchange={handleRootIncludeToggle}
+              />
+              <span class="ecv-seg__faux" aria-hidden="true"></span>
+            </label>
+            <h3 class="ecv-seg__title">{seg.label}</h3>
+            <span class="ecv-seg__chev-wrap" aria-hidden="true">
+              <svg class={seg.chevronCls} viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.9 4.4l20.7 20.5c.6.6.6 1.6 0 2.2L17.9 47.6c-.6.6-1.6.6-2.2 0l-2.2-2.2c-.6-.6-.6-1.6 0-2.2l16.3-16.1c.6-.6.6-1.6 0-2.2L13.6 8.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.5 1.5-.5 2.1 0z"/></svg>
+            </span>
+          </header>
+
+          <template lwc:if={seg.expanded}>
+            <div class="ecv-seg__body">
+              <template for:each={seg.rows} for:item="r">
+                <div class={r.rowClass} key={r.id}>
+                  <!-- Row now shows only the label + input. Whether the
+                       input is enabled is gated by the coverage-level
+                       checkbox above. Mandatory attributes surface an
+                       asterisk via labelClass so brokers still see which
+                       fields the RFQ template flagged as required. -->
+                  <div class="ecv-row__label-wrap">
+                    <span class={r.labelClass}>{r.label}</span>
+                  </div>
+                  <div class="ecv-row__control">
+
+                    <!-- renderInputForAttribute(dataType) - branches -->
+                    <template lwc:if={r.isRange}>
+                      <div class="ecv-row__pair">
+                        <div class="ecv-row__affix-input">
+                          <span class="ecv-row__affix" aria-hidden="true">$</span>
+                          <input
+                            class="ecv-input"
+                            type="number"
+                            inputmode="decimal"
+                            placeholder="Min"
+                            aria-label="Minimum"
+                            data-attr={r.id}
+                            data-field="min"
+                            value={r.min}
+                            disabled={r.valueDisabled}
+                            oninput={handleRangeInput}
+                          />
+                        </div>
+                        <span class="ecv-row__dash" aria-hidden="true">–</span>
+                        <div class="ecv-row__affix-input">
+                          <span class="ecv-row__affix" aria-hidden="true">$</span>
+                          <input
+                            class="ecv-input"
+                            type="number"
+                            inputmode="decimal"
+                            placeholder="Max"
+                            aria-label="Maximum"
+                            data-attr={r.id}
+                            data-field="max"
+                            value={r.max}
+                            disabled={r.valueDisabled}
+                            oninput={handleRangeInput}
+                          />
+                        </div>
+                      </div>
+                    </template>
+
+                    <template lwc:if={r.isCurrency}>
+                      <div class="ecv-row__affix-input">
+                        <span class="ecv-row__affix" aria-hidden="true">$</span>
+                        <input
+                          class="ecv-input"
+                          type="number"
+                          inputmode="decimal"
+                          placeholder="0.00"
+                          aria-label={r.label}
+                          data-attr={r.id}
+                          value={r.value}
+                          disabled={r.valueDisabled}
+                          oninput={handleSingleInput}
+                        />
+                      </div>
+                    </template>
+
+                    <template lwc:if={r.isPercent}>
+                      <div class="ecv-row__affix-input ecv-row__affix-input_suffix">
+                        <input
+                          class="ecv-input"
+                          type="number"
+                          min="0"
+                          max="100"
+                          inputmode="decimal"
+                          placeholder="0"
+                          aria-label={r.label}
+                          data-attr={r.id}
+                          value={r.value}
+                          disabled={r.valueDisabled}
+                          oninput={handleSingleInput}
+                        />
+                        <span class="ecv-row__affix ecv-row__affix_suffix" aria-hidden="true">%</span>
+                      </div>
+                    </template>
+
+                    <template lwc:if={r.isPicklist}>
+                      <div class="ecv-row__select-wrap">
+                        <select
+                          class="ecv-select"
+                          aria-label={r.label}
+                          data-attr={r.id}
+                          disabled={r.valueDisabled}
+                          onchange={handleSelectChange}
+                        >
+                          <option value="">Select…</option>
+                          <template for:each={r.options} for:item="opt">
+                            <option
+                              key={opt.value}
+                              value={opt.value}
+                              selected={opt.selected}
+                            >{opt.label}</option>
+                          </template>
+                        </select>
+                      </div>
+                    </template>
+
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </article>
+      </template>
+    </template>
+
+    <template lwc:else>
+      <c-empty-state
+        illustration-name="success:new"
+        title="No core coverages configured"
+        size="medium"
+      >
+        No core coverages are configured for the in-scope products. Open
+        Setup and include at least one Plan Coverage attribute to surface
+        this step.
+      </c-empty-state>
+    </template>
+  </div>
+</template>

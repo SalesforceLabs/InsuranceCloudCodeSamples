@@ -1,0 +1,680 @@
+.compare {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.compare-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.18em;
+  color: var(--atlas-muted);
+}
+
+.title {
+  margin: 6px 0 0;
+  font-size: 22px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+}
+
+.cta-row { display: flex; gap: var(--atlas-button-gap, 0.75rem); }
+
+/* EB Export to Spreadsheet - brokers need this for client decks, so
+   the EB flow renders it as a stronger green pill instead of the plain
+   ghost variant used by PA. */
+.ghost.export-eb {
+  background: linear-gradient(135deg, #04844b, #2eb67d);
+  color: #fff;
+  border: 0;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  box-shadow: 0 4px 12px rgba(4, 132, 75, 0.28);
+  padding: 9px var(--slds-g-spacing-4, 16px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ghost.export-eb:hover {
+  filter: brightness(1.05);
+  background: linear-gradient(135deg, #04844b, #2eb67d);
+}
+.ghost.export-eb .export-icon {
+  font-size: var(--slds-g-font-scale-2, 16px);
+}
+
+/* SLDS 2 agentic sparkle - flat, no decorative glow. */
+.spark { display: inline-flex; align-items: center; justify-content: center; }
+.spark-svg { width: 1.333em; height: 1.333em; }
+
+.ghost {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #5c5c5c);
+  background: #fff;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 9px var(--slds-g-spacing-4, 16px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  cursor: pointer;
+}
+.ghost:hover { background: var(--slds-g-color-surface-container-2, #f3f3f3); }
+
+.brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  padding: 10px 20px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.brand:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* SLDS solid brand - used for primary user actions like Bind. Gradient is
+   reserved for agentic / AI-driven actions; this is the standard CTA. */
+.brand.solid {
+  background: var(--atlas-brand);
+  box-shadow: 0 4px 12px rgba(6, 106, 254, 0.22);
+}
+.brand.solid:hover {
+  background: var(--atlas-brand-dark);
+}
+.brand.solid:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Loading state ─────────────────────────── */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: var(--slds-g-spacing-7, 40px);
+  background: #fff;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius-lg);
+  color: var(--atlas-muted);
+  font-size: 13.5px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid var(--slds-g-color-brand-base-90, #d6e6ff);
+  border-top-color: var(--slds-g-color-accent-1, #066afe);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── View tab bar (Agentforce Recommended | All Markets) ────── */
+.qc-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  padding: var(--slds-g-spacing-1, 4px);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  align-self: flex-start;
+}
+
+.qc-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px var(--slds-g-spacing-4, 16px);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.qc-tab:hover:not(.is-active) {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.qc-tab.is-active {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
+.qc-tab-spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.qc-tab-spark svg { width: 14px; height: 14px; }
+
+.qc-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  margin-left: var(--slds-g-spacing-1, 4px);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: 11px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.qc-tab.is-active .qc-tab-count {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+
+/* ── Agentforce insight banner ──────────────────────────────── */
+.qc-banner.slds-scoped-notification {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  background: linear-gradient(135deg, #f6f3ff 0%, var(--slds-g-color-brand-base-95, #edf4ff) 100%);
+  border: var(--slds-g-sizing-border-1, 1px) solid rgba(124, 58, 237, 0.18);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+
+.qc-banner-spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--atlas-purple-light, #f1ecff);
+  color: var(--atlas-purple, #7c3aed);
+  flex-shrink: 0;
+}
+.qc-banner-spark svg { width: 1rem; height: 1rem; }
+
+.qc-banner-body {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* ── All Markets manual-compare toolbar ─────────────────────── */
+.qc-allmarkets-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  flex-wrap: wrap;
+}
+
+.qc-allmarkets-hint {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-5, 500);
+}
+
+.qc-allmarkets-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--atlas-button-gap, 0.75rem);
+}
+
+.qc-allmarkets-bar .ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qc-allmarkets-bar .ghost-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.qc-allmarkets-bar .ghost-icon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+/* Ghost-icon decoration for the Export buttons */
+.cta-row .ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cta-row .ghost-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cta-row .ghost-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Cards ────────────────────────────────── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 980px) {
+  .cards {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 14px;
+    padding-bottom: var(--slds-g-spacing-1, 4px);
+  }
+
+  .cards > .q-card {
+    flex: 0 0 calc(85vw - 24px);
+    max-width: var(--slds-g-sizing-15, 320px);
+    scroll-snap-align: start;
+  }
+}
+
+.q-card {
+  position: relative;
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: var(--atlas-shadow-card);
+  padding: 22px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  outline: none;
+}
+
+.q-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--atlas-shadow-lift);
+}
+
+.q-card.is-best {
+  border: 2px solid var(--atlas-brand);
+  box-shadow: 0 18px 44px rgba(6, 106, 254, 0.18);
+  transform: translateY(-4px);
+}
+
+.q-card.is-selected {
+  border-color: var(--atlas-success);
+  box-shadow: 0 12px 32px rgba(46, 132, 74, 0.15);
+}
+
+.q-card.is-best.is-selected {
+  border-color: var(--atlas-brand);
+  box-shadow: 0 18px 44px rgba(6, 106, 254, 0.28);
+}
+
+.best-pill {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  font-size: 11.5px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+  cursor: help;
+}
+
+.card-h {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--slds-g-radius-border-3, 12px);
+  color: #fff;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carrier {
+  font-size: 15px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+}
+
+.planname {
+  font-size: 12.5px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-brand-dark);
+  margin-top: 1px;
+}
+
+.ambest {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+  margin-top: 2px;
+}
+
+.premium {
+  text-align: center;
+  padding: 14px 0 10px;
+  border-top: 1px solid var(--atlas-divider);
+  border-bottom: 1px solid var(--atlas-divider);
+}
+
+.amount {
+  font-size: 30px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  letter-spacing: -0.02em;
+}
+
+.q-card.is-best .amount {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.per {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+  margin-left: 6px;
+}
+
+.rows {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--slds-g-spacing-2, 8px) 0;
+  border-bottom: 1px solid var(--atlas-divider);
+  font-size: 12.5px;
+}
+
+.row:last-child { border-bottom: 0; }
+
+.row dt {
+  color: var(--atlas-muted);
+  margin: 0;
+}
+
+.row dd {
+  margin: 0;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+}
+
+/* The Travelers AI reason now renders inside a nested c-agentic-card; this
+   class targets the paragraph slotted into that card. */
+.ai-callout-body {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--atlas-ink-2);
+  line-height: 1.55;
+}
+
+.card-f {
+  margin-top: auto;
+}
+
+/* ── Per-card CTA buttons (Select & Bind / Reject Quote) ─────────── */
+.card-f {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--atlas-button-gap, 0.75rem);
+  flex-wrap: wrap;
+}
+
+.reject-link {
+  background: transparent;
+  border: 0;
+  color: var(--atlas-muted);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.reject-link:hover {
+  background: rgba(194, 57, 52, 0.06);
+  color: var(--atlas-danger);
+}
+
+.select-bind {
+  flex: 1;
+  min-width: 0;
+  padding: 10px var(--slds-g-spacing-4, 16px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  border: 0;
+  background: var(--atlas-brand);
+  color: #fff;
+  font-family: var(--atlas-font);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(6, 106, 254, 0.22);
+  transition: background 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+}
+
+.select-bind:hover {
+  background: var(--atlas-brand-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(6, 106, 254, 0.28);
+}
+
+.q-card.is-best .select-bind {
+  background: linear-gradient(
+    135deg,
+    var(--slds-g-color-accent-1, #066afe),
+    var(--slds-g-color-accent-2, #0250d9)
+  );
+  box-shadow: 0 6px 20px rgba(6, 106, 254, 0.32);
+}
+
+.selected-tag {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px var(--slds-g-spacing-4, 16px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--atlas-success);
+  color: #fff;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  letter-spacing: 0.01em;
+}
+
+.selected-tag svg { width: 14px; height: 14px; }
+
+.rejected-tag {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px var(--slds-g-spacing-4, 16px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--atlas-muted);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.rejected-tag svg { width: var(--slds-g-sizing-4, 0.75rem); height: var(--slds-g-sizing-4, 0.75rem); }
+
+/* ── Rejected card state ─────────────────────────────────────────── */
+.q-card.is-rejected {
+  opacity: 0.5;
+  filter: grayscale(0.55);
+  background: rgba(15, 23, 42, 0.02);
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: none;
+}
+
+.q-card.is-rejected:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.q-card.is-rejected .best-pill,
+.q-card.is-rejected c-agentic-card {
+  display: none;
+}
+
+.q-card.is-rejected .amount {
+  text-decoration: line-through;
+  color: var(--atlas-muted);
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+}
+
+/* ── Manual-compare checkbox + checked-card highlight ───────── */
+.q-card.is-selectable { cursor: default; }
+
+.q-card.is-checked {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 1px var(--slds-g-color-border-accent-1, #066afe),
+    0 12px 32px rgba(6, 106, 254, 0.16);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+.qc-check {
+  position: absolute;
+  top: var(--slds-g-spacing-3, 12px);
+  left: var(--slds-g-spacing-3, 12px);
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.qc-check-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.qc-check[aria-checked='true'] .qc-check-box {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.qc-check-box svg { width: 14px; height: 14px; }
+
+/* ── Card footer buttons (View Details / Select) - SLDS 2 ───── */
+.card-f .qc-btn-neutral,
+.card-f .qc-btn-brand {
+  flex: 1;
+  min-width: 0;
+  height: var(--slds-g-sizing-9, 2rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--slds-g-spacing-var-inline-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.card-f .qc-btn-neutral {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.card-f .qc-btn-neutral:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.card-f .qc-btn-brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.card-f .qc-btn-brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+
+@media (max-width: 980px) {
+  .cards { grid-template-columns: 1fr; }
+}
+
+
+/* ── SLDS 2 conformance: pill action buttons (radius-border/circle) ── */
+.card-f .qc-btn-brand { border-radius: var(--slds-g-radius-border-pill, 9999px); }

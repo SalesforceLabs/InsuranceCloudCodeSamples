@@ -1,0 +1,74 @@
+/* Integration Procedures */
+
+.ip-list-page {
+  background: #fff;
+  border: 1px solid #dddbda;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.ip-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 16px;
+}
+.ip-list-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #001e5b;
+  margin: 0 0 4px 0;
+}
+.ip-list-header p {
+  font-size: 12px;
+  color: #706E6B;
+  margin: 0;
+}
+.ip-list-body {
+  padding: 0;
+}
+
+/* Detail page */
+.ip-detail-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.ip-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.ip-detail-procname {
+  font-size: 11px;
+  font-weight: 600;
+  color: #5c5c5c;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+.ip-detail-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #080707;
+  margin: 0 0 8px 0;
+}
+.ip-detail-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ip-meta-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f3f3f3;
+  color: #444;
+  border: 1px solid #e0e0e0;
+  border-radius: 999px;
+}

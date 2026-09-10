@@ -1,0 +1,71 @@
+<template>
+  <div class="eb-cs">
+    <!-- Native tabset - one tab per selected Root Product. Mirrors the
+         tablist pattern used in c-eb-policy-record-page. -->
+    <div class="eb-cs__tabs" role="tablist" aria-label="Root Products">
+      <template for:each={rootTabs} for:item="t">
+        <button
+          key={t.id}
+          type="button"
+          role="tab"
+          class={t.cls}
+          aria-selected={t.ariaSelected}
+          tabindex={t.tabIndex}
+          data-id={t.id}
+          onclick={handleTabClick}
+        >
+          {t.label}
+        </button>
+      </template>
+    </div>
+
+    <div class="eb-cs__panel" role="tabpanel">
+      <template lwc:if={activeRootIsEmpty}>
+        <c-empty-state
+          illustration-name="success:new"
+          title="No coverage attributes for this root product"
+          size="small"
+        >
+          The runtime will skip Step 2 for it and surface its detail
+          in Benefits &amp; Copays instead.
+        </c-empty-state>
+      </template>
+
+      <template lwc:else>
+        <ul class="eb-cs__rows">
+          <template for:each={activeRootRows} for:item="a">
+            <li key={a.id} class="eb-cs__row">
+              <span class="eb-cs__col eb-cs__col_include">
+                <label class="eb-cs__check">
+                  <input
+                    type="checkbox"
+                    data-attr={a.id}
+                    checked={a.includedInRfq}
+                    onchange={handleIncludeToggle}
+                    aria-label={a.label}
+                  />
+                  <span class="eb-cs__check-faux" aria-hidden="true"></span>
+                </label>
+              </span>
+              <span class="eb-cs__col eb-cs__col_name">
+                <span class="eb-cs__row-label">{a.label}</span>
+              </span>
+              <span class="eb-cs__col eb-cs__col_type">
+                <c-picklist
+                  class="eb-cs__type-picklist"
+                  size="s"
+                  data-attr={a.id}
+                  options={dataTypeOptions}
+                  value={a.dataType}
+                  accessible-label="Data Type"
+                  onchange={handleDataTypeChange}
+                ></c-picklist>
+                <span class="eb-cs__type-hint">{a.hint}</span>
+              </span>
+            </li>
+          </template>
+        </ul>
+      </template>
+    </div>
+  </div>
+</template>

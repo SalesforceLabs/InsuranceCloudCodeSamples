@@ -1,0 +1,283 @@
+<template>
+  <div class="ipr">
+    <!-- ── Highlights panel - same shell as the Account record page,
+             which is traced from the org's LEX page header. ────────── -->
+    <header class="slds-page-header sf-record-header">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <div class="slds-media slds-media_center">
+            <div class="slds-media__figure">
+              <span class="sf-record-avatar" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path
+                    fill="#fff"
+                    d="M6 2h8l4 4v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm7 1.5V7h3.5L13 3.5zM8 11h8v1.5H8V11zm0 3.5h8V16H8v-1.5zM8 18h5v1.5H8V18z"
+                  />
+                </svg>
+              </span>
+            </div>
+            <div class="slds-media__body">
+              <p class="slds-page-header__name-meta">Insurance Policy</p>
+              <h1 class="slds-page-header__title slds-truncate sf-record-title">
+                {displayName}
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- One joined group, styled exactly as on the Account record page,
+             whose leading slot is this record's primary action: New Request
+             For Quote here, where the account carries Create RFQ. -->
+        <div class="slds-page-header__col-actions">
+          <div class="slds-button-group sf-action-group" role="group">
+            <button
+              class="slds-button slds-button_neutral sf-record-btn"
+              type="button"
+              onclick={handleCreateRenewal}
+            >
+              New Request For Quote
+            </button>
+            <button class="slds-button slds-button_neutral sf-record-btn" type="button">New Contact</button>
+            <button class="slds-button slds-button_neutral sf-record-btn" type="button">New Case</button>
+            <div class={dropdownClass}>
+              <button
+                class="slds-button slds-button_icon slds-button_icon-border-filled sf-caret-btn action-dropdown-btn"
+                type="button"
+                aria-label="Show more actions"
+                aria-haspopup="true"
+                aria-expanded={dropdownAriaExpanded}
+                title="Show more actions"
+                onclick={toggleDropdown}
+              >
+                <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"/></svg>
+              </button>
+              <template lwc:if={dropdownOpen}>
+                <div class="slds-dropdown slds-dropdown_right slds-dropdown_small action-dropdown">
+                  <ul class="slds-dropdown__list" role="menu">
+                    <li class="slds-dropdown__item" role="presentation">
+                      <a href="#edit" role="menuitem">Edit</a>
+                    </li>
+                    <li class="slds-dropdown__item" role="presentation">
+                      <a href="#clone" role="menuitem">Clone</a>
+                    </li>
+                    <li class="slds-dropdown__item" role="presentation">
+                      <a href="#delete" role="menuitem">Delete</a>
+                    </li>
+                  </ul>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Field strip -->
+      <div class="slds-page-header__row sf-record-fields">
+        <template for:each={highlights} for:item="f">
+          <div class="sf-record-field" key={f.id}>
+            <span class="sf-record-field-label">{f.label}</span>
+            <span class="sf-record-field-value">
+              <template lwc:if={f.value}>
+                <span class="sf-record-field-text">{f.value}</span>
+              </template>
+              <template lwc:else>
+                <span class="sf-record-field-blank">&nbsp;</span>
+              </template>
+            </span>
+          </div>
+        </template>
+      </div>
+    </header>
+
+    <!-- ── 2-column body: tabs + content (left), Activity (right) ─── -->
+    <div class="sf-body-grid">
+      <div class="sf-body-main">
+        <div class="sf-record-tabs" role="tablist" aria-label="Insurance Policy">
+          <template for:each={tabs} for:item="t">
+            <button
+              key={t.id}
+              class={t.tabClass}
+              type="button"
+              role="tab"
+              aria-selected={t.ariaSelected}
+              data-id={t.id}
+              onclick={handleTabClick}
+            >
+              {t.label}
+            </button>
+          </template>
+        </div>
+
+        <div class="ipr__body">
+          <!-- ═══ Related ═══════════════════════════════════════════ -->
+          <template lwc:if={isRelatedTab}>
+            <div class="ipr-rl">
+              <template for:each={relatedLists} for:item="rl">
+                <article class="ipr-rl__card" key={rl.id}>
+                  <header class="ipr-rl__head">
+                    <span class={rl.iconClass} aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <path
+                          fill="#fff"
+                          d="M6 2h8l4 4v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm7 1.5V7h3.5L13 3.5zM8 11h8v1.5H8V11zm0 3.5h8V16H8v-1.5zM8 18h5v1.5H8V18z"
+                        />
+                      </svg>
+                    </span>
+                    <h2 class="ipr-rl__label">
+                      <a class="ipr-rl__title-link" href="#related-list">{rl.title}</a>
+                      <span class="ipr-rl__count">{rl.countLabel}</span>
+                    </h2>
+                    <button class="ipr-rl__btn" type="button">New</button>
+                    <button
+                      class="ipr-rl__menu"
+                      type="button"
+                      aria-label={rl.actionsLabel}
+                    >
+                      <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                        <circle cx="26" cy="10" r="5" />
+                        <circle cx="26" cy="26" r="5" />
+                        <circle cx="26" cy="42" r="5" />
+                      </svg>
+                    </button>
+                  </header>
+
+                  <template lwc:if={rl.hasRows}>
+                    <div class="ipr-rl__table-wrap">
+                      <table class="ipr-rl__table">
+                        <thead>
+                          <tr>
+                            <template for:each={rl.columns} for:item="c">
+                              <th key={c.id} scope="col">{c.label}</th>
+                            </template>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <template for:each={rl.rows} for:item="row">
+                            <tr key={row.id}>
+                              <template for:each={row.cells} for:item="cell">
+                                <td key={cell.id}>
+                                  <template lwc:if={cell.isLink}>
+                                    <a class="ipr-rl__row-link" href="#record">{cell.value}</a>
+                                  </template>
+                                  <template lwc:else>{cell.value}</template>
+                                </td>
+                              </template>
+                            </tr>
+                          </template>
+                        </tbody>
+                      </table>
+                    </div>
+                    <template lwc:if={rl.showViewAll}>
+                      <footer class="ipr-rl__foot">
+                        <a class="ipr-rl__view-all" href="#view-all">View All</a>
+                      </footer>
+                    </template>
+                  </template>
+                </article>
+              </template>
+            </div>
+          </template>
+
+          <!-- ═══ Details ═══════════════════════════════════════════ -->
+          <template lwc:if={isDetailsTab}>
+            <div class="ipr-det">
+              <template for:each={detailSections} for:item="s">
+                <section class="ipr-det__card" key={s.id}>
+                  <h3 class="ipr-det__section-title">{s.title}</h3>
+                  <div class="ipr-det__grid">
+                    <template for:each={s.fields} for:item="f">
+                      <div class={f.fieldClass} key={f.id}>
+                        <span class="ipr-det__label">{f.label}</span>
+                        <template lwc:if={f.isLink}>
+                          <a class="ipr-det__value ipr-det__value_link" href="#record"
+                            >{f.displayValue}</a
+                          >
+                        </template>
+                        <template lwc:else>
+                          <span class="ipr-det__value">{f.displayValue}</span>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </section>
+              </template>
+            </div>
+          </template>
+
+          <!-- ═══ Policy UI - Insurance Policy Structure ═════════════ -->
+          <template lwc:if={isPolicyUiTab}>
+            <article class="ipr-tree__card">
+              <header class="ipr-tree__head">
+                <span class="ipr-tree__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <path
+                      fill="#fff"
+                      d="M4 3h7v5H4V3zm9 0h7v5h-7V3zM4 10h7v5H4v-5zm9 0h7v5h-7v-5zM4 17h7v4H4v-4zm9 0h7v4h-7v-4z"
+                    />
+                  </svg>
+                </span>
+                <h2 class="ipr-tree__title">Insurance Policy Structure</h2>
+                <button class="ipr-tree__expand-all" type="button" onclick={handleToggleAll}>
+                  {expandAllLabel}
+                </button>
+              </header>
+
+              <div class="ipr-tree__table-wrap">
+                <table class="ipr-tree__table" role="treegrid">
+                  <thead>
+                    <tr>
+                      <template for:each={structureColumns} for:item="c">
+                        <th key={c.id} scope="col">{c.label}</th>
+                      </template>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template for:each={structureRows} for:item="row">
+                      <tr key={row.id} class={row.rowClass} aria-level={row.level}>
+                        <th scope="row" class="ipr-tree__item-cell">
+                          <div class="ipr-tree__item" style={row.indentStyle}>
+                            <template lwc:if={row.hasChildren}>
+                              <button
+                                class={row.toggleClass}
+                                type="button"
+                                data-id={row.id}
+                                aria-label={row.toggleLabel}
+                                aria-expanded={row.ariaExpanded}
+                                onclick={handleToggleNode}
+                              >
+                                <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                                  <path
+                                    d="M17.8 4.4l20.7 20.5c.6.6.6 1.6 0 2.2L17.8 47.6c-.6.6-1.6.6-2.2 0l-2.2-2.2c-.6-.6-.6-1.6 0-2.2l16.3-16.1c.6-.6.6-1.6 0-2.2L13.3 8.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.5 1.5-.5 2.3 0z"
+                                  />
+                                </svg>
+                              </button>
+                            </template>
+                            <template lwc:else>
+                              <span class="ipr-tree__toggle-spacer" aria-hidden="true"></span>
+                            </template>
+                            <a class="ipr-tree__link" href="#record">{row.label}</a>
+                          </div>
+                        </th>
+                        <td>{row.product}</td>
+                        <td>{row.start}</td>
+                        <td>{row.end}</td>
+                        <td class="ipr-tree__amount">{row.standardAmount}</td>
+                        <td class="ipr-tree__amount">{row.termAmount}</td>
+                        <td class="ipr-tree__amount">{row.standardTax}</td>
+                        <td class="ipr-tree__amount">{row.termTax}</td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </template>
+        </div>
+      </div>
+
+      <aside class="sf-sidebar-stack">
+        <c-activity-panel record-label="policy"></c-activity-panel>
+      </aside>
+    </div>
+  </div>
+</template>

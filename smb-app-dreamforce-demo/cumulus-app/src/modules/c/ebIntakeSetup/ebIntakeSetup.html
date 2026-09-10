@@ -1,0 +1,51 @@
+<template>
+  <section class="eis" aria-label="Asset Data Capture">
+    <header class="eis__head">
+      <span class="eis__eyebrow">RFQ &amp; Intake Setup</span>
+      <h2 class="eis__title">Asset Data Capture</h2>
+      <p class="eis__sub">
+        Map the risk assets (vehicles, properties, schedules) and
+        operator rosters required during RFQ intake. Toggle which fields
+        the broker sees in the runtime form per Root Product.
+      </p>
+    </header>
+
+    <div class="eis__panel" role="status">
+      <span class="eis__pill">Scaffold</span>
+      <h3 class="eis__panel-title">Configuration coming soon</h3>
+      <p class="eis__panel-sub">
+        This child component is wired to the new modular contract - it
+        already receives the selected Root Product via <code>@api</code>
+        and reports saves through the uniform
+        <code>configurationsave</code> event. The intake-config UI
+        (asset templates, field toggles, validation rules) lands in a
+        follow-up pass.
+      </p>
+      <dl class="eis__meta">
+        <div class="eis__meta-row">
+          <dt class="eis__meta-dt">Active Root Product</dt>
+          <dd class="eis__meta-dd">
+            <template lwc:if={hasRootProduct}>{rootProductLabel}</template>
+            <template lwc:else>- none selected -</template>
+          </dd>
+        </div>
+        <div class="eis__meta-row">
+          <dt class="eis__meta-dt">Contract</dt>
+          <dd class="eis__meta-dd">
+            <code>@api rootProduct</code> · emits
+            <code>configurationsave</code>
+          </dd>
+        </div>
+      </dl>
+
+      <button
+        type="button"
+        class="eis__btn"
+        onclick={handlePlaceholderSave}
+        title="Fires the configurationsave event for QA"
+      >
+        Save (placeholder)
+      </button>
+    </div>
+  </section>
+</template>

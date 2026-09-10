@@ -1,0 +1,100 @@
+/* Alias Creation step — the target editor stacks a LOB dropdown above the
+ * split "line definition scope · canonical attribute search" picker. Both the
+ * search-with-scope pill and the tree/attribute chrome are reused from
+ * EnrichmentMappingStep.css. */
+
+/* Attribute : Add-As-Alias-To columns sit at a 30:70 ratio (the 40px middle
+ * column carries the connector arrow). */
+.emap--alias .emap__cols-head,
+.emap--alias .emap-row {
+  grid-template-columns: 3fr 40px 7fr;
+}
+
+/* LOB dropdown + split selector share one row — the LOB picker takes a fixed
+ * slice on the left, the search-with-scope pill flexes to fill the rest. */
+.ealias-editor {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+}
+.ealias-editor > .slds2-dropdown {
+  flex: 0 0 34%;
+  min-width: 0;
+}
+.ealias-editor > .emap-fp {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Multiple canonical terms per attribute: the editor cell holds the picker
+ * plus a fixed-width controls area (remove "×" always, add "+" on the last
+ * row). The area is a constant width on every row so the picker boxes stay
+ * aligned regardless of how many buttons a row shows. */
+.ealias-row__editor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ealias-row__editor > .ealias-editor {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ealias-row__controls {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 60px;
+  justify-content: flex-start;
+}
+.ealias-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--slds-g-color-accent-1);
+  background: transparent;
+  border: none;
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+}
+.ealias-iconbtn:hover {
+  background: var(--slds-g-color-surface-2);
+}
+
+/* Continuation rows (2nd+ canonical term) leave the attribute cell blank so
+ * the incoming attribute reads once at the top. */
+.ealias-row__cont {
+  display: block;
+  width: 100%;
+}
+.emap--alias .emap-row__attr--empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Line-definition name trailing a canonical attribute option when the scope
+ * spans every definition in the LOB — less significant than the attribute. */
+.ealias-opt-qual {
+  color: var(--slds-g-color-on-surface-1);
+  font-size: var(--slds-g-font-scale-neg-1);
+}
+
+/* Line-definition scope option — bold name over a muted type subline. */
+.ealias-line-opt {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.ealias-line-opt__name {
+  font-weight: var(--slds-g-font-weight-7);
+  color: var(--slds-g-color-on-surface-2);
+}
+.ealias-line-opt__type {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}

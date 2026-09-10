@@ -1,0 +1,199 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-eb-policy-record-page - minimal LEX-style record page shell hosting the
+   EB Insurance Policy "Plan" tab.
+   ════════════════════════════════════════════════════════════════════ */
+
+:host {
+  display: block;
+  min-height: 100%;
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  font-family: var(--atlas-font);
+}
+
+.eb-rp {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ── Record header ────────────────────────────────────────────── */
+.eb-rp__header {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+  padding: var(--slds-g-spacing-var-5, 1.5rem)
+    var(--slds-g-spacing-var-inline-6, 2rem) 0;
+}
+.eb-rp__header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+.eb-rp__header-main {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  min-width: 0;
+}
+
+/* Action button group - neutral SLDS buttons with one brand primary. */
+.eb-rp__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--atlas-button-gap, 0.75rem);
+  flex-shrink: 0;
+}
+.eb-rp__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-4, 1rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.eb-rp__btn:hover {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border-color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.eb-rp__btn:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.eb-rp__btn_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.eb-rp__btn_brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-accent-container-2, #0250d9);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.eb-rp__btn_caret {
+  padding: 0 var(--slds-g-spacing-var-inline-2, 0.5rem);
+}
+.eb-rp__btn_caret svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.eb-rp__obj-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-success-base-50, #0b827c);
+  flex-shrink: 0;
+}
+.eb-rp__obj-icon svg {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+}
+.eb-rp__eyebrow {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-rp__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.01em;
+}
+
+.eb-rp__highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-var-inline-8, 3rem);
+  margin: var(--slds-g-spacing-var-5, 1.5rem) 0 var(--slds-g-spacing-var-4, 1rem);
+  padding: 0 0 0 calc(40px + var(--slds-g-spacing-3, 0.75rem));
+}
+.eb-rp__highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.eb-rp__highlight dt {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-rp__highlight dd {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eb-rp__status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem var(--slds-g-spacing-var-inline-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-1, #056764);
+}
+
+/* ── Tab strip ────────────────────────────────────────────────── */
+.eb-rp__tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-var-inline-5, 1.5rem);
+  padding: 0 var(--slds-g-spacing-var-inline-6, 2rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+}
+.eb-rp__tab {
+  position: relative;
+  border: 0;
+  background: transparent;
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem) 0;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+}
+.eb-rp__tab:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-rp__tab_active {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-rp__tab_active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--slds-g-color-accent-1, #066afe);
+}
+.eb-rp__tab:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+/* ── Body ─────────────────────────────────────────────────────── */
+.eb-rp__body {
+  flex: 1 1 auto;
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-inline-5, 1.5rem);
+}
+.eb-rp__placeholder {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-8, 3rem) var(--slds-g-spacing-var-inline-4, 1rem);
+  text-align: center;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}

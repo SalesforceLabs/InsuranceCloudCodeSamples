@@ -1,0 +1,219 @@
+/* SLDS 2 Button — uses real --slds-c-button-* hooks plus --slds-s-button-*
+ * system tokens shipped by @salesforce-ux/design-system-2.
+ *
+ * Real SLDS 2 buttons are PILL-shaped (--slds-g-radius-border-pill = 15rem),
+ * sized by content + padding-block (no fixed min-height), with a subtle
+ * "lift" shadow on hover via --slds-s-button-bordered-shadow-hover.
+ */
+.slds2-btn {
+  --slds-c-button-color-background: transparent;
+  --slds-c-button-color-background-hover: var(--slds-c-button-color-background);
+  --slds-c-button-color-background-active: var(--slds-c-button-color-background);
+  --slds-c-button-color-border: transparent;
+  --slds-c-button-color-border-hover: var(--slds-c-button-color-border);
+  --slds-c-button-color-border-active: var(--slds-c-button-color-border);
+  --slds-c-button-text-color: var(--slds-g-color-on-surface-2);
+  --slds-c-button-text-color-hover: var(--slds-c-button-text-color);
+  --slds-c-button-text-color-active: var(--slds-c-button-text-color);
+  --slds-c-button-radius-border: var(--slds-s-button-radius-border, var(--slds-g-radius-border-pill));
+  --slds-c-button-sizing-border: var(--slds-g-sizing-border-1);
+  --slds-c-button-spacing-block-start: var(--slds-g-spacing-2);
+  --slds-c-button-spacing-block-end: var(--slds-g-spacing-2);
+  --slds-c-button-spacing-inline-start: var(--slds-s-button-spacing-inline, var(--slds-g-spacing-4));
+  --slds-c-button-spacing-inline-end: var(--slds-s-button-spacing-inline, var(--slds-g-spacing-4));
+  --slds-c-button-font-weight: var(--slds-g-font-weight-5);
+  --slds-c-button-shadow: none;
+  --slds-c-button-shadow-focus: var(--slds-s-button-shadow-focus,
+    0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15));
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2);
+  background: var(--slds-c-button-color-background);
+  color: var(--slds-c-button-text-color);
+  border: var(--slds-c-button-sizing-border) solid var(--slds-c-button-color-border);
+  border-radius: var(--slds-c-button-radius-border);
+  padding-block-start: var(--slds-c-button-spacing-block-start);
+  padding-block-end: var(--slds-c-button-spacing-block-end);
+  padding-inline-start: var(--slds-c-button-spacing-inline-start);
+  padding-inline-end: var(--slds-c-button-spacing-inline-end);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-c-button-font-weight);
+  line-height: 1.25;
+  box-shadow: var(--slds-c-button-shadow);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    background-color 100ms ease,
+    border-color 100ms ease,
+    color 100ms ease,
+    box-shadow 100ms ease,
+    transform 100ms ease;
+}
+
+.slds2-btn:hover:not(:disabled) {
+  background: var(--slds-c-button-color-background-hover);
+  border-color: var(--slds-c-button-color-border-hover);
+  color: var(--slds-c-button-text-color-hover);
+}
+.slds2-btn:active:not(:disabled) {
+  background: var(--slds-c-button-color-background-active);
+  border-color: var(--slds-c-button-color-border-active);
+  color: var(--slds-c-button-text-color-active);
+}
+.slds2-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--slds-c-button-shadow-focus);
+}
+.slds2-btn:disabled,
+.slds2-btn[aria-disabled='true'] {
+  background: var(--slds-g-color-disabled-container-1);
+  color: var(--slds-g-color-disabled-1);
+  border-color: var(--slds-g-color-border-disabled-1);
+  cursor: not-allowed;
+}
+
+/* Sizes — adjust block padding to compress/expand height */
+.slds2-btn--sm {
+  --slds-c-button-spacing-block-start: var(--slds-g-spacing-1);
+  --slds-c-button-spacing-block-end: var(--slds-g-spacing-1);
+  --slds-c-button-spacing-inline-start: var(--slds-g-spacing-3);
+  --slds-c-button-spacing-inline-end: var(--slds-g-spacing-3);
+  font-size: var(--slds-g-font-scale-base);
+}
+.slds2-btn--md { /* default */ }
+.slds2-btn--lg {
+  --slds-c-button-spacing-block-start: var(--slds-g-spacing-3);
+  --slds-c-button-spacing-block-end: var(--slds-g-spacing-3);
+  --slds-c-button-spacing-inline-start: var(--slds-g-spacing-5);
+  --slds-c-button-spacing-inline-end: var(--slds-g-spacing-5);
+  font-size: var(--slds-g-font-scale-2);
+}
+
+/* Variants — set sub-namespaced hooks AND mirror to base hooks */
+.slds2-btn--brand {
+  --slds-c-button-brand-color-background: var(--slds-g-color-accent-1);
+  --slds-c-button-brand-color-background-hover: var(--slds-g-color-accent-2);
+  --slds-c-button-brand-color-background-active: var(--slds-g-color-accent-3);
+  --slds-c-button-brand-color-border: var(--slds-g-color-accent-1);
+  --slds-c-button-brand-color-border-hover: var(--slds-g-color-accent-2);
+  --slds-c-button-brand-text-color: var(--slds-g-color-on-accent-1);
+  --slds-c-button-brand-text-color-hover: var(--slds-g-color-on-accent-1);
+  --slds-c-button-brand-text-color-active: var(--slds-g-color-on-accent-1);
+
+  --slds-c-button-color-background: var(--slds-c-button-brand-color-background);
+  --slds-c-button-color-background-hover: var(--slds-c-button-brand-color-background-hover);
+  --slds-c-button-color-background-active: var(--slds-c-button-brand-color-background-active);
+  --slds-c-button-color-border: var(--slds-c-button-brand-color-border);
+  --slds-c-button-color-border-hover: var(--slds-c-button-brand-color-border-hover);
+  --slds-c-button-text-color: var(--slds-c-button-brand-text-color);
+  --slds-c-button-text-color-hover: var(--slds-c-button-brand-text-color-hover);
+  --slds-c-button-text-color-active: var(--slds-c-button-brand-text-color-active);
+}
+.slds2-btn--brand:hover:not(:disabled) {
+  box-shadow: var(--slds-s-button-brand-shadow-hover);
+  transform: var(--slds-s-button-brand-transform-hover, translateY(-2px));
+}
+
+.slds2-btn--neutral {
+  --slds-c-button-neutral-color-background: var(--slds-s-button-color-background, var(--slds-g-color-surface-container-1));
+  --slds-c-button-neutral-color-background-hover: var(--slds-s-button-color-background-hover, var(--slds-g-color-brand-base-90));
+  --slds-c-button-neutral-color-background-active: var(--slds-s-button-color-background-active, var(--slds-g-color-surface-container-2));
+  --slds-c-button-neutral-color-border: var(--slds-s-button-color-border, var(--slds-g-color-border-2));
+  --slds-c-button-neutral-color-border-hover: var(--slds-c-button-neutral-color-border);
+  --slds-c-button-neutral-color-border-active: var(--slds-c-button-neutral-color-border);
+
+  --slds-c-button-color-background: var(--slds-c-button-neutral-color-background);
+  --slds-c-button-color-background-hover: var(--slds-c-button-neutral-color-background-hover);
+  --slds-c-button-color-background-active: var(--slds-c-button-neutral-color-background-active);
+  --slds-c-button-color-border: var(--slds-c-button-neutral-color-border);
+  --slds-c-button-color-border-hover: var(--slds-c-button-neutral-color-border-hover);
+  --slds-c-button-text-color: var(--slds-s-button-color, var(--slds-g-color-accent-2));
+  --slds-c-button-text-color-hover: var(--slds-s-button-color-hover, var(--slds-g-color-on-surface-3));
+}
+.slds2-btn--neutral:hover:not(:disabled) {
+  box-shadow: var(--slds-s-button-bordered-shadow-hover);
+  transform: var(--slds-s-button-bordered-transform-hover, translateY(-1.5px));
+}
+
+.slds2-btn--destructive {
+  --slds-c-button-destructive-color-background: var(--slds-g-color-error-1);
+  --slds-c-button-destructive-color-background-hover: var(--slds-g-color-error-base-50);
+  --slds-c-button-destructive-color-border: var(--slds-g-color-error-1);
+  --slds-c-button-destructive-color-border-hover: var(--slds-g-color-error-base-50);
+  --slds-c-button-destructive-color: var(--slds-g-color-on-surface-inverse-1);
+  --slds-c-button-destructive-color-hover: var(--slds-g-color-on-surface-inverse-1);
+
+  --slds-c-button-color-background: var(--slds-c-button-destructive-color-background);
+  --slds-c-button-color-background-hover: var(--slds-c-button-destructive-color-background-hover);
+  --slds-c-button-color-border: var(--slds-c-button-destructive-color-border);
+  --slds-c-button-color-border-hover: var(--slds-c-button-destructive-color-border-hover);
+  --slds-c-button-text-color: var(--slds-c-button-destructive-color);
+  --slds-c-button-text-color-hover: var(--slds-c-button-destructive-color-hover);
+}
+
+.slds2-btn--success {
+  --slds-c-button-success-color-background: var(--slds-g-color-success-1);
+  --slds-c-button-success-color-background-hover: var(--slds-g-color-success-2, var(--slds-g-color-success-1));
+  --slds-c-button-success-color-border: var(--slds-g-color-success-1);
+  --slds-c-button-success-color: var(--slds-g-color-on-surface-inverse-1);
+
+  --slds-c-button-color-background: var(--slds-c-button-success-color-background);
+  --slds-c-button-color-background-hover: var(--slds-c-button-success-color-background-hover);
+  --slds-c-button-color-border: var(--slds-c-button-success-color-border);
+  --slds-c-button-text-color: var(--slds-c-button-success-color);
+  --slds-c-button-text-color-hover: var(--slds-c-button-success-color);
+}
+
+.slds2-btn--inverse {
+  --slds-c-button-color-background: transparent;
+  --slds-c-button-color-background-hover: rgba(255, 255, 255, 0.1);
+  --slds-c-button-color-border: var(--slds-g-color-on-surface-inverse-1);
+  --slds-c-button-text-color: var(--slds-g-color-on-surface-inverse-1);
+  --slds-c-button-text-color-hover: var(--slds-g-color-on-surface-inverse-1);
+}
+
+/* App-local variants — not in SLDS 2 spec */
+.slds2-btn--link {
+  --slds-c-button-text-color: var(--slds-g-color-accent-1);
+  --slds-c-button-text-color-hover: var(--slds-g-color-accent-2);
+  --slds-c-button-spacing-block-start: 0;
+  --slds-c-button-spacing-block-end: 0;
+  --slds-c-button-spacing-inline-start: 0;
+  --slds-c-button-spacing-inline-end: 0;
+  --slds-c-button-radius-border: 0;
+}
+.slds2-btn--link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.slds2-btn--icon {
+  --slds-c-button-color-background: transparent;
+  --slds-c-button-color-background-hover: var(--slds-g-color-surface-container-2);
+  --slds-c-button-text-color: var(--slds-g-color-on-surface-1);
+  --slds-c-button-text-color-hover: var(--slds-g-color-on-surface-3);
+  --slds-c-button-radius-border: var(--slds-g-radius-border-circle);
+  --slds-c-button-spacing-block-start: var(--slds-g-spacing-2);
+  --slds-c-button-spacing-block-end: var(--slds-g-spacing-2);
+  --slds-c-button-spacing-inline-start: var(--slds-g-spacing-2);
+  --slds-c-button-spacing-inline-end: var(--slds-g-spacing-2);
+  width: var(--slds-g-sizing-9);
+  height: var(--slds-g-sizing-9);
+}
+
+.slds2-btn--full { width: 100%; }
+
+.slds2-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.slds2-btn__icon svg {
+  width: 1em;
+  height: 1em;
+}

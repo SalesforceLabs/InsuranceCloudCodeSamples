@@ -1,0 +1,397 @@
+/* General Setup landing background.
+ *
+ * The Layout's <main> has its own padding; we negative-margin the wrapper
+ * out to the main edges so the hero banner can run full-width, then re-add
+ * matching padding only to the content area below the banner.
+ */
+.gs-page {
+  margin: calc(-1 * var(--slds-g-spacing-5)) calc(-1 * var(--slds-g-spacing-6));
+  min-height: 100vh;
+  background: var(--slds-g-color-surface-3);
+}
+
+/* Hero band — soft cloud-blue / brand wash with faint white "cloud" radial
+ * highlights. Tall enough to act as a hero (~3x the previous strip). */
+.gs-hero {
+  /* Reusable wash so the same gradient can be applied to icon tiles below. */
+  --gs-hero-wash:
+    radial-gradient(
+      ellipse 30% 80% at 80% 20%,
+      rgba(255, 255, 255, 0.7) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 25% 70% at 95% 90%,
+      rgba(255, 255, 255, 0.55) 0%,
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--slds-g-color-brand-base-95) 0%,
+      var(--slds-g-color-palette-cloud-blue-97) 60%,
+      #f7f1ff 100%
+    );
+
+  padding: var(--slds-g-spacing-6);
+  background: var(--gs-hero-wash);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4);
+  flex-wrap: wrap;
+}
+.gs-hero__inner {
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+/* Setup-assistant promo card sitting on the right side of the hero. The
+ * card itself is sized; SLDS Card supplies its own background/border. The
+ * subtitle is allowed to wrap so longer copy doesn't push the button out. */
+.gs-hero__assistant {
+  flex: 0 1 360px;
+  max-width: 360px;
+}
+.gs-hero__assistant.slds2-card {
+  background: var(--slds-g-color-surface-container-1);
+  box-shadow: none;
+  border: 0;
+}
+.gs-hero__assistant .slds2-card__header {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--slds-g-spacing-2);
+  border-bottom: 0;
+}
+.gs-hero__assistant .slds2-card__subtitle {
+  white-space: normal;
+}
+.gs-hero__assistant .slds2-card__actions {
+  align-self: flex-start;
+}
+.gs-hero__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-5);
+  font-weight: var(--slds-g-font-weight-4);
+  letter-spacing: var(--slds-g-font-letterspacing-tight, -0.01em);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.2;
+}
+.gs-hero__subtitle {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  color: var(--slds-g-color-on-surface-2);
+  line-height: 1.5;
+  max-width: 64ch;
+}
+
+/* Content frame below the hero — re-adds the layout's main padding plus an
+ * extra top spacer to breathe between the hero and the cards below. */
+.gs-page > .tph,
+.gs-page > .tph-landing {
+  padding: var(--slds-g-spacing-7) var(--slds-g-spacing-6) var(--slds-g-spacing-5);
+}
+
+/* Reuse the hero wash inside category card icon tiles so the landing
+ * preview area visually echoes the hero band above. The base layer is the
+ * same dual-radial highlight; the linear sweep is sized at 200%/200% so we
+ * can pan its position on hover for a "living gradient" feel. */
+.gs-page .tph-card-large__preview {
+  background:
+    radial-gradient(
+      ellipse 30% 80% at 80% 20%,
+      rgba(255, 255, 255, 0.7) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 25% 70% at 95% 90%,
+      rgba(255, 255, 255, 0.55) 0%,
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      var(--slds-g-color-brand-base-95) 0%,
+      var(--slds-g-color-palette-cloud-blue-97) 35%,
+      #f7f1ff 65%,
+      var(--slds-g-color-brand-base-95) 100%
+    );
+  background-size: auto, auto, 200% 200%;
+  background-position: 0% 0%, 0% 0%, 0% 50%;
+  border-color: transparent;
+  transition: background-position 600ms ease;
+}
+.gs-page .tph-card-large:hover .tph-card-large__preview {
+  background-position: 0% 0%, 0% 0%, 100% 50%;
+}
+
+/* Magnify the whole card on hover. Override the default 1px translateY in
+ * tph-card-large:hover so we don't fight ourselves. */
+.gs-page .tph-card-large {
+  transition:
+    border-color 120ms ease,
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 220ms ease;
+}
+.gs-page .tph-card-large:hover {
+  transform: scale(1.02);
+  box-shadow: var(--slds-g-shadow-1);
+}
+.gs-page .tph-card-large:active {
+  transform: scale(0.995);
+  transition-duration: 80ms;
+}
+
+/* Underwriters card — drop the header divider so the search/actions row sits
+ * flush above the table (no horizontal rule between them). */
+.uw-card .slds2-card__header {
+  border-bottom: 0;
+}
+
+/* Territory Based Rules — Salesforce Decision Table view. Columns are grouped
+ * under an "Input Conditions" band and an "Output Results" band via a
+ * two-row header, mirroring the platform's Decision Table builder. */
+.tbr-dtable__wrap {
+  overflow-x: auto;
+  border: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+}
+.tbr-dtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+  background: var(--slds-g-color-surface-container-1);
+}
+.tbr-dtable__group {
+  text-align: left;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-block: var(--slds-g-spacing-2);
+  padding-inline: var(--slds-g-spacing-4);
+  border-bottom: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+}
+.tbr-dtable__group--input {
+  color: var(--slds-g-color-accent-1);
+  background: var(--slds-g-color-brand-base-95);
+  border-right: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+}
+.tbr-dtable__group--output {
+  color: var(--slds-g-color-on-surface-2);
+  background: var(--slds-g-color-surface-container-2);
+}
+.tbr-dtable__head-row th {
+  text-align: left;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-2);
+  padding-block: var(--slds-g-spacing-3);
+  padding-inline: var(--slds-g-spacing-4);
+  border-bottom: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  white-space: nowrap;
+  background: var(--slds-g-color-surface-container-1);
+}
+.tbr-dtable tbody td {
+  padding-block: var(--slds-g-spacing-3);
+  padding-inline: var(--slds-g-spacing-4);
+  border-bottom: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  vertical-align: middle;
+}
+.tbr-dtable tbody tr:last-child td {
+  border-bottom: 0;
+}
+.tbr-dtable tbody tr:hover td {
+  background: var(--slds-g-color-surface-container-2);
+}
+/* Tint the input-condition column so the band reads through the body rows. */
+.tbr-dtable .tbr-dtable__col--input {
+  border-right: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.tbr-dtable__empty {
+  padding-block: var(--slds-g-spacing-7);
+  text-align: center;
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* Table header row: heading block on the left, Edit launch-out on the right. */
+.tbr-table-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4);
+}
+.tbr-table-head--end {
+  justify-content: flex-end;
+}
+
+/* ── Broker Tiers ──────────────────────────────────────────────────── */
+/* Heading block on the left, Add Row / Edit action on the right. */
+.bt-table-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4);
+}
+.bt-table-head--end {
+  justify-content: flex-end;
+}
+
+/* Per-row overflow trigger inside the mapping table. */
+.bt-row-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.bt-row-actions__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-on-surface-2);
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease,
+    color 100ms ease;
+}
+.bt-row-actions__trigger:hover,
+.bt-row-actions__trigger[aria-expanded='true'] {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+.bt-row-actions__trigger:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15);
+}
+
+/* SF-style search lookup used in the Broker / Tier config cells. */
+.bt-lookup__search-icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  color: var(--slds-g-color-on-surface-1);
+  pointer-events: none;
+}
+.bt-lookup__input {
+  width: 100%;
+  padding: 7px 10px 7px 32px;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  outline: none;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+.bt-lookup__input:focus,
+.bt-lookup__input[data-open='true'] {
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 2px var(--slds-g-color-brand-base-95);
+}
+.bt-lookup__empty {
+  padding: 12px 14px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+
+/* Two-column standard Salesforce record layout for broker details. */
+.bt-record {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-4) var(--slds-g-spacing-6);
+}
+.bt-record__field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding-bottom: var(--slds-g-spacing-2);
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+.bt-record__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+.bt-record__value {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .bt-record {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Queue-Based Routing Setup guide ───────────────────────────────────
+ * Read-only numbered step list. Each row: number chip · title + description ·
+ * a "Go to Setup" launch-out button. Styled with SLDS 2 globals only. */
+.qrs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.qrs-step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-4);
+  padding: var(--slds-g-spacing-4);
+  border-bottom: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+}
+.qrs-step:last-child {
+  border-bottom: 0;
+}
+.qrs-step__num {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--slds-g-radius-border-circle);
+  background: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-on-accent-1);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  line-height: 1;
+}
+.qrs-step__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.qrs-step__title {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.qrs-step__desc {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  line-height: 1.4;
+}
+.qrs-step__action {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+

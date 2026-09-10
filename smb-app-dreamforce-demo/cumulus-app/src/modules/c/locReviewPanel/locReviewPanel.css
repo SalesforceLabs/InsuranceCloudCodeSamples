@@ -1,0 +1,241 @@
+/* c-loc-review-panel
+   ────────────────────────────────────────────────────────────────
+   Renders a single LOC's Review payload inside a bundle-review
+   context. Class names mirror rfqWorkspace / rfqWorkspaceHome's
+   Review card so visual parity is guaranteed; the highlights dl
+   and asset tables use lrp-prefixed classes to avoid confusion
+   with the parent's global styles. Everything below stays inside
+   the panel's shadow DOM.
+*/
+
+:host {
+  display: block;
+  --atlas-divider: var(--slds-g-color-border-1, #e5e5e5);
+  --atlas-border: var(--slds-g-color-border-1, #c9c9c9);
+  --atlas-brand: var(--slds-g-color-accent-1, #066afe);
+  --atlas-muted: var(--slds-g-color-on-surface-1, #5c5c5c);
+  --atlas-font: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, sans-serif;
+  --atlas-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.lrp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-6, 2rem) var(--slds-g-spacing-var-4, 1rem);
+  border: var(--slds-g-sizing-border-1, 1px) dashed var(--atlas-divider);
+  border-radius: var(--atlas-radius);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.lrp-empty__icon {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.lrp-empty__icon svg { width: 100%; height: 100%; }
+.lrp-empty__title {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.lrp-empty__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Accordion stack (mirrors rfqWorkspace .review-acc) ─────── */
+.review-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-top: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+.review-acc {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  border-radius: var(--atlas-radius);
+  background: #fafbfc;
+  overflow: hidden;
+  transition: background-color 160ms ease, border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+.review-acc[open] {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-color: var(--atlas-border);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.review-acc__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  list-style: none;
+  user-select: none;
+}
+.review-acc__head::-webkit-details-marker { display: none; }
+.review-acc__head::marker { content: ''; }
+
+.review-acc__head:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: calc(var(--slds-g-sizing-1, 0.125rem) * -1);
+}
+
+.review-acc__caret {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  color: var(--atlas-muted);
+  transition: transform 220ms ease, color 120ms ease;
+}
+.review-acc[open] .review-acc__caret {
+  transform: rotate(90deg);
+  color: var(--atlas-brand);
+}
+
+.review-acc__title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.005em;
+}
+
+.review-acc__meta {
+  margin-left: auto;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.review-acc__body {
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem)
+    var(--slds-g-spacing-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+/* ── Highlights (Policy Details body) ───────────────────────── */
+.lrp-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-5, 1.5rem);
+  margin: 0;
+}
+.lrp-highlights__item { margin: 0; min-width: 0; }
+.lrp-highlights__term {
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.lrp-highlights__value {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .lrp-highlights { grid-template-columns: 1fr; }
+}
+
+/* ── Asset tables (vehicles / drivers / dwellings / homeowners /
+      scheduled items) ─────────────────────────────────────────── */
+.lrp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.lrp-table th,
+.lrp-table td {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+.lrp-table th {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.lrp-table tbody tr:last-child td { border-bottom: 0; }
+
+/* ── Coverage list (Policy Coverages body) ──────────────────── */
+.review-cov-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.review-cov {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-divider);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+
+.review-cov__name {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.review-cov__status {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.review-cov--on .review-cov__status {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-2, #023434);
+}
+
+.review-cov--off { background: var(--slds-g-color-surface-container-2, #f3f3f3); }
+.review-cov--off .review-cov__name {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.review-cov--off .review-cov__status {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+
+.review-cov__detail {
+  grid-column: 1 / -1;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}

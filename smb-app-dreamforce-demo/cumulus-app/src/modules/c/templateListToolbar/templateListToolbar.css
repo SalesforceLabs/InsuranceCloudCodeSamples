@@ -1,0 +1,225 @@
+/* c-template-list-toolbar
+   Compact Filter / Sort SLDS 2 bare icon buttons (Buttons + Button
+   Icons: slds-button_icon / slds-button_icon-bare). No square
+   outline. Icons sit on the trailing edge of the
+   tile cluster. Options live in the
+   open menu. Clear filters stays a ghost/text control so it never
+   competes with Add New. */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.tlt {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.tlt__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  position: relative;
+  z-index: 6;
+}
+
+.tlt__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  margin-left: auto;
+}
+
+/* ── Bare icon trigger (SLDS slds-button_icon-bare) ─────────
+   Same chrome as the tile kebab: 32px hit target, transparent
+   fill, no border. Hover / open paints a quiet grey wash. */
+.tlt-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.tlt-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-accent-1, #066afe);
+  cursor: pointer;
+  position: relative;
+  font-family: var(--atlas-font);
+  line-height: 1;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.tlt-icon:hover,
+.tlt-icon.slds-is-open,
+.tlt-icon.slds-is-selected {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.tlt-icon:focus {
+  outline: none;
+}
+.tlt-icon:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.tlt-icon.is-active::after {
+  content: '';
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-accent-1, #066afe);
+  box-shadow: 0 0 0 1px
+    var(--slds-g-color-surface-container-1, #ffffff);
+  pointer-events: none;
+}
+
+.tlt-icon .slds-button__icon {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  display: block;
+}
+
+/* ── Menu / popover (SLDS Menus). Right-aligned to the trigger
+   so the panel stays inside the landing card when icons sit on
+   the trailing edge. */
+.tlt-menu {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-1, 0.25rem));
+  right: 0;
+  left: auto;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  min-width: 14rem;
+  max-width: 20rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+  font-family: var(--atlas-font);
+}
+.tlt-menu_sort {
+  min-width: 12rem;
+}
+
+.tlt-menu__heading {
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  letter-spacing: 0.02em;
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+}
+.tlt-menu__heading:not(:first-child) {
+  margin-top: var(--slds-g-spacing-1, 0.25rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding-top: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.tlt-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-3, 0.75rem);
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  text-align: left;
+  cursor: pointer;
+}
+.tlt-menu__item:hover,
+.tlt-menu__item:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  outline: none;
+}
+.tlt-menu__item.is-selected {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+.tlt-menu__check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-4, 0.75rem);
+  flex-shrink: 0;
+  visibility: hidden;
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.tlt-menu__check svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.tlt-menu__item.is-selected .tlt-menu__check {
+  visibility: visible;
+}
+.tlt-menu__label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Ghost / text button - secondary to Add New (brand pill). Matches
+   c-attribute-picker's Show all toggle: accent text, no fill. */
+.tlt__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.125rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 120ms ease;
+}
+.tlt__clear:hover,
+.tlt__clear:focus-visible {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+.tlt__clear:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+
+.tlt-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  background: transparent;
+}

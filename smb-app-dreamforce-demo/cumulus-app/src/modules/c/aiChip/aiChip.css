@@ -1,0 +1,46 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  background: var(--atlas-purple-light);
+  color: var(--atlas-purple);
+  font-size: 11px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.spark {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* SLDS 2 flat - no decorative glow on the sparkle. */
+.spark svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.label {
+  line-height: var(--slds-g-font-line-height-1, 1);
+}
+
+.info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-4, 12px);
+  height: var(--slds-g-sizing-4, 12px);
+  color: rgba(124, 58, 237, 0.6);
+}
+
+.info svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}

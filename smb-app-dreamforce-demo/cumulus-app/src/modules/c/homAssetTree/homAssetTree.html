@@ -1,0 +1,333 @@
+<template>
+  <div class="hom-asset-tree">
+    <template lwc:if={hasDwellings}>
+      <ul class="hom-asset-tree__list" role="tree" aria-label="Schedule of Property">
+        <template for:each={tree} for:item="dwl">
+          <li class="hom-asset-tree__node" key={dwl.key} role="treeitem" aria-expanded={dwl.expanded}>
+            <!-- Level 1: Dwelling row -->
+            <div class="hom-asset-tree__dwl">
+              <button
+                class="hom-asset-tree__chevron-btn"
+                type="button"
+                data-dwelling-id={dwl.id}
+                onclick={toggleDwelling}
+                aria-label="Toggle dwelling details"
+                aria-expanded={dwl.expanded}
+              >
+                <svg class={dwl.chevronClass} viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.9 4.4l20.7 20.5c.6.6.6 1.6 0 2.2L17.9 47.6c-.6.6-1.6.6-2.2 0l-2.2-2.2c-.6-.6-.6-1.6 0-2.2l16.3-16.1c.6-.6.6-1.6 0-2.2L13.6 8.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.5 1.5-.5 2.1 0z"/></svg>
+              </button>
+              <span class="hom-asset-tree__dwl-icon" aria-hidden="true">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                  <path fill="currentColor" d="M12 3l9 8h-3v9h-4v-6h-4v6H6v-9H3l9-8z"/>
+                </svg>
+              </span>
+              <div
+                class="hom-asset-tree__dwl-body hom-asset-tree__dwl-body_clickable"
+                data-dwelling-id={dwl.id}
+                onclick={toggleDwelling}
+              >
+                <div class="hom-asset-tree__dwl-titlerow">
+                  <span class="hom-asset-tree__dwl-title">{dwl.name}</span>
+                  <button
+                    class="hom-asset-tree__view-btn"
+                    type="button"
+                    data-dwelling-id={dwl.id}
+                    onclick={handleViewDwelling}
+                    title="View property details"
+                    aria-label="View property details"
+                  >
+                    <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><g><path d="M51.8 25.1C47.1 15.6 37.3 9 26 9S4.9 15.6.2 25.1c-.3.6-.3 1.3 0 1.8C4.9 36.4 14.7 43 26 43s21.1-6.6 25.8-16.1c.3-.6.3-1.2 0-1.8zM26 37c-6.1 0-11-4.9-11-11s4.9-11 11-11 11 4.9 11 11-4.9 11-11 11z"/><path d="M26 19c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7z"/></g></svg>
+                    <span class="slds-assistive-text">View property details</span>
+                  </button>
+                </div>
+                <div class="hom-asset-tree__dwl-meta">{dwl.meta}</div>
+              </div>
+
+              <template lwc:if={dwl.isDraft}>
+                <span class={dwl.statusClass}>{dwl.statusLabel}</span>
+              </template>
+              <span class="hom-asset-tree__item-count">{dwl.itemsCountLabel}</span>
+
+              <!-- Overflow row-action menu. -->
+              <div class="hom-asset-tree__dwl-menu" onclick={stopPropagation}>
+                <button
+                  class="hom-asset-tree__menu-btn"
+                  type="button"
+                  data-dwelling-id={dwl.id}
+                  onclick={toggleDwellingMenu}
+                  aria-haspopup="menu"
+                  aria-expanded={dwl.menuOpen}
+                  title="Property actions"
+                >
+                  <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20 44c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z"/></svg>
+                  <span class="slds-assistive-text">Property actions</span>
+                </button>
+
+                <template lwc:if={dwl.menuOpen}>
+                  <ul class="hom-asset-tree__menu" role="menu">
+                    <li
+                      class="hom-asset-tree__menu-item"
+                      role="menuitem"
+                      tabindex="0"
+                      data-dwelling-id={dwl.id}
+                      data-action="add_scheduled_item"
+                      onclick={handleDwellingRowAction}
+                      onkeydown={handleDwellingRowKeydown}
+                    >
+                      Add New Item
+                    </li>
+                    <li
+                      class="hom-asset-tree__menu-item"
+                      role="menuitem"
+                      tabindex="0"
+                      data-dwelling-id={dwl.id}
+                      data-action="add_scheduled_item"
+                      onclick={handleDwellingRowAction}
+                      onkeydown={handleDwellingRowKeydown}
+                    >
+                      Assign Existing Item
+                    </li>
+                    <li
+                      class="hom-asset-tree__menu-item"
+                      role="menuitem"
+                      tabindex="0"
+                      data-dwelling-id={dwl.id}
+                      data-action="edit_dwelling"
+                      onclick={handleDwellingRowAction}
+                      onkeydown={handleDwellingRowKeydown}
+                    >
+                      Edit Property
+                    </li>
+                    <li
+                      class="hom-asset-tree__menu-item"
+                      role="menuitem"
+                      tabindex="0"
+                      data-dwelling-id={dwl.id}
+                      data-action="delete_dwelling"
+                      onclick={handleDwellingRowAction}
+                      onkeydown={handleDwellingRowKeydown}
+                    >
+                      Delete Property
+                    </li>
+                  </ul>
+                </template>
+              </div>
+            </div>
+
+            <!-- Level 2: Scheduled personal property items. Mirrors the
+                 PA vehicle → driver hierarchy: items render as an indented
+                 list with L-connectors directly under the dwelling. No
+                 subsection header or inline Add CTA (the Add action lives
+                 in the dwelling overflow menu). -->
+            <template lwc:if={dwl.showBody}>
+              <template lwc:if={dwl.hasItems}>
+                <ul class="hom-asset-tree__items" role="group">
+                  <template for:each={dwl.items} for:item="s">
+                    <li class="hom-asset-tree__item" key={s.id}>
+                      <span class="hom-asset-tree__item-icon" aria-hidden="true">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                          <path fill="currentColor" d="M12 2l2.4 5.4 5.6.6-4 4 1.2 5.8L12 15l-5.2 2.8L8 12l-4-4 5.6-.6L12 2z"/>
+                        </svg>
+                      </span>
+                      <div class="hom-asset-tree__item-body">
+                        <div class="hom-asset-tree__item-namerow">
+                          <span class="hom-asset-tree__item-name">{s.name}</span>
+                          <button
+                            class="hom-asset-tree__view-btn hom-asset-tree__view-btn_sm"
+                            type="button"
+                            data-item-id={s.id}
+                            onclick={handleViewItem}
+                            title="View item details"
+                            aria-label="View item details"
+                          >
+                            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><g><path d="M51.8 25.1C47.1 15.6 37.3 9 26 9S4.9 15.6.2 25.1c-.3.6-.3 1.3 0 1.8C4.9 36.4 14.7 43 26 43s21.1-6.6 25.8-16.1c.3-.6.3-1.2 0-1.8zM26 37c-6.1 0-11-4.9-11-11s4.9-11 11-11 11 4.9 11 11-4.9 11-11 11z"/><path d="M26 19c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7z"/></g></svg>
+                            <span class="slds-assistive-text">View item details</span>
+                          </button>
+                        </div>
+                        <div class="hom-asset-tree__item-meta">{s.category} · {s.appraisedDisplay}</div>
+                      </div>
+                      <div class="hom-asset-tree__item-menu" onclick={stopPropagation}>
+                        <button
+                          class="hom-asset-tree__menu-btn"
+                          type="button"
+                          data-item-id={s.id}
+                          onclick={toggleItemMenu}
+                          aria-haspopup="menu"
+                          aria-expanded={s.menuOpen}
+                          title="Item actions"
+                        >
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20 44c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z"/></svg>
+                          <span class="slds-assistive-text">Item actions</span>
+                        </button>
+
+                        <template lwc:if={s.menuOpen}>
+                          <ul class="hom-asset-tree__menu" role="menu">
+                            <li
+                              class="hom-asset-tree__menu-item"
+                              role="menuitem"
+                              tabindex="0"
+                              data-item-id={s.id}
+                              data-action="edit_item"
+                              onclick={handleItemRowAction}
+                              onkeydown={handleItemRowKeydown}
+                            >
+                              Edit Item
+                            </li>
+                            <li
+                              class="hom-asset-tree__menu-item"
+                              role="menuitem"
+                              tabindex="0"
+                              data-item-id={s.id}
+                              data-action="remove_item"
+                              onclick={handleItemRowAction}
+                              onkeydown={handleItemRowKeydown}
+                            >
+                              Remove Item
+                            </li>
+                          </ul>
+                        </template>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </template>
+              <template lwc:else>
+                <div class="hom-asset-tree__items hom-asset-tree__items_empty">
+                  <c-empty-state
+                    illustration-name="success:new"
+                    size="x-small"
+                  >
+                    No scheduled personal property attached. Use
+                    the overflow menu (⋮) → Add New Item to schedule
+                    jewelry, art, or collectibles as separate line
+                    items.
+                  </c-empty-state>
+                </div>
+              </template>
+            </template>
+          </li>
+        </template>
+      </ul>
+    </template>
+
+    <template lwc:else>
+      <div class="hom-asset-tree__empty">
+        <c-empty-state
+          illustration-name="success:new"
+          title="No properties yet"
+          size="medium"
+        >
+          Select <strong>Add Asset</strong> to start scheduling dwellings
+          and homeowners for this RFQ.
+        </c-empty-state>
+      </div>
+    </template>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         Homeowners section - siblings of Dwellings per the HO-3 PCM
+         (Property IPA + Named Insured IPP are parallel Level-1
+         subjects under Root).
+         ═══════════════════════════════════════════════════════════════ -->
+    <section class="hom-asset-tree__section">
+      <header class="hom-asset-tree__section-head">
+        <h3 class="hom-asset-tree__section-title">{homeownersSectionTitle}</h3>
+      </header>
+
+      <template lwc:if={hasHomeowners}>
+        <ul class="hom-asset-tree__list" role="tree" aria-label="Homeowners">
+          <template for:each={homeownerTree} for:item="h">
+            <li class="hom-asset-tree__node" key={h.key} role="treeitem">
+              <div class="hom-asset-tree__dwl">
+                <span class="hom-asset-tree__owner-avatar" aria-hidden="true">
+                  <span class="hom-asset-tree__owner-initials">{h.initials}</span>
+                </span>
+                <div class="hom-asset-tree__dwl-body">
+                  <div class="hom-asset-tree__dwl-titlerow">
+                    <span class="hom-asset-tree__dwl-title">{h.name}</span>
+                    <button
+                      class="hom-asset-tree__view-btn"
+                      type="button"
+                      data-homeowner-id={h.id}
+                      onclick={handleViewHomeowner}
+                      title="View homeowner details"
+                      aria-label="View homeowner details"
+                    >
+                      <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><g><path d="M51.8 25.1C47.1 15.6 37.3 9 26 9S4.9 15.6.2 25.1c-.3.6-.3 1.3 0 1.8C4.9 36.4 14.7 43 26 43s21.1-6.6 25.8-16.1c.3-.6.3-1.2 0-1.8zM26 37c-6.1 0-11-4.9-11-11s4.9-11 11-11 11 4.9 11 11-4.9 11-11 11z"/><path d="M26 19c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7z"/></g></svg>
+                      <span class="slds-assistive-text">View homeowner details</span>
+                    </button>
+                  </div>
+                  <div class="hom-asset-tree__dwl-meta">{h.meta}</div>
+                </div>
+
+                <template lwc:if={h.isDraft}>
+                  <span class={h.statusClass}>{h.statusLabel}</span>
+                </template>
+
+                <div class="hom-asset-tree__dwl-menu" onclick={stopPropagation}>
+                  <button
+                    class="hom-asset-tree__menu-btn"
+                    type="button"
+                    data-homeowner-id={h.id}
+                    onclick={toggleHomeownerMenu}
+                    aria-haspopup="menu"
+                    aria-expanded={h.menuOpen}
+                    title="Homeowner actions"
+                  >
+                    <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20 44c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z"/></svg>
+                    <span class="slds-assistive-text">Homeowner actions</span>
+                  </button>
+
+                  <template lwc:if={h.menuOpen}>
+                    <ul class="hom-asset-tree__menu" role="menu">
+                      <li
+                        class="hom-asset-tree__menu-item"
+                        role="menuitem"
+                        data-homeowner-id={h.id}
+                        data-action="edit_homeowner"
+                        onclick={handleHomeownerRowAction}
+                      >
+                        Edit Homeowner
+                      </li>
+                      <li
+                        class="hom-asset-tree__menu-item"
+                        role="menuitem"
+                        data-homeowner-id={h.id}
+                        data-action="delete_homeowner"
+                        onclick={handleHomeownerRowAction}
+                      >
+                        Delete Homeowner
+                      </li>
+                    </ul>
+                  </template>
+                </div>
+              </div>
+            </li>
+          </template>
+        </ul>
+      </template>
+
+      <template lwc:else>
+        <div class="hom-asset-tree__empty hom-asset-tree__empty_slim">
+          <c-empty-state
+            illustration-name="success:new"
+            size="x-small"
+          >
+            No homeowners on this RFQ yet - use Add Asset and pick
+            Homeowner.
+          </c-empty-state>
+        </div>
+      </template>
+    </section>
+
+    <!-- Read-only view modal (eye icon on a dwelling / scheduled item / homeowner) -->
+    <c-pa-view-modal
+      open={viewOpen}
+      kind={viewKind}
+      heading={viewHeading}
+      subtitle={viewSubtitle}
+      fields={viewFields}
+      summary={viewSummary}
+      onclose={handleViewClose}
+    ></c-pa-view-modal>
+  </div>
+</template>

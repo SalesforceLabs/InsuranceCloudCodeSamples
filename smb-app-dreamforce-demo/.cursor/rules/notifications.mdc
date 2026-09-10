@@ -1,0 +1,118 @@
+---
+description: Notification pattern - single c-notification-tray behind the global-header bell, SLDS 2 Notifications foundation, and when a notification beats a toast
+alwaysApply: true
+---
+
+# Notifications
+
+`c-notification-tray` is the **only** notification surface in this app. It implements the SLDS 2 Notifications foundation: [Notifications](https://www.lightningdesignsystem.com/2e1ef8501/p/70cff7-notifications), rendered as a [Popover](https://v1.lightningdesignsystem.com/components/popovers/).
+
+The tray is anchored under the bell in the global-header icon strip and is the **durable log of things that happened to the broker while they were elsewhere in the app**. Its sibling rule, [`toast-notifications.mdc`](toast-notifications.mdc), governs the other half of system messaging. Read both before adding any messaging surface.
+
+## Notification or toast?
+
+This is the decision the SLDS 2 foundation cares about most, and the one most often got wrong. The two are not interchangeable, and the test is not urgency - it is **retrievability**.
+
+| | Interface feedback (`c-toast`) | Notification (`c-notification-tray`) |
+|---|---|---|
+| Trigger | The user's own action, just now | A system event or another user, often while away |
+| Lifetime | Gone on dismiss, unrecoverable | Viewable, dismissible, revisitable |
+| Example here | "RFQ has been submitted to Pacific Underwriters" | "2 of 3 quotes received" |
+
+Ask: *would the broker want this back tomorrow?* If yes it is a notification. If it only confirms the click they just made, it is a toast.
+
+Both can fire for one flow, and in the routing flow both do: sending a bundle toasts the submission (the broker's own action) and then each carrier response lands in the tray (events that arrive later, unprompted).
+
+## Anatomy
+
+SLDS 2 requires four elements in every notification. The tray's item shape maps to them one-to-one, so a notification missing one of these is missing a required element, not a nice-to-have:
+
+| SLDS element | Field | Example |
+|---|---|---|
+| **Origin** - who or what initiated it | named in `body` | "Pinnacle Standard responded..." |
+| **Content** - the core message | `title` + `body` | "2 of 3 quotes received" |
+| **Action** - a clear path forward | `rfqId` / `accountId` route the row | opens the RFQ |
+| **Timing** - when it happened | `timestamp` (epoch ms) | "Just now", "4m ago" |
+
+An effective notification also balances three attributes: **timely** (delivered when action is still possible), **relevant** (right channel, right context), and **pursuable** (a direct path to act).
+
+## How to raise a notification
+
+The app shell owns the records; components never mutate the tray. Prepend to `this.notifications` in `c/app` (newest first):
+
+```javascript
+this.notifications = [
+  {
+    id: `quote-${accountId}-${received}-${Date.now()}`,
+    title: `${received} of ${total} quotes received`,
+    body: `${carrier} responded to your RFQ ${rfqLabel}.`,
+    timestamp: Date.now(),
+    unread: true,
+    accountId,
+    rfqId: rfqIds[0]
+  },
+  ...this.notifications
+];
+```
+
+`id` must be unique per arrival - it keys the list, and a collision silently drops the row. Include `Date.now()` or a counter, never just the record id.
+
+### Contract
+
+`c-notification-tray` is purely presentational. It takes `open` and `items`, and reports intent upward:
+
+| Event | Meaning | Handled by |
+|---|---|---|
+| `close` | scrim, Escape, or close button | parent unmounts the tray |
+| `markallread` | "Mark all as read" pressed | shell clears every `unread` |
+| `itemopen` | `{ id }`, a row was activated | shell marks that row read |
+
+`c-account-record-page` re-dispatches these to the shell as `notificationsread` and `notificationopen` (both `bubbles: true, composed: true`).
+
+Relative stamps are computed on render, not on a ticking interval - the tray only re-renders when it opens or an item lands, which are the only moments the labels can be read.
+
+## Do
+
+- **Batch notifications for the same item** to minimise noise. Staged quote arrivals on one RFQ are one running count (`2 of 3`), not three unrelated rows.
+- **Name the origin in the body.** "Pinnacle Standard responded" tells the broker who acted; "A quote arrived" does not.
+- **Keep the whole row actionable**, carrying enough context (`rfqId`, `accountId`) to route somewhere useful.
+- **Mark new items `unread: true`** so the bell badge and the row's unread dot both reflect reality.
+- **Include single-step inline actions** where they resolve the item outright, e.g. approve or reject on an approval.
+
+## Do not
+
+- **Do not use a notification as feedback for the user's own action.** Use `c-toast`, or inline text, a popover, or a modal.
+- **Do not build a second notification surface** - no inline notification banners, no per-page notification lists, no bell of your own. Mount `c-notification-tray`.
+- **Do not put multi-step actions in a row.** One step only; anything longer belongs on the record.
+- **Do not treat the tray as a complete activity log.** Notifications are user-mutable and mutable per item, so nothing may rely on a row having been seen.
+- **Do not overload the broker.** Every row costs attention; be selective about what earns one.
+- **Do not animate without a reduced-motion escape.** The arrival animations (row slide-in, bell ring, badge pop) are all suppressed under `prefers-reduced-motion: reduce`, and anything new must be too.
+
+## Priority mix
+
+SLDS 2 recommends balancing the distribution so critical information stands out instead of drowning:
+
+- **45%** standard
+- **30%** urgent
+- **25%** discreet
+
+Today every notification in this app is a standard quote arrival, so the mix is untested. Treat the split as the target to design against when a second notification type lands, not as something the code currently enforces.
+
+## Styling
+
+The tray renders into a **native shadow root**, so the global SLDS stylesheet does not reach its markup. Class names such as `slds-popover` and `slds-assistive-text` carry intent only, and the anatomy is reimplemented in `notificationTray.css`. This is the house pattern, and it has a sharp edge: a global utility you assume is present will silently do nothing. `slds-assistive-text` in particular must be redeclared locally, or "Unread" renders as visible text.
+
+Nubbin placement is owned by the host page, which knows where the bell sits and passes `--nt-nubbin-inset`. The tray owns its own size and internals.
+
+## Component locations
+
+- Tray: `cumulus-app/src/modules/c/notificationTray/`
+- Bell, badge, and tray anchoring: `cumulus-app/src/modules/c/accountRecordPage/`
+- Record ownership and read state: `cumulus-app/src/modules/c/app/app.js`
+- Toast counterpart: `cumulus-app/src/modules/c/toast/` (see [`toast-notifications.mdc`](toast-notifications.mdc))
+
+## Source coverage
+
+Written from the SLDS 2 Notifications **Overview** tab plus the v1 [Notifications guidelines](https://v1.lightningdesignsystem.com/guidelines/messaging/components/notifications/), which still carry the component-level detail (icon plus tray anatomy, item states, the do/do-not list, mobile behaviour).
+
+The SLDS 2 page has two further tabs, **Notification Priority** and **Delivery Channels**, whose content is lazy-loaded and was not retrievable. The priority tiers named above come from the Overview's own distribution figures. If that guidance matters, open those tabs and extend this file rather than inferring the detail.

@@ -1,0 +1,136 @@
+<template>
+  <section class="rw-page" aria-label="Renewals workspace">
+    <!-- ═══════════════════════════════════════════════════
+         KPI banner - mirrors the Hub strip
+         ═══════════════════════════════════════════════════ -->
+    <div class="rw-kpi-banner" role="list">
+      <template for:each={kpiTiles} for:item="k">
+        <div key={k.id} class={k.cls} role="listitem">
+          <span class="rw-kpi__value">{k.value}</span>
+          <span class="rw-kpi__label">{k.label}</span>
+        </div>
+      </template>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         Header
+         ═══════════════════════════════════════════════════ -->
+    <header class="rw-header">
+      <button
+        type="button"
+        class="rw-back"
+        onclick={handleBackToHub}
+        aria-label="Back to Run My Day"
+      >
+        <svg class="rw-back__icon" width="14" height="14" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M12.5 4l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Run My Day</span>
+      </button>
+      <h1 class="rw-title">Your Upcoming Renewals (Next 120 Days)</h1>
+      <p class="rw-sub">{pipelineCountLabel}</p>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════
+         Tabstrip
+         ═══════════════════════════════════════════════════ -->
+    <div class="rw-tabstrip" role="tablist" aria-label="Renewal views">
+      <template for:each={tabs} for:item="t">
+        <button
+          key={t.id}
+          type="button"
+          class={t.cls}
+          role="tab"
+          aria-selected={t.selected}
+          data-tab-id={t.id}
+          onclick={handleTabClick}
+        >
+          <span class="rw-tab__label">{t.label}</span>
+          <span class="rw-tab__count">{t.count}</span>
+        </button>
+      </template>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         Tab 1: Action Required (At-Risk)
+         7 columns · only rows with risk flags
+         ═══════════════════════════════════════════════════ -->
+    <template lwc:if={showActionRequired}>
+      <div class="rw-panel rw-panel--cards" role="tabpanel">
+        <template lwc:if={hasAtRiskAlerts}>
+          <div class="rw-alert-list" role="list">
+            <template for:each={atRiskAlerts} for:item="alert">
+              <c-renewal-alert
+                key={alert.id}
+                alert={alert}
+                onstartrenewal={handleStartRenewal}
+                onopenaccount={handleAlertOpenAccount}
+              ></c-renewal-alert>
+            </template>
+          </div>
+        </template>
+        <template lwc:else>
+          <c-empty-state
+            illustration-name="success:selfassigned"
+            size="x-small"
+          >
+            No at-risk renewals right now - nice work.
+          </c-empty-state>
+        </template>
+      </div>
+    </template>
+
+    <!-- ═══════════════════════════════════════════════════
+         Tab 2: All Renewals
+         4 columns · full 120-day slice
+         ═══════════════════════════════════════════════════ -->
+    <template lwc:if={showAllRenewals}>
+      <div class="rw-panel" role="tabpanel">
+        <template lwc:if={hasAllRenewalsRows}>
+          <div class="rw-table-wrap">
+            <table class="rw-table" role="table">
+              <thead>
+                <tr>
+                  <th scope="col">Account</th>
+                  <th scope="col">Policy</th>
+                  <th scope="col">Exp Date</th>
+                  <th scope="col" class="rw-th--num">Premium</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={allRenewalsRows} for:item="r">
+                  <tr key={r.id}>
+                    <td>
+                      <a
+                        href="#"
+                        class="rw-account-link"
+                        data-account-id={r.accountId}
+                        onclick={handleOpenAccount}
+                      >{r.accountName}</a>
+                    </td>
+                    <td>{r.policyType}</td>
+                    <td>{r.expirationDate}</td>
+                    <td class="rw-td--num">{r.premiumFmt}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </template>
+        <template lwc:else>
+          <div class="rw-empty">
+            <c-empty-state
+              illustration-name="success:selfassigned"
+              title="No renewals in the next 120 days"
+              size="small"
+            >
+              Nothing to renew in the coming window. Use this quiet
+              stretch to prep upcoming policies or reach out to
+              lapsed accounts.
+            </c-empty-state>
+          </div>
+        </template>
+      </div>
+    </template>
+  </section>
+</template>

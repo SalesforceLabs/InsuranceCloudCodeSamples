@@ -1,0 +1,144 @@
+<template>
+  <div
+    class={wizardWrapperClass}
+    role={wizardRole}
+    aria-modal={wizardAriaModal}
+    aria-labelledby={wizardLabelledBy}
+    onkeydown={handleKeydown}
+  >
+    <template lwc:if={showModalChrome}>
+      <div class="rtw-wizard__backdrop" onclick={handleClose}></div>
+    </template>
+
+    <div class={wizardContainerClass}>
+      <template lwc:if={showModalChrome}>
+        <header class="rtw-wizard__head">
+          <h2 id="rtw-wizard-title" class="rtw-wizard__title">{wizardTitle}</h2>
+          <button
+            class="rtw-wizard__close"
+            type="button"
+            onclick={handleClose}
+            aria-label="Close"
+            title="Close"
+          >
+            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+          </button>
+        </header>
+      </template>
+
+      <div class="rtw-wizard__body">
+        <!-- ── Vertical stepper ───────────────────────────── -->
+        <aside class="rtw-wizard__nav" aria-label="RFQ Template setup steps">
+          <ol class="rtw-wizard__nav-list">
+            <template for:each={wizardSteps} for:item="s">
+              <li class="rtw-wizard__nav-item" key={s.key}>
+                <button
+                  class={s.cls}
+                  type="button"
+                  data-idx={s.stepIdx}
+                  onclick={handleStepPick}
+                  aria-current={s.ariaCurrent}
+                  disabled={s.isLocked}
+                >
+                  <span class="rtw-wizard__nav-label">{s.label}</span>
+                  <span class="rtw-wizard__nav-sub">{s.sub}</span>
+                </button>
+                <template lwc:if={s.hasConnector}>
+                  <span class="rtw-wizard__nav-link" aria-hidden="true"></span>
+                </template>
+              </li>
+            </template>
+          </ol>
+        </aside>
+
+        <!-- ── Step bodies ────────────────────────────────────
+             Both panes stay mounted for the life of the wizard.
+             Stepping back from Publish has to return the admin to
+             the playbook they configured, and unmounting it would
+             drop that state. -->
+        <section class="rtw-wizard__panel">
+          <template lwc:if={showCanvasHead}>
+            <div class="rtw-wizard__canvas-head">
+              <button
+                class="rtw-wizard__back"
+                type="button"
+                onclick={handleClose}
+              >
+                <svg viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false"><path d="M380 83v354c0 10-13 17-22 9L146 273c-8-6-8-19 0-25L358 73c9-7 22-1 22 10"/></svg>
+                Back to Templates
+              </button>
+              <span class="rtw-wizard__canvas-step">{currentStepLabel}</span>
+            </div>
+          </template>
+
+          <div class="rtw-wizard__pane" hidden={isPlaybookHidden}>
+            <template lwc:if={showPanelTitle}>
+              <h3 class="rtw-wizard__panel-title">{panelTitle}</h3>
+            </template>
+            <template lwc:if={isStepInitialize}>
+              <p class="rtw-wizard__panel-sub">
+                Line of Business and Line of Coverage are already scoped. Pick a
+                Root Product to load the steps this template configures.
+              </p>
+            </template>
+
+            <c-rfq-playbook-setup
+              embedded
+              stage-id={activeStageId}
+              hide-picker={playbookHidePicker}
+              seeded-lob={seededLob}
+              seeded-loc={seededLoc}
+              onassignmentschange={handleAssignmentsChange}
+            ></c-rfq-playbook-setup>
+          </div>
+
+          <div class="rtw-wizard__pane" hidden={isPublishHidden}>
+            <template lwc:if={showPanelTitle}>
+              <h3 class="rtw-wizard__panel-title">{panelTitle}</h3>
+            </template>
+            <c-rfq-publish-template
+              lwc:ref="publishForm"
+              root-product={rootProduct}
+              new-template-defaults={newTemplateDefaults}
+              onvaliditychange={handleValidityChange}
+            ></c-rfq-publish-template>
+          </div>
+        </section>
+      </div>
+
+      <footer class="rtw-wizard__foot">
+        <template lwc:if={showCanvasHead}>
+          <button
+            class="rtw-button rtw-button_neutral"
+            type="button"
+            onclick={handleClose}
+          >
+            Cancel
+          </button>
+          <span class="rtw-wizard__foot-spacer"></span>
+        </template>
+        <template lwc:if={showPreviousSlot}>
+          <button
+            class="rtw-button rtw-button_neutral"
+            type="button"
+            onclick={handlePrevious}
+            disabled={previousDisabled}
+          >
+            Previous
+          </button>
+        </template>
+        <template lwc:if={showModalChrome}>
+          <span class="rtw-wizard__foot-spacer"></span>
+        </template>
+        <button
+          class="rtw-button rtw-button_brand"
+          type="button"
+          onclick={handleNext}
+          disabled={nextDisabled}
+        >
+          {nextLabel}
+        </button>
+      </footer>
+    </div>
+  </div>
+</template>

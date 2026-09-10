@@ -1,0 +1,55 @@
+/* SLDS 2 Select — mirrors Input sizing/colors */
+.slds2-select__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.slds2-select {
+  --slds-c-select-color-background: var(--slds-s-input-color-background, var(--slds-g-color-surface-container-1));
+  --slds-c-select-color-background-focus: var(--slds-c-select-color-background);
+  --slds-c-select-color-border: var(--slds-s-input-color-border, var(--slds-g-color-border-2));
+  --slds-c-select-color-border-focus: var(--slds-c-select-color-border);
+  --slds-c-select-text-color: var(--slds-g-color-on-surface-1);
+  --slds-c-select-text-color-focus: var(--slds-c-select-text-color);
+  --slds-c-select-radius-border: var(--slds-s-input-radius-border, var(--slds-g-radius-border-2));
+  --slds-c-select-shadow: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: calc(1.875rem + 2px);
+  line-height: 1.875rem;
+  padding-block: 0;
+  padding-inline-start: var(--slds-s-input-spacing, var(--slds-g-spacing-2));
+  padding-inline-end: 2rem;
+  background: var(--slds-c-select-color-background);
+  border: var(--slds-g-sizing-border-1) solid var(--slds-c-select-color-border);
+  border-radius: var(--slds-c-select-radius-border);
+  color: var(--slds-c-select-text-color);
+  box-shadow: var(--slds-c-select-shadow);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  cursor: pointer;
+}
+.slds2-select:focus {
+  outline: none;
+  background: var(--slds-c-select-color-background-focus);
+  border-color: var(--slds-c-select-color-border-focus);
+  color: var(--slds-c-select-text-color-focus);
+  box-shadow: var(--slds-s-input-shadow-focus,
+    0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15));
+}
+.slds2-select:disabled {
+  background: var(--slds-g-color-disabled-container-1);
+  color: var(--slds-g-color-disabled-1);
+  cursor: not-allowed;
+}
+
+.slds2-select__chevron {
+  position: absolute;
+  right: var(--slds-g-spacing-2);
+  pointer-events: none;
+  color: var(--slds-g-color-on-surface-1);
+}

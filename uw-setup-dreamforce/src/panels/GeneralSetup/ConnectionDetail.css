@@ -1,0 +1,302 @@
+/* Connection detail page. Visual style matches the rest of General Setup
+ * — Card stack, SLDS tones, subtle dividers. Layout mirrors the
+ * Integration Hub detail design: eyebrow → header → general → health →
+ * used by → recent activity. */
+
+.cd-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+
+.cd-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 4px 6px;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.cd-eyebrow:hover {
+  text-decoration: underline;
+  color: var(--slds-g-color-accent-2);
+}
+
+.cd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+  flex-wrap: wrap;
+}
+.cd-header__title-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.cd-header__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.2;
+  word-break: break-word;
+}
+.cd-provider-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-accent-1);
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.cd-provider-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+
+.cd-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+}
+.cd-status__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--slds-g-color-on-surface-1);
+}
+.cd-status__dot--connected {
+  background: var(--slds-g-color-success-1);
+}
+.cd-status__dot--warn {
+  background: var(--slds-g-color-warning-1);
+}
+.cd-status__dot--off {
+  background: var(--slds-g-color-on-surface-1);
+}
+
+.cd-header__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Cards — ensure each has a visible top rule so the stack reads as
+ * sectioned. The shared Card component already provides a heading +
+ * body; we just want a tight gap between cards. */
+.cd-card {
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+}
+
+.cd-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin: 0;
+}
+@media (max-width: 960px) {
+  .cd-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.cd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.cd-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.cd-field dt {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slds-g-color-on-surface-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cd-field dd {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  word-break: break-word;
+}
+.cd-field__mono {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* Health row — 4 stat tiles in a single row. */
+.cd-health {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 720px) {
+  .cd-health {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.cd-health__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 16px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+}
+.cd-health__stat--chart {
+  align-items: stretch;
+}
+.cd-health__value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.cd-health__num {
+  font-size: var(--slds-g-font-scale-4);
+  font-weight: var(--slds-g-font-weight-6);
+  line-height: 1;
+}
+.cd-health__stat--success .cd-health__num {
+  color: var(--slds-g-color-success-1);
+}
+.cd-health__stat--neutral .cd-health__num {
+  color: var(--slds-g-color-on-surface-3);
+}
+.cd-health__stat--error .cd-health__num {
+  color: var(--slds-g-color-error-1);
+}
+.cd-health__unit {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+.cd-health__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.cd-sparkline {
+  width: 100%;
+  height: 56px;
+  display: block;
+}
+
+/* Status pill in the Recent Activity table. */
+.cd-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+}
+.cd-status-pill--ok {
+  color: var(--slds-g-color-success-1);
+}
+.cd-status-pill--bad {
+  color: var(--slds-g-color-error-1);
+}
+.cd-mono {
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-2);
+}
+.cd-link {
+  color: var(--slds-g-color-accent-1);
+  font-weight: var(--slds-g-font-weight-6);
+  cursor: pointer;
+  text-decoration: none;
+}
+.cd-link:hover {
+  text-decoration: underline;
+}
+
+/* Endpoints card — enabled endpoints for the connection's service. */
+.cd-endpoints {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cd-endpoint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-container-1);
+  min-width: 0;
+}
+.cd-endpoint__name {
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-5);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+}
+.cd-endpoint__path {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* HTTP method pill — self-contained mirror of the wizard's .cw-method. */
+.cw-method {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  padding: 2px 6px;
+  border-radius: var(--slds-g-radius-border-1);
+  font-family: var(--slds-g-font-family-monospace);
+  font-size: 11px;
+  font-weight: var(--slds-g-font-weight-7);
+  letter-spacing: 0.03em;
+  color: var(--slds-g-color-on-surface-inverse-1, white);
+  background: var(--slds-g-color-neutral-base-50);
+}
+.cw-method--get {
+  background: var(--slds-g-color-neutral-base-90);
+  color: var(--slds-g-color-on-surface-3);
+}
+.cw-method--post {
+  background: var(--slds-g-color-accent-1);
+}
+.cw-method--put {
+  background: var(--slds-g-color-warning-1);
+}
+.cw-method--delete {
+  background: var(--slds-g-color-error-1);
+}

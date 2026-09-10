@@ -1,0 +1,18 @@
+.slds2-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--slds-g-color-surface-3);
+}
+
+.slds2-layout__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.slds2-layout__main {
+  flex: 1;
+  min-width: 0;
+  padding: var(--slds-g-spacing-5) var(--slds-g-spacing-6);
+}

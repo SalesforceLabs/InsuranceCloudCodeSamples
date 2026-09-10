@@ -1,0 +1,263 @@
+/* ─────────────────────────────────────────────────────────────
+   c-agentforce-coworker
+
+   The org's /lightning/coworker landing screen. Colours and metrics
+   below were read off fscee2's computed styles, not approximated
+   from the screenshot.
+   ───────────────────────────────────────────────────────────── */
+
+:host {
+  display: block;
+  position: relative;
+  /* Fills whatever the workspace tab panel gives it. The shell's own
+     banner + tab strip are ~128px, matching the org's page body. */
+  min-height: calc(100vh - 128px);
+  overflow: hidden;
+}
+
+.afc {
+  position: relative;
+  min-height: calc(100vh - 128px);
+}
+
+/* ── Painted background ─────────────────────────────────────── */
+/* Layer 1: the peach-into-lavender wash. Stops are the org's, with
+   the fixed positioning dropped so the wash scrolls with the tab
+   rather than the browser viewport. */
+.afc__bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(244, 244, 250, 0.62) 0%, rgba(242, 243, 252, 0.62) 100%),
+    radial-gradient(76% 58% at 8% 5%, rgba(247, 188, 158, 0.72) 0%, rgba(247, 188, 158, 0) 74%),
+    radial-gradient(36% 30% at 18% 14%, rgba(245, 196, 173, 0.32) 0%, rgba(245, 196, 173, 0) 78%),
+    radial-gradient(112% 88% at 86% 19%, rgba(194, 203, 247, 0.22) 0%, rgba(194, 203, 247, 0) 73%),
+    radial-gradient(132% 108% at 72% 94%, rgba(166, 180, 241, 0.24) 0%, rgba(166, 180, 241, 0) 74%);
+  background-color: #f7f8fc;
+}
+
+/* Layer 2: the blue wave sweeping the lower right. The org builds it
+   from a 2500px block rotated a couple of degrees off-axis; the same
+   effect here comes from an oversized rotated slab so the diagonal
+   edge lands in the same place at any width. */
+.afc__wave {
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  top: 42%;
+  height: 140%;
+  opacity: 0.52;
+  transform: rotate(-4deg);
+  transform-origin: 50% 0;
+  background-image:
+    linear-gradient(98deg, rgba(209, 204, 238, 0.08) 0%, rgba(185, 196, 241, 0.2) 52%, rgba(151, 173, 241, 0.3) 100%),
+    radial-gradient(44% 88% at 74% 46%, rgba(136, 159, 238, 0.22) 0%, rgba(136, 159, 238, 0) 82%);
+}
+
+/* ── Content column ─────────────────────────────────────────── */
+.afc__stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  min-height: calc(100vh - 128px);
+  padding: var(--slds-g-spacing-6, 32px) var(--slds-g-spacing-5, 24px);
+  box-sizing: border-box;
+}
+
+.afc__col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+}
+
+.afc__greeting {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-6, 2rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.afc__subline {
+  margin: var(--slds-g-spacing-2, 8px) 0 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+
+/* ── Composer ───────────────────────────────────────────────── */
+.afc__composer {
+  margin-top: var(--slds-g-spacing-5, 24px);
+}
+
+.afc__composer-box {
+  display: flex;
+  align-items: flex-end;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-4, 20px);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  min-height: 130px;
+  box-sizing: border-box;
+}
+
+.afc__textarea {
+  flex: 1 1 auto;
+  min-width: 0;
+  align-self: stretch;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  padding: 0;
+}
+
+.afc__textarea::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.afc__composer-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  padding-left: var(--slds-g-spacing-2, 8px);
+}
+
+.afc__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: transparent;
+  /* Idle send is the org's 30%-alpha ink, not a disabled grey token. */
+  color: rgba(16, 16, 16, 0.3);
+  cursor: default;
+  padding: 0;
+}
+
+.afc__send svg {
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+}
+
+.afc__send_ready {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+}
+
+/* ── Composer footer ────────────────────────────────────────── */
+.afc__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  margin-top: var(--slds-g-spacing-1, 4px);
+  min-height: var(--slds-g-sizing-9, 32px);
+}
+
+.afc__connections {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 8px);
+}
+
+.afc__connections-label,
+.afc__disclaimer,
+.afc__link {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.afc__connections-label {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.afc__source {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-neutral-base-90, #e5e5e5);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+}
+
+.afc__source svg {
+  width: var(--slds-g-sizing-4, 12px);
+  height: var(--slds-g-sizing-4, 12px);
+}
+
+.afc__disclaimer {
+  flex: 1 1 auto;
+  text-align: center;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.afc__link {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+}
+
+.afc__link:hover {
+  text-decoration: underline;
+}
+
+/* ── Suggested prompt pills ─────────────────────────────────── */
+.afc__prompts {
+  display: flex;
+  justify-content: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  margin-top: var(--slds-g-spacing-5, 24px);
+}
+
+.afc__prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 8px);
+  height: var(--slds-g-sizing-9, 32px);
+  padding: 0 var(--slds-g-spacing-4, 16px);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-pill, 240px);
+  font-family: inherit;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+}
+
+.afc__prompt:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.afc__prompt-glyph {
+  width: var(--slds-g-sizing-4, 14px);
+  height: var(--slds-g-sizing-4, 14px);
+  flex: 0 0 auto;
+}
+
+.afc__prompt-caret {
+  width: var(--slds-g-sizing-3, 8px);
+  height: var(--slds-g-sizing-3, 8px);
+  flex: 0 0 auto;
+}

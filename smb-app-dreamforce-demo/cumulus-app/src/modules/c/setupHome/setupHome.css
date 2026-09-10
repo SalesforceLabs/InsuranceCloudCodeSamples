@@ -1,0 +1,733 @@
+:host {
+  display: block;
+  height: calc(100vh - 50px);
+}
+
+.sh {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* ── Setup context bar ────────────────────────────────────── */
+/* Mirrors `.sf-tabs` in c-account-record-page: 40px border-box with a 1px
+   bottom border, leaving the same 35px content row, and the same trick of
+   moving that row's 4px of slack to the bottom pad so the contents ride up
+   off the hairline instead of the row shrinking. Keep this lift equal to
+   `--sf-tab-row-lift` or the waffle glyph drifts off the app's baseline.
+   No gap: the wordmark's own right padding is the only separation before
+   the tabs. */
+.sh__bar {
+  --sh-bar-row-lift: 4px;
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+  height: 40px;
+  flex: 0 0 40px;
+  padding: calc(var(--slds-g-spacing-1, 4px) - var(--sh-bar-row-lift))
+    var(--slds-g-spacing-3, 0.75rem) var(--sh-bar-row-lift);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.sh__waffle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-10, 48px);
+  height: 40px;
+  /* Leading edge of the content row, not centred: `.sf-tab-launcher` is a
+     40px target top-aligned inside its 35px stretched wrap, so matching it
+     is what puts both waffle glyphs on the same baseline. */
+  align-self: flex-start;
+  flex: 0 0 auto;
+  /* No margin, exactly like `.sf-app-launcher-wrap`. The 8px before the
+     wordmark is that element's own left padding, so the box runs 12..60
+     and the wordmark text still starts on the org-reported x=68. */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+}
+
+/* The glyph below is a byte-for-byte port of `.sf-tab-launcher
+   .sf-grid-dots` in c-account-record-page, which is the App Launcher the
+   user meets first and everywhere outside Setup. Two copies now exist:
+   the source can't be lifted into a shared component without losing the
+   parent-hover colour sweep, which does not cross a shadow boundary.
+   Keep the two blocks in step: 5px circles on a 3px gap, so the grid is
+   21px and centres in this 48x40 box on x=25.5, the same column the App
+   Launcher occupies outside Setup. */
+.sh__waffle:hover {
+  background: transparent;
+}
+
+.sh__waffle:focus-visible {
+  background: transparent;
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+.sh__waffle-dots {
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  gap: 3px;
+  padding: 0;
+}
+
+.sh__waffle-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--slds-g-color-disabled-1, #757575);
+  transition: background-color 0.1s;
+}
+
+.sh__waffle-dots span:nth-child(1) { transition-delay: 0.2s; }
+.sh__waffle-dots span:nth-child(2) { transition-delay: 0.15s; }
+.sh__waffle-dots span:nth-child(3) { transition-delay: 0.1s; }
+.sh__waffle-dots span:nth-child(4) { transition-delay: 0.15s; }
+.sh__waffle-dots span:nth-child(5) { transition-delay: 0.1s; }
+.sh__waffle-dots span:nth-child(6) { transition-delay: 0.05s; }
+.sh__waffle-dots span:nth-child(7) { transition-delay: 0.1s; }
+.sh__waffle-dots span:nth-child(8) { transition-delay: 0.05s; }
+.sh__waffle-dots span:nth-child(9) { transition-delay: 0s; }
+
+.sh__waffle:hover .sh__waffle-dots span:nth-child(1),
+.sh__waffle:hover .sh__waffle-dots span:nth-child(2),
+.sh__waffle:hover .sh__waffle-dots span:nth-child(3),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(1),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(2),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(3) {
+  background: var(--slds-g-color-brand-base-50, #066afe);
+}
+
+.sh__waffle:hover .sh__waffle-dots span:nth-child(4),
+.sh__waffle:hover .sh__waffle-dots span:nth-child(5),
+.sh__waffle:hover .sh__waffle-dots span:nth-child(7),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(4),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(5),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(7) {
+  background: var(--slds-g-color-warning-base-70, #e4a201);
+}
+
+.sh__waffle:hover .sh__waffle-dots span:nth-child(6),
+.sh__waffle:hover .sh__waffle-dots span:nth-child(8),
+.sh__waffle:hover .sh__waffle-dots span:nth-child(9),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(6),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(8),
+.sh__waffle:focus-visible .sh__waffle-dots span:nth-child(9) {
+  background: var(--slds-g-color-warning-base-80, #fcc003);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh__waffle-dots span {
+    transition: none;
+    transition-delay: 0s;
+  }
+}
+
+.sh__wordmark {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  /* Same inset pair as `.sf-context-app`: 8px lead puts the text on x=68,
+     16px trail is the only separation before the tabs. */
+  padding: 0 var(--slds-g-spacing-4, 1rem) 0 var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 25px;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  white-space: nowrap;
+}
+
+/* The tabs cancel the bar's lift so they still reach the hairline: unlike
+   the app's record tabs, which mark the active one with a 3px underline,
+   Setup washes the whole active tab, and that wash reads as clipped if it
+   stops 4px short of the border. */
+.sh__bar-tabs {
+  display: flex;
+  align-items: stretch;
+  margin: 0 0 calc(-1 * var(--sh-bar-row-lift, 0px));
+  padding: 0;
+  list-style: none;
+}
+
+/* Width is content-driven on purpose. Hardcoding it squeezed the label
+   and wrapped "Object Manager" onto two lines. */
+.sh__bar-tab {
+  display: flex;
+  align-items: stretch;
+  flex: 0 1 auto;
+  max-width: 240px;
+  padding: 0;
+  white-space: nowrap;
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.sh__bar-tab_object {
+  padding: 0 var(--slds-g-spacing-2, 0.5rem) 0 0;
+}
+
+.sh__bar-tab_active {
+  background: rgba(6, 106, 254, 0.1);
+}
+
+.sh__bar-tab-link {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-palette-neutral-10, #181818);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.sh__bar-tab-link:hover {
+  text-decoration: underline;
+}
+
+.sh__bar-tab-label {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 16px caret plus its own 8px right padding. This is the element that
+   takes the Object Manager tab from 138px to its measured 146px. */
+.sh__bar-tab-caret-wrap {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  /* Stretch to the 35px content row like every sibling. A fixed 36px here
+     put the box a pixel past the bar's bottom hairline. Only the 24px
+     width (16px caret + 8px gutter) is load-bearing for the tab's 146px. */
+  align-self: stretch;
+  padding: 0 var(--slds-g-spacing-2, 0.5rem) 0 0;
+}
+
+.sh__bar-tab-caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  align-self: center;
+  flex: 0 0 auto;
+  padding: 0;
+  color: var(--slds-g-color-palette-neutral-50, #747474);
+  text-decoration: none;
+}
+
+.sh__bar-caret {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
+/* ── Body split ───────────────────────────────────────────── */
+.sh__body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.sh__side-col {
+  display: flex;
+  flex: 0 0 250px;
+  width: 250px;
+  min-height: 0;
+}
+
+.sh__side-col_collapsed {
+  flex-basis: 24px;
+  width: 24px;
+}
+
+.sh__side-col_collapsed .sh__nav {
+  display: none;
+}
+
+.sh__nav {
+  flex: 0 0 226px;
+  width: 226px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--slds-g-spacing-6, 2rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+
+.sh__collapse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 24px;
+  width: 24px;
+  padding: 0;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-neutral-base-50, #747474);
+  border-radius: 0;
+  background: var(--slds-g-color-neutral-base-100, #ffffff);
+  color: var(--slds-g-color-neutral-base-50, #747474);
+  cursor: pointer;
+  transition: border 0.15s linear;
+}
+
+.sh__collapse:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-accent-1, #066afe);
+}
+
+.sh__collapse-chevron {
+  width: 14px;
+  height: 14px;
+  transform: rotate(0deg);
+}
+
+.sh__collapse-chevron_flip {
+  transform: rotate(180deg);
+}
+
+/* ── Quick Find ───────────────────────────────────────────── */
+/* Insets are asymmetric so the 226px nav yields the org's 194px input
+   starting at x=14. */
+.sh__find {
+  position: relative;
+  padding: var(--slds-g-spacing-3, 0.75rem) 18px
+    var(--slds-g-spacing-3, 0.75rem) 14px;
+}
+
+/* Sits 10px inside the input's left edge, which is why the input carries
+   32px of left padding. */
+.sh__find-icon {
+  position: absolute;
+  top: 50%;
+  left: 24px;
+  width: 14px;
+  height: 14px;
+  transform: translateY(-50%);
+  color: #757575;
+  pointer-events: none;
+}
+
+.sh__find-input {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 30px 0 32px;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-palette-neutral-50, #747474);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  font: inherit;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 30px;
+  color: var(--slds-g-color-palette-neutral-10, #181818);
+}
+
+.sh__find-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh__find-input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: -1px;
+}
+
+/* ── Navigation tree ──────────────────────────────────────── */
+.sh__nav-group {
+  padding-bottom: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.sh__nav-heading {
+  margin: var(--slds-g-spacing-4, 1rem) 0 var(--slds-g-spacing-1, 0.25rem);
+  padding: 0 var(--slds-g-spacing-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh__nav-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Rows are flex-start aligned and only min-height constrained, so a long
+   label wraps to a second line and grows the row instead of truncating.
+   6px block padding + a 20px line box reproduces the 32px single-line
+   row; a two-line row lands at 52px, which is what the org shows for
+   "Brokerage General Settings" under a "broke" query.
+
+   --sh-nav-level is set per row from the JS-flattened tree. Level 0 keeps
+   the 24px inset that was already measured against the org; each further
+   level steps the label right by 20px. */
+.sh-nav__row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 6px var(--slds-g-spacing-3, 0.75rem) 6px
+    calc(var(--slds-g-spacing-5, 1.5rem) + (var(--sh-nav-level, 0) * 20px));
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  line-height: 20px;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  text-decoration: none;
+}
+
+.sh-nav__row:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  text-decoration: underline;
+}
+
+.sh-nav__row_active {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+.sh-nav__chevron {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  /* 4px of top offset centres the 12px glyph in the first 20px line box,
+     so a wrapped label leaves the chevron on its first line. */
+  margin: 4px 0 0 -1rem;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  transition: transform 0.1s linear;
+}
+
+.sh-nav__chevron_open {
+  transform: rotate(90deg);
+}
+
+.sh-nav__label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Quick Find match highlight. Sampled off the org: rgb(249, 228, 183),
+   which is --slds-g-color-warning-base-90. The mark carries no padding,
+   no radius, and no colour override - the text keeps the row's colour. */
+.sh-nav__mark {
+  background: var(--slds-g-color-warning-base-90, #f9e3b6);
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Closing line under a filtered tree. Aligns with the Quick Find input's
+   left edge rather than the tree's, and uses the same size, weight, and
+   colour as a nav row. */
+.sh__find-footer {
+  margin: 0;
+  padding: var(--slds-g-spacing-6, 2rem) 18px var(--slds-g-spacing-2, 0.5rem)
+    14px;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 20px;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* ── Canvas ───────────────────────────────────────────────── */
+.sh__canvas {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--slds-g-spacing-4, 1rem) 0;
+  /* Sampled from the org's Setup content area: rgb(243, 244, 252). No
+     SLDS surface token carries this lavender-tinted grey (surface-2 is
+     #F3F3F3, palette-indigo-95 is #F1F3FB), so it stays a literal. */
+  background: #f3f4fc;
+}
+
+/* Templates dashboard leaves. The panel content sits straight on the
+   canvas with no card wrapper, so this only supplies the side gutters,
+   matching .sh__canvas-inner. */
+.sh__canvas_panel {
+  padding-inline: var(--slds-g-spacing-6, 2rem);
+}
+
+.sh__landing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  padding-block: var(--slds-g-spacing-4, 1rem);
+}
+
+.sh__landing-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+
+.sh__landing-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.sh__landing-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.sh__canvas-inner {
+  padding: 0 var(--slds-g-spacing-6, 2rem);
+}
+
+.sh__welcome {
+  padding: var(--slds-g-spacing-6, 2rem) 0 var(--slds-g-spacing-8, 3rem);
+}
+
+/* 42px / weight 200 is the org's display treatment for this greeting and
+   sits outside the SLDS display scale, so both are literals here. */
+/* Setup's welcome banner is the one place the app uses SLDS 2 Display type
+   - a short title making a bold visual statement. Display is the only role
+   that takes the light 300 weight; everything else stays on 400. */
+.sh__welcome-title {
+  margin: 0 0 var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-7, 2.5rem);
+  font-weight: var(--slds-g-font-weight-3, 300);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.sh__welcome-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh__section-title {
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--atlas-type-section-size);
+  font-weight: var(--atlas-type-section-weight);
+  line-height: var(--atlas-type-section-lh);
+  color: var(--atlas-type-section-color);
+}
+
+.sh__section-sub {
+  margin: 0 0 var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Goal cards ───────────────────────────────────────────── */
+.sh__card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--slds-g-spacing-5, 1.5rem);
+  margin: 0 0 var(--slds-g-spacing-8, 3rem);
+  padding: 0;
+  list-style: none;
+}
+
+.sh-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--atlas-radius-lg);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  box-shadow: 0 2px 4px rgba(24, 24, 24, 0.08);
+}
+
+/* Gradient stands in for the org's hero artwork, which this repo does not
+   ship. Deliberately glyph-free so nothing reads as a real icon. */
+.sh-card__hero {
+  flex: 0 0 169px;
+  height: 169px;
+  background:
+    radial-gradient(
+      circle at 32% 38%,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0) 46%
+    ),
+    radial-gradient(
+      circle at 72% 66%,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0) 40%
+    ),
+    linear-gradient(135deg, #fddde3 0%, #ece1f9 55%, #d6e6ff 100%);
+}
+
+.sh-card__body {
+  flex: 1 1 auto;
+  padding: var(--slds-g-spacing-4, 1rem);
+}
+
+.sh-card__cat {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin: 0 0 var(--slds-g-spacing-2, 0.5rem);
+}
+
+.sh-card__cat-mark {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex: 0 0 auto;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+.sh-card__cat-mark_it {
+  background: var(--slds-g-color-error-base-50, #e3066a);
+}
+
+.sh-card__cat-mark_fins {
+  background: var(--slds-g-color-palette-purple-50, #9050e9);
+}
+
+.sh-card__cat-text {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh-card__pill {
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-5, 1.75);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh-card__title {
+  margin: 0 0 var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--atlas-type-subsection-size);
+  font-weight: var(--atlas-type-subsection-weight);
+  line-height: var(--atlas-type-subsection-lh);
+  color: var(--atlas-type-subsection-color);
+}
+
+.sh-card__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.sh-card__status {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh-card__cta {
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-4, 1rem);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  cursor: pointer;
+}
+
+.sh-card__cta:hover,
+.sh-card__cta:focus-visible {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+}
+
+/* ── Recent Items ─────────────────────────────────────────── */
+.sh__recent {
+  padding-bottom: var(--slds-g-spacing-8, 3rem);
+}
+
+.sh__table-card {
+  margin-top: var(--slds-g-spacing-3, 0.75rem);
+  overflow: hidden;
+  border-radius: var(--atlas-radius-lg);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  box-shadow: 0 2px 4px rgba(24, 24, 24, 0.08);
+}
+
+.sh__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sh__th {
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh__th_end {
+  text-align: right;
+}
+
+.sh__tr:not(:last-child) .sh__td {
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.sh__td {
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.sh__td_muted {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.sh__td_end {
+  text-align: right;
+}
+
+.sh__link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+}
+
+.sh__link:hover,
+.sh__link:focus-visible {
+  text-decoration: underline;
+}

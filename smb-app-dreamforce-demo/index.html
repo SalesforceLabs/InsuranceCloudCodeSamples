@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atlas - Previews &amp; Prototypes</title>
+    <style>
+      :root {
+        --bg: #f3f3f3;
+        --surface: #ffffff;
+        --border: #c9c9c9;
+        --ink: #03234d;
+        --muted: #5c5c5c;
+        --accent: #0250d9;
+        --accent-hover: #022ac0;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          Roboto, sans-serif;
+        line-height: 1.5;
+      }
+      .wrap { max-width: 56rem; margin: 0 auto; padding: 3rem 1.5rem; }
+      header { margin-bottom: 2rem; }
+      h1 { margin: 0 0 0.5rem; font-size: 1.75rem; font-weight: 700; }
+      .sub { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      ul.versions { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+      li.version {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .v-meta { min-width: 0; }
+      .v-tag {
+        display: inline-block;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: #edf4ff;
+        border-radius: 0.25rem;
+        padding: 0.125rem 0.5rem;
+        margin: 0 0.375rem 0.5rem 0;
+      }
+      .v-tag_latest {
+        color: #ffffff;
+        background: var(--accent);
+      }
+      .v-title { font-size: 1.125rem; font-weight: 600; margin: 0 0 0.25rem; }
+      .v-desc { margin: 0; color: var(--muted); font-size: 0.875rem; }
+      .v-actions {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .v-open {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--accent);
+        border-radius: 0.5rem;
+        color: var(--accent);
+        background: transparent;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+      }
+      .v-open:hover {
+        background: #edf4ff;
+        color: var(--accent-hover);
+        border-color: var(--accent-hover);
+      }
+      /* Brand/primary CTA used for "Start demo" on the latest card. */
+      .v-open_brand {
+        background: var(--accent);
+        color: #ffffff;
+        border-color: var(--accent);
+      }
+      .v-open_brand:hover {
+        background: var(--accent-hover);
+        color: #ffffff;
+        border-color: var(--accent-hover);
+      }
+      footer { margin-top: 2.5rem; color: var(--muted); font-size: 0.8125rem; }
+      section.segment { margin-bottom: 2.5rem; }
+      section.segment:last-of-type { margin-bottom: 0; }
+      h2.segment-title {
+        margin: 0 0 1rem;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--ink);
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+      h2.segment-title .count {
+        margin-left: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .segment-empty {
+        margin: 0;
+        padding: 1.25rem 1.5rem;
+        background: var(--surface);
+        border: 1px dashed var(--border);
+        border-radius: 0.5rem;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      .segment-empty code {
+        background: #edf4ff;
+        color: var(--accent);
+        padding: 0.0625rem 0.375rem;
+        border-radius: 0.25rem;
+        font-size: 0.8125rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Atlas - Previews &amp; Prototypes</h1>
+        <p class="sub">Snapshot builds of the Atlas broker portal plus standalone user-testing prototypes. Each entry is a self-contained preview.</p>
+      </header>
+
+      <section class="segment">
+        <h2 class="segment-title">Version Previews</h2>
+        <ul class="versions">
+          <li class="version">
+            <div class="v-meta">
+              <span class="v-tag v-tag_latest">Latest</span>
+              <span class="v-tag">Version 03</span>
+              <p class="v-title">Atlas - MVP Latest</p>
+              <p class="v-desc">MVP latest push (v4latest): Integrations &amp; Preview with Quote Provider Selection accordion, Runtime Preview Display, and Insurance Setup workspace updates.</p>
+            </div>
+            <div class="v-actions">
+              <a class="v-open" href="./preview/v03/">Open preview</a>
+              <a class="v-open v-open_brand" href="./preview/v03/?demo=1&amp;tab=account-acme">Start demo &rarr;</a>
+            </div>
+          </li>
+          <li class="version">
+            <div class="v-meta">
+              <span class="v-tag">Version 02</span>
+              <p class="v-title">Atlas - Broker Portal</p>
+              <p class="v-desc">Atlas broker-portal build with the Insurance Setup workspace, Create RFQ modal, Quote Comparison, and Agentforce &amp; Slack integrations.</p>
+            </div>
+            <a class="v-open" href="./preview/v02/">Open preview &rarr;</a>
+          </li>
+          <li class="version">
+            <div class="v-meta">
+              <span class="v-tag">Version 01</span>
+              <p class="v-title">Early Stage Mock</p>
+              <p class="v-desc">Early-stage broker-portal rebuild on verified SLDS 2: Account Record Page, Run My Day, Meeting Center, Guided RFQ Intake, RFQ Workspace, Quote Comparison, EB Policy.</p>
+            </div>
+            <a class="v-open" href="./preview/v01/">Open preview &rarr;</a>
+          </li>
+          <li class="version">
+            <div class="v-meta">
+              <span class="v-tag">Version 00</span>
+              <p class="v-title">Eng. Team Mock</p>
+              <p class="v-desc">Original engineering-team mock-up of the RFQ create flow (static SLDS) - commit bf343a3, May 26, 2026.</p>
+            </div>
+            <a class="v-open" href="./preview/v00/">Open preview &rarr;</a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="segment">
+        <h2 class="segment-title">User Testing &amp; Prototypes</h2>
+        <p class="segment-empty">
+          No prototypes published yet. Drop standalone user-testing builds into <code>preview/user-testing/&lt;name&gt;/</code> and add a card here pointing at the folder.
+        </p>
+      </section>
+
+      <footer>
+        Version previews live under <code>preview/v00/</code>, <code>preview/v01/</code>, <code>preview/v02/</code>, <code>preview/v03/</code>, &hellip; User-testing prototypes live under <code>preview/user-testing/&lt;name&gt;/</code>.
+      </footer>
+    </div>
+  </body>
+</html>

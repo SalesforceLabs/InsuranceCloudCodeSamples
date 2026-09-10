@@ -1,0 +1,563 @@
+<template>
+  <div class="page">
+    <template lwc:if={hasForcedMcState}>
+      <section class="mc-forced-empty" aria-label="Meeting Center state">
+        <c-empty-state
+          illustration-name={forcedMcStateName}
+          title={forcedMcStateTitle}
+          size="medium"
+        >
+          {forcedMcStateDescription}
+          <template lwc:if={hasForcedMcStateCta}>
+            <button
+              slot="cta"
+              type="button"
+              class="slds-button slds-button_brand"
+            >{forcedMcStateCtaLabel}</button>
+          </template>
+        </c-empty-state>
+      </section>
+    </template>
+    <template lwc:if={showMcSurface}>
+    <!--
+      Record header, matching the org's meeting-highlights-panel: the
+      account breadcrumb, the playbook name with its status pill, the
+      event's date + time range, and an Organizer / Related Record /
+      Event meta row. The account is a reference here, not a container -
+      this page is its own workspace tab, the way the org opens
+      /lightning/r/MeetingPlaybook/<id>/view.
+    -->
+    <header class="head">
+      <div class="head-main">
+        <template lwc:if={hasBreadcrumbParent}>
+          <nav class="mc-breadcrumb" aria-label="Breadcrumb">
+            <template lwc:if={isParentLinkable}>
+              <a
+                href="#"
+                class="mc-breadcrumb__parent"
+                onclick={handleBreadcrumbClick}
+              >{breadcrumbParent}</a>
+            </template>
+            <template lwc:if={isParentPlainText}>
+              <span class="mc-breadcrumb__parent-text">{breadcrumbParent}</span>
+            </template>
+            <span class="mc-breadcrumb__sep" aria-hidden="true">&gt;</span>
+            <span class="mc-breadcrumb__current">{meetingTitle}</span>
+          </nav>
+        </template>
+
+        <div class="mc-title-row">
+          <h1 class="title">{meetingTitle}</h1>
+          <template lwc:if={meetingStatus}>
+            <span class={statusPillClass}>{meetingStatus}</span>
+          </template>
+        </div>
+        <p class="mc-timerange">{meetingTimeRange}</p>
+
+        <dl class="mc-record-meta">
+          <div class="mc-record-meta__item">
+            <dt>Organizer</dt>
+            <dd>{meeting.organizer}</dd>
+          </div>
+          <div class="mc-record-meta__item">
+            <dt>Related Record</dt>
+            <dd>
+              <template lwc:if={isParentLinkable}>
+                <a
+                  href="#"
+                  class="mc-record-meta__link"
+                  onclick={handleBreadcrumbClick}
+                >{meeting.relatedRecord}</a>
+              </template>
+              <template lwc:else>{meeting.relatedRecord}</template>
+            </dd>
+          </div>
+          <div class="mc-record-meta__item">
+            <dt>Event</dt>
+            <dd>{meeting.eventSubject}</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="head-cta">
+        <button class="ghost" type="button">Add to Calendar</button>
+        <button class="ghost" type="button">Share</button>
+        <button class="brand solid" type="button">Start Meeting</button>
+      </div>
+    </header>
+
+    <!--
+      Body, matching the org's Meeting Playbook record page: the three
+      stages live inside one card on the left, and the Slack channel is
+      a sidebar region that persists across all three rather than a
+      per-stage card.
+    -->
+    <div class="mc-layout">
+      <div class="mc-stage">
+        <nav class="tabs">
+          <template for:each={tabsView} for:item="t">
+            <button
+              key={t.id}
+              class={t.className}
+              data-tab={t.id}
+              onclick={handleTab}
+              type="button"
+            >
+              {t.label}
+            </button>
+          </template>
+        </nav>
+
+        <!-- ══ Pre Meeting ══════════════════════════════════════════
+             Copied from the FSC org Meeting Playbook tab
+             (runtime_industries_meetingengagement-meeting-prep-tab):
+             readiness across the top, Client Summary + Documents in
+             the 2/5 column, Tasks + Brief + Generate in the 3/5. -->
+        <template lwc:if={isPrep}>
+          <div class="mc-prep">
+            <div class="mc-prep__ready">
+              <div class="mc-prep-ready">
+                <div class="mc-prep-ready__head">
+                  <span class="mc-prep-ready__title">Meeting Preparation Readiness</span>
+                  <span class="mc-prep-ready__count">{prepReadinessLabel}</span>
+                </div>
+                <div
+                  class="mc-prep-ready__bar"
+                  role="progressbar"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow={prepReadinessNow}
+                  aria-label={prepReadinessAria}
+                >
+                  <span
+                    class="mc-prep-ready__bar-value"
+                    style={prepReadinessValueStyle}
+                  >
+                    <span class="slds-assistive-text">{prepReadinessAria}</span>
+                  </span>
+                </div>
+              </div>
+              <button class="slds-button slds-button_neutral" type="button">Refresh</button>
+            </div>
+
+            <div class="mc-prep__col">
+              <article class="slds-card mc-org-card" aria-label="Client Summary">
+                <header class="mc-org-card__head">
+                  <h2 class="mc-org-card__title">
+                    <c-ai-sparkle></c-ai-sparkle>
+                    <span>Client Summary</span>
+                  </h2>
+                </header>
+                <div class="mc-org-card__body">
+                  <p class="mc-org-card__updated">{orgPrep.updatedAt}</p>
+                  <p class="mc-summary__lead"><strong>{orgPrep.lead}</strong></p>
+                  <ul class="mc-summary__list">
+                    <template for:each={summaryBullets} for:item="bullet">
+                      <li key={bullet.id}>
+                        <strong>{bullet.label}</strong><template for:each={bullet.parts} for:item="part"><span key={part.id}>{part.text}<template lwc:if={part.sup}><sup>{part.sup}</sup></template></span></template>
+                      </li>
+                    </template>
+                  </ul>
+                  <div class="mc-org-sources">
+                    <button
+                      class="mc-org-sources__toggle"
+                      type="button"
+                      aria-expanded={prepSourcesAriaExpanded}
+                      onclick={handleTogglePrepSources}
+                    >
+                      <svg class={prepSourcesChevronClass} aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                        <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                      </svg>
+                      {prepSourcesToggleLabel}
+                    </button>
+                    <template lwc:if={prepSourcesOpen}>
+                      <p class="mc-org-sources__heading">Cited Sources</p>
+                      <ul class="mc-org-sources__list">
+                        <template for:each={citedSources} for:item="src">
+                          <li key={src.id} class="mc-org-sources__item">
+                            <a href="#" onclick={handleTaskNameClick}>{src.name}</a>
+                            <span class="mc-org-sources__type">· {src.type}<sup>{src.n}</sup></span>
+                          </li>
+                        </template>
+                      </ul>
+                      <p class="mc-org-sources__heading">References</p>
+                      <ul class="mc-org-sources__list">
+                        <template for:each={referenceSources} for:item="src">
+                          <li key={src.id} class="mc-org-sources__item">
+                            <a href="#" onclick={handleTaskNameClick}>{src.name}</a>
+                            <span class="mc-org-sources__type">· {src.type}</span>
+                          </li>
+                        </template>
+                      </ul>
+                    </template>
+                  </div>
+                </div>
+              </article>
+
+              <article class="slds-card mc-org-card" aria-label="Documents">
+                <header class="mc-org-card__head">
+                  <h2 class="mc-org-card__title">
+                    <span class="mc-org-card__folder" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path fill="#fff" d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+                      </svg>
+                    </span>
+                    <span>Documents</span>
+                  </h2>
+                  <button
+                    class="slds-button slds-button_icon"
+                    type="button"
+                    title={docsCollapseLabel}
+                    aria-label={docsCollapseLabel}
+                    onclick={handleTogglePrepDocs}
+                  >
+                    <svg class={docsChevronClass} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path fill="currentColor" d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+                    </svg>
+                  </button>
+                </header>
+                <template lwc:if={prepDocsOpen}>
+                  <div class="mc-org-card__body mc-docs-body">
+                    <div class="mc-docs-drop">
+                      <div class="slds-file-selector slds-file-selector_files">
+                        <div class="slds-file-selector__dropzone">
+                          <label class="slds-file-selector__body">
+                            <span class="slds-file-selector__button slds-button slds-button_neutral">
+                              <svg class="mc-docs-upload-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path fill="currentColor" d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+                              </svg>
+                              Upload Files
+                            </span>
+                            <span class="slds-file-selector__text">Or drop files</span>
+                          </label>
+                        </div>
+                      </div>
+                      <p class="mc-docs-formats">Accepted formats: .jpeg, .jpg, .pdf, .png, .xlsx</p>
+                    </div>
+                    <template lwc:if={hasDocuments}>
+                      <ul class="mc-doc-list">
+                        <template for:each={documents} for:item="doc">
+                          <li key={doc.id} class="mc-doc">
+                            <c-doctype-icon kind={doc.kind}></c-doctype-icon>
+                            <span class="mc-doc__body">
+                              <span class="mc-doc__name">{doc.name}</span>
+                              <span class="mc-doc__meta">{doc.meta}</span>
+                            </span>
+                          </li>
+                        </template>
+                      </ul>
+                    </template>
+                    <template lwc:else>
+                      <div class="mc-docs-empty">
+                        <img
+                          class="mc-docs-empty__art"
+                          src={docsEmptyIllustration}
+                          alt=""
+                          aria-hidden="true"
+                          draggable="false"
+                        />
+                        <p class="mc-docs-empty__sub">After you start adding documents, you'll see them here.</p>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </article>
+            </div>
+
+            <div class="mc-prep__col">
+              <article class="slds-card mc-org-card" aria-label={meetingPrepTaskTitle}>
+                <header class="mc-org-card__head">
+                  <h2 class="mc-org-card__title">{meetingPrepTaskTitle}</h2>
+                  <button class="slds-button slds-button_neutral" type="button">New</button>
+                </header>
+                <div class="mc-org-card__body">
+                  <table class="mc-prep-tasks" role="grid" aria-label={meetingPrepTaskTitle}>
+                    <thead>
+                      <tr>
+                        <th scope="col">
+                          <span class="mc-prep-tasks__th">Name
+                            <svg class="mc-prep-tasks__sort" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                          </span>
+                        </th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">
+                          <span class="mc-prep-tasks__th">Due Date
+                            <svg class="mc-prep-tasks__sort" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                          </span>
+                        </th>
+                        <th scope="col">Status</th>
+                        <th scope="col"><span class="slds-assistive-text">Actions</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template for:each={meetingPrepTasks} for:item="task">
+                        <tr key={task.id}>
+                          <td>
+                            <a
+                              href="#"
+                              class="mc-prep-tasks__name"
+                              title={task.name}
+                              onclick={handleTaskNameClick}
+                            >{task.name}</a>
+                          </td>
+                          <td>
+                            <span class="mc-prep-tasks__owner">
+                              <span class="mc-prep-tasks__avatar" aria-hidden="true">{task.ownerInitials}</span>
+                              {task.owner}
+                            </span>
+                          </td>
+                          <td>{task.dueDate}</td>
+                          <td>
+                            <span class="mc-prep-tasks__status">{task.status}</span>
+                          </td>
+                          <td>
+                            <button
+                              class="slds-button slds-button_icon"
+                              type="button"
+                              aria-label="Show actions"
+                              title="Show actions"
+                            >
+                              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+
+              <article class="slds-card mc-org-card mc-org-card_brief" aria-label="Meeting Preparation Brief">
+                <header class="mc-org-card__head">
+                  <h2 class="mc-org-card__title">
+                    <c-ai-sparkle></c-ai-sparkle>
+                    <span>Meeting Preparation Brief</span>
+                  </h2>
+                </header>
+                <div class="mc-org-card__body mc-brief">
+                  <p class="mc-org-card__updated">{orgPrep.updatedAt}</p>
+                  <template for:each={briefSections} for:item="section">
+                    <h3 key={section.headingKey} class="mc-brief__h">{section.heading}</h3>
+                    <p key={section.bodyKey} class="mc-brief__p">{section.body}</p>
+                  </template>
+                  <h3 class="mc-brief__h">Suggested Agenda</h3>
+                  <ol class="mc-brief__ol">
+                    <template for:each={briefAgenda} for:item="row">
+                      <li key={row.id}>{row.text}</li>
+                    </template>
+                  </ol>
+                  <h3 class="mc-brief__h">Meeting Priorities</h3>
+                  <ol class="mc-brief__ol">
+                    <template for:each={briefPriorities} for:item="row">
+                      <li key={row.id}>{row.text}</li>
+                    </template>
+                  </ol>
+                </div>
+                <footer class="mc-org-card__foot">
+                  <button class="slds-button slds-button_neutral" type="button">Edit</button>
+                </footer>
+              </article>
+
+              <div class="mc-stage-action">
+                <button
+                  class="slds-button slds-button_brand"
+                  type="button"
+                  onclick={handleGenerateGuide}
+                >Generate Meeting Discussion Guide</button>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- ══ In Session ═══════════════════════════════════════════
+             The discussion guide the Pre Meeting stage generated, plus
+             the live note-capture panel that feeds the follow-up. -->
+        <template lwc:if={isSession}>
+          <div class={sessionGridClass}>
+            <div class="mc-col">
+              <section class="card-surface">
+                <header class="card-head">
+                  <h2><c-ai-sparkle></c-ai-sparkle> Meeting Discussion Guide</h2>
+                  <span class="badge violet">{discussionGuideTimestamp}</span>
+                </header>
+                <p class="mc-lede">{prep.discussionGuide.intro}</p>
+                <ol class="mc-guide">
+                  <template for:each={discussionTopics} for:item="topic">
+                    <li key={topic.id} class="mc-guide__item">
+                      <span class="mc-guide__window">{topic.window}</span>
+                      <span class="mc-guide__body">
+                        <span class="mc-guide__title">{topic.title}</span>
+                        <span class="mc-guide__prompt">{topic.prompt}</span>
+                      </span>
+                    </li>
+                  </template>
+                </ol>
+                <div class="mc-card-foot">
+                  <button class="mp-btn mp-btn_outline" type="button">Edit</button>
+                </div>
+              </section>
+
+              <section class="card-surface mc-docs">
+                <header class="card-head">
+                  <h2>Documents</h2>
+                  <span class="badge">{documents.length} files</span>
+                </header>
+                <template lwc:if={hasDocuments}>
+                  <ul class="mc-doc-list">
+                    <template for:each={documents} for:item="doc">
+                      <li key={doc.id} class="mc-doc">
+                        <c-doctype-icon kind={doc.kind}></c-doctype-icon>
+                        <span class="mc-doc__body">
+                          <span class="mc-doc__name">{doc.name}</span>
+                          <span class="mc-doc__meta">{doc.meta}</span>
+                        </span>
+                      </li>
+                    </template>
+                  </ul>
+                </template>
+              </section>
+            </div>
+
+            <div class="mc-col">
+              <section class="mc-notes">
+                <h2 class="mc-notes__title">Meeting Notes and Documents</h2>
+                <p class="mc-notes__prompt">{prep.sessionNotes.prompt}</p>
+                <label class="mc-notes__label" for="session-notes">Notes</label>
+                <textarea
+                  id="session-notes"
+                  class="mc-notes__input"
+                  rows="8"
+                  placeholder={prep.sessionNotes.placeholder}
+                ></textarea>
+                <div class="mc-notes__actions">
+                  <button class="ghost" type="button">Join call</button>
+                  <button class="ghost" type="button">Record audio</button>
+                </div>
+              </section>
+
+              <div class="mc-stage-action">
+                <button
+                  class="brand solid"
+                  type="button"
+                  onclick={handleGenerateFollowUp}
+                >Generate Meeting Follow Up</button>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- ══ Post Meeting ═════════════════════════════════════════
+             The recap Agentforce wrote from the session notes, and the
+             actions it wants to run off the back of it. -->
+        <template lwc:if={isFollow}>
+          <div class={followGridClass}>
+            <div class="mc-col">
+              <section class="card-surface">
+                <header class="card-head">
+                  <h2><c-ai-sparkle></c-ai-sparkle> Meeting Follow-Up Summary</h2>
+                  <span class="badge violet">{followUpTimestamp}</span>
+                </header>
+                <p class="mc-lede">{prep.followUp.recap}</p>
+                <h3 class="block-title">Decisions and Commitments</h3>
+                <ul class="bullet checks">
+                  <template for:each={followUpDecisions} for:item="row">
+                    <li key={row.id}>
+                      <span class="check">✓</span>
+                      {row.line}
+                    </li>
+                  </template>
+                </ul>
+                <div class="mc-card-foot">
+                  <button class="mp-btn mp-btn_outline" type="button">Edit</button>
+                </div>
+              </section>
+
+              <section class="card-surface mc-docs">
+                <header class="card-head">
+                  <h2>Documents</h2>
+                  <span class="badge">{documents.length} files</span>
+                </header>
+                <template lwc:if={hasDocuments}>
+                  <ul class="mc-doc-list">
+                    <template for:each={documents} for:item="doc">
+                      <li key={doc.id} class="mc-doc">
+                        <c-doctype-icon kind={doc.kind}></c-doctype-icon>
+                        <span class="mc-doc__body">
+                          <span class="mc-doc__name">{doc.name}</span>
+                          <span class="mc-doc__meta">{doc.meta}</span>
+                        </span>
+                      </li>
+                    </template>
+                  </ul>
+                </template>
+              </section>
+            </div>
+
+            <div class="mc-col">
+              <section class="card-surface">
+                <header class="card-head">
+                  <h2><c-ai-sparkle></c-ai-sparkle> Agentforce Actions</h2>
+                  <span class="badge violet">{selectedCount} selected</span>
+                </header>
+
+                <ul class="checklist">
+                  <template for:each={prepActions} for:item="a">
+                    <li key={a.id} class={a.itemClass}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={a.checked}
+                          data-id={a.id}
+                          onchange={toggleAction}
+                        />
+                        <div>
+                          <div class="check-label">{a.label}</div>
+                          <div class="check-detail">{a.detail}</div>
+                        </div>
+                      </label>
+                    </li>
+                  </template>
+                </ul>
+
+                <footer class="actions-foot">
+                  <button class="brand wide" type="button">
+                    <c-ai-sparkle></c-ai-sparkle>
+                    Apply Selected ({selectedCount})
+                  </button>
+                </footer>
+              </section>
+
+              <div class="mc-stage-action">
+                <button
+                  class="ghost"
+                  type="button"
+                  onclick={handleGoToConcierge}
+                >Go to Meeting Concierge</button>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <p class="mc-ai-disclaimer">
+          Generative AI can produce inaccurate responses. Review responses carefully.
+        </p>
+      </div>
+
+      <!-- Slack lives in the record page's sidebar region in the org, so
+           it sits outside the stage card and survives every stage
+           change rather than being rebuilt per tab. The panel defaults
+           to the org's disconnected Slack Channel card. -->
+      <div class="mc-rail">
+        <c-slack-channel-panel
+          channel-name={slackChannelName}
+          members={slackMembers}
+          messages={slackMessages}
+          connected={slackConnected}
+          limit="8"
+        ></c-slack-channel-panel>
+      </div>
+    </div>
+    </template>
+  </div>
+</template>

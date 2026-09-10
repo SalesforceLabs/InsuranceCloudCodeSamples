@@ -1,0 +1,143 @@
+/*
+ * Dropdown — standard custom select. No SLDS 2 package spec exists for this
+ * component, so it consumes globals only. Trigger sizing/colors mirror the
+ * native Select; the menu is portalled to <body> (fixed position) so it never
+ * gets clipped by modal/overflow containers.
+ */
+
+.slds2-dropdown {
+  display: inline-block;
+}
+.slds2-dropdown--full {
+  display: block;
+  width: 100%;
+}
+
+.slds2-dropdown__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 10px;
+  font-family: var(--slds-g-font-family-base);
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  text-align: left;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-2);
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+  transition: border-color 0.1s ease;
+}
+.slds2-dropdown__trigger:hover:not(:disabled) {
+  border-color: var(--slds-g-color-border-1);
+}
+.slds2-dropdown__trigger:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: -1px;
+}
+.slds2-dropdown__trigger[aria-expanded='true'] {
+  border-color: var(--slds-g-color-accent-1);
+}
+.slds2-dropdown__trigger:disabled {
+  color: var(--slds-g-color-on-surface-3);
+  background: var(--slds-g-color-disabled-container-1);
+  border-color: var(--slds-g-color-border-2);
+  cursor: not-allowed;
+}
+
+.slds2-dropdown__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.slds2-dropdown__placeholder {
+  overflow: hidden;
+  color: var(--slds-g-color-on-surface-3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slds2-dropdown__chevron {
+  flex-shrink: 0;
+  color: var(--slds-g-color-on-surface-2);
+  transition: transform 0.12s ease;
+}
+.slds2-dropdown__trigger[aria-expanded='true'] .slds2-dropdown__chevron {
+  transform: rotate(180deg);
+}
+
+.slds2-dropdown__menu {
+  z-index: 9001;
+  max-height: 320px;
+  padding: 4px;
+  overflow-y: auto;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-2);
+  border-radius: var(--slds-g-radius-border-2);
+  box-shadow: var(--slds-g-shadow-3);
+}
+
+.slds2-dropdown__group + .slds2-dropdown__group {
+  margin-top: 2px;
+  border-top: 1px solid var(--slds-g-color-border-2);
+  padding-top: 2px;
+}
+.slds2-dropdown__group-label {
+  padding: 6px 10px 2px;
+  font-size: var(--slds-g-font-scale-neg-2);
+  font-weight: var(--slds-g-font-weight-7);
+  color: var(--slds-g-color-on-surface-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.slds2-dropdown__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  padding: 8px 10px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  border-radius: var(--slds-g-radius-border-1);
+  cursor: pointer;
+}
+.slds2-dropdown__option:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.slds2-dropdown__option--selected {
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-accent-1);
+}
+.slds2-dropdown__option--disabled {
+  color: var(--slds-g-color-on-surface-3);
+  cursor: not-allowed;
+}
+.slds2-dropdown__option--disabled:hover {
+  background: transparent;
+}
+.slds2-dropdown__option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.slds2-dropdown__option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.slds2-dropdown__option-desc {
+  font-size: var(--slds-g-font-scale-neg-2);
+  color: var(--slds-g-color-on-surface-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.slds2-dropdown__option--selected .slds2-dropdown__option-desc {
+  color: var(--slds-g-color-accent-2);
+}

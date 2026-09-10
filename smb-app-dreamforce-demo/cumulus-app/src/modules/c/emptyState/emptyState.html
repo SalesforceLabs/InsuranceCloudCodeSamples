@@ -1,0 +1,27 @@
+<template>
+  <div class={hostClass} role="status">
+    <template lwc:if={showIllustration}>
+      <div class={illustrationClass}>
+        <img
+          class="es__svg"
+          src={illustrationSrc}
+          alt={illustrationAlt}
+          aria-hidden={illustrationAriaHidden}
+          draggable="false"
+        />
+      </div>
+    </template>
+
+    <template lwc:if={title}>
+      <h2 class="es__title">{title}</h2>
+    </template>
+
+    <p class="es__description">
+      <slot></slot>
+    </p>
+
+    <div class="es__cta" part="cta">
+      <slot name="cta"></slot>
+    </div>
+  </div>
+</template>

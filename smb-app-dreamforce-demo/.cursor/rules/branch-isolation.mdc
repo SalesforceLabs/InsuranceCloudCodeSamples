@@ -1,0 +1,65 @@
+---
+description: Keep Dreamforce demo work isolated from older branches and the original repo
+alwaysApply: true
+---
+
+# Branch isolation
+
+Work stays on `dreamforce-demo`, and nothing done here may reach the older
+branches or the original `SMB-app` repo.
+
+This checkout has a single remote, and it is the demo repo:
+
+| Remote | Repo | Status |
+|---|---|---|
+| `origin` | `SMB-app-dreamforce-demo` | the only remote, and the valid push target |
+
+`origin` is safe here **because of the URL it points at, not because of its
+name.** In other checkouts of this project `origin` is the original `SMB-app`
+and must never be pushed to. Verify the URL, never the remote name.
+
+There are also no older branches in this checkout. `dreamforce-demo` is the
+only branch, local or remote, so `smb-final-version`, `atlas-smb-app-v4`, and
+`main` are not reachable until someone fetches them.
+
+## Rules
+
+- Never push to any remote whose URL is not `SMB-app-dreamforce-demo`. That
+  includes `git push --all` and `git push --mirror`, which ignore the current
+  branch and can fan out to every configured remote.
+- Never commit to, rebase, amend, or force-push `smb-final-version`,
+  `atlas-smb-app-v4`, `main`, or any other pre-existing branch, if one is ever
+  fetched into this checkout.
+- Never republish the GitHub Pages preview on `atlas-smb-app-v4`. The
+  `preview/` folder may be edited on `dreamforce-demo` only.
+- Branch off `dreamforce-demo`, not off the older branches.
+- Do not delete or rename existing branches, local or remote.
+- Rebasing your own unpushed commits on `dreamforce-demo` onto a newer
+  `origin/dreamforce-demo` is fine; it rewrites only commits nobody else has.
+
+## Before every push
+
+Confirm the branch, its upstream, and the URL that upstream resolves to:
+
+```bash
+git branch --show-current               # expect: dreamforce-demo
+git rev-parse --abbrev-ref @{upstream}  # expect: origin/dreamforce-demo
+git remote get-url --push origin        # expect: .../SMB-app-dreamforce-demo.git
+```
+
+The third command is the one that matters. The first two can both look correct
+while `origin` points somewhere it should not.
+
+`push.default` is unset, so it defaults to `simple`, meaning a bare `git push`
+from `dreamforce-demo` only ever reaches that branch's own upstream. Prefer a
+bare `git push` over naming a remote and branch.
+
+## Reading from older branches is fine
+
+Inspecting history or copying a file out of an older branch does not modify it,
+so this is allowed once such a branch has been fetched:
+
+```bash
+git show smb-final-version:path/to/file        # read
+git checkout smb-final-version -- path/to/file # copy onto dreamforce-demo
+```

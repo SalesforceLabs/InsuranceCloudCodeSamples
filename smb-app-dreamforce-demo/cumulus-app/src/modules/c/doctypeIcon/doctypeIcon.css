@@ -1,0 +1,34 @@
+:host {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.dti {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Doctype icons are a 56x64 vertical rectangle, so the box is sized on
+   that ratio rather than square - squaring it would letterbox the
+   artwork and flatten the folded corner. */
+.dti__svg {
+  width: 1.75rem;
+  height: 2rem;
+  display: block;
+}
+
+/* .slds-assistive-text is a global utility, and this component renders
+   into a native shadow root where the global stylesheet does not reach.
+   Redeclared locally or the label renders as visible text. */
+.dti__assistive {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

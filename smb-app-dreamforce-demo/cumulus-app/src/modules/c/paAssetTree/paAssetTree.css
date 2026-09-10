@@ -1,0 +1,1064 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-pa-asset-tree - hierarchical Schedule of Vehicles.
+   Each vehicle is a parent row; assigned drivers nest beneath it.
+   Styling hooks follow SLDS 2 (surface containers, density-aware
+   spacing, border radii) so a future SLDS swap is a one-liner.
+   ════════════════════════════════════════════════════════════════════ */
+
+.pa-asset-tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.pa-asset-tree__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+
+/* ── Parent vehicle node ───────────────────────────────────── */
+.pa-asset-tree__node {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  transition: box-shadow 160ms ease;
+}
+
+.pa-asset-tree__node:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.pa-asset-tree__veh {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.pa-asset-tree__veh-icon {
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  /* Blue container + white glyph - SLDS pairs accent-container-1 with
+     on-accent-1. (Previously used accent-1 for the glyph, which resolved
+     to the same blue as the container and rendered the icon invisible.) */
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pa-asset-tree__veh-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* In coverages mode the title doubles as the expand/collapse target. */
+.pa-asset-tree__veh-body_clickable {
+  cursor: pointer;
+}
+.pa-asset-tree__veh-body_clickable:hover .pa-asset-tree__veh-title {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.pa-asset-tree__veh-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pa-asset-tree__veh-title {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.005em;
+}
+
+.pa-asset-tree__veh-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Status pill (Pre-loaded vs Draft) ─────────────────────── */
+.pa-asset-tree__status {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--slds-g-spacing-1, 4px) 10px;
+  border-radius: var(--slds-g-radius-border-pill, 999px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pa-asset-tree__status.is-ready {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-success-1, #056764);
+}
+
+.pa-asset-tree__status.is-draft {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-warning-1, #8c4b02);
+}
+
+.pa-asset-tree__driver-count {
+  margin-left: auto;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-5, 500);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Driver child rows ─────────────────────────────────────── */
+.pa-asset-tree__drivers {
+  /* One shared nesting step - the same hook the Policy UI tree and the
+     bundle tables indent by. Nesting reads from the indent alone; the
+     tree draws no connector rails. */
+  --pa-tree-step: var(--slds-g-spacing-6, 2rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding-left: var(--pa-tree-step);
+}
+
+.pa-asset-tree__driver {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  position: relative;
+}
+
+.pa-asset-tree__avatar {
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  background: transparent;
+  color: var(--slds-g-color-accent-1, #066afe);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.pa-asset-tree__avatar svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+
+.pa-asset-tree__driver-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pa-asset-tree__driver-name {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.pa-asset-tree__driver-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ── Empty driver slot under a vehicle ─────────────────────── */
+.pa-asset-tree__empty-driver {
+  position: relative;
+  margin-left: 18px;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border: var(--slds-g-sizing-border-1, 1px) dashed var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-style: italic;
+}
+
+/* ── Empty tree (no vehicles at all) ─────────────────────────
+   Thin wrapper around <c-empty-state> - c-empty-state carries the
+   full SLDS 2 Empty State anatomy (illustration + title +
+   description + optional CTA) and its own padding, so we only
+   need to (a) keep the panel a card-shaped chrome, and (b) let
+   the host stretch to full width. The wrapper used to duplicate
+   c-empty-state's illustration/description styling (dashed border,
+   grey fill, narrow max-widths on <p> and <svg>) which caused the
+   host to collapse to its narrowest word in the description and
+   left an empty slab to its side - see 2026-08-12 fix. */
+.pa-asset-tree__empty {
+  display: block;
+  /* Wrapper is now purely a positioning host - c-empty-state carries
+     its own top/bottom padding, so we no longer stack a second layer
+     of vertical breathing room here (was 1rem). */
+  padding: 0;
+}
+
+.pa-asset-tree__empty c-empty-state {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .pa-asset-tree__veh {
+    flex-wrap: wrap;
+  }
+  /* Scope to the vehicle row so the same chip class on a nested
+     driver does not pick up the wrap indent. */
+  .pa-asset-tree__veh > .pa-asset-tree__status,
+  .pa-asset-tree__veh > .pa-asset-tree__driver-count {
+    margin-left: var(--slds-g-spacing-8, 48px);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   POLICY-LEVEL COVERAGES + PERSONAL UMBRELLA (coverages mode, root)
+   ════════════════════════════════════════════════════════════════════ */
+.pa-asset-tree__policy {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  margin-bottom: var(--slds-g-spacing-4, 1rem);
+  display: block;
+}
+
+.pa-asset-tree__policy-head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  margin-bottom: 0;
+}
+/* Clickable header (expand/collapse target), mirroring the vehicle rows. */
+.pa-asset-tree__policy-head_clickable {
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.pa-asset-tree__policy-head_clickable:hover .pa-asset-tree__policy-title {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.pa-asset-tree__policy-head_clickable:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Body spacing only applies when the card is expanded. */
+.pa-asset-tree__policy .pa-asset-tree__cov-ranges {
+  margin-top: var(--slds-g-spacing-var-5, 1.5rem);
+}
+
+.pa-asset-tree__policy-icon {
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pa-asset-tree__policy-icon svg { width: 18px; height: 18px; }
+
+.pa-asset-tree__policy-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.pa-asset-tree__policy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+
+/* ── Policy coverage ranges (PA umbrella policy) ─────────────────── */
+.pa-asset-tree__cov-ranges {
+  display: flex;
+  flex-direction: column;
+}
+
+.pa-asset-tree__cov-range {
+  display: flex;
+  align-items: center;
+  /* flex-wrap so review-mode content (label + status pill + a full-
+     width detail line) drops to its own row without disturbing the
+     Step-2 edit layout, which never overflows horizontally at the
+     desktop widths this card is used at. */
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+.pa-asset-tree__cov-range:last-child {
+  border-bottom: 0;
+}
+/* Excluded (unchecked) coverage rows keep their text + values at full
+   readability per spec; the only visual cue is the unchecked checkbox.
+   No opacity grey-out here. */
+.pa-asset-tree__cov-range.is-excluded {
+  opacity: 1;
+}
+
+/* Include checkbox + coverage name (fixed-width left column). */
+.pa-asset-tree__cov-include {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 11rem;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+/* Mandatory rows: checkbox is disabled (broker can't opt out). Swap
+   cursor so the affordance reads as locked, but keep the label color
+   full-strength so the row stays scannable. */
+.pa-asset-tree__cov-include:has(input:disabled) {
+  cursor: not-allowed;
+}
+.pa-asset-tree__cov-include input {
+  position: absolute;
+  opacity: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+}
+.pa-asset-tree__cov-faux {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  position: relative;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+}
+.pa-asset-tree__cov-include input:checked + .pa-asset-tree__cov-faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.pa-asset-tree__cov-include input:checked + .pa-asset-tree__cov-faux::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid var(--slds-g-color-on-accent-1, #fff);
+  border-width: 0 2px 2px 0;
+  /* SLDS 2 centered check: 50%/50% anchor + translate -50%/-55% so
+     the visual mass of the rotated bottom-right-corner glyph sits at
+     the geometric center of the faux box. */
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+/* Disabled state (SLDS 2 spec). Both checked + unchecked disabled
+   variants render as a fully greyed faux: disabled-container fill,
+   border-disabled-1 stroke. When checked+disabled the check mark
+   flips from white to on-disabled-1 grey so the lock reads as
+   "locked, included" rather than "locked, blue". */
+.pa-asset-tree__cov-include input:disabled + .pa-asset-tree__cov-faux {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+}
+.pa-asset-tree__cov-include input:disabled:checked + .pa-asset-tree__cov-faux::after {
+  border-color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.pa-asset-tree__cov-include:has(input:disabled) .pa-asset-tree__cov-include-label {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.pa-asset-tree__cov-include input:focus-visible + .pa-asset-tree__cov-faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.pa-asset-tree__cov-include-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* Value field groups (Limit / Deductible). */
+.pa-asset-tree__cov-range-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-6, 2rem);
+  flex: 1 1 auto;
+}
+.pa-asset-tree__cov-range-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.pa-asset-tree__cov-range-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* SLDS required-field marker - red asterisk to the right of the label
+   text. Convention: every mandatory field renders the
+   <abbr class="slds-required"> AFTER the label text so the eye scans
+   the label first, then catches the requiredness cue. Matches
+   c-pa-driver-form / c-pa-vehicle-form / c-rfq-intake-modal. */
+.slds-required {
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-decoration: none;
+  margin-left: 2px;
+}
+.pa-asset-tree__cov-range-group c-picklist {
+  min-width: 8rem;
+}
+
+@media (max-width: 48em) {
+  .pa-asset-tree__cov-range {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--slds-g-spacing-3, 0.75rem);
+  }
+  .pa-asset-tree__cov-include {
+    width: auto;
+  }
+}
+
+/* Highlighted, mandatory umbrella section - full-bleed shaded band so the
+   inner fields line up with the policy grid above. Horizontal padding
+   matches the card padding (1.5rem) and the negative side/bottom margins
+   pull the band to the card edges; the accent bar is an inset shadow so
+   it doesn't shift the field alignment. */
+.pa-asset-tree__umbrella {
+  margin: var(--slds-g-spacing-var-5, 1.5rem)
+    calc(-1 * var(--slds-g-spacing-var-5, 1.5rem))
+    calc(-1 * var(--slds-g-spacing-var-5, 1.5rem));
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  box-shadow: inset var(--slds-g-sizing-border-3, 3px) 0 0 0
+    var(--slds-g-color-border-accent-1, #066afe);
+  border-bottom-left-radius: var(--slds-g-radius-border-3, 0.75rem);
+  border-bottom-right-radius: var(--slds-g-radius-border-3, 0.75rem);
+}
+
+.pa-asset-tree__umbrella-head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-bottom: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* Subtle "Mandatory" marker beside the umbrella eyebrow badge - keeps the
+   semantics without reintroducing a second clashing pill style. */
+.pa-asset-tree__req-tag {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0;
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.pa-asset-tree__umbrella-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-4, 1rem);
+  align-items: end;
+}
+
+.pa-asset-tree__umbrella-check {
+  display: flex;
+  align-items: center;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   CHEVRON (expand/collapse)
+   ════════════════════════════════════════════════════════════════════ */
+.pa-asset-tree__chevron-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.pa-asset-tree__chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 160ms ease;
+}
+.pa-asset-tree__chevron.is-open {
+  transform: rotate(90deg);
+}
+.pa-asset-tree__chevron_sm {
+  width: 14px;
+  height: 14px;
+}
+
+/* Name + view-icon rows - keep the eye glyph inline, right after the name. */
+.pa-asset-tree__veh-titlerow,
+.pa-asset-tree__driver-namerow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+
+/* ── View (eye) icon button - opens the read-only details modal ── */
+.pa-asset-tree__view-btn {
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.pa-asset-tree__view-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.pa-asset-tree__view-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Standard SLDS 2 utility-icon size (x-small, 1rem/16px) - identical for
+   vehicle and driver rows so the eye glyph reads uniformly. */
+.pa-asset-tree__view-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+/* _sm keeps the same icon size; only its tap target is unchanged so it
+   aligns within the denser driver row. */
+.pa-asset-tree__view-btn_sm svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   NESTED COVERAGES BODY (Level 2a / 2b / 3)
+   ════════════════════════════════════════════════════════════════════ */
+.pa-asset-tree__body {
+  margin-top: var(--slds-g-spacing-var-3, 0.75rem);
+  padding-left: var(--slds-g-spacing-var-5, 1.5rem);
+  border-left: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  margin-left: var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+.pa-asset-tree__subsection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.pa-asset-tree__subhead {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+/* Subhead pill - single shared chrome (matches the .eb-bnf-pill in the
+   EB accordion) so all three subsection eyebrows read uniformly. Variant
+   modifiers add a soft hierarchy tint without breaking the WCAG color
+   contrast - `_driver` uses the SLDS 2 brand-base-95 light-accent pair
+   (was previously accent-container-1 bg + accent-1 text, which rendered
+   as solid blue on solid blue and made the label invisible). */
+.pa-asset-tree__badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0;
+  padding: 2px 10px;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.pa-asset-tree__badge_vehicle {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.pa-asset-tree__badge_driver {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.pa-asset-tree__badge_coverage {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-success-1, #056764);
+}
+
+/* Coverage form grids (vehicle = 3 cols, driver = 3 cols). */
+.pa-asset-tree__cov-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.pa-asset-tree__cov-grid_driver {
+  align-items: center;
+}
+
+/* Coverage row list (vehicle + driver) - 1 row per coverage with an
+   include checkbox on the left and the per-coverage value select on
+   the right. Mirrors the .pa-asset-tree__cov-ranges layout from the
+   Policy-Level Coverages card so the visual rhythm reads as the
+   same primitive across all three tiers. */
+.pa-asset-tree__cov-rows {
+  display: flex;
+  flex-direction: column;
+}
+.pa-asset-tree__cov-row {
+  display: flex;
+  align-items: center;
+  /* Same rationale as .pa-asset-tree__cov-range above: flex-wrap so
+     review-mode content (status pill + detail line) wraps onto its
+     own row while the coverages-mode edit layout stays single-row. */
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+.pa-asset-tree__cov-row:last-child {
+  border-bottom: 0;
+}
+/* Excluded (unchecked) vehicle / driver coverage rows keep their text +
+   values at full readability per spec. The unchecked checkbox is the
+   only visual cue; no opacity grey-out here. */
+.pa-asset-tree__cov-row.is-excluded {
+  opacity: 1;
+}
+/* Value column: small label above the select so the row matches the
+   policy-coverage range-group typography (xs label + sized select). */
+.pa-asset-tree__cov-row-value {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  flex: 0 0 auto;
+  min-width: 9rem;
+}
+.pa-asset-tree__cov-row-value c-picklist {
+  min-width: 9rem;
+  display: block;
+}
+
+@media (max-width: 48em) {
+  .pa-asset-tree__cov-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--slds-g-spacing-3, 0.75rem);
+  }
+}
+
+/* Driver sub-node (Level 2b row + Level 3 coverages). */
+.pa-asset-tree__driver-node {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+/* Driver Coverages - sits as a soft sub-card under the driver
+   row. Matches the .eb-seg__body chrome from the EB accordion: white
+   surface + border-1 hairline + radius-border-2, no heavy colored
+   stripe. The driver row above is the gray "header" and this is the
+   white "body" so the pair reads as one card. */
+.pa-asset-tree__driver-cov {
+  margin-left: var(--slds-g-spacing-7, 2.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   FORM CONTROLS (selects + checkboxes), scoped to the tree
+   ════════════════════════════════════════════════════════════════════ */
+.pa-asset-tree .slds-form-element__label {
+  display: block;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  margin-bottom: var(--slds-g-spacing-1, 4px);
+}
+
+/* All select dropdowns in the asset tree now route through c-picklist
+   (custom SLDS 2 combobox) so the open menu reads as SLDS rather than
+   the native macOS popover. Native .slds-select styles deleted. */
+
+.pa-asset-tree__check-field {
+  display: flex;
+  align-items: center;
+}
+.pa-asset-tree .slds-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  position: relative;
+}
+.pa-asset-tree .slds-checkbox input {
+  position: absolute;
+  opacity: 0;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+}
+.pa-asset-tree .slds-checkbox__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  cursor: pointer;
+}
+.pa-asset-tree .slds-checkbox_faux {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  flex-shrink: 0;
+  position: relative;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.pa-asset-tree .slds-checkbox input:checked + .slds-checkbox__label .slds-checkbox_faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.pa-asset-tree .slds-checkbox input:checked + .slds-checkbox__label .slds-checkbox_faux::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 10px;
+  border: solid var(--slds-g-color-on-accent-1, #ffffff);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+.pa-asset-tree .slds-checkbox input:focus + .slds-checkbox__label .slds-checkbox_faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.pa-asset-tree__check-text {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   DRIVER REMOVE (X) + ASSIGN DRIVER POPOVER
+   ════════════════════════════════════════════════════════════════════ */
+.pa-asset-tree__driver-remove {
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
+}
+.pa-asset-tree__driver:hover .pa-asset-tree__driver-remove,
+.pa-asset-tree__driver-remove:focus-visible {
+  opacity: 1;
+}
+.pa-asset-tree__driver-remove:hover {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.pa-asset-tree__driver-remove svg { width: 0.875rem; height: 0.875rem; }
+
+/* Delete asset (trash) - on every vehicle row in roster mode. */
+.pa-asset-tree__veh-delete {
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 120ms ease, color 120ms ease;
+}
+.pa-asset-tree__veh-delete:hover {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.pa-asset-tree__veh-delete:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.pa-asset-tree__veh-delete svg { width: 1rem; height: 1rem; }
+
+/* ── Vehicle row overflow (action) menu ────────────────────────
+   Pinned to the right edge of the vehicle row. Houses Assign Driver,
+   Add New Driver, Edit Vehicle, Delete Vehicle. */
+.pa-asset-tree__veh-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+.pa-asset-tree__menu-btn {
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease;
+}
+.pa-asset-tree__menu-btn:hover {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.pa-asset-tree__menu-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.pa-asset-tree__menu-btn svg { width: 1.125rem; height: 1.125rem; }
+
+/* Dropdown - right-aligned to the trigger so all rows line up. */
+.pa-asset-tree__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  min-width: 200px;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16),
+    0 2px 6px rgba(15, 23, 42, 0.08);
+}
+.pa-asset-tree__menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  transition: background 100ms ease;
+}
+.pa-asset-tree__menu-item:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.pa-asset-tree__menu-item svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.pa-asset-tree__menu-item_destructive {
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.pa-asset-tree__menu-item_destructive svg {
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.pa-asset-tree__menu-item_destructive:hover {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   REVIEW MODE (mode="review") - read-only coverage rows.
+   The tree paints the same hierarchy as coverages mode (chevrons,
+   section pills, per-vehicle + per-driver bodies), but each coverage
+   row collapses into a compact summary line: bold coverage label on
+   the left, plain-text captured value(s) on the right. No checkboxes,
+   no picklist-shaped chips, no faux input surfaces - every
+   interactive control from coverages mode is suppressed since
+   editing round-trips through the pencil icon on the Assets &
+   Coverages step header. Unincluded / unvalued rows are filtered out
+   upstream in JS (`visiblePolicyCoverageRowsForReview`, per-vehicle
+   `visibleVehicleCoverageRowsForReview`, per-driver
+   `visibleDriverCoverageRowsForReview`) so the DOM only contains
+   coverages the broker actually captured.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Review-mode row (policy, vehicle, driver - all three tiers share
+   the same layout). Label flush-left, value(s) right-aligned; no
+   fixed left column since there's no checkbox occupying it. Border
+   between rows keeps the visual rhythm of the coverages-mode
+   .pa-asset-tree__cov-range / .pa-asset-tree__cov-row so the two
+   modes read as siblings of the same primitive. */
+.pa-asset-tree__cov-row_review {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-4, 1rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+.pa-asset-tree__cov-row_review:last-child {
+  border-bottom: 0;
+}
+
+/* Coverage name (Bodily Injury / Comprehensive / Medical Payments…).
+   Bold + full-strength on-surface text so the label carries the row
+   without a checkbox or badge to lead the eye. */
+.pa-asset-tree__cov-ro-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  flex: 0 0 auto;
+}
+
+/* Right-hand cluster: 1+ (sub-label, value) groups. Uninsured
+   Motorist has 2 (Limit + Deductible) so this wraps horizontally
+   with a generous gap and right-justifies. */
+.pa-asset-tree__cov-ro-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-5, 1.5rem);
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+.pa-asset-tree__cov-ro-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* Plain-text value ("$100,000 – $250,000" / "$500" / "Included").
+   Same typographic weight/size as the coverage label so a summary
+   row reads as a matched key/value pair. `white-space: nowrap`
+   keeps ranges from breaking across the en-dash. */
+.pa-asset-tree__cov-ro-value {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  white-space: nowrap;
+}
+
+/* Coverages-mode empty driver hint (no add affordance here). */
+.pa-asset-tree__cov-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-style: italic;
+}
+.pa-asset-tree__cov-empty strong {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-style: normal;
+}
+
+.slds-assistive-text {
+  position: absolute;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.pa-asset-tree__assign {
+  position: relative;
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+}
+.pa-asset-tree__assign_roster {
+  /* Sits on the driver-row grid, so it takes the same nesting step. */
+  padding-left: var(--slds-g-spacing-6, 2rem);
+  margin-top: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.pa-asset-tree__assign-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.pa-asset-tree__assign-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.pa-asset-tree__assign-btn svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: currentColor;
+}
+
+@media (max-width: 760px) {
+  .pa-asset-tree__policy-grid,
+  .pa-asset-tree__umbrella-grid,
+  .pa-asset-tree__cov-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ── SLDS 2 conformance: pill action buttons (radius-border/circle) ── */
+.pa-asset-tree__assign-btn { border-radius: var(--slds-g-radius-border-pill, 9999px); }

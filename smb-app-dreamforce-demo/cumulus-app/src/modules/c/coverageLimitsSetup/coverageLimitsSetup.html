@@ -1,0 +1,62 @@
+<template>
+  <div class="cls">
+    <!-- ── Tabset (Overall / Vehicle / Driver) ──────────────────
+         Mirrors the policy hierarchy levels from the Auto PCM
+         catalog. Active tab gets an accent bottom-border per
+         the SLDS 2 tabs spec. -->
+    <div class="cls-tabs" role="tablist" aria-label="Coverage hierarchy">
+      <template for:each={tabsView} for:item="t">
+        <button
+          key={t.id}
+          type="button"
+          role="tab"
+          class={t.cls}
+          data-id={t.id}
+          aria-selected={t.ariaSelected}
+          tabindex={t.tabIndex}
+          onclick={handleTabClick}
+          onkeydown={handleTabKeydown}
+        >{t.label}</button>
+      </template>
+    </div>
+
+    <!-- ── Overall Coverages panel ──────────────────────────── -->
+    <template lwc:if={isOverallActive}>
+      <section class="cls-panel" role="tabpanel" aria-label="Overall Coverages">
+        <c-attribute-picker
+          group-mode="tree"
+          attributes={overallPickerAttributes}
+          selected-ids={overallSelectedIds}
+          onattrtoggle={handleAttrPickerToggle}
+          onselectallchange={handleAttrPickerSelectAll}
+        ></c-attribute-picker>
+      </section>
+    </template>
+
+    <!-- ── Vehicle Coverages panel ──────────────────────────── -->
+    <template lwc:if={isVehicleActive}>
+      <section class="cls-panel" role="tabpanel" aria-label="Vehicle Coverages">
+        <c-attribute-picker
+          group-mode="tree"
+          attributes={vehiclePickerAttributes}
+          selected-ids={vehicleSelectedIds}
+          onattrtoggle={handleAttrPickerToggle}
+          onselectallchange={handleAttrPickerSelectAll}
+        ></c-attribute-picker>
+      </section>
+    </template>
+
+    <!-- ── Driver Coverages panel ───────────────────────────── -->
+    <template lwc:if={isDriverActive}>
+      <section class="cls-panel" role="tabpanel" aria-label="Driver Coverages">
+        <c-attribute-picker
+          group-mode="tree"
+          attributes={driverPickerAttributes}
+          selected-ids={driverSelectedIds}
+          onattrtoggle={handleAttrPickerToggle}
+          onselectallchange={handleAttrPickerSelectAll}
+        ></c-attribute-picker>
+      </section>
+    </template>
+  </div>
+</template>

@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setup | Salesforce</title>
+  <link rel="stylesheet" href="styles.css?v=139" />
+  <link rel="stylesheet" href="agent-chat.css?v=58" />
+  <link rel="stylesheet" href="run-my-day.css?v=139" />
+  <link rel="stylesheet" href="reconciliation-normalization.css?v=139" />
+  <link rel="stylesheet" href="integration-procedures.css?v=139" />
+</head>
+<body>
+
+  <header class="top-header">
+    <div class="header-left">
+      <div class="app-launcher-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor"/>
+          <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor"/>
+          <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor"/>
+          <rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <span class="org-name">Salesforce</span>
+      <div class="header-divider"></div>
+      <span class="setup-title">Setup</span>
+    </div>
+    <div class="header-right">
+      <div class="header-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+          <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input type="text" placeholder="Search Setup" />
+      </div>
+      <button class="header-assistant-btn" onclick="openAgentChat()" title="Setup Assistant">
+        <img src="https://salesforcetime.com/wp-content/uploads/2025/12/AgentforceIcon.png" alt="Agentforce" style="width: 24px; height: 24px;" />
+      </button>
+      <div class="user-avatar">NS</div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <nav class="left-nav">
+      <div class="nav-search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+          <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input type="text" placeholder="Quick Find" />
+      </div>
+
+      <ul class="nav-tree">
+        <li class="nav-node" id="node-insurance">
+          <div class="nav-row" onclick="toggle('insurance')">
+            <svg class="chevron open" id="chev-insurance" width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Insurance</span>
+          </div>
+          <ul class="nav-children open" id="children-insurance">
+            <li class="nav-node" id="node-underwriting">
+              <div class="nav-row" onclick="toggle('underwriting')">
+                <svg class="chevron open" id="chev-underwriting" width="12" height="12" viewBox="0 0 24 24" fill="none">
+                  <path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Underwriting</span>
+              </div>
+              <ul class="nav-children open" id="children-underwriting">
+                <li class="nav-node">
+                  <div class="nav-row leaf" onclick="selectItem(this, 'activity-management')">
+                    <span>Activities and Stages</span>
+                  </div>
+                </li>
+                <li class="nav-node">
+                  <div class="nav-row leaf" onclick="selectItem(this, 'integration-hub')">
+                    <span>Integration Hub</span>
+                  </div>
+                </li>
+                <li class="nav-node">
+                  <div class="nav-row leaf" onclick="selectItem(this, 'data-enrichment')">
+                    <span>Data Enrichment</span>
+                  </div>
+                </li>
+                <li class="nav-node">
+                  <div class="nav-row leaf" onclick="selectItem(this, 'document-extraction')">
+                    <span>Document Extraction</span>
+                  </div>
+                </li>
+                <li class="nav-node">
+                  <div class="nav-row leaf" onclick="selectItem(this, 'reconciliation-normalization')">
+                    <span>Reconciliation And Normalization</span>
+                  </div>
+                </li>
+                <li class="nav-node">
+                  <div class="nav-row leaf" onclick="selectItem(this, 'run-my-day')">
+                    <span>Run My Day</span>
+                  </div>
+                </li>
+                <li class="nav-node" id="node-submission-ingestion">
+                  <div class="nav-row" onclick="toggle('submission-ingestion')">
+                    <svg class="chevron open" id="chev-submission-ingestion" width="12" height="12" viewBox="0 0 24 24" fill="none">
+                      <path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Submission Ingestion</span>
+                  </div>
+                  <ul class="nav-children open" id="children-submission-ingestion">
+                    <li class="nav-node">
+                      <div class="nav-row leaf" onclick="selectItem(this, 'email-to-submission')">
+                        <span>Email to Submission</span>
+                      </div>
+                    </li>
+                    <li class="nav-node">
+                      <div class="nav-row leaf" onclick="selectItem(this, 'submission-assignment')">
+                        <span>Submission Assignment Rules</span>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-node">
+          <div class="nav-row" onclick="selectItem(this, 'object-management')">
+            <span>Object Management</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main-content">
+
+      <!-- Activity Management Panel -->
+      <div id="panel-activity-management" class="panel hidden">
+        <div class="integration-hub-page">
+          <div class="integration-hub-header">
+            <h1 class="integration-hub-title">Activities and Stages</h1>
+          </div>
+
+          <div class="integration-hub-tabs">
+            <button class="integration-hub-tab active" onclick="switchActivityManagementTab('activities')">Activities</button>
+            <button class="integration-hub-tab" onclick="switchActivityManagementTab('stage-management')">Stage Management</button>
+          </div>
+
+          <div class="integration-hub-content">
+            <!-- Activities Tab -->
+            <div id="activity-mgmt-tab-activities" class="integration-tab-content active">
+              <div class="list-view" style="background: transparent;">
+                <div class="list-header" style="background: #fff; border: 1px solid var(--sf-border); border-radius: 6px 6px 0 0;">
+                  <div class="list-header-left">
+                    <h1 class="list-title">All Activities</h1>
+                    <span class="list-count" id="activities-library-count"></span>
+                  </div>
+                  <button class="btn-new" onclick="openActivityLibraryModal(null)">New</button>
+                </div>
+                <div class="table-wrap" style="background: #fff; border: 1px solid var(--sf-border); border-top: none; border-radius: 0 0 6px 6px;">
+                  <table class="slds-table">
+                    <thead>
+                      <tr>
+                        <th class="col-check"><input type="checkbox" /></th>
+                        <th>Activity Name</th>
+                        <th>Process</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="activities-library-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage Management Tab -->
+            <div id="activity-mgmt-tab-stage-management" class="integration-tab-content">
+              <div class="list-view" style="background: transparent;">
+                <!-- Submission Activity Configurations -->
+                <div class="list-header" style="background: #fff; border: 1px solid var(--sf-border); border-radius: 6px 6px 0 0; margin-bottom: 0;">
+                  <div class="list-header-left">
+                    <h1 class="list-title">Submission Activity Configurations</h1>
+                    <span class="list-count" id="stm-count"></span>
+                  </div>
+                  <button class="btn-new" onclick="openStmModal(null)">New</button>
+                </div>
+                <div class="table-wrap" style="background: #fff; border: 1px solid var(--sf-border); border-top: none; border-radius: 0 0 6px 6px; margin-bottom: 32px;">
+                  <table class="slds-table">
+                    <thead>
+                      <tr>
+                        <th class="col-check"><input type="checkbox" /></th>
+                        <th>Name</th>
+                        <th>Active</th>
+                        <th>Effective From</th>
+                        <th>Effective To</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="stm-tbody"></tbody>
+                  </table>
+                </div>
+
+                <!-- Line Of Business Activity Configuration -->
+                <div class="list-header" style="background: #fff; border: 1px solid var(--sf-border); border-radius: 6px 6px 0 0; margin-bottom: 0;">
+                  <div class="list-header-left">
+                    <h1 class="list-title">Line Of Business Activity Configuration</h1>
+                    <span class="list-count" id="sc-count"></span>
+                  </div>
+                  <button class="btn-new" onclick="openScModal(null)">New</button>
+                </div>
+                <div class="table-wrap" style="background: #fff; border: 1px solid var(--sf-border); border-top: none; border-radius: 0 0 6px 6px;">
+                  <table class="slds-table">
+                    <thead>
+                      <tr>
+                        <th class="col-check"><input type="checkbox" /></th>
+                        <th>Name</th>
+                        <th>Line of Business</th>
+                        <th>Active</th>
+                        <th>Effective From</th>
+                        <th>Effective To</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sc-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submission Activity Configuration Detail Page -->
+      <div id="panel-stm-detail" class="panel hidden">
+        <div class="sc-detail-page">
+
+          <div class="sc-detail-header">
+            <button class="back-btn" onclick="backToActivityManagement()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Activity Management
+            </button>
+            <div class="sc-detail-title-row">
+              <h1 class="sc-detail-title" id="stm-detail-title"></h1>
+              <div class="sc-detail-meta" id="stm-detail-meta"></div>
+            </div>
+          </div>
+
+          <div class="sc-meta-row">
+            <div class="sc-general-section" id="stm-general-section"></div>
+          </div>
+
+          <div class="sc-meta-row">
+            <div class="sc-general-section" id="stm-summary-section"></div>
+          </div>
+
+          <div class="sc-detail-body">
+            <div class="sc-stage-content" id="stm-activity-content" style="width:100%;padding:24px 28px;">
+              <!-- Activities section will be rendered here -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Stage Configuration Detail Page -->
+      <div id="panel-sc-detail" class="panel hidden">
+        <div class="sc-detail-page">
+
+          <div class="sc-detail-header">
+            <button class="back-btn" onclick="backToScList()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Activity Management
+            </button>
+            <div class="sc-detail-title-row">
+              <h1 class="sc-detail-title" id="sc-detail-title"></h1>
+              <div class="sc-detail-meta" id="sc-detail-meta"></div>
+            </div>
+          </div>
+
+          <div class="sc-meta-row">
+            <div class="sc-general-section" id="sc-general-section"></div>
+          </div>
+
+          <div class="sc-meta-row">
+            <div class="sc-general-section" id="sc-summary-section"></div>
+          </div>
+
+          <h2 id="sc-stages-heading" style="font-size: 18px; font-weight: 700; color: #080707; margin: 24px 0 16px 0; padding-left: 20px;">Stages</h2>
+
+          <div class="sc-detail-body">
+            <nav class="sc-stage-nav">
+              <div class="sc-stage-nav-label">Stages</div>
+              <ul id="sc-stage-list"></ul>
+            </nav>
+            <div class="sc-stage-content" id="sc-stage-content"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Connection Detail Panel -->
+      <div id="panel-connection-detail" class="panel hidden">
+        <div class="connection-detail-page">
+          <div class="connection-detail-header">
+            <button class="back-btn" onclick="backToIntegrationHub()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              INTEGRATION HUB
+            </button>
+            <div class="connection-detail-title-row">
+              <div class="connection-detail-title-left">
+                <div class="connection-logo-large" id="conn-detail-logo"></div>
+                <div>
+                  <h1 class="connection-detail-title" id="conn-detail-title"></h1>
+                  <div class="connection-detail-status" id="conn-detail-status"></div>
+                </div>
+              </div>
+              <div class="connection-detail-actions">
+                <button class="btn-secondary" onclick="testConnectionDetail()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Test Connection
+                </button>
+                <button class="btn-secondary" onclick="updateCredentialsDetail()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Update Credentials
+                </button>
+                <button class="btn-danger" onclick="deactivateConnectionDetail()">Deactivate</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="connection-detail-body">
+            <!-- General Section -->
+            <div class="connection-section">
+              <div class="connection-section-header">
+                <h2 class="connection-section-title">General</h2>
+                <button class="edit-icon-btn" onclick="editConnectionGeneral()" title="Edit">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="connection-general-grid" id="conn-general-grid"></div>
+            </div>
+
+            <!-- Health Section -->
+            <div class="connection-section">
+              <div class="connection-section-header">
+                <h2 class="connection-section-title">Health (Last 24 Hours)</h2>
+              </div>
+              <div class="connection-health-grid">
+                <div class="connection-health-stat">
+                  <div class="connection-health-value" id="health-avg-latency">—</div>
+                  <div class="connection-health-label">Avg Latency</div>
+                </div>
+                <div class="connection-health-stat">
+                  <div class="connection-health-value" id="health-errors">—</div>
+                  <div class="connection-health-label">Errors</div>
+                </div>
+                <div class="connection-health-stat">
+                  <div class="connection-health-value" id="health-total-calls">—</div>
+                  <div class="connection-health-label">Total Calls</div>
+                </div>
+                <div class="connection-health-chart" id="health-chart">
+                  <div class="health-chart-inner">
+                    <div class="health-chart-label">Latency Trend</div>
+                    <canvas id="latency-chart" width="400" height="100"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Used By Section -->
+            <div class="connection-section">
+              <div class="connection-section-header">
+                <h2 class="connection-section-title">Used by (<span id="used-by-count">0</span> references)</h2>
+              </div>
+              <div class="connection-used-by-table">
+                <table class="slds-table">
+                  <thead>
+                    <tr>
+                      <th>Activity Name</th>
+                      <th>Stage</th>
+                      <th>Usage Type</th>
+                    </tr>
+                  </thead>
+                  <tbody id="used-by-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="connection-section">
+              <div class="connection-section-header">
+                <h2 class="connection-section-title">Recent Activity</h2>
+              </div>
+              <div class="connection-recent-activity-table">
+                <table class="slds-table">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Status</th>
+                      <th>Latency</th>
+                      <th>Caller</th>
+                      <th>Endpoint</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-activity-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Integration Hub Panel -->
+      <div id="panel-integration-hub" class="panel hidden">
+        <div class="integration-hub-page">
+          <div class="integration-hub-header">
+            <h1 class="integration-hub-title">Integration Hub</h1>
+            <button class="btn-settings">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Settings
+            </button>
+          </div>
+
+          <div class="integration-hub-tabs">
+            <button class="integration-hub-tab active" onclick="switchIntegrationTab('integration-procedures')">Integration Procedures</button>
+            <button class="integration-hub-tab" onclick="switchIntegrationTab('connections')">Connections</button>
+            <button class="integration-hub-tab" onclick="switchIntegrationTab('provider-catalog')">Provider Catalog</button>
+            <button class="integration-hub-tab" onclick="switchIntegrationTab('health')">Health Dashboard</button>
+          </div>
+
+          <div class="integration-hub-content">
+            <!-- Integration Procedures Tab -->
+            <div id="integration-tab-integration-procedures" class="integration-tab-content active">
+              <div id="integration-procedures-content"></div>
+            </div>
+
+            <!-- Connections Tab -->
+            <div id="integration-tab-connections" class="integration-tab-content">
+              <div class="integration-stats">
+                <div class="integration-stat-card">
+                  <div class="integration-stat-icon blue">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="integration-stat-content">
+                    <div class="integration-stat-value" id="total-connections">0</div>
+                    <div class="integration-stat-label">Total Connections</div>
+                  </div>
+                </div>
+
+                <div class="integration-stat-card">
+                  <div class="integration-stat-icon green">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="integration-stat-content">
+                    <div class="integration-stat-value" id="connected-count">0</div>
+                    <div class="integration-stat-label">Connected</div>
+                  </div>
+                </div>
+
+                <div class="integration-stat-card">
+                  <div class="integration-stat-icon yellow">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="integration-stat-content">
+                    <div class="integration-stat-value" id="attention-count">0</div>
+                    <div class="integration-stat-label">Needs Attention</div>
+                  </div>
+                </div>
+
+                <div class="integration-stat-card">
+                  <div class="integration-stat-icon red">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="integration-stat-content">
+                    <div class="integration-stat-value" id="disconnected-count">0</div>
+                    <div class="integration-stat-label">Disconnected</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="connections-list-header">
+                <span class="connections-count" id="connections-list-count">0 connections</span>
+                <button class="btn-new" onclick="openConnectionModal(null)">+ Add Connection</button>
+              </div>
+
+              <div class="connections-table-wrap">
+                <table class="slds-table">
+                  <thead>
+                    <tr>
+                      <th>Connection Name</th>
+                      <th>Auth Type</th>
+                      <th>Base URL</th>
+                      <th>Status</th>
+                      <th>Avg Latency</th>
+                      <th>Used By</th>
+                      <th>Last Tested</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="connections-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Provider Catalog Tab -->
+            <div id="integration-tab-provider-catalog" class="integration-tab-content">
+              <div class="provider-catalog-filters">
+                <div class="provider-filter-chips">
+                  <button class="filter-chip active" onclick="filterProviders('all')">All</button>
+                  <button class="filter-chip" onclick="filterProviders('Property')">Property</button>
+                  <button class="filter-chip" onclick="filterProviders('Hazard')">Hazard</button>
+                  <button class="filter-chip" onclick="filterProviders('Business Data')">Business Data</button>
+                  <button class="filter-chip" onclick="filterProviders('Credit')">Credit</button>
+                  <button class="filter-chip" onclick="filterProviders('Identity')">Identity</button>
+                  <button class="filter-chip" onclick="filterProviders('Geospatial')">Geospatial</button>
+                  <button class="filter-chip" onclick="filterProviders('Rating')">Rating</button>
+                </div>
+                <div class="provider-search">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                    <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <input type="text" placeholder="Search providers" id="provider-search-input" oninput="searchProviders()" />
+                </div>
+              </div>
+
+              <div class="provider-catalog-grid" id="provider-catalog-grid"></div>
+            </div>
+
+            <!-- Health Dashboard Tab -->
+            <div id="integration-tab-health" class="integration-tab-content">
+              <div class="health-dashboard-stats">
+                <div class="health-stat-card">
+                  <div class="health-stat-value" id="health-uptime">—</div>
+                  <div class="health-stat-label">Uptime (Connected)</div>
+                </div>
+
+                <div class="health-stat-card">
+                  <div class="health-stat-value" id="health-avg-response">—</div>
+                  <div class="health-stat-label">Avg Response Time</div>
+                </div>
+
+                <div class="health-stat-card">
+                  <div class="health-stat-value error" id="health-errors-24h">—</div>
+                  <div class="health-stat-label">Errors (24h)</div>
+                </div>
+
+                <div class="health-stat-card">
+                  <div class="health-stat-value" id="health-total-conn">—</div>
+                  <div class="health-stat-label">Total Connections</div>
+                </div>
+              </div>
+
+              <div class="health-dashboard-section">
+                <h2 class="health-dashboard-title">Connection Health</h2>
+                <div class="health-table-wrap">
+                  <table class="slds-table">
+                    <thead>
+                      <tr>
+                        <th style="width: 60px;"></th>
+                        <th>Connection</th>
+                        <th>Status</th>
+                        <th>Latency</th>
+                        <th>Errors (24h)</th>
+                        <th>Trend</th>
+                        <th>Last Checked</th>
+                      </tr>
+                    </thead>
+                    <tbody id="health-connections-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Integration Procedure Detail Panel -->
+      <div id="panel-integration-procedure-detail" class="panel hidden">
+        <div id="integration-procedure-detail-content"></div>
+      </div>
+
+      <!-- Data Enrichment Panel -->
+      <div id="panel-data-enrichment" class="panel hidden">
+        <div class="integration-hub-page">
+          <div class="integration-hub-header">
+            <h1 class="integration-hub-title">Data Enrichment</h1>
+          </div>
+
+          <div class="integration-hub-tabs">
+            <button class="integration-hub-tab active" onclick="switchEnrichmentTab('data')">Enrichment Data</button>
+            <button class="integration-hub-tab" onclick="switchEnrichmentTab('definition')">Enrichment Definition</button>
+          </div>
+
+          <div class="integration-hub-content">
+            <!-- Enrichment Data Tab -->
+            <div id="enrichment-tab-data" class="integration-tab-content active">
+              <div style="text-align: center; padding: 80px 20px; color: #706E6B;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style="margin: 0 auto 16px; opacity: 0.3;">
+                  <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">No Enrichment Data</div>
+                <div style="font-size: 14px;">Enrichment data records will appear here once configured.</div>
+              </div>
+            </div>
+
+            <!-- Enrichment Definition Tab -->
+            <div id="enrichment-tab-definition" class="integration-tab-content">
+              <div id="enrichment-definitions-content"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enrichment Config Detail Panel -->
+      <div id="panel-enrichment-config-detail" class="panel hidden"></div>
+
+      <!-- Run My Day Panel -->
+      <div id="panel-run-my-day" class="panel hidden">
+        <div id="run-my-day-content"></div>
+      </div>
+
+      <!-- Reconciliation And Normalization Panel -->
+      <div id="panel-reconciliation-normalization" class="panel hidden">
+        <div id="rn-content"></div>
+      </div>
+
+      <!-- RN Hierarchy Detail Panel -->
+      <div id="panel-rn-hierarchy-detail" class="panel hidden">
+        <div id="rn-hierarchy-detail-content"></div>
+      </div>
+
+      <!-- Document Extraction Panel -->
+      <div id="panel-document-extraction" class="panel hidden">
+        <div class="doc-extraction-page">
+          <!-- Header Card -->
+          <div class="doc-extraction-header-card">
+            <div class="doc-extraction-header-left">
+              <div class="doc-extraction-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="doc-extraction-subtitle">Insurance Settings</div>
+                <h1 class="doc-extraction-title">Document Extraction</h1>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document AI Toggle Card -->
+          <div class="doc-extraction-toggle-card">
+            <div class="doc-extraction-toggle-content">
+              <div>
+                <h2 class="doc-extraction-toggle-title">Document AI for Insurance</h2>
+                <p class="doc-extraction-toggle-desc">Process PDFs using Agentforce and large language models (LLMs) to extract the content and map it with the Insurance objects and fields.</p>
+              </div>
+              <div class="doc-extraction-toggle-switch">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="doc-ai-enabled" checked onchange="toggleDocumentAI()">
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="doc-ai-status">Enabled</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Templates Section -->
+          <div class="doc-extraction-templates-card">
+            <div class="doc-extraction-templates-header">
+              <h2 class="doc-extraction-section-title">Submission Document Extraction Templates</h2>
+              <a
+                href="https://www.figma.com/design/Z3TQIILAR7ooadzuM7AR4u/264-Doc-Extraction?node-id=5-34972&t=YtJFMVri51efoJBH-0"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-figma"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M8.5 2A3.5 3.5 0 0 0 5 5.5 3.5 3.5 0 0 0 8.5 9H12V2H8.5zM12 2v7h3.5A3.5 3.5 0 0 0 19 5.5 3.5 3.5 0 0 0 15.5 2H12zM5 12.5A3.5 3.5 0 0 0 8.5 16H12V9H8.5A3.5 3.5 0 0 0 5 12.5zm10.5-3.5H12v7h3.5a3.5 3.5 0 0 0 0-7zM12 19.5A3.5 3.5 0 1 0 12 16v3.5z" fill="currentColor"/>
+                </svg>
+                Open in Figma
+              </a>
+            </div>
+
+            <div class="doc-extraction-empty-state">
+              <svg class="doc-extraction-empty-illustration" width="300" height="200" viewBox="0 0 300 200" fill="none">
+                <rect x="100" y="80" width="100" height="80" rx="4" fill="#E3F2FD" stroke="#90CAF9" stroke-width="2"/>
+                <rect x="110" y="90" width="80" height="4" rx="2" fill="#90CAF9"/>
+                <rect x="110" y="100" width="60" height="4" rx="2" fill="#90CAF9"/>
+                <rect x="110" y="110" width="70" height="4" rx="2" fill="#90CAF9"/>
+                <path d="M140 50 L160 70 L140 70 Z" fill="#BBDEFB"/>
+                <path d="M180 40 L200 60 L180 60 Z" fill="#BBDEFB"/>
+                <ellipse cx="70" cy="140" rx="15" ry="8" fill="#E3F2FD"/>
+                <ellipse cx="230" cy="140" rx="15" ry="8" fill="#E3F2FD"/>
+              </svg>
+              <h3 class="doc-extraction-empty-title">No Templates Configured</h3>
+              <p class="doc-extraction-empty-desc">Start by creating a new extraction template</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email to Submission Panel -->
+      <div id="panel-email-to-submission" class="panel hidden">
+        <div class="setup-page">
+          <div class="setup-header">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div class="setup-icon blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="setup-subtitle">SETUP</div>
+                <h1 class="setup-title">Email-to-Submission</h1>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-description">
+            <p><strong>Email-to-Submission Settings</strong></p>
+            <p style="margin-top:8px;">Automatically turn email to email-enabled queues into submissions. Enable automatically creates submission records based on the routing address's settings.</p>
+            <p style="margin-top:8px;">Verify that your email server is on the existing email addresses list, or add it. Email routing addresses let you submit submissions to your underwriting team. Enables automatically creates submissions based on the routing address's settings.</p>
+          </div>
+
+          <!-- Settings Section -->
+          <div class="setup-section">
+            <div class="settings-header">
+              <h2 class="setup-section-title">Settings</h2>
+              <button class="btn-link" onclick="editEmailSettings()">Edit</button>
+            </div>
+
+            <div class="settings-notice">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;">
+                <circle cx="12" cy="12" r="10" stroke="#856404" stroke-width="2"/>
+                <path d="M12 8v4M12 16h.01" stroke="#856404" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span>After you enable Email-to-Submission, you will need to update its settings.</span>
+            </div>
+
+            <table class="settings-table">
+              <tbody>
+                <tr>
+                  <td class="settings-label">Enable Email-to-Submission</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="email-to-submission-enabled" onchange="toggleEmailToSubmission()" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Notify submission owners on new emails</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="notify-owners" checked disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Create HTML email</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="create-html" disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Save new emails as draft</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="save-draft" checked disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Save Email Headers and Routing Addresses</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="save-headers-settings" checked disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Move email record to email thread</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="move-thread" checked disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Enable threading on related change from to field</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="enable-threading" disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Send Emails from Submissions Section -->
+          <div class="setup-section">
+            <div class="settings-header">
+              <h2 class="setup-section-title">Send Emails from Submissions</h2>
+            </div>
+            <table class="settings-table">
+              <tbody>
+                <tr>
+                  <td class="settings-label">Send emails via external services</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="external-services" disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Insert email threading token in email subject</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="threading-token" checked disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Insert email header in email body or email subject</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="email-header" checked disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="settings-label">Filter user signatures before email threads</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="filter-signatures" checked disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- On-Demand Service Section -->
+          <div class="setup-section">
+            <div class="settings-header">
+              <h2 class="setup-section-title">On-Demand Service</h2>
+            </div>
+            <p style="font-size:12px;color:var(--sf-text-muted);margin-bottom:12px;">
+              Let Salesforce handle incoming emails for you. Our Email-to-Submission on-demand service supplies broker info needs to a site from working submissions.
+            </p>
+            <table class="settings-table">
+              <tbody>
+                <tr>
+                  <td class="settings-label">Enable on-demand service</td>
+                  <td class="settings-value">
+                    <input type="checkbox" id="on-demand-service" disabled class="email-setting-checkbox" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="font-size:12px;color:var(--sf-text-muted);margin-top:12px;">
+              Choose how Email-to-Submission handles emails that exceed your organization's daily email processing limit, such as during volume spikes.
+            </p>
+            <div style="margin-top:12px;">
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;">
+                <input type="radio" name="email-limit" id="email-limit-from" checked disabled class="email-setting-checkbox" />
+                <span>Send email to from address</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;">
+                <input type="radio" name="email-limit" id="email-limit-action" disabled class="email-setting-checkbox" />
+                <div>
+                  <div>Unconfinned sender action</div>
+                  <select id="sender-action-select" style="margin-top:4px;width:200px;" disabled class="email-setting-checkbox">
+                    <option>Bounce message</option>
+                    <option>Discard message</option>
+                  </select>
+                </div>
+              </label>
+            </div>
+            <p style="font-size:12px;color:var(--sf-text-muted);margin-top:12px;">
+              Let Salesforce notify email senders when there's an issue during Email-to-Submission processing.
+            </p>
+            <div style="margin-top:12px;display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="send-failure-email" disabled class="email-setting-checkbox" />
+              <span style="font-size:13px;">Send email failure error email during Email-to-Submission processing errors</span>
+            </div>
+          </div>
+
+          <!-- Routing Addresses Section -->
+          <div class="setup-section">
+            <div class="settings-header">
+              <h2 class="setup-section-title">Routing Addresses</h2>
+              <button class="btn-new" onclick="openRoutingAddressForm()">New</button>
+            </div>
+            <div style="padding:16px;background:#F9F9F9;border:1px solid var(--sf-border);border-radius:4px;">
+              <p style="font-size:13px;color:var(--sf-text);">No email addresses defined</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email to Submission Routing Address Form -->
+      <div id="panel-email-routing-form" class="panel hidden">
+        <div class="setup-page">
+          <div class="setup-header">
+            <div class="setup-icon blue">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="setup-subtitle">SETUP</div>
+              <h1 class="setup-title">Email-to-Submission</h1>
+            </div>
+          </div>
+
+          <div class="setup-description">
+            <p><strong>Email-to-Submission Routing Address</strong></p>
+            <p style="margin-top:8px;">Configure forwarding addresses that you can use to submit requests to your underwriting team. Salesforce forwards requests to the email service address that Salesforce generates for you. Learn More</p>
+            <p style="margin-top:8px;">Configure email services to get a unique Email Services address and Salesforce can perform additional automated tasks and do it in a unique reverse address where your email server will email the submissions.</p>
+          </div>
+
+          <!-- Routing Information Section -->
+          <div class="setup-section">
+            <div class="form-section-header">
+              <h3 class="form-section-title">Routing Information</h3>
+              <span class="required-info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                = Required Information
+              </span>
+            </div>
+
+            <div class="form-section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Name <span class="req">*</span></label>
+                  <input type="text" id="routing-name" class="form-input" placeholder="RoutingOne" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Routing Name <span class="req">*</span></label>
+                  <input type="text" id="routing-email" class="form-input" />
+                  <div style="font-size:11px;color:var(--sf-text-muted);margin-top:4px;">
+                    This email address must be associated with an Email Service Address. Example: broker@example.com
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Created by Permission Set</label>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <input type="text" class="form-input" style="flex:1;" placeholder="Controlled by Permission Set" disabled />
+                  <button class="btn-secondary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                      <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email Settings Section -->
+          <div class="setup-section">
+            <div class="form-section-header">
+              <h3 class="form-section-title">Email Settings</h3>
+            </div>
+            <div class="form-section-body">
+              <div class="form-group">
+                <label class="form-label">Save Email Headers</label>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <input type="checkbox" id="save-headers" checked />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Accept Email From</label>
+                <textarea class="form-input" rows="3" style="width:100%;"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task Settings Section -->
+          <div class="setup-section">
+            <div class="form-section-header">
+              <h3 class="form-section-title">Task Settings</h3>
+            </div>
+            <div class="form-section-body">
+              <div class="form-group">
+                <label class="form-label">Create Task from Email</label>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <input type="checkbox" id="create-task" checked />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Task Status</label>
+                <input type="text" class="form-input" style="width:200px;" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Submission Settings Section -->
+          <div class="setup-section">
+            <div class="form-section-header">
+              <h3 class="form-section-title">Submission Settings</h3>
+            </div>
+            <div class="form-section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Submission Owner</label>
+                  <select class="form-input">
+                    <option>User</option>
+                    <option>Queue</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label"></label>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:22px;">
+                    <input type="text" class="form-input" style="flex:1;" />
+                    <button class="btn-secondary">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                        <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Submission Priority</label>
+                  <select class="form-input">
+                    <option>--None--</option>
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                    <option>Urgent</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Submission Origin</label>
+                  <select class="form-input">
+                    <option>--None--</option>
+                    <option>Email</option>
+                    <option>Phone</option>
+                    <option>Web</option>
+                    <option>Broker Portal</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:16px 0;border-top:1px solid var(--sf-border);display:flex;gap:8px;">
+            <button class="btn-primary" onclick="saveRoutingAddress()">Save</button>
+            <button class="btn-primary" onclick="saveRoutingAddress()">Save & New</button>
+            <button class="btn-secondary" onclick="cancelRoutingAddress()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submission Assignment Rules Panel -->
+      <div id="panel-submission-assignment" class="panel hidden">
+        <div class="setup-page">
+          <div class="setup-header">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div class="setup-icon purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="setup-subtitle">SETUP</div>
+                <h1 class="setup-title">Submission Assignment Rules</h1>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-description">
+            <p>Automatically assign submissions to users or queues based on criteria you define. You can create multiple rules, but only one rule can be active at a time.</p>
+            <p style="margin-top: 8px;">Click a rule name to add or edit rule entries.</p>
+          </div>
+
+          <div class="setup-section">
+            <div class="list-view-inline">
+              <div class="list-header-inline">
+                <button class="btn-new" onclick="newAssignmentRule()">New</button>
+              </div>
+              <table class="slds-table">
+                <thead>
+                  <tr>
+                    <th>Action</th>
+                    <th>Rule Name</th>
+                    <th>Active</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                  </tr>
+                </thead>
+                <tbody id="assignment-rules-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignment Rule Detail Panel -->
+      <div id="panel-assignment-rule-detail" class="panel hidden">
+        <div class="detail-page">
+          <div class="detail-breadcrumb">
+            <a href="#" onclick="window.location.hash='/submission-assignment'; return false;">Submission Assignment Rules</a>
+            <span style="margin:0 8px;color:#DDDBDA;">/</span>
+            <span id="assignment-rule-breadcrumb">Test</span>
+          </div>
+
+          <div class="detail-header">
+            <div>
+              <div class="detail-subtitle">SUBMISSION ASSIGNMENT RULE</div>
+              <h1 class="detail-title" id="assignment-rule-title">Test</h1>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:12px;color:var(--sf-text-muted);margin-right:8px;">
+                <a href="#" style="color:#0176D3;text-decoration:none;">Help for this Page</a>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-left:4px;">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="detail-description">
+            Add rule entries that specify the criteria used to route submissions. You can reorder rule entries on this page after you create them.
+          </div>
+
+          <!-- Rule Detail Section -->
+          <div class="detail-section">
+            <div class="detail-section-header">
+              <h2 class="detail-section-title">Rule Detail</h2>
+              <button class="btn-secondary" onclick="editRuleDetail()">Edit</button>
+            </div>
+            <div class="detail-grid">
+              <div class="detail-field">
+                <div class="detail-field-label">Rule Name</div>
+                <div class="detail-field-value" id="rule-detail-name">Test</div>
+              </div>
+              <div class="detail-field">
+                <div class="detail-field-label">Active</div>
+                <div class="detail-field-value" id="rule-detail-active">—</div>
+              </div>
+              <div class="detail-field">
+                <div class="detail-field-label">Created By</div>
+                <div class="detail-field-value" id="rule-detail-created">Admin User, 5/14/2026, 3:31 PM</div>
+              </div>
+              <div class="detail-field">
+                <div class="detail-field-label">Modified By</div>
+                <div class="detail-field-value" id="rule-detail-modified">Admin User, 5/14/2026, 3:31 PM</div>
+              </div>
+            </div>
+            <div style="margin-top:16px;">
+              <button class="btn-secondary" onclick="editRuleDetail()">Edit</button>
+            </div>
+          </div>
+
+          <!-- Rule Entries Section -->
+          <div class="detail-section">
+            <div class="detail-section-header">
+              <h2 class="detail-section-title">Rule Entries</h2>
+              <button class="btn-new" onclick="openRuleEntryWizard()">New</button>
+            </div>
+            <div id="rule-entries-list">
+              <div class="empty-state" style="padding:40px 20px;text-align:left;">
+                <div style="font-size:13px;color:var(--sf-text);margin-bottom:12px;">No rule entries specified.</div>
+                <div style="font-size:12px;color:var(--sf-text-muted);line-height:1.5;">
+                  We recommend you create multiple rule entries under this rule. It is typically not necessary to create more than one rule.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule Entry Wizard Modal -->
+      <!-- Rule Entry Form Panel -->
+      <div id="panel-rule-entry-form" class="panel hidden">
+        <div class="setup-page">
+          <div class="detail-breadcrumb">
+            <a href="#" onclick="backToRuleDetail(); return false;">Submission Assignment Rules</a>
+            <span style="margin:0 8px;color:#DDDBDA;">/</span>
+            <a href="#" onclick="backToRuleDetail(); return false;" id="rule-entry-breadcrumb-rule">Test</a>
+            <span style="margin:0 8px;color:#DDDBDA;">/</span>
+            <span>New Rule Entry</span>
+          </div>
+
+          <div class="setup-header">
+            <div class="setup-icon purple">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <div>
+              <div class="setup-subtitle">SUBMISSION ASSIGNMENT RULES</div>
+              <h1 class="setup-title" id="rule-entry-rule-name">Test</h1>
+            </div>
+          </div>
+
+          <div class="setup-description">
+            <p><strong>Enter the rule entry</strong></p>
+          </div>
+
+          <!-- Step 1: Sort Order -->
+          <div class="setup-section">
+            <div class="form-section-header">
+              <h3 class="form-section-title">Step 1: Set the order in which this rule entry will be processed</h3>
+              <span class="required-info">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                = Required Information
+              </span>
+            </div>
+            <div class="form-section-body">
+              <div class="form-group">
+                <label class="form-label">Sort Order <span class="req">*</span></label>
+                <input type="number" id="rule-entry-sort" class="form-input" style="width:200px;" value="1" min="1" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Criteria -->
+          <div class="setup-section">
+            <div class="form-section-header">
+              <h3 class="form-section-title">Step 2: Select the criteria for this rule entry</h3>
+            </div>
+            <div class="form-section-body">
+              <div style="margin-bottom:16px;font-size:12px;color:var(--sf-text-muted);">
+                Run this rule IF the criteria are met.
+              </div>
+                <div id="criteria-builder">
+                  <div class="criteria-row">
+                    <select class="form-input" style="width:200px;">
+                      <option>--None--</option>
+                      <option>Submission Name</option>
+                      <option>Broker</option>
+                      <option>Carrier</option>
+                      <option>Submission Status</option>
+                      <option>Line of Business</option>
+                      <option>Insured Name</option>
+                      <option>Insured State</option>
+                      <option>Priority</option>
+                    </select>
+                    <select class="form-input" style="width:150px;">
+                      <option>--None--</option>
+                      <option>equals</option>
+                      <option>not equal to</option>
+                      <option>contains</option>
+                      <option>starts with</option>
+                      <option>greater than</option>
+                      <option>less than</option>
+                    </select>
+                    <input type="text" class="form-input" style="width:200px;" />
+                    <span style="margin:0 8px;color:var(--sf-text-muted);">AND</span>
+                  </div>
+                  <div class="criteria-row">
+                    <select class="form-input" style="width:200px;">
+                      <option>--None--</option>
+                      <option>Submission Name</option>
+                      <option>Broker</option>
+                      <option>Carrier</option>
+                      <option>Submission Status</option>
+                      <option>Line of Business</option>
+                      <option>Insured Name</option>
+                      <option>Insured State</option>
+                      <option>Priority</option>
+                    </select>
+                    <select class="form-input" style="width:150px;">
+                      <option>--None--</option>
+                      <option>equals</option>
+                      <option>not equal to</option>
+                      <option>contains</option>
+                      <option>starts with</option>
+                      <option>greater than</option>
+                      <option>less than</option>
+                    </select>
+                    <input type="text" class="form-input" style="width:200px;" />
+                    <span style="margin:0 8px;color:var(--sf-text-muted);">AND</span>
+                  </div>
+                  <div class="criteria-row">
+                    <select class="form-input" style="width:200px;">
+                      <option>--None--</option>
+                      <option>Submission Name</option>
+                      <option>Broker</option>
+                      <option>Carrier</option>
+                      <option>Submission Status</option>
+                      <option>Line of Business</option>
+                      <option>Insured Name</option>
+                      <option>Insured State</option>
+                      <option>Priority</option>
+                    </select>
+                    <select class="form-input" style="width:150px;">
+                      <option>--None--</option>
+                      <option>equals</option>
+                      <option>not equal to</option>
+                      <option>contains</option>
+                      <option>starts with</option>
+                      <option>greater than</option>
+                      <option>less than</option>
+                    </select>
+                    <input type="text" class="form-input" style="width:200px;" />
+                    <span style="margin:0 8px;color:var(--sf-text-muted);">AND</span>
+                  </div>
+                  <div class="criteria-row">
+                    <select class="form-input" style="width:200px;">
+                      <option>--None--</option>
+                      <option>Submission Name</option>
+                      <option>Broker</option>
+                      <option>Carrier</option>
+                      <option>Submission Status</option>
+                      <option>Line of Business</option>
+                      <option>Insured Name</option>
+                      <option>Insured State</option>
+                      <option>Priority</option>
+                    </select>
+                    <select class="form-input" style="width:150px;">
+                      <option>--None--</option>
+                      <option>equals</option>
+                      <option>not equal to</option>
+                      <option>contains</option>
+                      <option>starts with</option>
+                      <option>greater than</option>
+                      <option>less than</option>
+                    </select>
+                    <input type="text" class="form-input" style="width:200px;" />
+                    <span style="margin:0 8px;color:var(--sf-text-muted);">AND</span>
+                  </div>
+                  <div class="criteria-row">
+                    <select class="form-input" style="width:200px;">
+                      <option>--None--</option>
+                      <option>Submission Name</option>
+                      <option>Broker</option>
+                      <option>Carrier</option>
+                      <option>Submission Status</option>
+                      <option>Line of Business</option>
+                      <option>Insured Name</option>
+                      <option>Insured State</option>
+                      <option>Priority</option>
+                    </select>
+                    <select class="form-input" style="width:150px;">
+                      <option>--None--</option>
+                      <option>equals</option>
+                      <option>not equal to</option>
+                      <option>contains</option>
+                      <option>starts with</option>
+                      <option>greater than</option>
+                      <option>less than</option>
+                    </select>
+                    <input type="text" class="form-input" style="width:200px;" />
+                  </div>
+                </div>
+                <button class="btn-link" style="margin-top:12px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:4px;">
+                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                  Add Filter Logic...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: User/Queue Assignment -->
+          <div class="setup-section">
+            <div class="form-section-header">
+              <h3 class="form-section-title">Step 3: Select the user or queue to assign the submission to</h3>
+            </div>
+            <div class="form-section-body">
+              <div class="form-group">
+                <label class="form-label">User</label>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <input type="text" id="rule-entry-user" class="form-input" style="flex:1;" />
+                  <button class="btn-secondary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                      <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="display:flex;align-items:center;gap:4px;">
+                  <input type="checkbox" id="rule-entry-no-reassign" />
+                  Do Not Reassign Owner
+                </label>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Template</label>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <input type="text" id="rule-entry-email-template" class="form-input" style="flex:1;" />
+                  <button class="btn-secondary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                      <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Predefined Teams -->
+          <div class="setup-section">
+            <div class="form-section-header">
+              <h3 class="form-section-title">Step 4: Optionally, select predefined submission teams to add to the submission</h3>
+            </div>
+            <div class="form-section-body">
+              <div class="form-group">
+                <label class="form-label">Predefined Case Teams</label>
+                <div id="predefined-teams-list">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <input type="text" class="form-input" style="flex:1;" />
+                    <button class="btn-secondary">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                        <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <input type="text" class="form-input" style="flex:1;" />
+                    <button class="btn-secondary">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                        <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <input type="text" class="form-input" style="flex:1;" />
+                    <button class="btn-secondary">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                        <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <button class="btn-link" style="margin-top:8px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:4px;">
+                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                  Add Row
+                </button>
+                <div style="margin-top:12px;padding:8px;background:#F3F2F2;border-left:3px solid #706E6B;font-size:12px;color:var(--sf-text-muted);">
+                  Please be sure that any existing Predefined Case Teams on the Case do not already include the following Users that you have added to this Case through this Rule, otherwise you will receive an error.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:16px 0;border-top:1px solid var(--sf-border);display:flex;gap:8px;">
+            <button class="btn-primary" onclick="saveRuleEntry()">Save</button>
+            <button class="btn-primary" onclick="saveRuleEntry()">Save & New</button>
+            <button class="btn-secondary" onclick="backToRuleDetail()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Object Management Panel -->
+      <div id="panel-object-management" class="panel hidden">
+        <div class="list-view">
+          <div class="list-header">
+            <div class="list-header-left">
+              <div>
+                <h1 class="list-title">Submission</h1>
+                <span class="obj-subtitle">Custom Object &nbsp;·&nbsp; API Name: <code>Submission__c</code></span>
+              </div>
+              <span class="list-count" id="field-count"></span>
+            </div>
+            <button class="btn-new" onclick="openModal(null)">New Field</button>
+          </div>
+          <div class="list-subheader">
+            <span class="list-view-label">All Fields</span>
+          </div>
+          <div class="table-wrap">
+            <table class="slds-table">
+              <thead>
+                <tr>
+                  <th class="col-check"><input type="checkbox" /></th>
+                  <th>Field Label</th>
+                  <th>API Name</th>
+                  <th>Data Type</th>
+                  <th>Description</th>
+                  <th>Required</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fields-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Activity Modal (for Stage Configuration) -->
+  <div id="activity-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeActivityModal()">
+    <div class="modal modal-xl">
+      <div class="modal-header">
+        <h2 id="activity-modal-title">Add Task to Stage</h2>
+        <button class="modal-close" onclick="closeActivityModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body modal-body-scroll" style="padding: 24px;">
+        <div style="display: grid; grid-template-columns: 1fr 400px; gap: 32px; align-items: start;">
+          <!-- Left Column: Form Fields -->
+          <div style="min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+            <input type="hidden" id="act-edit-id" />
+            <input type="hidden" id="act-stage-key" />
+
+            <!-- Display Name -->
+            <div class="form-group">
+              <label>Display Name <span class="req">*</span></label>
+              <input type="text" id="act-name" placeholder="Enter task name" oninput="updateActivityPreview()" />
+              <p class="form-hint">Name shown for this task in the runtime.</p>
+            </div>
+
+            <!-- Activity Selection -->
+            <div class="form-group">
+              <label>Select Activity</label>
+              <input type="hidden" id="act-activity-ref" />
+              <div class="custom-select-wrap" id="custom-activity-select">
+                <div class="custom-select-trigger">
+                  <span class="custom-select-placeholder">— Select Activity —</span>
+                </div>
+                <div class="custom-select-dropdown" id="activity-select-dropdown">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+              <p class="form-hint">Optionally choose a pre-defined activity from the Activities library.</p>
+            </div>
+
+            <!-- Display selected activity info -->
+            <div id="act-selected-info" class="hidden" style="padding: 12px; background: #F9F9F9; border: 1px solid var(--sf-border); border-radius: 4px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--sf-text-muted); margin-bottom: 6px;">SELECTED ACTIVITY</div>
+              <div id="act-selected-details"></div>
+            </div>
+
+            <!-- Availability -->
+            <div>
+              <div class="form-section-divider">Availability</div>
+              <div class="form-group" style="margin-top: 12px;">
+                <label>When is this activity available?</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="act-availability" value="On Stage Change" onchange="onAvailabilityChange()" checked /> On Stage Change</label>
+                  <label class="radio-label"><input type="radio" name="act-availability" value="Conditional" onchange="onAvailabilityChange()" /> Conditional</label>
+                </div>
+              </div>
+              <div id="act-availability-rules-wrap" class="hidden">
+                <div id="act-availability-rules"></div>
+              </div>
+            </div>
+
+            <!-- Trigger -->
+            <div>
+              <div class="form-section-divider">Trigger</div>
+              <div class="form-group" style="margin-top: 12px;">
+                <label>How is this activity triggered?</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="act-trigger" value="Manual" onchange="onTriggerChange()" checked /> Manual</label>
+                  <label class="radio-label"><input type="radio" name="act-trigger" value="On Stage Change" onchange="onTriggerChange()" /> On Stage Change</label>
+                  <label class="radio-label"><input type="radio" name="act-trigger" value="Conditional" onchange="onTriggerChange()" /> Conditional</label>
+                </div>
+              </div>
+              <div id="act-trigger-rules-wrap" class="hidden" style="margin-top: 12px;">
+                <div id="act-trigger-rules"></div>
+              </div>
+
+              <!-- Button Name (for Manual trigger) -->
+              <div class="form-group" id="act-button-name-wrap" style="display: none; margin-top: 12px;">
+                <label>Button Name</label>
+                <input type="text" id="act-button-name" placeholder="e.g., Start Review" oninput="updateActivityPreview()" />
+                <p class="form-hint">The label shown on the manual action button.</p>
+              </div>
+            </div>
+
+            <!-- Mandatory -->
+            <div class="form-group form-group-inline">
+              <input type="checkbox" id="act-mandatory" />
+              <label for="act-mandatory">Mandatory — this activity must complete before stage can advance</label>
+            </div>
+          </div>
+
+          <!-- Right Column: Preview -->
+          <div id="activity-preview-panel" style="position: sticky; top: 0; min-width: 0;">
+            <div style="background: #F9F9F9; border: 1px solid #DDDBDA; border-radius: 8px; padding: 20px;">
+              <div style="font-size: 11px; font-weight: 600; color: #706E6B; letter-spacing: 0.5px; margin-bottom: 16px;">PENDING TASK PREVIEW</div>
+
+              <!-- Preview Card (mimics PendingTask component expanded state) -->
+              <div id="activity-preview-card" style="background: white; border-radius: 12px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                <!-- Task Header -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <svg id="preview-hierarchy-icon" width="16" height="16" viewBox="0 0 52 52" fill="#5c5c5c" style="flex-shrink: 0; display: none;" aria-hidden="true">
+                      <use href="/assets/salesforce-lightning-design-system/icons/utility-sprite/svg/symbols.svg#hierarchy" />
+                    </svg>
+                    <h3 id="preview-title" style="font-size: 14px; font-weight: 600; color: #0176D3; margin: 0; line-height: 20px;">Task Name</h3>
+                  </div>
+                </div>
+
+                <!-- Subline -->
+                <div id="preview-subline" style="font-size: 11px; color: #5c5c5c; line-height: 14px; margin-bottom: 8px;">
+                  Submission/Submission Line · Manual Task · Assigned To [Assignee]
+                </div>
+
+                <!-- Dependency Notice (for Conditional) -->
+                <div id="preview-dependency" style="display: none; font-size: 12px; color: #5c5c5c; line-height: 17px; background-color: #f3f3f3; padding: 8px 12px; border-radius: 4px; border-left: 3px solid #939393; margin-bottom: 8px;">
+                  <strong>Dependent on:</strong> <span id="preview-dependency-list">—</span>
+                </div>
+
+                <!-- Description -->
+                <div id="preview-description" style="font-size: 12px; color: #5c5c5c; line-height: 17px; margin-bottom: 8px; display: none;">
+                  Activity description will appear here
+                </div>
+
+                <!-- Button (for Manual trigger) -->
+                <div id="preview-button-section" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e5e5; display: none; justify-content: center;">
+                  <button id="preview-button" style="padding: 0; border: none; background: none; color: #0176D3; font-size: 13px; font-weight: 600; cursor: default;">
+                    Run Task
+                  </button>
+                </div>
+              </div>
+
+              <div style="margin-top: 12px; font-size: 11px; color: #706E6B; line-height: 15px;">
+                This preview shows how the activity will appear as a pending task in the submission record.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveActivity()">Save</button>
+        <button class="btn-cancel" onclick="closeActivityModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Field Modal -->
+  <div id="field-modal" class="modal-overlay hidden" onclick="overlayClick(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">New Field</h2>
+        <button class="modal-close" onclick="closeModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>Field Label <span class="req">*</span></label>
+            <input type="text" id="f-label" oninput="autoApiName()" placeholder="e.g. Premium Amount" />
+          </div>
+          <div class="form-group">
+            <label>API Name <span class="req">*</span></label>
+            <input type="text" id="f-api" placeholder="e.g. Premium_Amount__c" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Data Type <span class="req">*</span></label>
+            <select id="f-type" onchange="onTypeChange()">
+              <option>Text</option>
+              <option>Number</option>
+              <option>Currency</option>
+              <option>Date</option>
+              <option>Date/Time</option>
+              <option>Boolean</option>
+              <option>Picklist</option>
+              <option>Multi-Select Picklist</option>
+              <option>Percent</option>
+              <option>Phone</option>
+              <option>Email</option>
+              <option>URL</option>
+              <option>Long Text Area</option>
+            </select>
+          </div>
+          <div class="form-group form-group-check">
+            <label>Required</label>
+            <input type="checkbox" id="f-required" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="f-description" rows="2" placeholder="Brief description of this field"></textarea>
+        </div>
+        <div id="picklist-section" class="picklist-section hidden">
+          <label class="picklist-label">Picklist Values</label>
+          <div class="picklist-add">
+            <input type="text" id="picklist-input" placeholder="Add a value…" />
+            <button type="button" class="btn-add-value" onclick="addPicklistValue()">Add</button>
+          </div>
+          <ul id="picklist-values" class="picklist-list"></ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveField()">Save</button>
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage SLA / Owner Modal -->
+  <div id="stage-meta-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeStageMetaModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="stage-meta-modal-title">Edit Stage</h2>
+        <button class="modal-close" onclick="closeStageMetaModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="sla-stage-key" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>SLA (hours)</label>
+            <input type="number" id="sla-value" min="0" placeholder="e.g. 48" />
+          </div>
+          <div class="form-group">
+            <label>Owner</label>
+            <input type="hidden" id="sla-owner-id" />
+            <input type="hidden" id="sla-owner-type" />
+            <div class="owner-search-wrap" id="sla-owner-wrap">
+              <div class="owner-search-input-row">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                  <path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input type="text" id="sla-owner" placeholder="Search contacts or queues…"
+                  autocomplete="off"
+                  oninput="filterOwnerDropdown()"
+                  onfocus="openOwnerDropdown()" />
+                <button type="button" class="owner-clear-btn" id="sla-owner-clear" onclick="clearOwner()" title="Clear">×</button>
+              </div>
+              <div class="owner-dropdown hidden" id="sla-owner-dropdown"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveStageMetaModal()">Save</button>
+        <button class="btn-cancel" onclick="closeStageMetaModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission Activity Configuration Modal -->
+  <div id="stm-modal" class="modal-overlay hidden" onclick="stmOverlayClick(event)">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2 id="stm-modal-title">New Activity Configuration</h2>
+        <button class="modal-close" onclick="closeStmModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="stm-edit-id" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Name <span class="req">*</span></label>
+            <input type="text" id="stm-name" placeholder="e.g. Submission Activity Config" />
+          </div>
+        </div>
+
+        <div class="form-group form-group-check">
+          <label>Active</label>
+          <input type="checkbox" id="stm-active" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Effective From</label>
+            <input type="date" id="stm-eff-from" />
+          </div>
+          <div class="form-group">
+            <label>Effective To</label>
+            <input type="date" id="stm-eff-to" />
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveStmRecord()">Save</button>
+        <button class="btn-cancel" onclick="closeStmModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage Configuration Modal -->
+  <div id="sc-modal" class="modal-overlay hidden" onclick="scOverlayClick(event)">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2 id="sc-modal-title">New Stage Configuration</h2>
+        <button class="modal-close" onclick="closeScModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="sc-edit-id" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Name <span class="req">*</span></label>
+            <input type="text" id="sc-name" placeholder="e.g. Submission UW Stage Config" />
+          </div>
+          <div class="form-group">
+            <label>Line of Business <span class="req">*</span></label>
+            <select id="sc-record-type">
+              <option value="">— Select Line of Business —</option>
+              <option value="General Liability">General Liability</option>
+              <option value="Property">Property</option>
+              <option value="Cyber">Cyber</option>
+              <option value="Workers' Compensation">Workers' Compensation</option>
+              <option value="Professional Liability">Professional Liability</option>
+              <option value="Umbrella / Excess">Umbrella / Excess</option>
+              <option value="Commercial Auto">Commercial Auto</option>
+              <option value="Marine">Marine</option>
+              <option value="Management Liability">Management Liability</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group form-group-check">
+          <label>Active</label>
+          <input type="checkbox" id="sc-active" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Effective From</label>
+            <input type="date" id="sc-eff-from" />
+          </div>
+          <div class="form-group">
+            <label>Effective To</label>
+            <input type="date" id="sc-eff-to" />
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveScRecord()">Save</button>
+        <button class="btn-cancel" onclick="closeScModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transition Rule Modal -->
+  <div id="tr-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeTrModal()">
+    <div class="modal modal-xl">
+      <div class="modal-header">
+        <h2 id="tr-modal-title">New Transition Rule</h2>
+        <button class="modal-close" onclick="closeTrModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body modal-body-scroll">
+        <input type="hidden" id="tr-edit-id" />
+        <input type="hidden" id="tr-stage-key" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Transition To <span class="req">*</span></label>
+            <select id="tr-to-stage">
+              <option value="">— Select target stage —</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Trigger</label>
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="tr-trigger" value="Manual" /> Manual</label>
+            <label class="radio-label"><input type="radio" name="tr-trigger" value="Automated" /> Automated</label>
+          </div>
+        </div>
+
+        <div class="form-section-divider">Transition Conditions</div>
+        <div id="tr-rules-mount"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveTrRule()">Save</button>
+        <button class="btn-cancel" onclick="closeTrModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission Activity Summary Prompt Modal -->
+  <div id="stm-summary-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeStmSummaryModal()">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2>Submission Summary Prompt</h2>
+        <button class="modal-close" onclick="closeStmSummaryModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="stm-summary-stm-id" />
+        <p class="form-hint" style="margin-bottom:4px;">Define the AI prompt used to generate the overall submission summary across all lines of business.</p>
+        <div class="form-group">
+          <label>Prompt</label>
+          <textarea id="stm-summary-prompt" rows="6" placeholder="e.g. Summarise the submission across all lines of business…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveStmSummaryModal()">Save</button>
+        <button class="btn-cancel" onclick="closeStmSummaryModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission Summary Prompt Modal (SC-level) -->
+  <div id="sc-summary-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeScSummaryModal()">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2>Submission Summary Prompt</h2>
+        <button class="modal-close" onclick="closeScSummaryModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="sc-summary-sc-id" />
+        <p class="form-hint" style="margin-bottom:4px;">Define the AI prompt used to generate the overall submission summary at runtime.</p>
+        <div class="form-group">
+          <label>Prompt</label>
+          <textarea id="sc-summary-prompt" rows="6" placeholder="e.g. Summarise the insurance being requested…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveScSummaryModal()">Save</button>
+        <button class="btn-cancel" onclick="closeScSummaryModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage Updates Prompt Modal (stage-level) -->
+  <div id="su-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeStageUpdatesModal()">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2>Stage Updates Prompt</h2>
+        <button class="modal-close" onclick="closeStageUpdatesModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="su-stage-key" />
+        <p class="form-hint" style="margin-bottom:4px;">Define the AI prompt used to summarise recent activity at this stage.</p>
+        <div class="form-group">
+          <label>Prompt</label>
+          <textarea id="su-prompt" rows="6" placeholder="e.g. Summarise the most recent actions taken at this stage…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveStageUpdatesModal()">Save</button>
+        <button class="btn-cancel" onclick="closeStageUpdatesModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Stages Modal -->
+  <div id="add-stages-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeAddStagesModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add Stages</h2>
+        <button class="modal-close" onclick="closeAddStagesModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="form-hint" style="margin-bottom:8px;">Select the stages to add to this configuration. Already-added stages are shown but cannot be re-added.</p>
+        <div id="add-stages-list" class="stage-checklist"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveAddStages()">Add Selected</button>
+        <button class="btn-cancel" onclick="closeAddStagesModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection Modal -->
+  <div id="connection-modal" class="modal-overlay hidden" onclick="connectionOverlayClick(event)">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2 id="connection-modal-title">New Connection</h2>
+        <button class="modal-close" onclick="closeConnectionModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="conn-edit-id" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Connection Name <span class="req">*</span></label>
+            <input type="text" id="conn-name" placeholder="e.g. D&B Production" />
+          </div>
+          <div class="form-group">
+            <label>Auth Type <span class="req">*</span></label>
+            <select id="conn-auth-type">
+              <option value="">— Select Auth Type —</option>
+              <option value="OAuth 2.0">OAuth 2.0</option>
+              <option value="API Key">API Key</option>
+              <option value="Basic Auth">Basic Auth</option>
+              <option value="Bearer Token">Bearer Token</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Base URL <span class="req">*</span></label>
+          <input type="text" id="conn-base-url" placeholder="https://api.provider.com/v1" />
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select id="conn-status">
+            <option value="Connected">Connected</option>
+            <option value="Disconnected">Disconnected</option>
+            <option value="Needs Attention">Needs Attention</option>
+          </select>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveConnection()">Save</button>
+        <button class="btn-cancel" onclick="closeConnectionModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection Wizard Modal -->
+  <div id="connection-wizard-modal" class="modal-overlay hidden" onclick="wizardOverlayClick(event)">
+    <div class="modal modal-wizard">
+      <div class="modal-header">
+        <h2 id="wizard-title">Connect to Provider</h2>
+        <button class="modal-close" onclick="closeWizard()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Wizard Steps Indicator -->
+      <div class="wizard-steps">
+        <div class="wizard-step active" id="wizard-step-indicator-1">
+          <div class="wizard-step-number">1</div>
+          <div class="wizard-step-label">Name & Endpoint</div>
+        </div>
+        <div class="wizard-step-connector" id="wizard-connector-1"></div>
+        <div class="wizard-step" id="wizard-step-indicator-2">
+          <div class="wizard-step-number">2</div>
+          <div class="wizard-step-label">Authentication</div>
+        </div>
+        <div class="wizard-step-connector" id="wizard-connector-2"></div>
+        <div class="wizard-step" id="wizard-step-indicator-3">
+          <div class="wizard-step-number">3</div>
+          <div class="wizard-step-label">Test & Save</div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="wizard-provider-id" />
+
+        <!-- Step 1: Name & Endpoint -->
+        <div id="wizard-step-1" class="wizard-step-content active">
+          <div class="form-group">
+            <label>Connection Name <span class="req">*</span></label>
+            <input type="text" id="wizard-connection-name" placeholder="e.g. Verisk Production" />
+          </div>
+
+          <div class="form-group">
+            <label>Base URL <span class="req">*</span></label>
+            <input type="text" id="wizard-base-url" placeholder="https://api.verisk.com/location/v2" />
+            <p class="form-hint">Pre-filled from template. Override if needed.</p>
+          </div>
+
+          <div class="form-group">
+            <label>Test Endpoint</label>
+            <input type="text" id="wizard-test-endpoint" placeholder="e.g. /health, /status" />
+            <p class="form-hint">Optional. Used for connectivity checks.</p>
+          </div>
+
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea id="wizard-notes" rows="3" placeholder="Optional notes about this connection"></textarea>
+          </div>
+        </div>
+
+        <!-- Step 2: Authentication -->
+        <div id="wizard-step-2" class="wizard-step-content">
+          <div id="wizard-auth-banner" class="wizard-auth-type-banner">
+            API Key — Detected from provider template
+          </div>
+
+          <div class="form-group">
+            <label>Subscriber ID <span class="req">*</span></label>
+            <input type="text" id="wizard-subscriber-id" placeholder="e.g. SUB-12345" />
+          </div>
+
+          <div class="form-group">
+            <label>API Key <span class="req">*</span></label>
+            <input type="password" id="wizard-api-key" placeholder="Enter your API key" />
+          </div>
+
+          <details class="wizard-advanced-settings">
+            <summary>Advanced Settings</summary>
+            <div class="wizard-advanced-content">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Timeout (ms)</label>
+                  <input type="number" id="wizard-timeout" value="5000" />
+                </div>
+                <div class="form-group">
+                  <label>Max Retries</label>
+                  <input type="number" id="wizard-max-retries" value="3" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Permission Set Override</label>
+                <select id="wizard-permission-set">
+                  <option value="default">Use default</option>
+                  <option value="custom1">Custom Permission Set 1</option>
+                  <option value="custom2">Custom Permission Set 2</option>
+                </select>
+                <p class="form-hint">Leave as "Use default" to inherit from Integration Hub settings.</p>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Step 3: Test & Save -->
+        <div id="wizard-step-3" class="wizard-step-content">
+          <div class="wizard-test-message">
+            Click "Test Connection" to verify your configuration.
+          </div>
+
+          <div id="wizard-test-result" class="wizard-test-result hidden"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" id="wizard-back-btn" onclick="wizardBack()" style="display:none;">Back</button>
+        <button class="btn-cancel" onclick="closeWizard()">Cancel</button>
+        <button class="btn-new" id="wizard-next-btn" onclick="wizardNext()">Next</button>
+        <button class="btn-secondary" id="wizard-save-without-test-btn" onclick="wizardSaveWithoutTest()" style="display:none;">Save</button>
+        <button class="btn-new" id="wizard-test-btn" onclick="wizardTestConnection()" style="display:none;">Test Connection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Library Modal -->
+  <div id="activity-library-modal" class="modal-overlay hidden" onclick="actLibOverlayClick(event)">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2 id="act-lib-modal-title">New Activity</h2>
+        <button class="modal-close" onclick="closeActivityLibraryModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="act-lib-edit-id" />
+
+        <!-- Name -->
+        <div class="form-group">
+          <label>Activity Name <span class="req">*</span></label>
+          <input type="text" id="act-lib-name" placeholder="e.g. Risk Assessment Email" />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="act-lib-description" rows="2" placeholder="Brief description of what this activity does"></textarea>
+        </div>
+
+        <!-- Process -->
+        <div class="form-group">
+          <label>Process <span class="req">*</span></label>
+          <select id="act-lib-process" onchange="onActivityLibraryProcessChange()">
+            <option value="">— Select Process —</option>
+            <option value="Flow">Flow</option>
+            <option value="Integration Procedure">Integration Procedure</option>
+            <option value="Omniscript">Omniscript</option>
+            <option value="Agent">Agent</option>
+            <option value="Enrichment Definition">Enrichment Definition</option>
+          </select>
+        </div>
+
+        <!-- Process Selection -->
+        <div class="form-section-divider">Process Selection</div>
+        <div id="act-lib-process-details">
+          <p class="form-hint">Choose a Process type above to configure details.</p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-new" onclick="saveActivityLibrary()">Save</button>
+        <button class="btn-cancel" onclick="closeActivityLibraryModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global row action dropdown menu -->
+  <div id="row-action-menu" class="row-action-menu hidden"></div>
+
+  <!-- Global hover tooltip -->
+  <div id="act-tooltip" class="act-tooltip-popup hidden"></div>
+
+  <!-- Agent Chat Panel -->
+  <div id="agent-chat-panel" class="agent-chat-panel hidden">
+    <div class="agent-chat-header">
+      <div class="agent-chat-header-left">
+        <div class="agent-avatar">
+          <img src="http://salesforcetime.com/wp-content/uploads/2025/12/AgentforceIcon.png" alt="Agentforce" />
+        </div>
+        <div>
+          <div class="agent-title">Setup Assistant</div>
+          <div class="agent-subtitle">Powered by Agentforce</div>
+        </div>
+      </div>
+      <button class="agent-close-btn" onclick="closeAgentChat()" title="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="m18 6-12 12M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="agent-chat-body" id="agent-chat-body">
+      <!-- Messages will be inserted here -->
+    </div>
+    <div class="agent-chat-footer">
+      <div class="agent-input-wrap">
+        <input type="text" id="agent-input" class="agent-input" placeholder="Ask me anything..." disabled />
+        <button class="agent-send-btn" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="m22 2-7 20-4-9-9-4 20-7z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+      <div class="agent-footer-note">This is a simulated conversation for demo purposes</div>
+    </div>
+  </div>
+
+  <script src="persistence.js?v=139"></script>
+  <script src="integration-procedures.js?v=139"></script>
+  <script src="enrichment-definitions.js?v=139"></script>
+  <script src="app.js?v=139"></script>
+  <script src="activities-refactor.js?v=139"></script>
+  <script src="activity-render-patch.js?v=139"></script>
+  <script src="activity-management-tabs.js?v=139"></script>
+  <script src="run-my-day.js?v=139"></script>
+  <script src="reconciliation-normalization.js?v=139"></script>
+  <script src="agent-chat.js?v=139"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<template>
+  <template lwc:if={loaded}>
+    <div class="slds-card slds-p-around_medium rfq-launch">
+      <header class="slds-media slds-media_center slds-m-bottom_small">
+        <div class="slds-media__figure">
+          <lightning-icon
+            icon-name="standard:household"
+            alternative-text="Account"
+            size="medium"
+          ></lightning-icon>
+        </div>
+        <div class="slds-media__body">
+          <p class="slds-text-title slds-text-color_weak">
+            Step 0 · Guided RFQ Intake
+          </p>
+          <h2 class="slds-text-heading_medium slds-truncate">
+            {accountName}
+          </h2>
+        </div>
+      </header>
+
+      <p class="slds-m-bottom_small slds-text-body_regular">
+        We've pulled this account from Salesforce and pre-selected the
+        coverages Agentforce recommends based on the account profile.
+      </p>
+
+      <dl class="slds-dl_horizontal slds-m-bottom_medium rfq-dl">
+        <dt class="slds-dl_horizontal__label">Account Owner</dt>
+        <dd class="slds-dl_horizontal__detail">{accountOwner}</dd>
+        <dt class="slds-dl_horizontal__label">Industry</dt>
+        <dd class="slds-dl_horizontal__detail">{accountIndustry}</dd>
+        <dt class="slds-dl_horizontal__label">Suggested LOB</dt>
+        <dd class="slds-dl_horizontal__detail">
+          <lightning-badge label={suggestedLob}></lightning-badge>
+        </dd>
+        <dt class="slds-dl_horizontal__label">Suggested Coverages</dt>
+        <dd class="slds-dl_horizontal__detail">
+          <template for:each={suggestedLocs} for:item="loc">
+            <lightning-badge
+              key={loc}
+              label={loc}
+              class="slds-m-right_xx-small"
+            ></lightning-badge>
+          </template>
+        </dd>
+        <dt class="slds-dl_horizontal__label">Record ID</dt>
+        <dd class="slds-dl_horizontal__detail">
+          <code class="slds-text-body_small">{recordId}</code>
+        </dd>
+      </dl>
+
+      <footer class="slds-grid slds-grid_align-end slds-gutters_xx-small">
+        <div class="slds-col">
+          <lightning-button
+            label="Cancel"
+            variant="neutral"
+            onclick={handleCancel}
+          ></lightning-button>
+        </div>
+        <div class="slds-col slds-m-left_x-small">
+          <lightning-button
+            label="Start Guided RFQ"
+            variant="brand"
+            icon-name="utility:einstein"
+            icon-position="left"
+            onclick={handleStart}
+          ></lightning-button>
+        </div>
+      </footer>
+    </div>
+  </template>
+
+  <template lwc:else>
+    <div class="slds-p-around_medium slds-text-align_center">
+      <lightning-spinner
+        alternative-text="Loading account"
+        size="small"
+      ></lightning-spinner>
+      <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+        Loading account…
+      </p>
+    </div>
+  </template>
+</template>

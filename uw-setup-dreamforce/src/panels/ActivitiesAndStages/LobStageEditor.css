@@ -1,0 +1,561 @@
+/* LOB Stage Editor — chevron path + prompt + tasks/rules sub-layout. */
+
+.lse {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+}
+
+/* ── Path: row of chevron-shaped tabs + Manage button on the right ─── */
+.lse-path-row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--slds-g-spacing-3);
+}
+
+/* The path spans the full available width; chevrons share it equally. */
+.lse-path {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  /* Each chevron paints its own arrowhead via clip-path; a small negative
+   * margin lets consecutive chevrons interlock without a gap. */
+}
+
+.lse-path__chevron {
+  --lse-chev-bg: var(--slds-g-color-surface-container-2);
+  --lse-chev-fg: var(--slds-g-color-on-surface-2);
+  --lse-chev-border: var(--slds-g-color-border-1);
+  /* Equal width — every stage occupies the same slice of the path. */
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  /* Leave a 22px tail notch on the right for the chevron arrow and matching
+   * lead space on the left so the label stays centred within the visible body. */
+  padding: 0 22px 0 22px;
+  background: var(--lse-chev-bg);
+  color: var(--lse-chev-fg);
+  border: 0;
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: 500;
+  cursor: pointer;
+  /* Chevron arrowhead on the right side. */
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%);
+  margin-left: -10px;
+  user-select: none;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+.lse-path__chevron:first-child {
+  margin-left: 0;
+  /* Flat left edge for the first step */
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
+  padding-left: 14px;
+}
+.lse-path__chevron-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lse-path__chevron:hover:not([data-active='true']) {
+  --lse-chev-bg: var(--slds-g-color-brand-base-95);
+  --lse-chev-fg: var(--slds-g-color-on-surface-3);
+}
+.lse-path__chevron[data-active='true'] {
+  --lse-chev-bg: var(--slds-g-color-accent-1);
+  --lse-chev-fg: var(--slds-g-color-on-accent-1);
+}
+
+.lse-path__chevron[data-drop-before='true']::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--slds-g-color-accent-1);
+  z-index: 2;
+}
+.lse-path__chevron[data-drop-after='true']::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--slds-g-color-accent-1);
+  z-index: 2;
+}
+
+.lse-path__add-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.lse-path__empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  border: 1px dashed var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* The Card wrapping the Stage path needs to allow overflow so the
+ * absolutely-positioned Add-Stages popover isn't clipped at its bottom
+ * edge. Default SLDS Card sets overflow: hidden for the rounded corners. */
+.lse-path-card.slds2-card {
+  overflow: visible;
+}
+
+/* ── Add Stage popover ───────────────────────────────────────────── */
+.lse-add-pop {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  z-index: 50;
+  width: 260px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+  box-shadow: var(--slds-g-shadow-3);
+  padding: var(--slds-g-spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+}
+.lse-add-pop__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+}
+.lse-add-pop__title {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: 600;
+  color: var(--slds-g-color-on-surface-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.lse-add-pop__manage {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.lse-add-pop__manage:hover {
+  color: var(--slds-g-color-accent-2);
+  text-decoration: underline;
+}
+.lse-add-pop__manage:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: 2px;
+}
+.lse-add-pop__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* If the picklist is long, let the list scroll and keep Cancel/Add visible. */
+  max-height: 240px;
+  overflow-y: auto;
+}
+.lse-add-pop__option {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3);
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-1);
+}
+.lse-add-pop__option:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.lse-add-pop__option[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.lse-add-pop__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+  margin-top: var(--slds-g-spacing-2);
+  padding-top: var(--slds-g-spacing-2);
+  border-top: 1px solid var(--slds-g-color-border-1);
+}
+.lse-add-pop__add-wrap {
+  position: relative;
+}
+
+/* ── Manage Stages dueling (dual-listbox) picklist ───────────────── */
+.lse-dual__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+  margin-bottom: var(--slds-g-spacing-3);
+}
+.lse-dual {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  align-items: stretch;
+  gap: var(--slds-g-spacing-3);
+}
+.lse-dual__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1);
+  min-width: 0;
+}
+.lse-dual__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.lse-dual__box {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  height: 300px;
+  overflow-y: auto;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lse-dual__item {
+  padding: 7px 10px;
+  border-radius: var(--slds-g-radius-border-1);
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+.lse-dual__item:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.lse-dual__item--hi {
+  background: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-on-accent-1);
+}
+.lse-dual__item--hi:hover {
+  background: var(--slds-g-color-accent-1);
+}
+.lse-dual__empty {
+  padding: 10px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+.lse-dual__move {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2);
+}
+.lse-dual__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  color: var(--slds-g-color-on-surface-2);
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease;
+}
+.lse-dual__btn:hover:not(:disabled) {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-accent-1);
+}
+.lse-dual__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.lse-dual__btn:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: 1px;
+}
+
+/* ── Body: prompt above, then 20:80 ─────────────────────────────── */
+.lse-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+}
+
+/* Empty-state placeholder shown when no stages exist. Keeps the same
+ * surface treatment the prompt cards used to use (now Cards). */
+.lse-prompt {
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+  padding: var(--slds-g-spacing-4);
+}
+
+.lse-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+.lse-tabs__pane {
+  min-width: 0;
+}
+.lse-split__title {
+  margin: 0 0 var(--slds-g-spacing-3) 0;
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-7);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+.lse-split__hint {
+  margin: 0 0 var(--slds-g-spacing-2) 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-2);
+}
+
+/* ── Transition Rules ────────────────────────────────────────────── */
+.lse-rules {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+}
+.lse-rules__head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.lse-rules__empty {
+  padding: 16px 4px;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* Each rule group is a single target stage's table. */
+.lse-tr-group {
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  overflow: hidden;
+}
+.lse-tr-group__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--slds-g-color-surface-container-2);
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+.lse-tr-group__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+/* Table inside each group. */
+.lse-tr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-base);
+}
+.lse-tr-table thead th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-1);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+  background: var(--slds-g-color-surface-container-1);
+}
+.lse-tr-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+  vertical-align: top;
+  color: var(--slds-g-color-on-surface-2);
+}
+.lse-tr-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.lse-tr-table__num {
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-1);
+}
+.lse-tr-table__empty {
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+.lse-tr-table__link {
+  color: var(--slds-g-color-accent-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-decoration: none;
+  cursor: pointer;
+}
+.lse-tr-table__link:hover {
+  text-decoration: underline;
+}
+.lse-tr-table__order {
+  white-space: nowrap;
+}
+.lse-tr-table__order-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.lse-tr-group__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.lse-tr-transition {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.lse-tr-table__actions {
+  white-space: nowrap;
+}
+.lse-tr-table__actions-inner {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.lse-tr-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lse-tr-conditions__line {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+}
+.lse-tr-conditions__num {
+  color: var(--slds-g-color-on-surface-1);
+}
+.lse-tr-conditions__ctx {
+  color: var(--slds-g-color-on-surface-2);
+  font-weight: var(--slds-g-font-weight-6);
+}
+.lse-tr-conditions__expr {
+  margin-top: 4px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* Modal — Transition Rule editor. */
+.lse-tr-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.lse-tr-modal__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.lse-tr-modal__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+  margin-bottom: 4px;
+}
+.lse-tr-modal__radios {
+  display: inline-flex;
+  gap: 16px;
+}
+.lse-tr-modal__radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+}
+
+.lse-tr-modal__divider {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--slds-g-color-border-1);
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+.lse-tr-modal__cond-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.lse-tr-modal__conds {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lse-tr-modal__empty {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+  padding: 8px 4px;
+}
+.lse-tr-modal__cond {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+.lse-tr-modal__cond-num {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-1);
+  text-align: center;
+}
+.lse-tr-modal__cond-spacer {
+  display: block;
+}

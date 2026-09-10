@@ -1,0 +1,331 @@
+<template>
+  <template lwc:if={open}>
+    <!-- SLDS 2 modal: centered dialog over translucent backdrop.
+         Header / body (form + widget-specific block) / footer. -->
+    <div
+      class="sem__backdrop"
+      role="presentation"
+      onclick={handleBackdropClick}
+      onkeydown={handleKeydown}
+    >
+      <section
+        class="sem__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sem-title"
+        onclick={handleDialogClick}
+      >
+        <header class="sem__head">
+          <div class="sem__head-copy">
+            <h2 id="sem-title" class="sem__title">Edit step</h2>
+            <p class="sem__sub">{headSub}</p>
+          </div>
+          <button
+            type="button"
+            class="sem__close"
+            aria-label="Close"
+            onclick={handleCancel}
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M18.3 5.71L12 12.01l6.3 6.29-1.42 1.42L10.59 13.43 4.29 19.72 2.88 18.3l6.3-6.29-6.3-6.29L4.29 4.3l6.3 6.29 6.3-6.29z"/>
+            </svg>
+          </button>
+        </header>
+
+        <!-- Tab strip - splits the body into two named tabs:
+             Details bundles Placement + Identity + Behavior
+             (step metadata + toggles), and Configuration hosts
+             the widget-type-specific sub-form. -->
+        <div class="sem__tabs" role="tablist" aria-label="Edit step sections">
+          <button
+            type="button"
+            role="tab"
+            class={detailsTabClass}
+            aria-selected={isDetailsTab}
+            data-tab="details"
+            onclick={handleTabSelect}
+          >Details</button>
+          <button
+            type="button"
+            role="tab"
+            class={configurationTabClass}
+            aria-selected={isConfigurationTab}
+            data-tab="configuration"
+            onclick={handleTabSelect}
+          >Configuration</button>
+        </div>
+
+        <div class="sem__body">
+          <!-- ── Details tab: Placement + Identity + Behavior ────
+               Three stacked sections cover all step-metadata and
+               toggles: (1) read-only positional metadata, (2)
+               editable label / component name / description, and
+               (3) required / active behavior toggles. -->
+          <template lwc:if={isDetailsTab}>
+          <section class="sem__section" aria-labelledby="sem-sec-placement">
+            <h3 id="sem-sec-placement" class="sem__section-title">Placement</h3>
+            <div class="sem__grid sem__grid_thirds">
+              <div class="sem__field">
+                <span class="sem__label">Order</span>
+                <div class="sem__ro">{orderLabel}</div>
+              </div>
+              <div class="sem__field">
+                <span class="sem__label">Step Type</span>
+                <div class="sem__ro">{stepTypeLabel}</div>
+              </div>
+              <div class="sem__field">
+                <span class="sem__label">Origin</span>
+                <div class="sem__ro">{originLabel}</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── Section 2: Identity ─────────────────────────────
+               Editable label + description. Component Name shown
+               read-only for built-in substeps (they map to a fixed
+               LWC); custom (admin-injected) widgets don't have a
+               component name yet - the wiring happens at deploy. -->
+          <section class="sem__section" aria-labelledby="sem-sec-identity">
+            <h3 id="sem-sec-identity" class="sem__section-title">Identity</h3>
+
+            <div class="sem__grid sem__grid_halves">
+              <div class="sem__field">
+                <span class="sem__label">
+                  Step Title <abbr class="slds-required" title="required">*</abbr>
+                </span>
+                <input
+                  class="sem__input"
+                  type="text"
+                  value={title}
+                  oninput={handleTitleInput}
+                  aria-label="Step Title"
+                />
+              </div>
+              <div class="sem__field">
+                <span class="sem__label">Component Name</span>
+                <input
+                  class="sem__input"
+                  type="text"
+                  value={componentName}
+                  readonly={componentNameReadonly}
+                  oninput={handleComponentNameInput}
+                  aria-label="Component Name"
+                  placeholder="e.g. c/myCustomStep"
+                />
+                <template lwc:if={componentNameHint}>
+                  <span class="sem__hint">{componentNameHint}</span>
+                </template>
+              </div>
+            </div>
+
+            <div class="sem__field">
+              <span class="sem__label">Description</span>
+              <textarea
+                class="sem__textarea"
+                rows="3"
+                oninput={handleDescriptionInput}
+                aria-label="Step description"
+              >{description}</textarea>
+            </div>
+          </section>
+
+          <!-- ── Section 3: Behavior ─────────────────────────────
+               Whether the step is required (broker can't advance
+               past it without filling it) and whether it's active
+               (rendered in the pipeline). -->
+          <section class="sem__section" aria-labelledby="sem-sec-behavior">
+            <h3 id="sem-sec-behavior" class="sem__section-title">Behavior</h3>
+
+            <div class="sem__grid sem__grid_halves">
+              <label class="sem__toggle">
+                <input
+                  type="checkbox"
+                  checked={required}
+                  disabled={requiredDisabled}
+                  onchange={handleRequiredToggle}
+                />
+                <span class="sem__toggle-body">
+                  <span class="sem__toggle-title">Required</span>
+                  <span class="sem__toggle-sub">
+                    Broker must complete this step before submitting.
+                  </span>
+                </span>
+              </label>
+
+              <label class="sem__toggle">
+                <input
+                  type="checkbox"
+                  checked={active}
+                  disabled={activeDisabled}
+                  onchange={handleActiveToggle}
+                />
+                <span class="sem__toggle-body">
+                  <span class="sem__toggle-title">Active</span>
+                  <span class="sem__toggle-sub">
+                    Rendered in the pipeline for producers.
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <template lwc:if={isBehaviorLocked}>
+              <p class="sem__hint">{behaviorLockedHint}</p>
+            </template>
+          </section>
+          </template>
+
+          <!-- ── Section 4: Configuration (widget-specific) ──────
+               Different widget kinds surface different config
+               sub-forms here. The switches below stay small - each
+               one just gives the admin a summary of what's owned
+               here + a pointer at where to configure the deeper
+               settings (canvas, integrations tab, etc). -->
+          <template lwc:if={isConfigurationTab}>
+          <section class="sem__section" aria-labelledby="sem-sec-config">
+            <h3 id="sem-sec-config" class="sem__section-title">Configuration</h3>
+
+            <template lwc:if={isKindInit}>
+              <p class="sem__config-copy">
+                Initialize is scoped by the template's Line of Business,
+                Line of Coverage, and Root Product. Adjust those from
+                the Initialize card in the pipeline.
+              </p>
+            </template>
+
+            <template lwc:if={isKindCollection}>
+              <div class="sem__display-fields">
+                <div class="sem__display-fields__head">
+                  <span class="sem__display-fields__title">Display Fields</span>
+                  <span class="sem__display-fields__sub">
+                    Standard-object attributes surfaced to the broker on this step. Fields already added are marked in the Field picker with a check.
+                  </span>
+                </div>
+
+                <!-- Add-row: Entity | Field | Label | +
+                     Sits above the existing rows so the admin can
+                     append a new field without scrolling past the
+                     current list. -->
+                <div class="sem__display-fields__add">
+                  <c-picklist
+                    class="sem__display-fields__picker"
+                    placeholder="Entity"
+                    accessible-label="Entity"
+                    options={entityOptions}
+                    value={entityValue}
+                    onchange={handleDisplayEntityChange}
+                  ></c-picklist>
+                  <c-picklist
+                    class="sem__display-fields__picker"
+                    placeholder="Field"
+                    accessible-label="Field"
+                    options={fieldOptions}
+                    value={fieldValue}
+                    disabled={fieldPickerDisabled}
+                    onchange={handleDisplayFieldChange}
+                  ></c-picklist>
+                  <input
+                    class="sem__input sem__display-fields__label-input"
+                    type="text"
+                    placeholder="Label (optional)"
+                    value={labelValue}
+                    oninput={handleDisplayLabelInput}
+                    aria-label="Field label"
+                  />
+                  <button
+                    type="button"
+                    class="sem__display-fields__add-btn"
+                    disabled={isAddDisplayFieldDisabled}
+                    onclick={handleAddDisplayField}
+                    aria-label="Add display field"
+                    title="Add display field"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                      <path d="M19 11h-6V5a1 1 0 00-2 0v6H5a1 1 0 000 2h6v6a1 1 0 002 0v-6h6a1 1 0 000-2z"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <template lwc:if={hasSelectionRows}>
+                  <ul class="sem__display-fields__list" role="list">
+                    <template for:each={selectionRows} for:item="r">
+                      <li key={r.key} class="sem__display-fields__row">
+                        <span class="sem__display-fields__row-entity">{r.entityLabel}</span>
+                        <span class="sem__display-fields__row-field">
+                          <span class="sem__display-fields__row-field-label">{r.fieldLabel}</span>
+                          <span class="sem__display-fields__row-api">{r.api}</span>
+                        </span>
+                        <button
+                          type="button"
+                          class="sem__display-fields__remove"
+                          data-key={r.key}
+                          aria-label={r.removeAriaLabel}
+                          title="Remove field"
+                          onclick={handleRemoveDisplayField}
+                        >
+                          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                            <path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"/>
+                          </svg>
+                        </button>
+                      </li>
+                    </template>
+                  </ul>
+                </template>
+              </div>
+            </template>
+
+            <template lwc:if={isKindCoverages}>
+              <p class="sem__config-copy">
+                Coverage tiers are configured in the Coverage Limits
+                canvas - three tabs (Overall / Vehicle / Driver)
+                mapping to the runtime tree levels.
+              </p>
+            </template>
+
+            <template lwc:if={isKindQuoteComparison}>
+              <p class="sem__config-copy">
+                Linked comparison template is picked from the Quote
+                Comparison step in the pipeline.
+              </p>
+            </template>
+
+            <template lwc:if={isKindReview}>
+              <p class="sem__config-copy">
+                Downstream integrations (Agentforce, Slack) are wired
+                on the Integrations &amp; Preview step in the pipeline.
+              </p>
+            </template>
+
+            <template lwc:if={isKindPublish}>
+              <p class="sem__config-copy">
+                Version, validity window, and activation are managed
+                on the Publish step in the pipeline.
+              </p>
+            </template>
+
+            <template lwc:if={isKindCustom}>
+              <p class="sem__config-copy">
+                Custom step. Additional settings will surface here once
+                the component is wired to a Salesforce object.
+              </p>
+            </template>
+          </section>
+          </template>
+        </div>
+
+        <footer class="sem__foot">
+          <button
+            type="button"
+            class="sem__btn sem__btn_neutral"
+            onclick={handleCancel}
+          >Cancel</button>
+          <button
+            type="button"
+            class="sem__btn sem__btn_brand"
+            disabled={isSaveDisabled}
+            onclick={handleSave}
+          >Save</button>
+        </footer>
+      </section>
+    </div>
+  </template>
+</template>

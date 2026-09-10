@@ -1,0 +1,359 @@
+/* Enrichment Definition wizard. Reuses .cw-steps / .cw-content / .cw-step
+ * chrome from ConnectWizard.css for the left stepper. */
+
+@import url('../GeneralSetup/ConnectWizard.css');
+
+/* Match the Run My Day / Connect wizard sizing: 92vw × 92vh. */
+.slds2-modal:has(.ed-wizard) {
+  max-width: none;
+  max-height: 92vh;
+  width: 92vw;
+  height: 92vh;
+}
+.slds2-modal:has(.ed-wizard) .slds2-modal__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.slds2-modal:has(.ed-wizard) .slds2-modal__body > .ed-wizard {
+  flex: 1;
+  min-height: 0;
+}
+
+.ed-wizard {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: calc(-1 * var(--slds-g-spacing-4));
+  min-height: 360px;
+}
+
+/* ── Connection picker — single-select ───────────────────────────── */
+
+.ed-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  border-top: 1px solid var(--slds-g-color-border-1);
+  padding-top: 16px;
+}
+/* Single-select variant is a single column with the chosen connection
+ * echoed above the list box. */
+.ed-picker--single {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ed-picker__selected {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ed-picker__selected-label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+}
+.ed-picker__selected-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  min-width: 0;
+  background: var(--slds-g-color-brand-base-95);
+  border: 1px solid var(--slds-g-color-accent-1);
+  border-radius: var(--slds-g-radius-border-2);
+}
+.ed-picker__selected-name {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+}
+
+.ed-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-container-1);
+  overflow: hidden;
+}
+.ed-pane__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--slds-g-color-surface-container-2);
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+.ed-pane__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.ed-pane__count {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ed-pane__empty {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+  padding: 16px;
+  line-height: 1.4;
+}
+
+/* Category badges inside a connection tile in the catalog. */
+.cw-tile-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 2px 0;
+}
+
+/* Endpoint detail rendered below the catalog once a connection is picked. */
+.ed-pane--endpoints {
+  gap: 8px;
+  padding: 12px;
+}
+.ed-pane--endpoints .cw-schema-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Provider rail + connection list + endpoint detail — three columns,
+ * mirroring the new-service modal's Provider → Service → Detail browser. */
+.ed-pane__split {
+  display: grid;
+  grid-template-columns: 22% 30% 48%;
+  min-height: 320px;
+  max-height: 520px;
+}
+.ed-pane__providers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-right: 1px solid var(--slds-g-color-border-1);
+  overflow-y: auto;
+}
+.ed-pane__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  overflow-y: auto;
+  min-width: 0;
+  border-right: 1px solid var(--slds-g-color-border-1);
+}
+.ed-pane__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  overflow-y: auto;
+  min-width: 0;
+}
+.ed-pane__detail-empty {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+  padding: 8px 4px;
+  line-height: 1.4;
+}
+.ed-pane__ep-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-bottom: 4px;
+}
+.ed-pane__ep-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: background-color 100ms ease, border-color 100ms ease;
+}
+.ed-pane__ep-tab:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.ed-pane__ep-tab--active {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.ed-pane__ep-tab-name {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+/* Stack Request above Response in the narrow detail column. */
+.ed-pane__detail .cw-schema-grid {
+  grid-template-columns: 1fr;
+}
+.ed-pane__col-label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+  padding: 0 4px 6px;
+}
+
+/* Provider rail row — logo + name/category + count. */
+.ed-pane__provider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: background-color 100ms ease, border-color 100ms ease;
+  min-width: 0;
+}
+.ed-pane__provider-row:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.ed-pane__provider-row--focus {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.ed-pane__provider-tag {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-accent-1);
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+}
+.ed-pane__provider-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.ed-pane__provider-name {
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ed-pane__provider-category {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.ed-pane__provider-count {
+  flex: 0 0 auto;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* Connection row inside a pane — name + auth/url. As a select button it
+ * carries a leading radio dot. */
+.ed-pane__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+}
+.ed-pane__row--select {
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease;
+}
+.ed-pane__row--select:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.ed-pane__row--selected {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.ed-pane__radio {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--slds-g-radius-border-circle);
+  border: 2px solid var(--slds-g-color-border-2);
+  background: var(--slds-g-color-surface-1);
+}
+.ed-pane__row--selected .ed-pane__radio {
+  border-color: var(--slds-g-color-accent-1);
+  background: radial-gradient(
+    circle,
+    var(--slds-g-color-accent-1) 0 4px,
+    var(--slds-g-color-surface-1) 5px
+  );
+}
+.ed-pane__row-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.ed-pane__row-name {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  word-break: break-word;
+}
+.ed-pane__row-desc {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+}
+.ed-pane__row-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  min-width: 0;
+}
+.ed-pane__row-url {
+  font-family: var(--slds-g-font-family-monospace);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 960px) {
+  .ed-picker {
+    grid-template-columns: 1fr;
+  }
+  .ed-pane__split {
+    grid-template-columns: 28% 34% 38%;
+  }
+}

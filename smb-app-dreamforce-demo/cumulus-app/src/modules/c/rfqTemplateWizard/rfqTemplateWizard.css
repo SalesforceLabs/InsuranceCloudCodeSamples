@@ -1,0 +1,302 @@
+/* ═══════════════════════════════════════════════════════
+   Wizard - a sidebar stepper, a step panel and a footer,
+   presented either as a centred overlay or, under
+   `embedded`, as an inline card on the Setup canvas.
+   Mirrors c-quote-compare-setup's wizard chrome so the two
+   "+ New Template" flows read as the same surface.
+   ═══════════════════════════════════════════════════════ */
+:host {
+  display: block;
+}
+.rtw-wizard {
+  position: fixed;
+  inset: 0;
+  z-index: 9001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  font-family: var(--atlas-font);
+}
+.rtw-wizard__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+.rtw-wizard__container {
+  position: relative;
+  width: min(1320px, 96vw);
+  height: min(960px, 96vh);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: rtw-wizard-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes rtw-wizard-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Inline mode (mounted as Setup canvas content) ──────────
+   Strip the overlay positioning and the floating-card chrome so
+   the wizard reads as a bordered card sitting on the Setup grey
+   canvas. The stepper and footer stay: the host supplies neither. */
+.rtw-wizard.rtw-wizard_embedded {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  display: block;
+  padding: 0;
+}
+.rtw-wizard__container.rtw-wizard__container_embedded {
+  position: static;
+  width: 100%;
+  height: auto;
+  min-height: calc(100vh - 18rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: none;
+  animation: none;
+}
+
+/* ── Canvas head: back link + active step name ──────────────── */
+.rtw-wizard__canvas-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  margin-bottom: var(--slds-g-spacing-3, 0.75rem);
+}
+.rtw-wizard__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rtw-wizard__back:hover {
+  text-decoration: underline;
+}
+.rtw-wizard__back:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.rtw-wizard__back svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.rtw-wizard__canvas-step {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.rtw-wizard__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-6, 2rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.rtw-wizard__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rtw-wizard__close {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.rtw-wizard__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rtw-wizard__close svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* ── Body: stepper + panel ──────────────────────────────── */
+.rtw-wizard__body {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+}
+.rtw-wizard__nav {
+  flex: 0 0 18rem;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding: var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-var-4, 1rem);
+  overflow-y: auto;
+}
+.rtw-wizard__nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rtw-wizard__nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.rtw-wizard__nav-step {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  text-align: left;
+  cursor: pointer;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: inherit;
+  transition: border-color 150ms ease;
+}
+.rtw-wizard__nav-step:hover:not([disabled]):not(.is-active) {
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+.rtw-wizard__nav-step:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.rtw-wizard__nav-step.is-active {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.rtw-wizard__nav-step[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+/* Short connector between consecutive cards, as the org draws it. */
+.rtw-wizard__nav-link {
+  width: var(--slds-g-sizing-border-2, 2px);
+  height: var(--slds-g-spacing-var-3, 0.75rem);
+  background: var(--slds-g-color-border-1, #c9c9c9);
+}
+.rtw-wizard__nav-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rtw-wizard__nav-step.is-active .rtw-wizard__nav-label {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rtw-wizard__nav-sub {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+
+/* ── Step panel ─────────────────────────────────────────── */
+.rtw-wizard__panel {
+  flex: 1;
+  min-width: 0;
+  padding: var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-var-6, 2rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+/* The inactive pane is hidden rather than unmounted so the playbook
+   keeps its config while the admin is on Publish. */
+.rtw-wizard__pane {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.rtw-wizard__pane[hidden] {
+  display: none;
+}
+.rtw-wizard__panel-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rtw-wizard__panel-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+.rtw-wizard__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-6, 2rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+.rtw-wizard__foot-spacer { flex: 1 1 auto; }
+
+.rtw-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-4, 1rem);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+}
+.rtw-button:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.rtw-button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.rtw-button_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+}
+.rtw-button_brand:hover:not([disabled]) {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.rtw-button_neutral {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+.rtw-button_neutral:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}

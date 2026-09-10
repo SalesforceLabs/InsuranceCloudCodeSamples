@@ -1,0 +1,406 @@
+<template>
+  <div class="tabnext-dashboard-canvas">
+    <template lwc:if={hasData}>
+      <!-- ── Toolbar: title + filters ───────────────────────────── -->
+      <header class="tabnext-filter-bar">
+        <div class="rid-toolbar__titles">
+          <h2 class="rid-toolbar__title">Revenue Intelligence</h2>
+          <span class="rid-toolbar__asof">{dashboardAsOf}</span>
+        </div>
+        <div class="rid-toolbar__filters">
+          <c-picklist
+            class="rid-toolbar__filter"
+            options={dateRangeOptions}
+            value={selectedDateRange}
+            placeholder="Year to Date"
+            accessible-label="Date range filter"
+            onchange={handleDateRangeChange}
+          ></c-picklist>
+          <c-picklist
+            class="rid-toolbar__filter"
+            options={lobOptions}
+            value={selectedLOB}
+            placeholder="All Lines of Business"
+            accessible-label="Line of Business filter"
+            onchange={handleLobChange}
+          ></c-picklist>
+          <c-picklist
+            class="rid-toolbar__filter"
+            options={producerOptions}
+            value={selectedProducer}
+            placeholder="All Producers"
+            accessible-label="Producer filter"
+            onchange={handleProducerChange}
+          ></c-picklist>
+          <button
+            type="button"
+            class="rid-toolbar__toggle"
+            aria-pressed={hasBillingEnabled}
+            onclick={handleToggleBilling}
+          >{billingToggleLabel}</button>
+        </div>
+      </header>
+
+      <!-- ── Tier 1: KPI tiles (2 or 4 wide via kpiGridClass) ────── -->
+      <section class={kpiGridClass} aria-label="Key revenue metrics">
+        <template for:each={kpiTiles} for:item="kpi">
+          <article key={kpi.id} class="tabnext-widget-card rid-kpi" aria-labelledby={kpi.id}>
+            <h3 class="rid-kpi__label" id={kpi.id}>{kpi.label}</h3>
+            <div class="rid-kpi__value">{kpi.value}</div>
+            <template lwc:if={kpi.trend}>
+              <span class={kpi.trend.cls}>
+                <svg class="rid-trend__icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+                  <path d={kpi.trend.icon} fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round" />
+                </svg>
+                <span class="rid-trend__text">{kpi.trend.text}</span>
+                <span class="slds-assistive-text">{kpi.trend.srText}</span>
+              </span>
+            </template>
+          </article>
+        </template>
+      </section>
+
+      <!-- ── Tier 2: Commission Status (donut) + Expected vs Received (grouped bar) -->
+      <section class="tabnext-grid-2-col" aria-label="Commission breakdowns">
+        <!-- Donut: Commission by Status -->
+        <div class="tabnext-widget-card">
+          <header class="rid-card__head">
+            <h3 class="rid-card__title">Commission by Status</h3>
+            <span class="rid-card__subtitle">Year to date</span>
+          </header>
+          <template lwc:if={donutChart.hasData}>
+            <!-- PROD: swap to Chart.js doughnut on <canvas> via
+                 lightning/platformResourceLoader. -->
+            <div class="rid-donut" role="img" aria-label={donutChart.a11y}>
+              <svg
+                class="rid-donut__svg"
+                viewBox="0 0 200 200"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <circle
+                  class="rid-donut__track"
+                  cx={donutChart.cx}
+                  cy={donutChart.cy}
+                  r={donutChart.r}
+                  fill="none"
+                  stroke-width={donutChart.strokeWidth}
+                ></circle>
+                <template for:each={donutChart.segments} for:item="seg">
+                  <circle
+                    key={seg.id}
+                    class="rid-donut__seg"
+                    cx={donutChart.cx}
+                    cy={donutChart.cy}
+                    r={donutChart.r}
+                    fill="none"
+                    stroke={seg.color}
+                    stroke-width={donutChart.strokeWidth}
+                    stroke-dasharray={seg.dashArray}
+                    stroke-dashoffset={seg.dashOffset}
+                  ></circle>
+                </template>
+                <text class="rid-donut__total" x="100" y="96" text-anchor="middle">{donutChart.totalDisplay}</text>
+                <text class="rid-donut__total-label" x="100" y="116" text-anchor="middle">Total</text>
+              </svg>
+              <ul class="rid-donut__legend">
+                <template for:each={donutChart.segments} for:item="seg">
+                  <li key={seg.id} class="rid-donut__legend-row">
+                    <span class="rid-donut__legend-dot" aria-hidden="true" style={seg.dotStyle}>
+                      <svg viewBox="0 0 8 8" aria-hidden="true" focusable="false">
+                        <circle cx="4" cy="4" r="4" fill={seg.color}></circle>
+                      </svg>
+                    </span>
+                    <span class="rid-donut__legend-label">{seg.label}</span>
+                    <span class="rid-donut__legend-value">{seg.valueDisplay}</span>
+                    <span class="rid-donut__legend-pct">{seg.pctDisplay}</span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="noresults:filter"
+              size="x-small"
+            >No commission data for the selected filters.</c-empty-state>
+          </template>
+        </div>
+
+        <!-- Grouped bar: Expected vs Received -->
+        <div class="tabnext-widget-card">
+          <header class="rid-card__head">
+            <h3 class="rid-card__title">Expected vs Received Commission</h3>
+            <span class="rid-card__subtitle">Gap reveals revenue leakage</span>
+          </header>
+          <template lwc:if={groupedBarChart.hasData}>
+            <!-- PROD: swap to Chart.js grouped bar on <canvas>. -->
+            <div class="rid-gbar" role="img" aria-label={groupedBarChart.a11y}>
+              <svg class="rid-gbar__svg" viewBox="0 0 480 220" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                <template for:each={groupedBarChart.gridlines} for:item="g">
+                  <line key={g.id} class="rid-gbar__grid" x1={g.x1} y1={g.y} x2={g.x2} y2={g.y}></line>
+                </template>
+                <template for:each={groupedBarChart.bars} for:item="bar">
+                  <g key={bar.id}>
+                    <rect class={bar.cls} x={bar.x} y={bar.y} width={bar.w} height={bar.h} rx="2"></rect>
+                  </g>
+                </template>
+                <template for:each={groupedBarChart.xTicks} for:item="t">
+                  <text key={t.id} class="rid-gbar__x-tick" x={t.x} y={t.y} text-anchor="middle">{t.label}</text>
+                </template>
+              </svg>
+              <ul class="rid-legend">
+                <template for:each={groupedBarChart.legend} for:item="l">
+                  <li key={l.id} class="rid-legend__row">
+                    <span class={l.cls} aria-hidden="true"></span>
+                    <span>{l.label}</span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:new"
+              size="x-small"
+            >No expected-vs-received data.</c-empty-state>
+          </template>
+        </div>
+      </section>
+
+      <!-- ── Tier 3: Commission by LOB + Commission by Carrier ─── -->
+      <section class="tabnext-grid-2-col" aria-label="Concentration risk">
+        <div class="tabnext-widget-card">
+          <header class="rid-card__head">
+            <h3 class="rid-card__title">Commission by Line of Business</h3>
+            <span class="rid-card__subtitle">Where the book concentrates</span>
+          </header>
+          <template lwc:if={lobBarChart.hasData}>
+            <!-- PROD: swap to Chart.js horizontal bar on <canvas>. -->
+            <ul class="rid-hbar" role="img" aria-label={lobBarChart.a11y}>
+              <template for:each={lobBarChart.items} for:item="item">
+                <li key={item.id} class="rid-hbar__row" aria-label={item.a11y}>
+                  <span class="rid-hbar__label">{item.label}</span>
+                  <span class="rid-hbar__track" aria-hidden="true">
+                    <span class="rid-hbar__fill" style={item.barStyle}></span>
+                  </span>
+                  <span class="rid-hbar__value">{item.valueDisplay}</span>
+                </li>
+              </template>
+            </ul>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:new"
+              size="x-small"
+            >No LOB data.</c-empty-state>
+          </template>
+        </div>
+
+        <div class="tabnext-widget-card">
+          <header class="rid-card__head">
+            <h3 class="rid-card__title">Commission by Carrier</h3>
+            <span class="rid-card__subtitle">Top-7 carriers by commission</span>
+          </header>
+          <template lwc:if={carrierBarChart.hasData}>
+            <ul class="rid-hbar" role="img" aria-label={carrierBarChart.a11y}>
+              <template for:each={carrierBarChart.items} for:item="item">
+                <li key={item.id} class="rid-hbar__row" aria-label={item.a11y}>
+                  <span class="rid-hbar__label">{item.label}</span>
+                  <span class="rid-hbar__track" aria-hidden="true">
+                    <span class="rid-hbar__fill" style={item.barStyle}></span>
+                  </span>
+                  <span class="rid-hbar__value">{item.valueDisplay}</span>
+                </li>
+              </template>
+            </ul>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:new"
+              size="x-small"
+            >No carrier data.</c-empty-state>
+          </template>
+        </div>
+      </section>
+
+      <!-- ── Tier 4: Billing Health (gated by hasBillingEnabled) ─ -->
+      <template lwc:if={hasBillingEnabled}>
+        <!-- Tier 4 pipeline mini-KPIs -->
+        <section class="rid-pipeline" aria-label="Billing pipeline">
+          <template for:each={billingPipelineTiles} for:item="t">
+            <div key={t.id} class="tabnext-widget-card rid-pipeline__tile">
+              <span class="rid-pipeline__label">{t.label}</span>
+              <span class="rid-pipeline__value">{t.value}</span>
+            </div>
+          </template>
+        </section>
+
+        <section class="tabnext-grid-2-col" aria-label="Billing health">
+          <!-- Stacked bar: Invoice Aging -->
+          <div class="tabnext-widget-card">
+            <header class="rid-card__head">
+              <h3 class="rid-card__title">Invoice Aging</h3>
+              <span class="rid-card__subtitle">Outstanding {agingStackBar.totalDisplay}</span>
+            </header>
+            <template lwc:if={agingStackBar.hasData}>
+              <!-- PROD: swap to Chart.js stacked horizontal bar on
+                   <canvas>. -->
+              <div class="rid-stack" role="img" aria-label={agingStackBar.a11y}>
+                <div class="rid-stack__track" aria-hidden="true">
+                  <template for:each={agingStackBar.segments} for:item="seg">
+                    <span key={seg.id} class={seg.cls} style={seg.widthStyle} title={seg.bucket}></span>
+                  </template>
+                </div>
+                <ul class="rid-stack__legend">
+                  <template for:each={agingStackBar.segments} for:item="seg">
+                    <li key={seg.id} class="rid-stack__legend-row">
+                      <span class={seg.cls} aria-hidden="true"></span>
+                      <span class="rid-stack__legend-label">{seg.bucket}</span>
+                      <span class="rid-stack__legend-value">{seg.valueDisplay}</span>
+                      <span class="rid-stack__legend-pct">{seg.pctDisplay}</span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </template>
+            <template lwc:else>
+              <c-empty-state
+                illustration-name="success:new"
+                size="x-small"
+              >No invoice aging data.</c-empty-state>
+            </template>
+          </div>
+
+          <!-- Line chart: Monthly Revenue Trend -->
+          <div class="tabnext-widget-card">
+            <header class="rid-card__head">
+              <h3 class="rid-card__title">Monthly Revenue Trend</h3>
+              <span class="rid-card__subtitle">Posted commission, YTD</span>
+            </header>
+            <template lwc:if={monthlyTrendChart.hasData}>
+              <!-- PROD: swap to Chart.js line on <canvas>. -->
+              <svg
+                class="rid-line__svg"
+                viewBox="0 0 480 220"
+                preserveAspectRatio="none"
+                role="img"
+                aria-label={monthlyTrendChart.a11y}
+               focusable="false">
+                <template for:each={monthlyTrendChart.gridlines} for:item="g">
+                  <line key={g.id} class="rid-line__grid" x1={g.x1} y1={g.y} x2={g.x2} y2={g.y}></line>
+                </template>
+                <path class="rid-line__area" d={monthlyTrendChart.areaPath}></path>
+                <polyline class="rid-line__path" points={monthlyTrendChart.polyline} fill="none"></polyline>
+                <template for:each={monthlyTrendChart.points} for:item="p">
+                  <g key={p.id} tabindex="0" class="rid-line__point" aria-label={p.a11y}>
+                    <circle class="rid-line__dot" cx={p.x} cy={p.y} r="4"></circle>
+                  </g>
+                </template>
+                <template for:each={monthlyTrendChart.xTicks} for:item="t">
+                  <text key={t.id} class="rid-line__x-tick" x={t.x} y={t.y} text-anchor="middle">{t.label}</text>
+                </template>
+              </svg>
+            </template>
+            <template lwc:else>
+              <c-empty-state
+                illustration-name="success:new"
+                size="x-small"
+              >No monthly trend data.</c-empty-state>
+            </template>
+          </div>
+        </section>
+      </template>
+
+      <!-- ── Tier 5: Tables ─────────────────────────────────────── -->
+      <section class="tabnext-grid-2-col" aria-label="Producer + statements">
+        <!-- Producer Leaderboard -->
+        <div class="tabnext-widget-card">
+          <header class="rid-card__head">
+            <h3 class="rid-card__title">Producer Leaderboard</h3>
+            <span class="rid-card__subtitle">By total commission</span>
+          </header>
+          <template lwc:if={hasProducers}>
+            <!-- PROD: swap to <lightning-datatable hide-checkbox-column>. -->
+            <table class="rid-table">
+              <thead>
+                <tr>
+                  <th scope="col">Producer</th>
+                  <th scope="col" class="rid-table__num">Total Commission</th>
+                  <th scope="col" class="rid-table__num">Policies</th>
+                  <th scope="col" class="rid-table__num">Avg %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={producerRows} for:item="p">
+                  <tr key={p.id}>
+                    <td class="rid-table__strong">{p.name}</td>
+                    <td class="rid-table__num">{p.totalCommissionDisplay}</td>
+                    <td class="rid-table__num">{p.policyCount}</td>
+                    <td class="rid-table__num">{p.avgCommissionDisplay}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:new"
+              size="x-small"
+            >No producer data.</c-empty-state>
+          </template>
+        </div>
+
+        <!-- Commission Statements -->
+        <div class="tabnext-widget-card">
+          <header class="rid-card__head">
+            <h3 class="rid-card__title">Commission Statements</h3>
+            <span class="rid-card__subtitle">Most recent first</span>
+          </header>
+          <template lwc:if={hasStatements}>
+            <table class="rid-table">
+              <thead>
+                <tr>
+                  <th scope="col">Carrier</th>
+                  <th scope="col">Date</th>
+                  <th scope="col" class="rid-table__num">Total Comm</th>
+                  <th scope="col">Basis</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={statementRows} for:item="s">
+                  <tr key={s.id}>
+                    <td class="rid-table__strong">{s.carrier}</td>
+                    <td class="rid-table__muted">{s.dateDisplay}</td>
+                    <td class="rid-table__num">{s.totalCommissionDisplay}</td>
+                    <td class="rid-table__muted">{s.basis}</td>
+                    <td><span class={s.statusClass}>{s.status}</span></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:new"
+              size="x-small"
+            >No commission statements.</c-empty-state>
+          </template>
+        </div>
+      </section>
+    </template>
+
+    <template lwc:else>
+      <c-empty-state
+        illustration-name="success:new"
+        title="No revenue intelligence data yet"
+        size="medium"
+      >
+        Revenue Intelligence populates once the first commission
+        statement is booked against the agency. Come back after your
+        next carrier reconciliation.
+      </c-empty-state>
+    </template>
+  </div>
+</template>

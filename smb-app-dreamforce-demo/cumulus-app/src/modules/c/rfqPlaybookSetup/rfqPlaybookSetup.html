@@ -1,0 +1,944 @@
+<template>
+  <!-- ─────────────────────────────────────────────────────────────
+       Flow present: render canvas + right-panel variant.
+       ─────────────────────────────────────────────────────────── -->
+  <template lwc:if={hasFlow}>
+    <!-- ── Layout grid ─────────────────────────────────────
+         Left column stacks the Root Product picker on top of
+         the canvas. The right config panel renders as the
+         second column and stretches to the full height of the
+         left column - that way the Product Hierarchy blue
+         viewport aligns its top edge with the Root Product
+         label rather than starting below it. -->
+    <div class={gridClass}>
+      <!-- ── Left column ──────────────────────────────────────
+           Hidden entirely when the picker AND stages list are both
+           hidden (embedded mode + root picked). Skipping the column
+           lets .rps-config take the full canvas width. -->
+      <template lwc:if={isGridLeftVisible}>
+      <div class="rps-grid__left">
+        <!-- ── LOB + LOC scoping pickers ──────────────────────
+             Sit above the Root Product picker on the Initialize
+             stage. Mirror the Comparison Setup wizard's pattern so
+             the broker scopes Line of Business → Line of Coverage
+             before narrowing down to a specific Root Product.
+
+             Hidden when the workspace's pre-builder modal already
+             captured both picks - the seededLob / seededLoc props
+             carry them in. A compact summary chip renders below
+             in that case so the admin still sees the scope. -->
+        <template lwc:if={isRootProductPickerVisible}>
+          <template lwc:if={showWizardPickers}>
+            <div class="rps-scope-grid">
+              <div class="rps-scope-grid__field">
+                <span class="rps-root-product__label">
+                  Line of Business <abbr class="slds-required" title="required">*</abbr>
+                </span>
+                <c-picklist
+                  options={wizardLobOptions}
+                  value={wizardLob}
+                  placeholder="Select Line of Business…"
+                  accessible-label="Line of Business"
+                  onchange={handleWizardLobChange}
+                ></c-picklist>
+              </div>
+              <div class="rps-scope-grid__field">
+                <span class="rps-root-product__label">
+                  Line of Coverage <abbr class="slds-required" title="required">*</abbr>
+                </span>
+                <c-picklist
+                  options={wizardLocOptions}
+                  value={wizardLoc}
+                  placeholder="Select Line of Coverage…"
+                  accessible-label="Line of Coverage"
+                  disabled={isWizardLocDisabled}
+                  onchange={handleWizardLocChange}
+                ></c-picklist>
+              </div>
+            </div>
+          </template>
+          <template lwc:if={hideWizardPickers}>
+            <div class="rps-scope-summary" aria-label="Template scope">
+              <span class="rps-scope-summary__row">
+                <span class="rps-scope-summary__label">Line of Business</span>
+                <span class="rps-scope-summary__value">{seededLobLabel}</span>
+              </span>
+              <span class="rps-scope-summary__sep" aria-hidden="true">·</span>
+              <span class="rps-scope-summary__row">
+                <span class="rps-scope-summary__label">Line of Coverage</span>
+                <span class="rps-scope-summary__value">{seededLocLabel}</span>
+              </span>
+            </div>
+          </template>
+        </template>
+
+        <!-- ── Root Product picker ────────────────────────────
+             Hidden in embedded mode once a Root Product is picked
+             so each stage's config can fill the canvas width. -->
+        <template lwc:if={isRootProductPickerVisible}>
+          <div class={rootProductBannerClass}>
+          <span class="rps-root-product__label">
+            Root Product <abbr class="slds-required" title="required">*</abbr>
+          </span>
+          <div class="rps-root-product__field">
+            <c-picklist
+              options={rootProductOptions}
+              value={rootProduct}
+              placeholder="Choose a Root Product…"
+              accessible-label="Root Product"
+              disabled={isRootProductLocked}
+              onchange={handleRootProductChange}
+            ></c-picklist>
+            <template lwc:if={hasRootProductHint}>
+              <span class="rps-root-product__hint">{rootProductHint}</span>
+            </template>
+          </div>
+        </div>
+        </template>
+
+
+        <!-- ── Canvas (left column, below Root Product) ────
+             Hidden in embedded mode (the workspace renders the same
+             stages as 3rd-level sub-substeps in its side panel and
+             drives the active stage via the `stageId` @api). -->
+        <template lwc:if={isStagesListVisible}>
+        <section class="rps-canvas" aria-label="Stages to configure">
+        <header class="rps-canvas__head">
+          <span class="rps-canvas__eyebrow">{flowLabel}</span>
+          <h4 class="rps-canvas__title">Steps to Configure</h4>
+          <p class="rps-canvas__sub">Pick any step to configure its data requirements. Steps can be edited in any order.</p>
+        </header>
+
+        <ul class="rps-canvas__blocks">
+          <template for:each={canvasBlocks} for:item="b">
+            <li
+              key={b.id}
+              class={b.cls}
+              data-id={b.id}
+              tabindex={b.tabIndex}
+              role="button"
+              aria-pressed={b.isActive}
+              aria-disabled={b.isDisabled}
+              onclick={handleBlockClick}
+              onkeydown={handleBlockKey}
+            >
+              <span class="rps-block__number" aria-hidden="true">{b.number}</span>
+
+              <div class="rps-block__body">
+                <h5 class="rps-block__title">{b.title}</h5>
+                <p class="rps-block__desc">{b.desc}</p>
+              </div>
+
+              <!-- Kebab menu (Edit / Move up / Move down / Delete).
+                   Renders on every tile including mandatory bookends -
+                   the individual actions self-disable via the native
+                   `disabled` attribute so Move / Delete never fires on
+                   a locked stage. Scrim below the list handles
+                   outside-click dismissal. -->
+              <div class="rps-block__menu-anchor" onclick={handleStageMenuAnchorClick}>
+                <button
+                  type="button"
+                  class={b.menuBtnClass}
+                  data-id={b.id}
+                  aria-label={b.menuAriaLabel}
+                  aria-haspopup="menu"
+                  aria-expanded={b.isMenuOpen}
+                  title="More actions"
+                  onclick={handleToggleStageMenu}
+                >
+                  <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                    <path d="M20 44c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z"/>
+                  </svg>
+                </button>
+
+                <template lwc:if={b.isMenuOpen}>
+                  <ul class="rps-block__menu" role="menu" aria-label="Step actions">
+                    <li role="none">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        class="rps-block__menu-item"
+                        data-id={b.id}
+                        disabled={b.editDisabled}
+                        onclick={handleEditStage}
+                      >
+                        <svg class="rps-block__menu-icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                          <path d="M9.5 33.4l8.9 8.9c.4.4 1 .4 1.4 0L42 20c.4-.4.4-1 0-1.4l-8.8-8.8c-.4-.4-1-.4-1.4 0L9.5 32.1c-.4.4-.4 1 0 1.3zM36.1 5.7c-.4.4-.4 1 0 1.4l8.8 8.8c.4.4 1 .4 1.4 0l2.5-2.5c1.6-1.5 1.6-3.9 0-5.5l-4.7-4.7c-1.6-1.6-4.1-1.6-5.7 0l-2.3 2.5zM2.1 48.2c-.2 1 .7 1.9 1.7 1.7l10.9-2.6c.4-.1.7-.3.9-.5l.2-.2c.2-.2.3-.9-.1-1.3l-9-9c-.4-.4-1.1-.3-1.3-.1l-.2.2c-.3.3-.4.6-.5.9L2.1 48.2z"/>
+                        </svg>
+                        Edit
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        class="rps-block__menu-item"
+                        data-id={b.id}
+                        disabled={b.moveUpDisabled}
+                        onclick={handleMoveStageUp}
+                      >
+                        <svg class="rps-block__menu-icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                          <path d="M43.7 30.7L27.5 14.5c-.8-.8-2.2-.8-3 0L8.3 30.7c-.8.8-.8 2.2 0 3l2.1 2.1c.8.8 2.2.8 3 0L26 23.2l12.6 12.6c.8.8 2.2.8 3 0l2.1-2.1c.8-.8.8-2.1 0-3z"/>
+                        </svg>
+                        Move up
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        class="rps-block__menu-item"
+                        data-id={b.id}
+                        disabled={b.moveDownDisabled}
+                        onclick={handleMoveStageDown}
+                      >
+                        <svg class="rps-block__menu-icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                          <path d="M8.3 21.3l16.2 16.2c.8.8 2.2.8 3 0l16.2-16.2c.8-.8.8-2.2 0-3l-2.1-2.1c-.8-.8-2.2-.8-3 0L26 28.8 13.4 16.2c-.8-.8-2.2-.8-3 0l-2.1 2.1c-.8.8-.8 2.2 0 3z"/>
+                        </svg>
+                        Move down
+                      </button>
+                    </li>
+                    <li role="none" class="rps-block__menu-sep" aria-hidden="true"></li>
+                    <li role="none">
+                      <button
+                        type="button"
+                        role="menuitem"
+                        class="rps-block__menu-item rps-block__menu-item_destructive"
+                        data-id={b.id}
+                        disabled={b.deleteDisabled}
+                        onclick={handleRemoveStage}
+                      >
+                        <svg class="rps-block__menu-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path fill="currentColor" d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Delete
+                      </button>
+                    </li>
+                  </ul>
+                </template>
+              </div>
+            </li>
+          </template>
+        </ul>
+
+        <!-- Outside-click dismiss for the per-tile kebab menu. Single
+             scrim serves whichever tile has its menu open. -->
+        <template lwc:if={hasOpenStageMenu}>
+          <div class="rps-block__menu-scrim" onclick={handleCloseStageMenu}></div>
+        </template>
+
+        <!-- ── "+ Add Widget" trigger + floating picker ──────
+             Lives below the canvas tiles. Only renders when the
+             admin has picked a Root Product AND at least one
+             widget remains in the catalog (single-instance only).
+             When the catalog is fully placed the trigger renders in
+             its disabled state - that visual is the only signal we
+             need; no chrome banner restates it. -->
+        <template lwc:if={isAddWidgetTriggerVisible}>
+          <div class="rps-add-widget-wrap">
+            <button
+              type="button"
+              class={addWidgetTriggerClass}
+              aria-haspopup="menu"
+              aria-expanded={isAddWidgetOpen}
+              aria-disabled={isAddWidgetDisabled}
+              title={addWidgetTriggerTitle}
+              onclick={handleToggleAddWidget}
+            >
+              <span class="rps-add-widget__plus" aria-hidden="true">
+                <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M30 29h16.5c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5H30c-.6 0-1-.4-1-1V5.5c0-.8-.7-1.5-1.5-1.5h-3c-.8 0-1.5.7-1.5 1.5V22c0 .6-.4 1-1 1H5.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5H22c.6 0 1 .4 1 1v16.5c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V30c0-.6.4-1 1-1z"/></svg>
+              </span>
+              <span class="rps-add-widget__label">Add Widget</span>
+            </button>
+
+            <template lwc:if={isAddWidgetOpen}>
+              <div class="rps-add-widget__scrim" onclick={handleCloseAddWidget}></div>
+              <ul class="rps-add-widget__menu" role="menu" aria-label="Available widgets">
+                <template for:each={availableWidgets} for:item="w">
+                  <li key={w.id} role="presentation">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      class="rps-add-widget__item"
+                      data-id={w.id}
+                      onclick={handleAddWidget}
+                    >
+                      <span class="rps-add-widget__item-icon" aria-hidden="true">
+                        <template lwc:if={w.isGroups}>
+                          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        </template>
+                        <template lwc:if={w.isForm}>
+                          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V5h14v14zM7 8h10v2H7zm0 4h10v2H7zm0 4h7v2H7z"/></svg>
+                        </template>
+                        <template lwc:if={w.isSlider}>
+                          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                            <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7h12M20 7h0M4 12h6M14 12h6M4 17h14M20 17h0"/>
+                            <circle cx="18" cy="7" r="2.2" fill="currentColor"/>
+                            <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
+                            <circle cx="18" cy="17" r="2.2" fill="currentColor"/>
+                          </svg>
+                        </template>
+                        <template lwc:if={w.isSearch}>
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M49.62 45.27L36.22 32a18.9 18.9 0 10-34.1-9.2A18.91 18.91 0 0032 36.27l13.3 13.3a1.45 1.45 0 002.1 0l2.1-2.1a1.68 1.68 0 00.12-2.2zm-28.7-11.5a12.9 12.9 0 1112.9-12.9 12.87 12.87 0 01-12.9 12.9z"  fill-rule="evenodd"/></svg>
+                        </template>
+                        <template lwc:if={w.isGuide}>
+                          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                            <path fill="currentColor" d="M5 4h6v6H5zm0 10h6v6H5zm10-10h4v6h-4zm0 10h4v6h-4z"/>
+                            <path fill="currentColor" d="M11 6h2v2h-2zm0 10h2v2h-2zm-1-5h6v2h-6z"/>
+                          </svg>
+                        </template>
+                        <template lwc:if={w.isLocation}>
+                          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>
+                        </template>
+                        <template lwc:if={w.isTable}>
+                          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M3 5h18v3H3zm0 5h6v9H3zm8 0h10v3H11zm0 5h10v4H11z"/></svg>
+                        </template>
+                      </span>
+                      <span class="rps-add-widget__item-body">
+                        <span class="rps-add-widget__item-title">{w.title}</span>
+                        <span class="rps-add-widget__item-desc">{w.desc}</span>
+                      </span>
+                    </button>
+                  </li>
+                </template>
+              </ul>
+            </template>
+          </div>
+        </template>
+        </section>
+        </template>
+      </div>
+      </template>
+
+      <!-- ── Config panel (right column, full-height) ─────── -->
+      <!--
+        Layering: the hierarchy mind-map auto-mounts as the default
+        view the moment a Root Product is picked. Clicking any stage
+        tile swaps in that stage's contextual variant; removing or
+        deselecting it restores this default. The empty state only
+        shows while no Root Product is picked yet.
+      -->
+      <section class="rps-config" aria-label="Stage configuration panel">
+        <template lwc:if={showHierarchyDefault}>
+            <header class="rps-config__head">
+            <template lwc:if={showStageTitle}>
+              <h4 class="rps-config__title">Product Hierarchy</h4>
+            </template>
+            <p class="rps-config__sub">
+              Read-only visualization of the product structure for {flowLabel}.
+            </p>
+          </header>
+
+          <div class={canvasClass} onmousedown={handlePanStart}>
+            <div class="rps-tree" style={treeTransformStyle} aria-label="Product hierarchy">
+              <!-- L0: Bundle (root) -->
+              <div class={hierarchyRoot.groupClass}>
+                <div class={hierarchyRoot.nodeClass}>
+                  <span class={hierarchyRoot.iconClass} aria-hidden="true">
+                    <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M46.5 14h-41c-.8 0-1.5-.7-1.5-1.5v-3C4 8.7 4.7 8 5.5 8h41c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5zM46.5 28.9h-41c-.8 0-1.5-.7-1.5-1.5v-3c0-.7.7-1.4 1.5-1.4h41c.8 0 1.5.7 1.5 1.5v3c0 .7-.7 1.4-1.5 1.4zM46.5 44h-41c-.8 0-1.5-.7-1.5-1.5v-3c0-.8.7-1.5 1.5-1.5h41c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5z"/></svg>
+                  </span>
+                  <span class="rps-tree__label">{hierarchyRoot.label}</span>
+                  <span class={hierarchyRoot.kindChipClass}>{hierarchyRoot.kindLabel}</span>
+                </div>
+
+                <template lwc:if={hierarchyHasChildren}>
+                  <div class="rps-tree__children">
+                    <!-- L1: Classifications -->
+                    <template for:each={hierarchyLvl1} for:item="c1">
+                      <div class={c1.groupClass} key={c1.id}>
+                        <div class={c1.nodeClass}>
+                          <span class={c1.iconClass} aria-hidden="true">
+                            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M46.5 14h-41c-.8 0-1.5-.7-1.5-1.5v-3C4 8.7 4.7 8 5.5 8h41c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5zM46.5 28.9h-41c-.8 0-1.5-.7-1.5-1.5v-3c0-.7.7-1.4 1.5-1.4h41c.8 0 1.5.7 1.5 1.5v3c0 .7-.7 1.4-1.5 1.4zM46.5 44h-41c-.8 0-1.5-.7-1.5-1.5v-3c0-.8.7-1.5 1.5-1.5h41c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5z"/></svg>
+                          </span>
+                          <span class="rps-tree__label">{c1.label}</span>
+                          <span class={c1.kindChipClass}>{c1.kindLabel}</span>
+                        </div>
+
+                        <template lwc:if={c1.hasChildren}>
+                          <div class="rps-tree__children">
+                            <!-- L2: Products / Coverages -->
+                            <template for:each={c1.children} for:item="c2">
+                              <div class={c2.groupClass} key={c2.id}>
+                                <div class={c2.nodeClass}>
+                                  <span class={c2.iconClass} aria-hidden="true">
+                                    <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M46.5 14h-41c-.8 0-1.5-.7-1.5-1.5v-3C4 8.7 4.7 8 5.5 8h41c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5zM46.5 28.9h-41c-.8 0-1.5-.7-1.5-1.5v-3c0-.7.7-1.4 1.5-1.4h41c.8 0 1.5.7 1.5 1.5v3c0 .7-.7 1.4-1.5 1.4zM46.5 44h-41c-.8 0-1.5-.7-1.5-1.5v-3c0-.8.7-1.5 1.5-1.5h41c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5z"/></svg>
+                                  </span>
+                                  <span class="rps-tree__label">{c2.label}</span>
+                                  <span class={c2.kindChipClass}>{c2.kindLabel}</span>
+                                </div>
+
+                                <template lwc:if={c2.hasChildren}>
+                                  <div class="rps-tree__children">
+                                    <!-- L3: Coverages -->
+                                    <template for:each={c2.children} for:item="c3">
+                                      <div class={c3.groupClass} key={c3.id}>
+                                        <div class={c3.nodeClass}>
+                                          <span class={c3.iconClass} aria-hidden="true">
+                                            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M46.5 14h-41c-.8 0-1.5-.7-1.5-1.5v-3C4 8.7 4.7 8 5.5 8h41c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5zM46.5 28.9h-41c-.8 0-1.5-.7-1.5-1.5v-3c0-.7.7-1.4 1.5-1.4h41c.8 0 1.5.7 1.5 1.5v3c0 .7-.7 1.4-1.5 1.4zM46.5 44h-41c-.8 0-1.5-.7-1.5-1.5v-3c0-.8.7-1.5 1.5-1.5h41c.8 0 1.5.7 1.5 1.5v3c0 .8-.7 1.5-1.5 1.5z"/></svg>
+                                          </span>
+                                          <span class="rps-tree__label">{c3.label}</span>
+                                          <span class={c3.kindChipClass}>{c3.kindLabel}</span>
+                                        </div>
+                                      </div>
+                                    </template>
+                                  </div>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Floating zoom + pan toolbar (bottom-right of viewport) -->
+            <div class="rps-tree-toolbar" role="toolbar" aria-label="Viewport controls">
+              <button
+                type="button"
+                class="rps-tree-toolbar__btn"
+                onclick={handleZoomOut}
+                disabled={isZoomOutDisabled}
+                aria-label="Zoom out"
+                title="Zoom out"
+              >
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path fill="currentColor" d="M5 11h14v2H5z"/>
+                </svg>
+              </button>
+              <span class="rps-tree-toolbar__pct" aria-live="polite">{zoomPercent}</span>
+              <button
+                type="button"
+                class="rps-tree-toolbar__btn"
+                onclick={handleZoomIn}
+                disabled={isZoomInDisabled}
+                aria-label="Zoom in"
+                title="Zoom in"
+              >
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path fill="currentColor" d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/>
+                </svg>
+              </button>
+              <span class="rps-tree-toolbar__divider" aria-hidden="true"></span>
+              <button
+                type="button"
+                class="rps-tree-toolbar__btn"
+                onclick={handleResetView}
+                aria-label="Reset view"
+                title="Reset view (100%, centered)"
+              >
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path fill="currentColor" d="M12 5V2L8 6l4 4V7c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 13c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 8.74A7.93 7.93 0 0 0 4 13c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </template>
+
+        <template lwc:if={hasActiveComponent}>
+
+          <!-- EB Plan Coverages widget - replaces the generic checklist
+               with a Root-Product-keyed tabset + per-attribute Include
+               toggles for the EB Health blueprint. -->
+          <template lwc:if={isActiveEbPlanCoverages}>
+            <header class="rps-config__head">
+              <template lwc:if={showStageTitle}>
+                <h4 class="rps-config__title">{configSubheading}</h4>
+              </template>
+              <p class="rps-config__sub">{configHelperCopy}</p>
+            </header>
+            <c-eb-coverage-setup
+              selected-root-ids={ebSelectedRootIds}
+            ></c-eb-coverage-setup>
+          </template>
+
+          <!-- EB Plan Benefits widget - same idea but tabs are Benefit
+               Categories filtered by the active root products. -->
+          <template lwc:if={isActiveEbPlanBenefits}>
+            <header class="rps-config__head">
+              <template lwc:if={showStageTitle}>
+                <h4 class="rps-config__title">{configSubheading}</h4>
+              </template>
+              <p class="rps-config__sub">{configHelperCopy}</p>
+            </header>
+            <c-eb-benefit-setup
+              selected-root-ids={ebSelectedRootIds}
+            ></c-eb-benefit-setup>
+          </template>
+
+          <!-- Variant B: SF-object sections (Stages 2 & 3) -->
+          <template lwc:if={showStandardSections}>
+            <header class="rps-config__head">
+              <template lwc:if={showStageTitle}>
+                <h4 class="rps-config__title">{configSubheading}</h4>
+              </template>
+              <p class="rps-config__sub">{configHelperCopy}</p>
+            </header>
+
+            <!-- ── Tabset (one tab per SF object on this stage) ──
+                 Inactive tabs truncate; the active tab sizes to its
+                 label. A trailing "+ Add ⌄" menu houses tab-scope
+                 add actions (currently "Add Custom Object"). -->
+            <ul class="rps-tabs" role="tablist" aria-label="Object groups for this stage">
+              <template for:each={visibleTabs} for:item="t">
+                <li class={t.liCls} role="presentation" key={t.id}>
+                  <button
+                    type="button"
+                    role="tab"
+                    class={t.cls}
+                    aria-selected={t.isActive}
+                    aria-controls="rps-tabpanel"
+                    data-id={t.id}
+                    title={t.label}
+                    onclick={handleTabSelect}
+                  >
+                    <span class="rps-tab__label">{t.label}</span>
+                    <template lwc:if={t.isCustom}>
+                      <span
+                        class="rps-tab__remove"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Remove custom object tab"
+                        title="Remove tab"
+                        data-stage={activeComponentId}
+                        data-section={t.id}
+                        onclick={handleRemoveCustomSection}
+                      >
+                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+                      </span>
+                    </template>
+                  </button>
+                </li>
+              </template>
+
+              <!-- "More ⌄" overflow trigger - only renders when there
+                   are tabs that don't fit in the strip. Replaces the
+                   former "+ Add" trigger; the "Add Custom Object"
+                   modal flow stays available via other entry points. -->
+              <template lwc:if={hasOverflowTabs}>
+                <li class="rps-tabs__more-li" role="presentation">
+                  <button
+                    type="button"
+                    class={moreTabsBtnCls}
+                    aria-haspopup="menu"
+                    aria-expanded={moreTabsAriaExpanded}
+                    aria-label="More tabs"
+                    title="More"
+                    onclick={handleMoreTabsToggle}
+                  >
+                    <span class="rps-tabs__more-label">More</span>
+                    <svg class="rps-tabs__more-chev" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                      <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+                    </svg>
+                  </button>
+
+                  <template lwc:if={isMoreTabsOpen}>
+                    <div class="rps-tabs__more-wrap">
+                      <div class="rps-tabs__more-scrim" onclick={handleMoreTabsScrim}></div>
+                      <ul class="rps-tabs__more-menu" role="menu" aria-label="Overflow tabs">
+                        <template for:each={moreTabsMenuItems} for:item="m">
+                          <li key={m.id} role="presentation">
+                            <button
+                              type="button"
+                              role="menuitem"
+                              class={m.cls}
+                              data-id={m.id}
+                              onclick={handleMoreTabSelect}
+                            >
+                              <span class="rps-tabs__more-item-label">{m.label}</span>
+                            </button>
+                          </li>
+                        </template>
+                      </ul>
+                    </div>
+                  </template>
+                </li>
+              </template>
+            </ul>
+
+            <!-- Tab panel - flat checklist for standard sections,
+                 collapsible accordion stack for sections that declare
+                 renderMode:'instances' (today: Vehicle Coverages,
+                 Driver Coverages). The accordion path replicates the
+                 same shared checklist N times so the admin can visually
+                 confirm "this set of fields applies once per vehicle
+                 / driver at runtime", with an Apply-to-All button that
+                 activates every attribute in the section in one click. -->
+            <div id="rps-tabpanel" class="rps-tabpanel" role="tabpanel">
+
+              <!-- ── Instance-mode (accordion) branch ───────── -->
+              <template lwc:if={isActiveSectionInstanceMode}>
+                <ul class="rps-accordion-list">
+                  <template for:each={activeTabInstanceSlots} for:item="slot">
+                    <li key={slot.slotKey} class={slot.cls}>
+                      <button
+                        type="button"
+                        class="rps-accordion__header"
+                        data-stage={slot.stageData}
+                        data-section={slot.sectionData}
+                        data-slot={slot.slotData}
+                        onclick={handleToggleAccordion}
+                        aria-expanded={slot.isOpen}
+                      >
+                        <svg
+                          class={slot.chevronCls}
+                         viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M17.9 4.4l20.7 20.5c.6.6.6 1.6 0 2.2L17.9 47.6c-.6.6-1.6.6-2.2 0l-2.2-2.2c-.6-.6-.6-1.6 0-2.2l16.3-16.1c.6-.6.6-1.6 0-2.2L13.6 8.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.5 1.5-.5 2.1 0z"/></svg>
+                        <span class="rps-accordion__label">{slot.label}</span>
+                      </button>
+
+                      <template lwc:if={slot.isOpen}>
+                        <div class="rps-accordion__body">
+                          <c-attribute-picker
+                            attributes={activeTabPickerAttributes}
+                            selected-ids={activeTabPickerSelectedIds}
+                            onattrtoggle={handleAttrPickerToggle}
+                            onselectallchange={handleAttrPickerSelectAll}
+                          ></c-attribute-picker>
+
+                          <!-- Apply-to-All lives at the foot of the
+                               first instance only - configure slot #1,
+                               then propagate to every other slot. -->
+                          <template lwc:if={slot.isFirstSlot}>
+                            <div class="rps-accordion__footer">
+                              <button
+                                type="button"
+                                class="rps-apply-all"
+                                onclick={handleApplyToAll}
+                                disabled={applyToAllDisabled}
+                                title="Select at least one coverage to apply it across all instances"
+                              >
+                                <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+                                Apply to All
+                              </button>
+                            </div>
+                          </template>
+                        </div>
+                      </template>
+                    </li>
+                  </template>
+                </ul>
+              </template>
+
+              <!-- ── Flat-checklist branch (default) ────────── -->
+              <template lwc:else>
+                <template lwc:if={activeTabIsEmpty}>
+                  <p class="rps-attr-empty" role="status">
+                    No PCM fields ship on this object for the current
+                    blueprint.
+                  </p>
+                </template>
+                <template lwc:if={activeTabHasAttrs}>
+                  <c-attribute-picker
+                    attributes={activeTabPickerAttributes}
+                    selected-ids={activeTabPickerSelectedIds}
+                    onattrtoggle={handleAttrPickerToggle}
+                    onselectallchange={handleAttrPickerSelectAll}
+                  ></c-attribute-picker>
+                </template>
+              </template>
+            </div>
+
+          </template>
+
+          <!-- ── Object Manager modal (custom-object picker) ──── -->
+          <template lwc:if={isAddObjectModalOpen}>
+            <div class="rps-modal" role="presentation">
+              <div class="rps-modal__backdrop" onclick={handleCloseAddObjectModal}></div>
+              <section class="rps-modal__container" role="dialog" aria-modal="true" aria-labelledby="rps-modal-obj-title">
+                <header class="rps-modal__head">
+                  <h3 id="rps-modal-obj-title" class="rps-modal__title">Add Custom Object</h3>
+                  <p class="rps-modal__sub">Pulled from Salesforce Object Manager. Pick an object to add as a new tab on this stage.</p>
+                  <button
+                    type="button"
+                    class="rps-modal__close"
+                    onclick={handleCloseAddObjectModal}
+                    aria-label="Close"
+                    title="Close"
+                  >
+                    <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+                  </button>
+                </header>
+                <ul class="rps-obj-list" role="listbox" aria-label="Salesforce objects">
+                  <template for:each={availableSfObjects} for:item="o">
+                    <li key={o.apiName} role="presentation">
+                      <button
+                        type="button"
+                        role="option"
+                        class="rps-obj-row"
+                        data-api={o.apiName}
+                        onclick={handleAddCustomObject}
+                      >
+                        <span class="rps-obj-row__mark" aria-hidden="true">{o.initial}</span>
+                        <span class="rps-obj-row__meta">
+                          <span class="rps-obj-row__label">{o.label}</span>
+                          <span class="rps-obj-row__api">{o.apiName}</span>
+                        </span>
+                        <span class={o.badgeClass}>{o.badgeLabel}</span>
+                      </button>
+                    </li>
+                  </template>
+                </ul>
+              </section>
+            </div>
+          </template>
+
+          <!-- Variant D: Quote Comparison - link an independent
+               comparison template to this RFQ flow. Optional stage; the
+               admin can remove it from the canvas if not needed. -->
+          <template lwc:if={isActiveQuoteComparison}>
+            <header class="rps-config__head">
+              <template lwc:if={showStageTitle}>
+                <h4 class="rps-config__title">Presentation &amp; Comparison Settings</h4>
+              </template>
+              <p class="rps-config__sub">
+                Pick a side-by-side comparison template to wire into this
+                RFQ flow. The selected layout is rendered at quote
+                presentation time so brokers can compare carriers using a
+                consistent grid.
+              </p>
+            </header>
+
+            <template lwc:if={isLinkedComparisonOrphaned}>
+              <div class="rps-banner rps-banner_warning" role="alert">
+                <span class="rps-banner__icon" aria-hidden="true">
+                  <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M51.4 42.5l-22.9-37c-1.2-2-3.8-2-5 0L.6 42.5C-.8 44.8.6 48 3.1 48h45.8c2.5 0 4-3.2 2.5-5.5zM26 40c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3zm3-9c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1V18c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v13z"/></svg>
+                </span>
+                <span class="rps-banner__copy">
+                  <strong>Linked template no longer available.</strong>
+                  The previously linked comparison template isn&apos;t
+                  published for this Line of Business + Coverage anymore.
+                  Pick a new one below to keep the broker comparison view
+                  working.
+                </span>
+              </div>
+            </template>
+
+            <div class="rps-compare-card">
+              <div class="rps-compare-field">
+                <span class="rps-compare-field__label">
+                  Linked Comparison Template
+                </span>
+                <template lwc:if={hasComparisonTemplateOptions}>
+                  <c-picklist
+                    options={comparisonTemplateOptions}
+                    value={linkedComparisonTemplate}
+                    placeholder="Choose a comparison template…"
+                    accessible-label="Linked Comparison Template"
+                    onchange={handleLinkedComparisonChange}
+                  ></c-picklist>
+                  <template lwc:if={linkedComparisonTemplateLabel}>
+                    <span class="rps-compare-field__hint">
+                      Linked to <strong>{linkedComparisonTemplateLabel}</strong>.
+                      Update or replace any time from Quote Comparison Setup.
+                    </span>
+                  </template>
+                </template>
+                <template lwc:else>
+                  <p class="rps-compare-field__empty" role="status">
+                    No comparison templates published for this Line of
+                    Business + Coverage yet. Create one in
+                    <strong>Quote Comparison Setup</strong> and it will
+                    appear here.
+                  </p>
+                </template>
+              </div>
+            </div>
+
+            <!-- Linked template preview - lo-fi schematic so the admin
+                 can sanity-check what brokers will see without leaving
+                 the RFQ flow. All data sourced from the shared
+                 data/comparisonTemplates store. -->
+            <template lwc:if={hasLinkedTemplate}>
+              <aside class="rps-compare-preview" aria-label="Linked template preview">
+                <header class="rps-compare-preview__head">
+                  <h5 class="rps-compare-preview__title">Comparison Preview</h5>
+                  <p class="rps-compare-preview__sub">
+                    Lo-fi layout of the linked template. Highlights are
+                    pinned summary widgets; body fields render as the
+                    scrollable comparison rows.
+                  </p>
+                </header>
+
+                <section class="rps-compare-preview__region rps-compare-preview__region_highlights">
+                  <span class="rps-compare-preview__region-label">Highlights</span>
+                  <ul class="rps-compare-preview__hl-row" role="list">
+                    <template for:each={linkedPreviewHighlights} for:item="hl">
+                      <li key={hl.slotIdx} class={hl.cls}>
+                        <template lwc:if={hl.label}>
+                          <span class="rps-compare-preview__hl-label">{hl.label}</span>
+                        </template>
+                      </li>
+                    </template>
+                  </ul>
+                </section>
+
+                <section class="rps-compare-preview__region rps-compare-preview__region_body">
+                  <span class="rps-compare-preview__region-label">Body Fields</span>
+                  <template lwc:if={linkedPreviewBodyEmpty}>
+                    <p class="rps-compare-preview__empty" role="status">
+                      No body fields selected on this template yet. Add
+                      metrics in <strong>Comparison Setup</strong> to
+                      populate the comparison rows.
+                    </p>
+                  </template>
+                  <template lwc:else>
+                    <ul class="rps-compare-preview__body" role="list">
+                      <template for:each={linkedPreviewBodyFields} for:item="field">
+                        <li key={field.id} class={field.cls}>
+                          <span class="rps-compare-preview__row-label">{field.label}</span>
+                          <span class="rps-compare-preview__row-bar" aria-hidden="true"></span>
+                        </li>
+                      </template>
+                    </ul>
+                  </template>
+                </section>
+              </aside>
+            </template>
+          </template>
+
+          <!-- Variant C: Stage 4 review/integration toggles -->
+          <template lwc:if={isActiveReview}>
+            <header class="rps-config__head">
+              <template lwc:if={showStageTitle}>
+                <h4 class="rps-config__title">Stage 4 Integrations</h4>
+              </template>
+              <p class="rps-config__sub">
+                Wire publishing integrations and post-bind broker hand-offs for this RFQ template.
+              </p>
+            </header>
+
+            <ul class="rps-integration-list">
+              <li class="rps-integration">
+                <div class="rps-integration__row">
+                  <label class="rps-integration__main">
+                    <input
+                      type="checkbox"
+                      checked={isAgentforceOn}
+                      onchange={handleAgentforceToggle}
+                    />
+                    <div class="rps-integration__body">
+                      <span class="rps-integration__heading">
+                        <span class="rps-integration__icon rps-integration__icon_agentforce" aria-hidden="true">
+                          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                            <path fill="currentColor" d="M14.5335 12.747H14.5427C14.1643 12.7793 13.8274 12.8439 13.5366 12.9362C13.5366 12.9362 13.112 13.07 12.4612 13.1624C12.3089 13.1854 12.115 13.1854 12.0089 13.1854H11.9304C11.8243 13.1854 11.6258 13.1762 11.4781 13.1531C10.8274 13.047 10.4074 12.8993 10.4074 12.8993C10.1166 12.807 9.77966 12.7377 9.4012 12.6962C7.32889 12.4839 6.43351 13.2731 6.38274 13.4208C6.33197 13.5685 6.55812 15.4885 6.72428 15.7931C6.88582 16.0931 7.13505 16.2685 7.3612 16.3654C7.59197 16.4624 9.48889 16.6516 10.1212 16.5639C10.7535 16.4762 10.8504 16.2639 11.0212 15.9408C11.1412 15.71 11.4504 14.667 11.6212 14.0531C11.6627 13.9331 11.6674 13.6931 11.9581 13.6747C12.2489 13.6977 12.2535 13.9424 12.2904 14.0624C12.4566 14.6762 12.7474 15.7285 12.8627 15.9593C13.0243 16.287 13.1212 16.4993 13.7535 16.6008C14.3812 16.6977 16.2827 16.5454 16.5135 16.4531C16.7443 16.3608 16.9935 16.19 17.1597 15.89C17.3258 15.59 17.5843 13.6747 17.5381 13.527C17.492 13.3747 16.6104 12.5716 14.5335 12.747Z"/>
+                            <path fill="currentColor" d="M21.0089 6.71466H21.0135C20.4366 5.98082 19.7535 5.33005 18.9966 4.77159C19.7812 4.63313 20.3766 3.95005 20.3766 3.12851C20.3766 2.20543 19.6289 1.45312 18.7012 1.45312C17.7735 1.45312 17.0258 2.20082 17.0258 3.12851C17.0258 3.31313 17.0627 3.48851 17.1181 3.65466C15.9274 3.09159 14.6258 2.72236 13.2643 2.57928C10.9843 2.33928 8.78274 2.74543 6.88582 3.64082C6.93658 3.47928 6.97351 3.30851 6.97351 3.12851C6.97351 2.20543 6.22582 1.45312 5.29812 1.45312C4.37043 1.45312 3.62274 2.20082 3.62274 3.12851C3.62274 3.95005 4.21351 4.62851 4.98889 4.77159C2.83812 6.35928 1.33812 8.67159 0.996585 11.3531C0.678124 13.8316 1.38428 16.3147 2.99043 18.3454C4.80889 20.6439 7.63351 22.1531 10.735 22.4808C11.1689 22.527 11.5981 22.55 12.0227 22.55C17.5566 22.55 22.3474 18.7931 23.0027 13.707C23.3212 11.2285 22.615 8.74543 21.0089 6.71466ZM12.0089 19.6885H12.0043C7.8412 19.6839 4.45351 16.9054 4.45351 13.49C4.45351 12.4608 4.76735 11.4731 5.33505 10.5962C5.38582 10.91 5.47812 11.1824 5.57966 11.3854C5.71812 11.6624 5.99505 11.8239 6.28582 11.8239C6.4012 11.8239 6.5212 11.8008 6.63197 11.7454C7.02428 11.5562 7.18582 11.0854 7.00582 10.6931C6.90889 10.4854 6.65966 9.79774 7.26428 9.27159C7.85043 9.80236 8.69043 10.4254 9.63658 10.73C11.3997 11.2885 12.7335 10.9608 12.7889 10.947C13.0566 10.8777 13.2643 10.6793 13.3474 10.4162C13.4304 10.1531 13.3704 9.86697 13.1904 9.6639C12.2997 8.63928 11.875 7.89159 11.6904 7.43928C15.2997 7.92851 15.992 10.8039 16.0197 10.9331C16.0981 11.3024 16.4258 11.5562 16.7904 11.5562C16.8458 11.5562 16.8966 11.5516 16.952 11.5377C17.3812 11.45 17.6535 11.03 17.5658 10.6008C17.455 10.0654 17.1643 9.34082 16.6474 8.6162C18.415 9.75159 19.5597 11.5147 19.5597 13.4947C19.5597 16.9101 16.172 19.6885 12.0089 19.6885Z"/>
+                          </svg>
+                        </span>
+                        <span class="rps-integration__title">Enable Agentforce Quote Summary</span>
+                      </span>
+                    </div>
+                  </label>
+                  <button
+                    type="button"
+                    class="rps-integration__link"
+                    onclick={handleGoToAgentforceBuilder}
+                  >
+                    Go to Agentforce Builder
+                    <svg class="rps-integration__link-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                </div>
+                <p class="rps-integration__desc">
+                  Generate a natural-language quote summary the broker can present to the client at hand-off.
+                </p>
+              </li>
+
+              <li class="rps-integration">
+                <div class="rps-integration__row">
+                  <label class="rps-integration__main">
+                    <input
+                      type="checkbox"
+                      checked={isSlackOn}
+                      onchange={handleSlackToggle}
+                    />
+                    <div class="rps-integration__body">
+                      <span class="rps-integration__heading">
+                        <span class="rps-integration__icon rps-integration__icon_slack" aria-hidden="true">
+                          <svg aria-hidden="true" viewBox="0 0 48 48" focusable="false">
+                            <path fill="#E01E5A" d="M10.0847 30.3321C10.0847 33.1074 7.81759 35.3745 5.04235 35.3745C2.2671 35.3745 0 33.1074 0 30.3321C0 27.5569 2.2671 25.2898 5.04235 25.2898H10.0847V30.3321Z"/>
+                            <path fill="#E01E5A" d="M12.6254 30.3319C12.6254 27.5567 14.8925 25.2896 17.6677 25.2896C20.443 25.2896 22.7101 27.5567 22.7101 30.3319V42.9573C22.7101 45.7326 20.443 47.9997 17.6677 47.9997C14.8925 47.9997 12.6254 45.7326 12.6254 42.9573V30.3319Z"/>
+                            <path fill="#36C5F0" d="M17.6677 10.0847C14.8925 10.0847 12.6254 7.81759 12.6254 5.04235C12.6254 2.2671 14.8925 0 17.6677 0C20.443 0 22.7101 2.2671 22.7101 5.04235V10.0847H17.6677Z"/>
+                            <path fill="#36C5F0" d="M17.6678 12.6253C20.443 12.6253 22.7101 14.8924 22.7101 17.6677C22.7101 20.4429 20.443 22.71 17.6678 22.71H5.04235C2.2671 22.71 0 20.4429 0 17.6677C0 14.8924 2.2671 12.6253 5.04235 12.6253H17.6678Z"/>
+                            <path fill="#2EB67D" d="M37.9154 17.6677C37.9154 14.8924 40.1825 12.6253 42.9577 12.6253C45.733 12.6253 48.0001 14.8924 48.0001 17.6677C48.0001 20.4429 45.733 22.71 42.9577 22.71H37.9154V17.6677Z"/>
+                            <path fill="#2EB67D" d="M35.3746 17.6678C35.3746 20.443 33.1075 22.7101 30.3322 22.7101C27.557 22.7101 25.2899 20.443 25.2899 17.6678V5.04235C25.2899 2.2671 27.557 0 30.3322 0C33.1075 0 35.3746 2.2671 35.3746 5.04235V17.6678Z"/>
+                            <path fill="#ECB22E" d="M30.3323 37.9154C33.1075 37.9154 35.3746 40.1825 35.3746 42.9578C35.3746 45.733 33.1075 48.0001 30.3323 48.0001C27.557 48.0001 25.2899 45.733 25.2899 42.9578V37.9154H30.3323Z"/>
+                            <path fill="#ECB22E" d="M30.3322 35.3748C27.557 35.3748 25.2899 33.1077 25.2899 30.3324C25.2899 27.5572 27.557 25.2901 30.3322 25.2901H42.9576C45.7329 25.2901 48 27.5572 48 30.3324C48 33.1077 45.7329 35.3748 42.9576 35.3748H30.3322Z"/>
+                          </svg>
+                        </span>
+                        <span class="rps-integration__title">Enable Slack Integration</span>
+                      </span>
+                    </div>
+                  </label>
+                  <button
+                    type="button"
+                    class="rps-integration__link"
+                    onclick={handleGoToSlackConfig}
+                  >
+                    Go to Integrations
+                    <svg class="rps-integration__link-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                </div>
+                <p class="rps-integration__desc">
+                  Post bind events and broker hand-offs into a Slack channel scoped to the chosen Salesforce object.
+                </p>
+
+                <template lwc:if={isSlackOn}>
+                  <div class="rps-integration__detail">
+                    <div class="rps-integration__field">
+                      <span class="rps-integration__field-label">Slack Channel Scope</span>
+                      <c-picklist
+                        options={slackChannelOptions}
+                        value={reviewConfig.slackChannel}
+                        placeholder="Select a channel scope…"
+                        accessible-label="Slack channel scope"
+                        onchange={handleSlackChannelChange}
+                      ></c-picklist>
+                    </div>
+                  </div>
+                </template>
+              </li>
+            </ul>
+          </template>
+
+        </template>
+
+        <!-- Empty state - only surfaces while no Root Product is
+             picked yet, so the right panel always has either the
+             default hierarchy view or an active stage's variant.
+             Uses shared SLDS 2 Empty State (Cosmos success:new). -->
+        <template lwc:if={showRightPanelEmpty}>
+          <div class="rps-config__empty">
+            <c-empty-state
+              illustration-name="success:new"
+              title="Pick a Root Product"
+              size="medium"
+            >
+              Choose a Root Product above to load the product hierarchy
+              and unlock the steps.
+            </c-empty-state>
+          </div>
+        </template>
+      </section>
+    </div>
+  </template>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       No flow: SLDS 2 Empty State (nothing yet / how to proceed).
+       ─────────────────────────────────────────────────────────── -->
+  <template lwc:else>
+    <div class="rps-empty-flow">
+      <c-empty-state
+        illustration-name="success:new"
+        title="No flow defined"
+        size="medium"
+      >
+        {noFlowMessage}
+      </c-empty-state>
+    </div>
+  </template>
+</template>

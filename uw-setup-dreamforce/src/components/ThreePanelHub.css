@@ -1,0 +1,580 @@
+/* ThreePanelHub — Category > Subcategory > Editor.
+ *
+ * Two visual modes:
+ *   • Landing — horizontal row of large preview cards, shown when no
+ *     category is focused. Click a card to enter working mode.
+ *   • Working — 1/2/3 column layout with categories on the left, sections
+ *     in the middle, and the editor on the right.
+ *
+ * Both modes share a fade + slide entrance animation so swapping between
+ * them feels continuous instead of abrupt.
+ */
+
+/* Push transition between landing and working modes. On open, both views
+ * travel upward (landing exits up, working enters from below = "push up").
+ * On close, both views travel downward (working exits down, landing enters
+ * from above = "push down") so the close visibly reverses the open.
+ * Keep durations in sync with PUSH_MS in ThreePanelHub.tsx. */
+@keyframes tph-push-up-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-16px); }
+}
+@keyframes tph-push-up-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes tph-push-down-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(16px); }
+}
+@keyframes tph-push-down-in {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Landing mode ──────────────────────────────────────────────── */
+.tph-landing {
+  width: 100%;
+}
+/* Initial mount of landing (page load): subtle rise. */
+.tph-landing--enter {
+  animation: tph-push-up-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+/* Re-mounting landing after closing the working view: drop in from above
+ * so the close visibly reverses the open. */
+.tph-landing--enter-down {
+  animation: tph-push-down-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+/* Leaving landing because user clicked a card: slide up and out. */
+.tph-landing--leaving {
+  animation: tph-push-up-out 280ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+.tph-landing__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--slds-g-spacing-4);
+  align-items: stretch;
+}
+.tph-card-large {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  padding: var(--slds-g-spacing-4);
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+.tph-card-large__actions {
+  position: absolute;
+  top: var(--slds-g-spacing-2);
+  right: var(--slds-g-spacing-2);
+  z-index: 2;
+}
+.tph-card-large:hover {
+  transform: translateY(-1px);
+}
+.tph-card-large:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+}
+.tph-card-large__preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  background: var(--slds-g-color-surface-container-2);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+}
+.tph-card-large__preview-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  /* Blend with the preview surface — only the icon glyph reads. */
+  background: transparent;
+  color: var(--slds-g-color-brand-base-30);
+}
+.tph-card-large__preview-icon svg {
+  width: 56px;
+  height: 56px;
+}
+/* "+" tile variant — dashed outer border, muted preview, plus glyph. */
+.tph-card-large--add {
+  border-style: dashed;
+  border-color: var(--slds-g-color-border-2);
+  background: transparent;
+}
+.tph-card-large--add:hover {
+  border-style: dashed;
+  border-color: var(--slds-g-color-accent-1);
+}
+.tph-card-large__preview--add {
+  background: var(--slds-g-color-surface-container-2);
+  border-style: dashed;
+  border-color: var(--slds-g-color-border-2);
+}
+.tph-card-large__preview-icon--add {
+  color: var(--slds-g-color-on-surface-1);
+}
+.tph-card-large__title {
+  font-size: var(--slds-g-font-scale-3);
+  font-weight: var(--slds-g-font-weight-4);
+  color: var(--slds-g-color-on-surface-3);
+  letter-spacing: var(--slds-g-font-letterspacing-tight, -0.01em);
+  line-height: 1.3;
+}
+.tph-card-large__desc {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.5;
+}
+
+/* Working mode entering on category click: rise from below into place. */
+.tph--enter {
+  animation: tph-push-up-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+/* Working mode leaving via the × button: slide down and out, mirroring
+ * the entrance in reverse. */
+.tph--leaving {
+  animation: tph-push-down-out 280ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.tph {
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+}
+.tph__row {
+  display: flex;
+  gap: var(--slds-g-spacing-3);
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.tph__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+  min-width: 0;
+}
+
+/* Working state: categories list (~24%) + master/detail card (rest).
+ * Width tunables — overridden inline by the dev tuner so we can dial in
+ * the right values without a refresh. */
+.tph--working {
+  --tph-cat-w: 24%;
+  --tph-master-w: 28%;
+}
+
+.tph--working .tph__col--cat { flex: 0 0 var(--tph-cat-w); }
+.tph--working .tph__md { flex: 1 1 auto; }
+
+/* Action toolbar (e.g. New Line of Business) above the columns. In-flow so
+ * it shares the same content box as the row below — its flex-end button
+ * lines up exactly with the master/detail container's right edge. */
+.tph__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--slds-g-spacing-4);
+}
+
+/* Master/detail card. */
+.tph__md {
+  display: flex;
+  flex-direction: column;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+  overflow: hidden;
+  min-width: 0;
+}
+.tph__md-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: var(--slds-g-spacing-3) var(--slds-g-spacing-4);
+  border-bottom: 1px solid var(--slds-g-color-border-1);
+}
+.tph__md-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.25;
+}
+.tph__md-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 275px) 1fr;
+  min-height: 0;
+}
+/* Single-subcategory variant: drop the master nav so the detail pane uses
+ * the full width of the master/detail card. */
+.tph__md-body.tph__md-body--single {
+  grid-template-columns: 1fr;
+}
+.tph__md-master {
+  border-right: 1px solid var(--slds-g-color-border-1);
+  padding: var(--slds-g-spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+.tph__md-master-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tph__md-master-group {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+  padding: 12px 12px 4px;
+}
+.tph__md-master-cell:first-child .tph__md-master-group {
+  padding-top: 4px;
+}
+.tph__md-master-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-2);
+  font: inherit;
+  color: var(--slds-g-color-on-surface-2);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+.tph__md-master-item:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.tph__md-master-item--selected {
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-on-surface-3);
+}
+.tph__md-master-item-label {
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: 600;
+}
+.tph__md-master-item-desc {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+}
+.tph__md-detail {
+  padding: var(--slds-g-spacing-4);
+  overflow-y: auto;
+  min-width: 0;
+}
+
+/* Kebab menu on the left category tiles (working view). */
+.tph__card-actions {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Header row used by master/detail card to host title + close button. */
+.tph__col-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--slds-g-radius-border-2);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1);
+  cursor: pointer;
+}
+.tph__col-close:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+.tph__col-title {
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  margin: 0 0 var(--slds-g-spacing-1);
+  /* Reserve the same space across all three columns so the rows below align. */
+  min-height: 20px;
+}
+
+/* Card — flat SLDS default treatment: surface-container-1 background, 1px
+ * border, no shadow. Selected/focused states adjust border + fill only.
+ * Cards are a flex row of [icon] [body]; body is a vertical stack. */
+.tph__card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  box-shadow: none;
+  transition: border-color 100ms ease, background-color 100ms ease;
+}
+.tph__card-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-brand-base-30);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.tph__card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tph__card:hover {
+  border-color: var(--slds-g-color-border-2);
+}
+.tph__card:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+}
+.tph__card--focus {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.tph__card--selected {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+
+.tph__card-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.3;
+}
+
+/* Categories column gets a bigger, thinner title — section cards keep the
+ * default treatment so the visual hierarchy moves left-to-right. */
+.tph__col--cat .tph__card-title {
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-4);
+  letter-spacing: var(--slds-g-font-letterspacing-tight, -0.01em);
+}
+.tph__card-count {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-4);
+  color: var(--slds-g-color-on-surface-1);
+  flex-shrink: 0;
+}
+.tph__card-desc {
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+}
+
+.tph__empty {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  padding: 8px 4px;
+}
+
+/* Subcategory detail wrapper — wraps the optional info header (description
+ * + Ask button) with the section body underneath. The header collapses to
+ * nothing when the subcategory doesn't supply an `info` block. */
+.tph__detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+.tph__detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-3);
+}
+.tph__detail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-4);
+  padding: var(--slds-g-spacing-6) var(--slds-g-spacing-4);
+}
+.tph__empty-illustration {
+  width: 240px;
+  max-width: 80%;
+  height: auto;
+  display: block;
+}
+
+/* Ask button — sits in the top-right of every subcategory detail pane.
+ * Text label + Agentforce astro glyph; opens the Setup Assistant. */
+.tph__ask-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-pill);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 100ms ease, border-color 100ms ease;
+}
+.tph__ask-btn:hover {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.tph__ask-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  color: var(--slds-g-color-accent-1);
+}
+
+/* Upload CSV button — neutral pill sitting to the left of the Ask button.
+ * A <label> wrapping a visually-hidden file input so the whole pill is the
+ * click target. */
+.tph__upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-pill);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 100ms ease, border-color 100ms ease;
+}
+.tph__upload-btn:hover {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.tph__upload-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Split button group — primary "Upload CSV" segment joined to a chevron
+ * overflow trigger. Outer corners round; the shared edge is a single 1px
+ * border (the trigger drops its left border to avoid a double line). */
+.tph__btn-group {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+.tph__btn-group .tph__btn-group-primary {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.tph__btn-group .tph__btn-group-trigger {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 0;
+  padding-inline: 8px;
+}
+.tph__btn-group-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  min-width: 200px;
+  padding: 4px;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  box-shadow: var(--slds-g-shadow-3);
+}
+.tph__btn-group-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-2);
+  text-align: left;
+  cursor: pointer;
+  transition: background 100ms ease;
+}
+.tph__btn-group-menu-item:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+
+/* Editor placeholder. */
+.tph__editor-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--slds-g-color-on-surface-1);
+  padding: 32px 24px;
+}
+.tph__editor-empty-icon {
+  width: 32px;
+  height: 32px;
+  opacity: 0.6;
+  color: var(--slds-g-color-accent-3);
+}
+.tph__editor-empty-title {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: 600;
+  color: var(--slds-g-color-on-surface-3);
+}
+.tph__editor-empty-sub {
+  font-size: var(--slds-g-font-scale-neg-1);
+  max-width: 32rem;
+}

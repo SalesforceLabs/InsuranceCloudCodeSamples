@@ -1,0 +1,50 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+build/
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# vite cache
+.vite/
+
+# salesforce cli local config
+.sf/
+.sfdx/
+.localdevserver/
+
+# env
+.env
+.env.local
+
+# Multi-LOC prototype harness — kept local-only; not part of the main
+# SMB app build. These files exist in the working tree (the harness
+# runs at localhost:5175/multi-loc.html via the dev server) but are
+# excluded from version control.
+cumulus-app/multi-loc.html
+cumulus-app/src/multi-loc.js
+cumulus-app/scripts/build-multi-loc.mjs
+cumulus-app/dist-multi-loc/
+cumulus-app/src/modules/c/multiLocPrototypeHarness/
+cumulus-app/src/modules/c/path1Workspace/
+cumulus-app/src/modules/c/path15Workspace/
+cumulus-app/src/modules/c/path2Workspace/
+cumulus-app/src/modules/c/multiPicklist/
+cumulus-app/src/modules/c/recordLookup/
+cumulus-app/src/modules/c/hoCoverageForm/
+cumulus-app/src/modules/c/hoPropertyList/
+cumulus-app/src/modules/c/hoPropertyModal/
+cumulus-app/src/modules/data/hoMockData/
+cumulus-app/src/modules/data/lookupMockData/
+
+# Multi-LOC deploy artifact (local-only)
+User Testing.html

@@ -1,0 +1,142 @@
+<template>
+  <article class={hostClass} role="region" aria-label={title}>
+    <!-- ── Header row: title + overflow menu ─────────────────────── -->
+    <div class="ac-head">
+      <h3 class="ac-title" title={title}>{title}</h3>
+      <template lwc:if={showMenu}>
+        <button
+          class="slds-button slds-button_icon slds-button_icon-x-small ac-icon-btn"
+          type="button"
+          aria-label="More options"
+        >
+          <svg class="slds-button__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 20c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm18 0c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm18 0c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6z"/></svg>
+        </button>
+      </template>
+    </div>
+
+    <!-- ── AI provenance row: pill + timestamp ───────────────────── -->
+    <div class="ac-meta-row">
+      <span class="ac-ai-pill" title="Powered by Agentforce">
+        <span class="ac-spark" aria-hidden="true">
+          <svg aria-hidden="true" viewBox="0 0 13 13" focusable="false">
+            <path
+              fill="currentColor"
+              d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738ZM12.865 10.8392L12.0796 10.4465C11.8421 10.3308 11.6532 10.1372 11.5344 9.90313L11.1404 9.12035C11.0864 9.00737 10.9245 9.00737 10.8678 9.12035L10.4738 9.90313C10.3577 10.1398 10.1634 10.3281 9.92858 10.4465L9.1432 10.8392C9.02985 10.893 9.02985 11.0544 9.1432 11.1109L9.92858 11.5037C10.1661 11.6193 10.355 11.813 10.4738 12.047L10.8678 12.8298C10.9218 12.9428 11.0837 12.9428 11.1404 12.8298L11.5344 12.047C11.6505 11.8103 11.8448 11.622 12.0796 11.5037L12.865 11.1109C12.9783 11.0571 12.9783 10.8957 12.865 10.8392ZM12.865 1.80363L12.0796 1.41089C11.8421 1.29522 11.6532 1.10154 11.5344 0.867516L11.1404 0.0847341C11.0864 -0.0282447 10.9245 -0.0282447 10.8678 0.0847341L10.4738 0.867516C10.3577 1.10423 10.1634 1.29253 9.92858 1.41089L9.1432 1.80363C9.02985 1.85742 9.02985 2.01882 9.1432 2.07531L9.92858 2.46805C10.1661 2.58372 10.355 2.7774 10.4738 3.01142L10.8678 3.7942C10.9218 3.90718 11.0837 3.90718 11.1404 3.7942L11.5344 3.01142C11.6505 2.77471 11.8448 2.58641 12.0796 2.46805L12.865 2.07531C12.9783 2.02151 12.9783 1.86011 12.865 1.80363Z"
+            />
+          </svg>
+        </span>
+        <span class="ac-ai-pill__label">{aiLabel}</span>
+        <span class="ac-info" aria-label="What does AI generated mean?">
+          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M26 2C12.7 2 2 12.7 2 26s10.7 24 24 24 24-10.7 24-24S39.3 2 26 2zm0 12.1c1.7 0 3 1.3 3 3s-1.3 3-3 3-3-1.3-3-3 1.3-3 3-3zm5 21c0 .5-.4.9-1 .9h-8c-.5 0-1-.3-1-.9v-2c0-.5.4-1.1 1-1.1.5 0 1-.3 1-.9v-4c0-.5-.4-1.1-1-1.1-.5 0-1-.3-1-.9v-2c0-.5.4-1.1 1-1.1h6c.5 0 1 .5 1 1.1v8c0 .5.4.9 1 .9.5 0 1 .5 1 1.1v2z"/></svg>
+        </span>
+      </span>
+
+      <template lwc:if={timestamp}>
+        <span class="ac-time">
+          {timestamp}
+          <template lwc:if={showRefresh}>
+            <button
+              class="slds-button slds-button_icon slds-button_icon-x-small ac-icon-btn"
+              type="button"
+              aria-label="Regenerate"
+              onclick={handleRefresh}
+            >
+              <svg class="slds-button__icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                <path
+                  fill="currentColor"
+                  d="M17.65 6.35A7.96 7.96 0 0012 4c-4.42 0-8 3.58-8 8s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4z"
+                />
+              </svg>
+            </button>
+          </template>
+        </span>
+      </template>
+    </div>
+
+    <!-- ── Body slot: caller-owned prose / CTAs ─────────────────── -->
+    <div class="ac-body">
+      <slot></slot>
+    </div>
+
+    <!-- ── Feedback row (thumbs up / down / more) ──────────────── -->
+    <template lwc:if={showFeedback}>
+      <div class="ac-feedback-row" role="group" aria-label="Feedback on AI output">
+        <button
+          class={thumbsUpClass}
+          type="button"
+          aria-label="Helpful"
+          aria-pressed={feedbackUpAriaPressed}
+          onclick={handleThumbUp}
+        >
+          <svg class="slds-button__icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path
+              fill="currentColor"
+              d="M1 21h4V9H1zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73z"
+            />
+          </svg>
+        </button>
+        <button
+          class={thumbsDownClass}
+          type="button"
+          aria-label="Not helpful"
+          aria-pressed={feedbackDownAriaPressed}
+          onclick={handleThumbDown}
+        >
+          <svg class="slds-button__icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path
+              fill="currentColor"
+              d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3z"
+            />
+          </svg>
+        </button>
+        <button
+          class="slds-button slds-button_icon slds-button_icon-x-small ac-icon-btn"
+          type="button"
+          aria-label="More feedback options"
+        >
+          <svg class="slds-button__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"/></svg>
+        </button>
+      </div>
+    </template>
+
+    <!-- ── Sources: toggle header + expanded list ──────────────── -->
+    <template lwc:if={hasSources}>
+      <div class="ac-sources-block">
+        <button
+          class="ac-sources-toggle"
+          type="button"
+          aria-expanded={sourcesAriaExpanded}
+          onclick={toggleSources}
+        >
+          <svg class={sourcesChevronClass} aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+          </svg>
+          <span class="ac-sources-toggle__label">Sources ({resolvedSourcesCount})</span>
+        </button>
+
+        <template lwc:if={showSourcesList}>
+          <ul class="ac-sources-list" role="list">
+            <template for:each={sourcesRows} for:item="s">
+              <li class="ac-sources-item" key={s.id}>
+                <span class="ac-sources-item__index">{s.index}</span>
+                <template lwc:if={s.href}>
+                  <a
+                    class="ac-sources-item__link"
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >{s.label}<svg class="ac-sources-item__extlink" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3zM19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2z"/></svg></a>
+                </template>
+                <template lwc:else>
+                  <span class="ac-sources-item__name">{s.label}</span>
+                </template>
+                <span class="ac-sources-item__sep" aria-hidden="true">&middot;</span>
+                <span class="ac-sources-item__type">{s.type}</span>
+              </li>
+            </template>
+          </ul>
+        </template>
+      </div>
+    </template>
+  </article>
+</template>

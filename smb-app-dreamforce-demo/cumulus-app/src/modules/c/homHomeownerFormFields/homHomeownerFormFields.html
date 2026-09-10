@@ -1,0 +1,188 @@
+<template>
+  <div class="hom-owner-modal">
+    <template lwc:if={showLookup}>
+      <div class="hom-lookup">
+        <span class="hom-lookup__label">Search existing homeowners</span>
+        <button
+          class={lookupTriggerClass}
+          type="button"
+          aria-haspopup="dialog"
+          aria-expanded={searchOpen}
+          onclick={handleSearchToggle}
+        >
+          <svg class="hom-lookup__trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="M21 21l-4.35-4.35"></path>
+          </svg>
+          <span class="hom-lookup__trigger-label">{lookupTriggerLabel}</span>
+          <template lwc:if={hasLookupSelection}>
+            <span
+              class="hom-lookup__clear"
+              role="button"
+              tabindex="0"
+              aria-label="Clear selection"
+              onclick={handleClearLookup}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path d="M18.3 5.71L12 12.01l6.3 6.29-1.42 1.42L10.59 13.43 4.29 19.72 2.88 18.3l6.3-6.29-6.3-6.29L4.29 4.3l6.3 6.29 6.3-6.29z"/>
+              </svg>
+            </span>
+          </template>
+        </button>
+
+        <template lwc:if={searchOpen}>
+          <div class="hom-lookup__scrim" onclick={handleSearchScrim}></div>
+          <div class="hom-lookup__panel" role="dialog" aria-label="Homeowner lookup">
+            <div class="hom-lookup__input-wrap">
+              <svg class="hom-lookup__input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+              </svg>
+              <input
+                class="hom-lookup__input"
+                type="search"
+                placeholder="Search by name, role, or prior carrier..."
+                value={searchQuery}
+                oninput={handleSearchInput}
+                onkeydown={handleSearchKey}
+                aria-label="Search existing homeowners"
+              />
+            </div>
+            <template lwc:if={hasLookupResults}>
+              <ul class="hom-lookup__results" role="listbox">
+                <template for:each={lookupResults} for:item="r">
+                  <li
+                    key={r.id}
+                    class={r.cls}
+                    role="option"
+                    aria-selected={r.ariaSelected}
+                    data-id={r.id}
+                    tabindex="0"
+                    onclick={handleLookupSelection}
+                    onkeydown={handleSearchKey}
+                  >
+                    <span class="hom-lookup__result-name">{r.displayName}</span>
+                    <span class="hom-lookup__result-meta">{r.metaLabel}</span>
+                  </li>
+                </template>
+              </ul>
+            </template>
+            <template lwc:else>
+              <p class="hom-lookup__empty" role="status">{lookupEmptyCopy}</p>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <p class="required-legend">
+      <abbr class="slds-required" title="required">*</abbr> = Required
+    </p>
+
+    <template lwc:if={hasLookupSelection}>
+      <div class="hom-owner-modal__selected">
+        <label class="slds-form-element__label" for="hom-owner-selected-name">
+          Homeowner
+        </label>
+        <input
+          id="hom-owner-selected-name"
+          class="slds-input hom-owner-modal__selected-input"
+          type="text"
+          value={selectedHomeownerName}
+          disabled
+          aria-readonly="true"
+        />
+      </div>
+    </template>
+
+    <div class="hom-owner-modal__grid">
+      <div class={firstNameClass}>
+        <label class="slds-form-element__label" for="hom-owner-first">
+          First Name <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="hom-owner-first"
+          class="slds-input"
+          type="text"
+          placeholder="Enter first name"
+          data-field="firstName"
+          value={firstName}
+          oninput={handleInput}
+        />
+        <template lwc:if={firstNameError}>
+          <span class="hom-owner-modal__error">Enter a first name.</span>
+        </template>
+      </div>
+
+      <div class={lastNameClass}>
+        <label class="slds-form-element__label" for="hom-owner-last">
+          Last Name <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="hom-owner-last"
+          class="slds-input"
+          type="text"
+          placeholder="Enter last name"
+          data-field="lastName"
+          value={lastName}
+          oninput={handleInput}
+        />
+        <template lwc:if={lastNameError}>
+          <span class="hom-owner-modal__error">Enter a last name.</span>
+        </template>
+      </div>
+
+      <div class={dobClass}>
+        <label class="slds-form-element__label" for="hom-owner-dob">
+          Date of Birth <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <c-date-input
+          input-id="hom-owner-dob"
+          data-field="dob"
+          value={dob}
+          accessible-label="Date of Birth"
+          onchange={handleInput}
+        ></c-date-input>
+        <template lwc:if={dobError}>
+          <span class="hom-owner-modal__error">Enter a date of birth.</span>
+        </template>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label">Role</label>
+        <c-picklist
+          options={roleOptions}
+          value={role}
+          placeholder="Select..."
+          accessible-label="Role"
+          data-field="role"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label">Marital Status</label>
+        <c-picklist
+          options={maritalOptions}
+          value={maritalStatus}
+          placeholder="Select..."
+          accessible-label="Marital Status"
+          data-field="maritalStatus"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label">Prior Carrier</label>
+        <c-picklist
+          options={carrierOptions}
+          value={priorCarrier}
+          placeholder="Select..."
+          accessible-label="Prior Carrier"
+          data-field="priorCarrier"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+    </div>
+  </div>
+</template>

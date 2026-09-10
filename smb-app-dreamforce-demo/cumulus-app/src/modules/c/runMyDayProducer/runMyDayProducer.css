@@ -1,0 +1,112 @@
+:host { display: block; }
+
+.rmdp-strip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4, 1rem);
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* =============================================================
+   Agent Insight body slot
+   The card chrome (title, AI-generated pill, timestamp, feedback,
+   sources) is owned by c-agentic-card. This file only styles what
+   the caller pushes into the default slot: the prose summary and
+   the primary "Open Renewals Workspace" CTA.
+   ============================================================= */
+
+/* ── Prose body - SLDS 2 Body Type ────────────────────────────
+   font-scale-2 (1rem) + lineheight-4 (1.5) + on-surface-2 is the
+   canonical SLDS 2 "Body Regular" recipe. Strong text is lifted
+   to on-surface-3 (title blue) + font-weight-7 so the key numbers
+   in the Agentforce recap anchor the sentence without needing
+   color-coded chips - emphasis via weight + hue, not decoration. */
+.rmdp-insight__body {
+  margin: 0;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  /* Let the browser optimize line breaks so the paragraph avoids
+     awkward orphans (a single trailing word on the last line). */
+  text-wrap: pretty;
+}
+
+/* Emphasized tokens are semantic units ("2 accounts", "18 days") - keep
+   them glued together so line breaks only occur at the natural word
+   boundaries between them, never between a numeral and its noun. */
+.rmdp-insight__body strong {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  white-space: nowrap;
+}
+
+/* ── Primary CTA - SLDS 2 Brand Button ────────────────────────
+   Explicit SLDS 2 accent hooks (not a compound with slds-button
+   so the linter rule `slds/no-slds-class-overrides` stays clean).
+   The button in HTML still carries `slds-button slds-button_brand`
+   for accessibility resets; this class layers the SLDS 2 primary
+   CTA recipe on top:
+     • Fill:    --slds-g-color-accent-container-1 (#066afe)
+     • Text:    --slds-g-color-on-accent-1        (#ffffff)
+     • Border:  --slds-g-color-border-accent-1    (matches fill)
+     • Radius:  --slds-g-radius-border-pill       (fully rounded)
+     • Padding: --slds-g-spacing-3 vertical, --slds-g-spacing-5
+                horizontal (SLDS 2 comfortable-density CTA sizing)
+     • Font:    --slds-g-font-scale-1 semibold
+   Hover / active / focus map to accent-container-2/3 per SLDS 2. */
+.rmdp-insight__actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  margin-top: var(--slds-g-spacing-4, 1rem);
+}
+
+.rmdp-insight__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  min-height: var(--slds-g-sizing-10, 3rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-5, 1.5rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-accent-1, #066afe);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  letter-spacing: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 120ms ease, border-color 120ms ease,
+              box-shadow 120ms ease;
+}
+
+.rmdp-insight__cta:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+  color: var(--slds-g-color-on-accent-2, #ffffff);
+}
+
+.rmdp-insight__cta:active {
+  background: var(--slds-g-color-accent-container-3, #022ac0);
+  border-color: var(--slds-g-color-border-accent-3, #022ac0);
+  color: var(--slds-g-color-on-accent-3, #ffffff);
+}
+
+.rmdp-insight__cta:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-3, #022ac0);
+  outline-offset: var(--slds-g-sizing-1, 2px);
+}
+
+/* =============================================================
+   Responsive
+   ============================================================= */
+@media (max-width: 640px) {
+  .rmdp-insight__actions { justify-content: stretch; }
+  .rmdp-insight__cta { width: 100%; }
+}

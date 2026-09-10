@@ -1,0 +1,56 @@
+<template>
+  <div class={rootClass}>
+    <button
+      type="button"
+      class={triggerClass}
+      role="combobox"
+      aria-haspopup="listbox"
+      aria-expanded={isOpen}
+      aria-activedescendant={activeOptionId}
+      aria-label={accessibleLabel}
+      aria-required={ariaRequired}
+      disabled={disabled}
+      onclick={handleToggle}
+      onkeydown={handleKeydown}
+    >
+      <span class={valueClass}>{displayLabel}</span>
+      <svg class="picklist__chev" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+        <path
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 9l6 6 6-6"
+        />
+      </svg>
+    </button>
+
+    <template lwc:if={isOpen}>
+      <!-- Transparent scrim catches outside clicks (SLDS combobox
+           menu behavior) without a document-level listener. -->
+      <div class="picklist__scrim" onclick={handleScrim}></div>
+      <ul class="picklist__listbox" role="listbox" aria-label={accessibleLabel} style={menuStyle}>
+        <template for:each={decoratedOptions} for:item="o">
+          <li
+            key={o.value}
+            id={o.id}
+            role="option"
+            class={o.cls}
+            data-value={o.value}
+            data-index={o.index}
+            aria-selected={o.isSelected}
+            aria-disabled={o.ariaDisabled}
+            onclick={handleSelect}
+            onmouseenter={handleHover}
+          >
+            <span class="picklist__check" aria-hidden="true">
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+            </span>
+            <span class="picklist__option-label">{o.label}</span>
+          </li>
+        </template>
+      </ul>
+    </template>
+  </div>
+</template>

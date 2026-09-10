@@ -1,0 +1,231 @@
+/* c-date-input - SLDS 2 date field (text + datepicker).
+   Native type=date follows the OS locale, so the closed value is
+   typed and formatted here as MM/DD/YYYY. Calendar chrome matches
+   the in-house picker on c-client-reply-modal. Size L/S follow the
+   same hooks as c-picklist. */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.date-input {
+  position: relative;
+  font-family: var(--atlas-font, inherit);
+}
+
+.date-input__control {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-2, 0.5rem) 0 var(--slds-g-spacing-var-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+.date-input__control:focus-within {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+
+.date-input_size_s .date-input__control {
+  min-height: var(--slds-g-sizing-7, 1.5rem);
+  padding: 0 var(--slds-g-spacing-1, 0.25rem) 0 var(--slds-g-spacing-2, 0.5rem);
+}
+
+.date-input__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--slds-g-sizing-9, 2rem);
+  border: 0;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-family: var(--atlas-font, inherit);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.date-input_size_s .date-input__text {
+  height: var(--slds-g-sizing-7, 1.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+}
+.date-input__text:focus {
+  outline: none;
+}
+.date-input__text::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.date-input__text:disabled {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+
+.date-input__cal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+}
+.date-input__cal:hover {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.date-input__cal:disabled {
+  cursor: not-allowed;
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.date-input__cal svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+.date-input__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  background: transparent;
+}
+
+.date-input__picker {
+  position: fixed;
+  z-index: 9101;
+  width: 17.5rem;
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+}
+
+.date-input__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-bottom: var(--slds-g-spacing-2, 0.5rem);
+}
+.date-input__month {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.date-input__nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-8, 1.75rem);
+  height: var(--slds-g-sizing-8, 1.75rem);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+}
+.date-input__nav-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.date-input__nav-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+.date-input__nav-btn svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+
+.date-input__dow,
+.date-input__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.date-input__dow-cell {
+  padding: var(--slds-g-spacing-1, 0.25rem) 0;
+  text-align: center;
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.date-input__day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Width has to match the height for `border-radius: 100%` to draw a
+     circle. Without it the button stretches to the 1fr grid column,
+     which is wider than it is tall, and both the selected fill and the
+     today ring render as ovals. `justify-self` then centres the circle
+     in its column instead of letting the grid stretch it again. */
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  justify-self: center;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-family: var(--atlas-font, inherit);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  cursor: pointer;
+}
+.date-input__day:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.date-input__day:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: -2px;
+}
+/* Today reads as a stroked ring rather than a fill, so it stays
+   distinct from the selected day. An inset shadow is used instead of a
+   real border so the ring sits inside the 2rem box and cannot nudge the
+   circle's size or the row's height. */
+.date-input__day_today {
+  box-shadow: inset 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.date-input__day_selected,
+.date-input__day_selected:hover {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+/* Today AND selected: the fill carries the selection, and the ring
+   flips to the on-accent colour so "this is also today" survives
+   instead of vanishing into the blue. */
+.date-input__day_today.date-input__day_selected {
+  box-shadow: inset 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-on-accent-1, #ffffff);
+}
+.date-input__day_muted,
+.date-input__day_disabled {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  pointer-events: none;
+}
+
+.slds-assistive-text {
+  position: absolute !important;
+  margin: -1px !important;
+  border: 0 !important;
+  padding: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}

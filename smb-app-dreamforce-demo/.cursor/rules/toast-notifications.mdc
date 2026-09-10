@@ -1,0 +1,105 @@
+---
+description: Toast notification pattern - single c-toast surface, top-center + backdrop, SLDS 2 Toast blueprint
+alwaysApply: true
+---
+
+# Toast Notifications
+
+`c-toast` is the **only** toast surface in this app. It implements the SLDS 2 Toast blueprint: [Toast blueprint](https://www.lightningdesignsystem.com/2e1ef8501/p/216f79-toast/t/95720c1284).
+
+All toasts render **top-center with a modal-style backdrop** (`slds-backdrop slds-backdrop_open`). Do not build alternate toast surfaces or inline banner notifications for transient success/error feedback.
+
+## Only three moments earn a toast
+
+> **An RFQ going out to markets, routing a bundle to carriers, and emailing the proposal. Nothing else.**
+
+The toast here is a full-width banner over a modal-style backdrop, so it interrupts. Spending that on "Draft saved." or "Activity timeline refreshed." trains the broker to dismiss without reading, and by the time the routing confirmation arrives it has no weight left.
+
+The test is whether the screen already answers the question. A saved draft, a deleted row, a switched tab, a bound policy and an RFQ saved to the bundle all change something visible; a toast on top of that is narration. The moments below are the ones where the broker hands work to someone else and the screen cannot show the outcome yet.
+
+| Moment | Message | Raised in |
+|---|---|---|
+| Submission (from an RFQ row menu) | "{name} added to the Submission Board." | `c/app` `_setRfqStatus` |
+| Submit to markets / straight-through | "Straight-through renewal initiated with {carrier}..." | `c/app` `handleRiskSubmitted` |
+| Routing to carriers | "RFQ has been submitted to {carriers}. We'll update you once the quotes are received" | `c/app` `handleConfirmRoute` |
+| Proposal emailed | "Proposal emailed to {recipient}. We'll let you know when they respond." | `c/app` `handleProposalSent` |
+
+### Saving to the bundle is not one of them
+
+`handleRiskSubmitted` serves two different events. Saving an RFQ to the
+bundle carries `newStatus: 'Ready for Submission'` and hands the broker
+straight to the Add-Another-LOC modal, whose own subtitle already reads
+"{LOC} is saved to the bundle" - so a toast lands on top of the very
+sentence it repeats. Submitting to markets carries no `newStatus`.
+
+The handler gates on exactly that, and the gate is the reason the
+bundle path stays quiet:
+
+```javascript
+if (!newStatus && message) { /* toast */ }
+```
+
+Keep the two shapes distinguishable. A workspace that stops sending
+`newStatus` on the save-to-bundle dispatch silently reintroduces the
+toast.
+
+### Anything else confirms itself
+
+```javascript
+// ❌ The row already vanished from the table.
+handleDelete() { /* ...toast('RFQ deleted.') */ }
+
+// ❌ The tab strip already shows the switch.
+handleSwitch() { /* ...toast('Switched you to that workspace.') */ }
+
+// ✅ Quiet - the wizard stays where it is and nothing was sent.
+handleSaveAsDraft() {}
+```
+
+If a genuinely new fourth moment appears, add it to the table above rather than reaching for a toast because there is nowhere else to put the message. A durable event belongs in `c-notification-tray` (see [`notifications.mdc`](notifications.mdc)); an inline result belongs next to the control that produced it.
+
+## How to fire a toast from a new component
+
+Dispatch the shared `toast` event and let the nearest mounted `c-toast` render it:
+
+```javascript
+this.dispatchEvent(
+  new CustomEvent('toast', {
+    detail: {
+      message: 'RFQ has been submitted to Pacific Underwriters, Summit Mutual. We\'ll update you once the quotes are received',
+      kind: 'success'
+    },
+    bubbles: true,
+    composed: true
+  })
+);
+```
+
+`kind` is one of `'success' | 'info' | 'error'`. The parent shell (`c-app` or a workspace shell) forwards the payload to its `c-toast` mount, which flips `visible=true` and auto-dismisses on a timer.
+
+## Do
+
+- Check the moment against the table above before adding one at all.
+- Keep copy concise — one clear sentence.
+- Pick the right `kind` for the intent: `success`, `info`, or `error` (mapped to SLDS themes `slds-theme_success`, `slds-theme_info`, `slds-theme_error`).
+- Show one toast at a time — if a new toast fires, replace the current one.
+- Use for transient, non-blocking confirmation of a completed action.
+
+## Do not
+
+- **Do not** toast an action the screen already confirms — a saved draft, a deleted row, a switched tab, a bound policy, a generated summary, a refreshed list.
+- **Do not** add inline banner notifications, alerts, or ad-hoc `<div>` toasts. If a message is persistent or requires action, use a scoped notification, alert, or modal instead.
+- **Do not** anchor toasts to any corner other than top-center — the `slds-notify_container` positioning is fixed in `c-toast`'s CSS.
+- **Do not** stack multiple toasts.
+- **Do not** use a toast when the user must act on the message — use a modal.
+- **Do not** hardcode SLDS class names in callers; they live inside `c-toast`.
+
+## Component locations
+
+- Component: `cumulus-app/src/modules/c/toast/`
+- Mounted at: `c-app` only. The RFQ workspaces used to carry their own
+ mount plus a private `showLocalToast` helper, which is how roster CRUD
+ confirmations ("Driver assigned to...", "Dwelling added...") bypassed
+ this policy. Both mounts and the helper are gone; raise a toast by
+ dispatching the shared `toast` event so it reaches the shell.
+- Reference SLDS 2 blueprint: <https://www.lightningdesignsystem.com/2e1ef8501/p/216f79-toast/t/95720c1284>

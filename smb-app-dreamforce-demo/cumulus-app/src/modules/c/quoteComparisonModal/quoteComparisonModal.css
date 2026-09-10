@@ -1,0 +1,1053 @@
+/* SLDS-spec modal recreated locally - the project doesn't import the SLDS
+   stylesheet, so we mirror the canonical structure with our cumulus tokens.
+   Class names match SLDS so future migration to the real stylesheet is a
+   one-line swap. */
+
+.slds-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+  z-index: 9000;
+}
+
+.slds-backdrop.slds-backdrop_open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slds-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Smaller outer gutter so the comparison modal fills more of the
+     viewport - the inner .slds-modal__content still adds its own
+     comfort padding. */
+  padding: var(--slds-g-spacing-3, 12px);
+  z-index: 9001;
+  font-family: var(--atlas-font);
+}
+
+.slds-modal_large .slds-modal__container {
+  max-width: 1100px;
+  width: 100%;
+}
+
+/* Full-width canvas for the side-by-side plan grid (up to 8 columns).
+   Removed the 1600px cap so wide displays can spread every carrier
+   column at its natural width without horizontal scrolling. Trimmed
+   the viewport gutter from 32px → 24px so the modal hugs the edges
+   more tightly. */
+.slds-modal_full .slds-modal__container {
+  max-width: calc(100vw - 24px);
+  width: 100%;
+}
+
+.slds-modal__container {
+  background: var(--atlas-surface);
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  animation: modal-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.slds-modal__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* Fixed chrome, like the footer - only the body between them scrolls. */
+  flex: 0 0 auto;
+  padding: 18px var(--slds-g-spacing-9, 56px) 18px var(--slds-g-spacing-5, 24px);
+  /* Flat surface, not the old #fff → #f7fbff blue wash: that tint is
+     off-palette and was already retired from the workspace review cards.
+     The bottom border carries the separation. */
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-bottom: 1px solid var(--atlas-border);
+}
+
+.slds-modal__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  letter-spacing: -0.015em;
+}
+
+.slds-modal__close {
+  position: absolute;
+  top: var(--slds-g-spacing-3, 12px);
+  right: var(--slds-g-spacing-3, 12px);
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: 999px;
+  border: 0;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--atlas-ink-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.slds-modal__close:hover {
+  background: var(--atlas-danger);
+  color: #fff;
+}
+
+.slds-modal__close svg { width: var(--slds-g-sizing-5, 1rem); height: var(--slds-g-sizing-5, 1rem); }
+
+.slds-modal__content {
+  flex: 1 1 auto;
+  /* Required for this to scroll instead of growing. A flex item
+     defaults to min-height: auto, which refuses to shrink below its
+     content, so a tall comparison grid pushed the body past the
+     container's max-height and the footer (Cancel / Email to Client)
+     was clipped by the container's overflow: hidden. */
+  min-height: 0;
+  /* Both axes hidden - the comparison table owns its own horizontal
+     scroll via .qct-scroll, so the modal body must NOT scroll
+     horizontally (otherwise the sticky-left corner column anchors
+     to this element instead of the inner scroll box and scrolls
+     out of view with the rest of the table). */
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  /* Tightened from 24px so the comparison matrix gets ~24px more of
+     horizontal canvas on each side - bigger plan columns, less
+     horizontal scrolling for the broker. */
+  padding: var(--slds-g-spacing-4, 16px);
+  /* New stacking + scroll context so sticky cells inside .qct-scroll
+     remain anchored to .qct-scroll, never bubble up to the modal. */
+  position: relative;
+}
+
+/* SLDS spacing utility used in the template - kept for parity. */
+.slds-p-around_medium { padding: var(--slds-g-spacing-4, 16px); }
+
+/* ════════════════════════════════════════════════════════════════════
+   Selection bar + grid footer
+   The broker ticks any number of carrier columns, then sends the whole
+   shortlist from the footer without leaving the matrix.
+   ════════════════════════════════════════════════════════════════════ */
+.qm-select-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-4, 1rem);
+  flex-wrap: wrap;
+  margin-bottom: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-inline-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+.qm-select-all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.qm-select-all__input {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  margin: 0;
+  accent-color: var(--slds-g-color-accent-container-1, #066afe);
+  cursor: pointer;
+}
+.qm-select-all__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  cursor: pointer;
+}
+
+.qm-select-bar__count {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.qm-grid-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4, 1rem);
+  flex-wrap: wrap;
+  /* The actions must survive any grid height, so the footer never
+     gives up space to the scrolling body above it. */
+  flex: 0 0 auto;
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-inline-5, 1.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+}
+.qm-grid-foot__count {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.qm-grid-foot__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--atlas-button-gap, 0.75rem);
+  margin-left: auto;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   EMAIL-TO-CLIENT sub-view (replaces the old bind checklist)
+   ════════════════════════════════════════════════════════════════════ */
+.qm-email {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.qm-email-card {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+
+.qm-email-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.qm-email-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.qm-email-recipient {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-3, 12px);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+.qm-email-recipient-name {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.qm-email-recipient-email {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+}
+.qm-email-input,
+.qm-email-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px var(--slds-g-spacing-3, 12px);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-1, #fff);
+}
+.qm-email-textarea {
+  resize: vertical;
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.qm-email-input:focus,
+.qm-email-textarea:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 2px var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+
+.qm-email-attach {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  align-self: stretch;
+  padding: 6px var(--slds-g-spacing-3, 12px);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.qm-email-attach-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  color: var(--slds-g-color-accent-1, #066afe);
+  flex-shrink: 0;
+}
+.qm-email-attach-icon svg { width: 14px; height: 14px; }
+.qm-email-attach-name {
+  flex: 1;
+  min-width: 0;
+}
+.qm-email-attach-view {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+}
+.qm-email-attach-view:hover {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+.qm-email-attach-view:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.qm-email-attach-view svg,
+.qm-email-attach-view .slds-button__icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.slds-assistive-text {
+  position: absolute !important;
+  margin: -1px !important;
+  border: 0 !important;
+  padding: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  text-transform: none !important;
+  white-space: nowrap !important;
+}
+
+/* PDF preview sheet - same dialog as compose, not a stacked modal. */
+/* ── Attachment preview: simulated PDF viewer ────────────────────
+   Deliberately not SLDS-tokened chrome. This block stands in for a
+   third-party document viewer (Acrobat / the browser's built-in PDF
+   pane), the same way c-slack-drawer stands in for Slack, so the
+   toolbar greys, the paper drop-shadow and the square page corners
+   are literal values. Paper has no border radius and no brand tint;
+   theming it would break the illusion the broker is looking at the
+   actual file they are about to send. The page CONTENT below keeps the
+   app's type colours - they are neutral greys and navy on white, which
+   is what a printed sheet wants anyway. */
+/* Stacked one layer above the comparison modal (backdrop 9000 / modal
+   9001), so the preview reads as sitting on top of the compose view
+   rather than replacing it. */
+.qm-pdf-backdrop {
+  z-index: 9002;
+}
+.qm-pdf-modal {
+  z-index: 9003;
+}
+.qm-pdf-modal:focus-visible {
+  outline: none;
+}
+.qm-pdf {
+  /* Sized like a viewer window rather than a form panel: wide enough to
+     read a page at 100%, capped so it never touches the viewport edge. */
+  width: min(48rem, 100%);
+  max-height: min(44rem, 100%);
+  margin: auto;
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(15, 23, 42, 0.4);
+  display: flex;
+  flex-direction: column;
+}
+.qm-pdf__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4, 1rem);
+  padding: 0.5rem 0.75rem;
+  background: #323639;
+  color: #f1f3f4;
+}
+.qm-pdf__toolbar-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.qm-pdf__badge {
+  flex-shrink: 0;
+  padding: 0.0625rem 0.3125rem;
+  border-radius: 0.1875rem;
+  background: #d93025;
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.qm-pdf__toolbar-name {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.qm-pdf__toolbar-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+.qm-pdf__toolbar-meta,
+.qm-pdf__toolbar-zoom {
+  font-size: 0.75rem;
+  color: #bdc1c6;
+  font-variant-numeric: tabular-nums;
+}
+.qm-pdf__toolbar-glyphs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.qm-pdf__toolbar-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #e8eaed;
+  font-size: 0.875rem;
+  line-height: 1;
+}
+.qm-pdf__toolbar-glyph_svg svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.qm-pdf__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: #e8eaed;
+  cursor: pointer;
+}
+.qm-pdf__close:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+.qm-pdf__close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.qm-pdf__close svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+/* Viewer canvas - the grey gutter a PDF page floats on. Flexes so the
+   page scrolls inside the dialog instead of growing it. */
+.qm-pdf__canvas {
+  padding: 1.5rem;
+  background: #525659;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* The page. Square corners + drop shadow, sized to a portrait sheet
+   so the proportions read as paper rather than as a card. */
+.qm-pdf__sheet {
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  padding: 2.25rem 2rem;
+  /* Widens with the carrier count - a five-quote comparison needs the
+     room a landscape spreadsheet export would take. */
+  max-width: 52rem;
+  min-height: 24rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.qm-pdf__eyebrow {
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.qm-pdf__sheet-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.qm-pdf__sheet-sub {
+  margin: 0 0 var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+/* ── Spreadsheet grid ─────────────────────────────────────────
+   Ruled on every side so it reads as a workbook export rather than an
+   app table. No recommendation column and no insight rows: the sheet
+   is the raw comparison, and the Agentforce read stays in the app. */
+.qm-pdf__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.qm-pdf__table th,
+.qm-pdf__table td {
+  text-align: left;
+  padding: 0.3125rem var(--slds-g-spacing-2, 0.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  vertical-align: top;
+  word-break: break-word;
+}
+/* Column headers: the carrier names. */
+.qm-pdf__table thead th {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+/* First column is the attribute stub, held narrow-ish so the carrier
+   columns share the remaining width evenly. */
+.qm-pdf__th-attr,
+.qm-pdf__row-label,
+.qm-pdf__band-label {
+  width: 34%;
+}
+.qm-pdf__row-label {
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+/* Section band - one full-width rule per group of attributes. */
+.qm-pdf__band-label {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.qm-pdf__band-fill {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+/* The premium line is the number the client reads first. */
+.qm-pdf__row_total td,
+.qm-pdf__row_total .qm-pdf__row-label {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+/* Page footer, pushed to the foot of the sheet by the flex column so
+   short documents still show it at the bottom edge like a real page. */
+.qm-pdf__sheet-foot {
+  margin-top: auto;
+  padding-top: var(--slds-g-spacing-5, 1.5rem);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Footer actions ─────────────────────────────────────────── */
+/* Shared action rail for both email views - compose and sent. */
+.qm-email-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--atlas-button-gap, 0.75rem);
+  margin-top: var(--slds-g-spacing-5, 1.5rem);
+}
+
+/* SLDS 2 action buttons, matched to .sb-btn in c-submission-board so
+   the two modal footers in this journey share radius, sizing, focus and
+   state ramps. Both variants take the pill radius: only the brand one
+   did before (via a late override further down this sheet), so Cancel
+   and Email to Client sat next to each other with different corners.
+   Hover / active step the accent container 1 -> 2 -> 3 ramp, and both
+   variants now carry focus-visible and disabled states. */
+.qm-btn-neutral,
+.qm-btn-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  /* Density-aware block padding rather than a fixed 2rem height, which
+     left these ~11px shorter than .sb-btn and under the 44px touch
+     target. Height now comes from padding + line-height, as it does
+     there, so both modal footers size identically in comfy and
+     compact. */
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease, box-shadow 120ms ease;
+}
+.qm-btn-neutral:focus-visible,
+.qm-btn-brand:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 0.125rem;
+}
+
+/* Transparent rather than an opaque white fill, matching .sb-btn_neutral
+   so the ghost secondary stays correct on a tinted footer. */
+.qm-btn-neutral {
+  background: transparent;
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.qm-btn-neutral[disabled] {
+  background: transparent;
+}
+.qm-btn-neutral:hover:not([disabled]) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.qm-btn-neutral:active:not([disabled]) {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+}
+.qm-btn-neutral[disabled] {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  cursor: not-allowed;
+}
+
+.qm-btn-brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.qm-btn-brand:hover:not([disabled]) {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.qm-btn-brand:active:not([disabled]) {
+  background: var(--slds-g-color-accent-container-3, #022ac0);
+  border-color: var(--slds-g-color-border-accent-3, #022ac0);
+}
+.qm-btn-brand[disabled],
+.qm-btn-brand[disabled]:hover {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.qm-btn-icon { display: inline-flex; width: 1rem; height: 1rem; }
+.qm-btn-icon svg { width: 1rem; height: 1rem; }
+
+/* ── Sent confirmation ──────────────────────────────────────── */
+/* The in-modal "Proposal emailed" panel is gone: sending closes the
+   dialog and the shell confirms with a toast, per toast-notifications
+   (interface feedback for the broker's own action). Its .qm-email-sent*
+   rules went with it. */
+
+@media (max-width: 760px) {
+  .slds-modal { padding: 0; }
+  .slds-modal__container {
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100vh;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Contextual insurance-agent chat panel
+   (the trigger lives on c-quote-compare-table's "Ask an Agent" button)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Grid wrapper - up to three columns:
+   ┌─────────────┬─────────────────────┬───────────────┐
+   │ Comparison  │  Comparison grid    │  Agent chat   │
+   │  Summary    │  (data table)       │  chat panel   │
+   │  (fixed)    │  (fluid)            │  (conditional)│
+   └─────────────┴─────────────────────┴───────────────┘
+   The chat panel only renders when isAgentforceOpen is true. */
+.qm-grid {
+  display: flex;
+  align-items: stretch;
+  gap: var(--slds-g-spacing-4, 1rem);
+  min-height: 0;
+}
+/* Grid view height chain. The body stops scrolling and becomes a frame,
+   the comparison row takes whatever is left below the select bar, and
+   c-quote-compare-table turns that into its own scroll box. One
+   vertical scroller instead of two nested ones, and the table's Select
+   row can no longer land beneath the footer. */
+.qm-content_grid {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.qm-content_grid .qm-select-bar {
+  flex: 0 0 auto;
+}
+.qm-content_grid .qm-grid {
+  /* .slds-grid isn't defined locally (the global sheet can't reach this
+     shadow root), so the row's flex context is declared here. */
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.qm-content_grid .qm-grid-col {
+  display: flex;
+  min-height: 0;
+}
+.qm-content_grid c-quote-compare-table {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+.qm-content_grid .qm-chat {
+  min-height: 0;
+}
+
+.qm-grid-col {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+.qm-grid-col_split {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* The Comparison Summary card now lives in the sticky-left corner of
+   c-quote-compare-table (with the "Ask an Agent" button). The dedicated
+   left sidebar that used to live here was removed so the comparison
+   matrix gets the full body width. */
+
+/* ── Docked chat panel ───────────────────────────────────────────
+   Fixed-width column docked to the right of the comparison grid.
+   White surface with a soft left-edge shadow so it reads as floating
+   above the table without an outline. */
+.qm-chat {
+  flex: 0 0 360px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: -8px 0 24px rgba(15, 23, 42, 0.08),
+    0 2px 6px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+  font-family: var(--atlas-font);
+  /* Cap to the modal body so the body scrolls internally. */
+  max-height: calc(100vh - 220px);
+}
+
+.qm-chat__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+}
+/* Agent mascot image - sized to sit next to the title with
+   the same vertical rhythm as the icons elsewhere in the modal. */
+.qm-chat__head-icon {
+  display: inline-block;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  object-fit: contain;
+  flex-shrink: 0;
+  user-select: none;
+}
+.qm-chat__head-title {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.qm-chat__head-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  flex-shrink: 0;
+}
+.qm-chat__head-info svg { width: 1rem; height: 1rem; }
+.qm-chat__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.qm-chat__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.qm-chat__close svg { width: 14px; height: 14px; }
+
+/* Scrollable transcript - the panel's middle row. Anchored to the
+   bottom so new bubbles rise up from the floor (matches messenger
+   conventions). The flex:1 ::before takes up any remaining vertical
+   slack so the chat hugs the input area at the bottom of the panel;
+   once messages fill the body, the ::before collapses and the chat
+   scrolls normally. */
+.qm-chat__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+.qm-chat__body::before {
+  content: '';
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Message row - bubbles only (no avatars). Agent rows hug the left,
+   user rows hug the right; bubble chrome alone signals authorship.
+   Each row plays a messenger-style entry animation on mount (slides
+   up + fades in) so new bubbles read as "just sent" instead of
+   appearing instantly. */
+.qm-chat__row {
+  display: flex;
+  align-items: flex-start;
+  animation: qm-bubble-in 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  will-change: transform, opacity;
+}
+.qm-chat__row_agent { justify-content: flex-start; }
+.qm-chat__row_user  { justify-content: flex-end; }
+
+@keyframes qm-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.qm-chat__msg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  max-width: 85%;
+  min-width: 0;
+}
+.qm-chat__row_user .qm-chat__msg { align-items: flex-end; }
+
+/* Typing indicator - three dots pulsing in sequence inside a stock
+   agent bubble. Reads as the assistant "composing" before the response
+   lands. The bubble re-uses .qm-chat__bubble_agent chrome so the
+   visual rhythm matches a real message. */
+.qm-chat__typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.625rem 0.875rem;
+}
+.qm-chat__typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-on-surface-1, #5c5c5c);
+  opacity: 0.4;
+  animation: qm-typing 1.2s ease-in-out infinite;
+}
+.qm-chat__typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.qm-chat__typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes qm-typing {
+  0%, 60%, 100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+/* Honor reduced-motion preferences - disable the keyframe animations
+   so users with vestibular sensitivities don't get the pulsing motion. */
+@media (prefers-reduced-motion: reduce) {
+  .qm-chat__row { animation: none; }
+  .qm-chat__typing-dot { animation: none; opacity: 0.8; }
+}
+
+/* Bubble - white surface for agent (with a hairline border), light
+   accent wash for user. Both share the same radius / type. */
+.qm-chat__bubble {
+  padding: var(--slds-g-spacing-var-block-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.qm-chat__bubble_agent {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.qm-chat__bubble_user {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.qm-chat__bubble p { margin: 0; }
+.qm-chat__bubble p + p { margin-top: var(--slds-g-spacing-2, 0.5rem); }
+.qm-chat__time {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Rich answer block (m3 - the deductible quote rundown). */
+.qm-chat__rich-intro,
+.qm-chat__rich-outro { margin: 0; }
+.qm-chat__rich-list {
+  list-style: none;
+  margin: var(--slds-g-spacing-2, 0.5rem) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.qm-chat__rich-item {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+.qm-chat__rich-label {
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  margin-right: var(--slds-g-spacing-1, 4px);
+}
+.qm-chat__rich-link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.qm-chat__rich-link:hover {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+}
+
+/* Sticky footer - input + send button always pinned at the bottom. */
+.qm-chat__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  flex-shrink: 0;
+}
+.qm-chat__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.qm-chat__input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.qm-chat__input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-1, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.qm-chat__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 120ms ease;
+}
+.qm-chat__send:hover:not(:disabled) {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.qm-chat__send:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.qm-chat__send svg { width: 1rem; height: 1rem; }
+
+/* Responsive - under ~78em the chat collapses to full-width below the
+   grid so the comparison table breathes. */
+@media (max-width: 78em) {
+  .qm-grid { flex-direction: column; }
+  .qm-chat {
+    flex: 0 0 auto;
+    max-height: var(--slds-g-sizing-16, 480px);
+    width: 100%;
+  }
+}
+

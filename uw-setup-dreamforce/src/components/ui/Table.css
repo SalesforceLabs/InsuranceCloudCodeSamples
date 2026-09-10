@@ -1,0 +1,66 @@
+.slds2-table__wrap {
+  overflow-x: auto;
+  background: var(--slds-g-color-surface-container-1);
+}
+
+.slds2-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+  background: var(--slds-g-color-surface-container-1);
+}
+
+.slds2-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--slds-g-color-surface-container-1);
+  text-align: left;
+  font-weight: var(--slds-s-table-header-font-weight, var(--slds-g-font-weight-6));
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-block: var(--slds-g-spacing-3);
+  padding-inline: var(--slds-g-spacing-4);
+  border-bottom: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  white-space: nowrap;
+}
+
+.slds2-table tbody td {
+  padding-block: var(--slds-g-spacing-3);
+  padding-inline: var(--slds-g-spacing-4);
+  border-bottom: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  vertical-align: middle;
+}
+
+.slds2-table tbody tr:hover td {
+  background: var(--slds-g-color-surface-container-2);
+}
+
+.slds2-table--compact thead th,
+.slds2-table--compact tbody td {
+  padding-block: var(--slds-g-spacing-2);
+  padding-inline: var(--slds-g-spacing-3);
+}
+
+.slds2-table--bordered {
+  border: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+  overflow: hidden;
+}
+
+.slds2-table__row--clickable { cursor: pointer; }
+
+.slds2-table__empty {
+  background: var(--slds-g-color-surface-container-1);
+  border: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-3);
+  overflow: hidden;
+}
+.slds2-table__empty-body {
+  padding-block: var(--slds-g-spacing-7);
+  padding-inline: var(--slds-g-spacing-5);
+  text-align: center;
+  color: var(--slds-g-color-on-surface-1);
+}

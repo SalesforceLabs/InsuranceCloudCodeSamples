@@ -1,0 +1,95 @@
+<template>
+  <section class="rpt" aria-label="Publish Template">
+    <!-- Title omitted - the host workspace's `.isw-canvas__crumb`
+         already shows "Publish" as the active step title. Keep the
+         subtitle here so the form's purpose stays visible. -->
+    <header class="rpt__head">
+      <p class="rpt__sub">
+        Assign visibility and activate the template. Producers and
+        service teams will see it in their RFQ launcher once it&apos;s
+        published.
+      </p>
+    </header>
+
+    <!-- Version &amp; Validity ─────────────────────────────────── -->
+    <div class="rpt-card">
+      <header class="rpt-card__head">
+        <strong>Version &amp; Validity</strong>
+        <span class="rpt-card__hint">{versioningSummary}</span>
+      </header>
+
+      <div class="rpt-grid">
+        <label class="rpt-field rpt-field_full">
+          <span class="rpt-field__label">
+            Version Name <abbr class="slds-required" title="required">*</abbr>
+          </span>
+          <input
+            class="rpt-field__input"
+            type="text"
+            value={versionName}
+            oninput={handleVersionNameChange}
+            placeholder="e.g., v1.0 - Initial Launch"
+            aria-label="Version Name"
+          />
+        </label>
+
+        <label class="rpt-field">
+          <span class="rpt-field__label">
+            Effective Start Date <abbr class="slds-required" title="required">*</abbr>
+          </span>
+          <c-date-input
+            value={effectiveStartDate}
+            accessible-label="Effective Start Date"
+            size="s"
+            onchange={handleStartDateChange}
+          ></c-date-input>
+        </label>
+
+        <label class="rpt-field">
+          <span class="rpt-field__label">
+            Effective End Date <abbr class="slds-required" title="required">*</abbr>
+          </span>
+          <c-date-input
+            value={effectiveEndDate}
+            min={effectiveStartDate}
+            accessible-label="Effective End Date"
+            size="s"
+            onchange={handleEndDateChange}
+          ></c-date-input>
+        </label>
+
+        <template lwc:if={isEndBeforeStart}>
+          <p class="rpt-field__error rpt-field_full" role="alert">
+            End Date must be on or after Start Date.
+          </p>
+        </template>
+      </div>
+    </div>
+
+    <!-- Activation ─────────────────────────────────────────── -->
+    <div class="rpt-card rpt-card_row">
+      <header class="rpt-card__head">
+        <strong>Activation</strong>
+        <span class="rpt-card__hint">
+          Activate now or save as draft. You can publish later from the
+          template list.
+        </span>
+      </header>
+
+      <button
+        type="button"
+        class="rpt-toggle"
+        role="switch"
+        aria-checked={isTemplateActive}
+        aria-label="Template Status"
+        onclick={handleTemplateStatusToggle}
+      >
+        <span class="rpt-toggle__caption" aria-hidden="true">Template Status</span>
+        <span class={templateStatusTrackClass} aria-hidden="true">
+          <span class="rpt-toggle__thumb"></span>
+        </span>
+        <span class="rpt-toggle__status">{templateStatusLabel}</span>
+      </button>
+    </div>
+  </section>
+</template>

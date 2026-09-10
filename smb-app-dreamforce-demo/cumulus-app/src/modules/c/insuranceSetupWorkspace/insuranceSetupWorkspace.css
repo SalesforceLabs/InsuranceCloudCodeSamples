@@ -1,0 +1,1662 @@
+/* ─────────────────────────────────────────────────────────────────────
+   c-insurance-setup-workspace
+   5-domain Setup shell: header, Root Product picker, two-column grid
+   (categorized left nav + right canvas router). All visual values use
+   --slds-g-* hooks with literal fallbacks, matching the rfqPlaybookSetup
+   and ebCoverageSetup conventions.
+   ───────────────────────────────────────────────────────────────────── */
+
+:host {
+  display: block;
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* No outer padding here - the host (agentforceSetup's afs-setup__main)
+   already supplies the page padding. Adding more here would double-
+   pad the workspace. Gap tightened so header sits closer to the grid. */
+.isw {
+  display: flex;
+  flex-direction: column;
+  /* Breathing room between the workspace header (title + subtitle)
+     and the sidebar/canvas shell below it. var-6 (2rem) keeps the
+     subtitle from pressing against the sidebar card. */
+  gap: var(--slds-g-spacing-var-6, 2rem);
+  padding-top: var(--slds-g-spacing-var-3, 0.75rem);
+  /* No bottom padding - the footer sits as the natural last child
+     of `.isw` (flush against the workspace content) and uses
+     position: sticky to keep itself in view as the page scrolls. */
+}
+
+/* ── Workspace footer ──────────────────────────────────────── */
+/* Lives inside .isw-canvas (the card). Top border extends edge-to-
+   edge by pulling out with negative side margins equal to the
+   canvas padding, then re-padding so the buttons stay aligned with
+   the body content above. */
+.isw-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin: var(--slds-g-spacing-var-3, 0.75rem)
+    calc(-1 * var(--slds-g-spacing-var-5, 1.5rem)) 0;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-5, 1.5rem) 0;
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.isw-footer__spacer {
+  flex: 1;
+}
+.isw-footer__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-4, 1rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease,
+    color 120ms ease;
+}
+.isw-footer__btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.isw-footer__btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Subtle variant - Cancel (text-only on neutral surface). */
+.isw-footer__btn_subtle {
+  background: transparent;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.isw-footer__btn_subtle:hover:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* Neutral variant - Previous (outlined). */
+.isw-footer__btn_neutral {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-footer__btn_neutral:hover:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+/* Brand variant - Proceed (filled accent). */
+.isw-footer__btn_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.isw-footer__btn_brand:hover:not(:disabled) {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.isw-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.isw-header__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-header__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* ── Two-column grid ────────────────────────────────────────── */
+.isw-grid {
+  display: grid;
+  /* Left column widened to host the richer category cards (icon +
+     title + description). Right column holds the canvas card. */
+  grid-template-columns: minmax(18rem, 22rem) minmax(0, 1fr);
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  align-items: stretch;
+}
+
+/* ── Left nav ───────────────────────────────────────────────── */
+/* Container chrome retired - the category cards themselves are now
+   the visible surface, sitting directly on the parent page bg. */
+.isw-nav {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  transition: opacity 160ms ease;
+}
+/* Locked state - gates every step card until a Root Product is picked. */
+.isw-nav_locked {
+  opacity: 0.45;
+  pointer-events: none;
+  user-select: none;
+}
+/* Category section (5 per workspace). */
+.isw-cat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.isw-cat__label {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.isw-cat__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+/* ── Step card ──────────────────────────────────────────────── */
+.isw-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  align-items: flex-start;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease,
+    box-shadow 150ms ease, transform 150ms ease;
+}
+.isw-step:hover {
+  border-color: var(--slds-g-color-border-1, #c9c9c9);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06),
+    0 8px 18px rgba(15, 23, 42, 0.06);
+}
+.isw-step:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.isw-step.is-active {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  box-shadow: 0 2px 6px rgba(2, 80, 217, 0.12);
+}
+.isw-step.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.isw-step__icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.isw-step__icon svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.isw-step.is-active .isw-step__icon {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.isw-step.is-disabled .isw-step__icon {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+
+.isw-step__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+.isw-step__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-step__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+
+/* ── Parts list (top-level nav, 3 entries) ──────────────────── */
+.isw-parts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.isw-part {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  align-items: flex-start;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  /* Full 1px border on all 4 sides in every state - the active blue
+     rail is layered on as an inset box-shadow (see below) so the
+     card edge never loses a side. */
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  transition: background 150ms ease, box-shadow 150ms ease;
+}
+.isw-part:hover {
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+}
+.isw-part:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Active rail is an inset shadow rather than a border modifier so the
+   card's 1px border stays whole on every side in both default and
+   active states. */
+.isw-part.is-active {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  box-shadow: inset var(--slds-g-sizing-2, 0.25rem) 0 0
+    var(--slds-g-color-accent-1, #066afe);
+}
+.isw-part.is-active:hover {
+  box-shadow: inset var(--slds-g-sizing-2, 0.25rem) 0 0
+    var(--slds-g-color-accent-1, #066afe),
+    0 2px 6px rgba(15, 23, 42, 0.06);
+}
+.isw-part.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  box-shadow: none;
+  pointer-events: none;
+}
+.isw-part__icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.isw-part__icon svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.isw-part__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+.isw-part__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-part__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+
+/* ── Part panel (inside the canvas) ─────────────────────────── */
+/* Header extends edge-to-edge across the canvas card by pulling out
+   with negative side margins equal to the canvas padding, then
+   re-padding internally so the title stays visually aligned with
+   the body content below. */
+.isw-panel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  margin: 0 calc(-1 * var(--slds-g-spacing-var-5, 1.5rem));
+  padding: 0 var(--slds-g-spacing-var-5, 1.5rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+/* Numbered circle marker - mirrors the parent-step pattern in the
+   reference (filled blue circle with white index inside). Sits left
+   of the part title so the substep numbering below (X.Y) reads as
+   a natural hierarchy. */
+.isw-panel__mark {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+.isw-panel__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+/* 3-column layout - workspace stepper takes 1/3, content area takes
+   2/3 (which the playbook then splits into 2 equal halves inside it),
+   so the visual rhythm reads as three equal columns. */
+.isw-panel__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+/* Full-width variant - applied when the active part has only one
+   section (no side panel needed). Mounted component fills the
+   entire canvas body. */
+.isw-panel__body.isw-panel__body_full {
+  grid-template-columns: minmax(0, 1fr);
+}
+.isw-panel__nav {
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding-right: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.isw-panel__detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Sections list (sub-nav inside a part panel) */
+.isw-sections {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+/* Section row - SLDS 2 stepper visual (Progress Indicator pattern).
+   Flat row (no card chrome), numbered circle marker on the left,
+   title + description on the right, vertical connector line between
+   consecutive markers. Active circle is filled blue with a halo;
+   active text turns bold accent blue. */
+.isw-section {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--slds-g-sizing-9, 2rem) 1fr;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  align-items: flex-start;
+  padding: var(--slds-g-spacing-2, 0.5rem) 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.isw-section:hover .isw-section__title {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.isw-section:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Connector line between consecutive section markers. The check
+   runs on the wrapping <li> (.isw-section-li) since each section row
+   sits inside its own <li> alongside an optional substeps <ul>. The
+   last section in the list skips the connector. */
+.isw-section-li:not(:last-child) .isw-section::before {
+  content: "";
+  position: absolute;
+  left: var(--slds-g-spacing-4, 1rem);
+  top: calc(var(--slds-g-spacing-2, 0.5rem) + var(--slds-g-sizing-9, 2rem));
+  width: var(--slds-g-sizing-border-2, 2px);
+  height: calc(100% - var(--slds-g-sizing-9, 2rem) + var(--slds-g-spacing-2, 0.5rem));
+  background: var(--slds-g-color-border-1, #c9c9c9);
+  transform: translateX(-50%);
+}
+/* No-number variant - single-section parts skip the "1" prefix. The
+   stepper marker is dropped along with its column so the title sits
+   flush with the row's left edge. */
+.isw-section.isw-section_no-number {
+  grid-template-columns: 1fr;
+}
+.isw-section.isw-section_no-number::before {
+  display: none;
+}
+/* Numbered circle marker. */
+.isw-section__number {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  transition: background 120ms ease, color 120ms ease,
+    border-color 120ms ease, box-shadow 120ms ease;
+}
+/* Active circle - filled accent + halo (SLDS 2 Progress Indicator
+   active marker). Halo uses brand-base-90 to match the QCS wizard
+   stepper exactly. */
+.isw-section.is-active .isw-section__number {
+  background: var(--slds-g-color-accent-1, #066afe);
+  border-color: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  box-shadow: 0 0 0 var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+/* Active title - bold accent so the active section is unmistakable
+   even without a card background. */
+.isw-section.is-active .isw-section__title {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+/* Done state - past steps render a filled SLDS success teal circle
+   with a checkmark icon (no halo, no bold title) so completed steps
+   read as "success" rather than another flavour of the blue active
+   state. Connector line below a done section is also success-tinted
+   to show progression. */
+.isw-section.is-done .isw-section__number {
+  background: var(--slds-g-color-success-1, #056764);
+  border-color: var(--slds-g-color-success-1, #056764);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.isw-section__number svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.isw-section-li:not(:last-child) .isw-section.is-done::before {
+  background: var(--slds-g-color-success-1, #056764);
+}
+/* Disabled (workspace locked) - applies via the host's is-disabled
+   class which we route through the row when isLocked. */
+.isw-section[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.isw-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+.isw-section__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  flex-wrap: wrap;
+}
+.isw-section.is-active .isw-section__title {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.isw-section__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+
+/* ── 3rd-level sub-substeps (X.Y.Z) ─────────────────────────────
+   Indented further under the active section row. Same numbered-grid
+   layout pattern as .isw-section but smaller and tighter so the
+   hierarchy stays scannable. Active row keeps the blue left-bar +
+   wash + bold accent text treatment. */
+.isw-section-li {
+  list-style: none;
+}
+.isw-substeps {
+  list-style: none;
+  margin: var(--slds-g-spacing-1, 0.25rem) 0
+    var(--slds-g-spacing-2, 0.5rem) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.isw-substep {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--slds-g-sizing-7, 1.5rem) 1fr;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  align-items: flex-start;
+  /* Indent so substeps clearly nest under the parent section's
+     number column (sizing-9 + spacing-var-3 gap). */
+  margin-left: var(--slds-g-spacing-var-5, 1.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.isw-substep:hover .isw-substep__title {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.isw-substep:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Connector line between consecutive sub-substep markers. */
+.isw-substep:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: var(--slds-g-spacing-3, 0.75rem);
+  top: calc(var(--slds-g-spacing-2, 0.5rem) + var(--slds-g-sizing-7, 1.5rem));
+  width: var(--slds-g-sizing-border-2, 2px);
+  height: calc(100% - var(--slds-g-sizing-7, 1.5rem));
+  background: var(--slds-g-color-border-1, #c9c9c9);
+  transform: translateX(-50%);
+}
+.isw-substep__number {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  transition: background 120ms ease, color 120ms ease,
+    border-color 120ms ease, box-shadow 120ms ease;
+}
+/* Active substep circle - same SLDS 2 active marker treatment as
+   sections. */
+.isw-substep.is-active .isw-substep__number {
+  background: var(--slds-g-color-accent-1, #066afe);
+  border-color: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  box-shadow: 0 0 0 var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+/* Done substep - filled SLDS success teal + checkmark, no halo.
+   Connector line below a done substep is also success-tinted so the
+   progression reads as completed (green) vs current (blue) vs
+   future (gray). */
+.isw-substep.is-done .isw-substep__number {
+  background: var(--slds-g-color-success-1, #056764);
+  border-color: var(--slds-g-color-success-1, #056764);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.isw-substep__number svg {
+  width: var(--slds-g-sizing-3, 0.5rem);
+  height: var(--slds-g-sizing-3, 0.5rem);
+}
+.isw-substep.is-done:not(:last-child)::before {
+  background: var(--slds-g-color-success-1, #056764);
+}
+.isw-substep__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.isw-substep__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  flex-wrap: wrap;
+}
+.isw-substep.is-active .isw-substep__title {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+
+/* ── Step tags (Optional / Required indicator) ───────────────
+   Mandatory steps carry no annotation by default (assumed). The
+   "Optional" tag is a small uppercase pill in subdued neutral
+   tones so it reads as a meta hint, not competing with the step
+   title for prominence. Mirrors the SLDS Lightning form-field
+   convention of opting INTO an optional label rather than marking
+   every mandatory item with an asterisk. */
+.isw-step-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--slds-g-spacing-2, 0.5rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.isw-step-tag_optional {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.isw-substep__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+
+/* ── Right canvas ───────────────────────────────────────────── */
+.isw-canvas {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  min-width: 0;
+  overflow: auto;
+}
+
+/* Canvas header (only when the routed view doesn't ship its own). */
+.isw-canvas__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.isw-canvas__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-canvas__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.isw-canvas__mount {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.isw-canvas__mount_stack {
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+
+/* Idle / empty pane host - anatomy lives in c-empty-state. */
+.isw-canvas__empty-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 18rem;
+}
+.isw-canvas__empty-pane c-empty-state {
+  width: 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SIDEBAR + WIDGET SUB-STEPS LAYOUT (active model)
+   ────────────────────────────────────────────────────────────────
+   Left  : permanent vertical category sidebar (~25%).
+   Right : dynamic canvas - default shows widget cards for sub-steps
+           of the active category; clicking a widget swaps to the
+           step's config UI with a "Back to <Category>" breadcrumb.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Outer shell - sidebar (1/4) on the left, combined pane (3/4) on
+   the right. The combined pane is a single bordered card that
+   internally splits into a pipeline column + divider + detail
+   column (see `.isw-combined` below). */
+.isw-shell {
+  display: grid;
+  /* Sidebar : detail ratio 1 : 3.5 - sidebar sits at ~22% of the
+     shell width (about 0.9x the previous 25%) so the detail panel
+     gains room for wizard descriptions and multi-column forms. */
+  grid-template-columns: minmax(14rem, 1fr) 3.5fr;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  align-items: start;
+}
+
+/* Combined pipeline + detail pane. One card chrome (border, radius,
+   shadow) wraps a 3-track grid: pipeline (1fr) | divider (1px) |
+   detail (2fr). Internal gutters use spacing-var-5 so the content
+   stays away from the divider. */
+.isw-combined {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 2fr);
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  align-items: stretch;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  /* SLDS 2 Nested-Card radius - 12px = `--slds-g-radius-border-3`,
+     per the Cards spec. Same hook used on every nested card across
+     the workspace (sidebar, pipeline, picker, template tiles). */
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  /* Pin the workspace card to a viewport-relative height so it
+     stays a constant shape regardless of the mounted wizard step.
+     Previously used `min-height: 24rem` (a floor), which let the
+     card grow / shrink with the mounted content between steps -
+     Initialize (short) vs Metric Selection (tall) produced a
+     visibly different card shape. The calc() means the card
+     resizes only when the browser resizes (different resolutions
+     get different sizes), never when the broker moves between
+     steps. Mounted wizards' own scroll containers handle content
+     overflow inside this fixed shell. */
+  min-height: calc(100vh - 10rem);
+}
+.isw-combined__divider {
+  width: var(--slds-g-sizing-border-1, 1px);
+  background: var(--slds-g-color-border-1, #c9c9c9);
+  /* Pull to the edges of the combined card's padding so the
+     divider visually runs the full height of the pane, including
+     across the head + footer rows. */
+  margin: calc(-1 * var(--slds-g-spacing-var-5, 1.5rem)) 0;
+}
+.isw-canvas-pipeline,
+.isw-canvas-detail {
+  display: flex;
+  flex-direction: column;
+  /* Tighter gap between the crumb (active step title) and the
+     mounted child component below - 0.5rem reads as the title
+     ANCHORING the content rather than floating away from it. */
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  min-width: 0;
+}
+/* Detail column stretches to the card's full inner height so the
+   footer (which uses `margin-top: auto`) is always pinned to the
+   very bottom of the pane, aligned with the tail of the pipeline
+   column on the left. The mounted step (Initialize's hierarchy
+   viewport, coverage tabs, etc.) sits at the top and never grows
+   the panel - it renders at its own natural / capped height and
+   any extra space just becomes breathing room between the content
+   and the footer. */
+
+
+/* ── Left sidebar ──────────────────────────────────────────── */
+/* Container chrome retired - each category renders as its own
+   standalone card stacked vertically. Matches the canvas widget
+   grid pattern so the two columns read as parallel groups of
+   cards rather than a single "panel of tabs" + a "panel of
+   widgets". */
+.isw-side {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+}
+.isw-side__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+/* Sidebar card - SLDS 2 Card spec (white container, 1px border,
+   rounded corners, no default shadows/outlines). Linear layout
+   matches the pipeline cards: icon left, title + description
+   stacked on the right. Active state paints a 4px accent rail via
+   pseudo-element so content alignment never shifts. */
+.isw-side__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  /* SLDS 2 Nested-Card radius - 12px = `--slds-g-radius-border-3`.
+     Matches the Cards spec applied to every nested card across the
+     workspace. */
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.isw-side__item:hover {
+  /* SLDS 2 hover - light blue tint (electric-blue-95). Same hue as
+     active so the affordance previews the selected state. Border
+     stays gray on hover; only the active state flips to the accent
+     border below. */
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+.isw-side__item:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.isw-side__item.is-active {
+  /* Selected card - light blue surface + full perimeter accent
+     border (replaces the previous left-rail pseudo-element).
+     Border keeps the same 1px width so the card never shifts. */
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.isw-side__item.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  pointer-events: none;
+}
+.isw-side__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  flex-shrink: 0;
+}
+/* Icon stays in its tinted-square treatment across all states -
+   the 4px accent rail + bold accent title already telegraph
+   "active" without an extra icon swap. Avoids visual noise inside
+   the card. */
+.isw-side__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+/* Body - vertical stack of title + description. min-width: 0 lets
+   long copy wrap inside the right-hand grid track. */
+.isw-side__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+.isw-side__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.isw-side__desc {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.isw-side__item.is-active .isw-side__label {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+
+/* ── Right canvas ──────────────────────────────────────────── */
+.isw-canvas {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  min-height: 22rem;
+}
+
+/* Widget-grid header - category name + description above the cards. */
+.isw-canvas__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.isw-canvas__head-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-canvas__head-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* Widget grid - legacy auto-fit CSS Grid kept dormant for one-step
+   revert. The active layout is `.isw-pipeline` below. */
+.isw-canvas__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* ── Pipeline Flow Builder ──────────────────────────────────
+   Linear vertical sequence of step cards joined by connector
+   lines, with hover-revealed [+] insert nodes between cards so
+   the broker can inject a new step at any array index. */
+.isw-pipeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.isw-pipeline__node {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+/* Active card - light blue surface + full perimeter accent
+   border (no left rail). Border keeps the same 1px width as the
+   default state, so the card never shifts between active /
+   default. Title + icon styling provide the rest of the emphasis. */
+.isw-widget.is-active {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.isw-widget.is-active:hover {
+  box-shadow: 0 2px 6px rgba(2, 80, 217, 0.08);
+}
+/* Body container - vertical stack of title + description on the
+   right of the icon. `min-width: 0` lets the body shrink inside
+   its grid track so long titles wrap instead of overflowing. */
+.isw-pipeline__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+/* Active card - title flips to the SLDS accent tone for emphasis. */
+.isw-widget.is-active .isw-widget__title {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.isw-pipeline__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+
+/* Plain connector - sits between cards where widget injection
+   isn't allowed. No button, just the 2px gray line so the
+   pipeline still reads as a continuous flow. */
+.isw-pipeline__gap {
+  position: relative;
+  width: var(--slds-g-sizing-9, 2rem);
+  /* Compact vertical connector - 24px keeps consecutive cards
+     visually grouped while still showing the flow line. */
+  height: var(--slds-g-sizing-7, 1.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Insert-node - same geometry as `__gap` but adds the [+] button
+   over the connector. Only emitted at gaps that target an
+   allowed-injection-point card (see `ALLOWED_INSERTION_TARGETS`). */
+.isw-pipeline__insert {
+  position: relative;
+  width: var(--slds-g-sizing-9, 2rem);
+  /* Slightly taller than the plain gap so the 24px [+] button has
+     breathing room above and below the connector line. */
+  height: var(--slds-g-sizing-9, 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.isw-pipeline__connector {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--slds-g-sizing-border-2, 2px);
+  height: 100%;
+  background: var(--slds-g-color-border-1, #c9c9c9);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.isw-pipeline__add-btn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  padding: 0;
+  border: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 140ms ease, transform 140ms ease,
+    background 140ms ease;
+}
+.isw-pipeline__add-btn svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+/* Reveal the + button when the insert region or button itself is
+   under hover OR keyboard focus, so the affordance is accessible
+   to non-pointer users as well. */
+.isw-pipeline__insert:hover .isw-pipeline__add-btn,
+.isw-pipeline__insert:focus-within .isw-pipeline__add-btn,
+.isw-pipeline__add-btn:focus-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+/* Pinned variant - [+] is permanently visible (no hover-reveal)
+   because this gap sits at an explicitly allowed injection point.
+   The broker shouldn't have to hunt for the affordance. */
+.isw-pipeline__insert_pinned .isw-pipeline__add-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+.isw-pipeline__add-btn:hover {
+  background: var(--slds-g-color-accent-2, #0250d9);
+  transform: scale(1.05);
+}
+.isw-pipeline__add-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ── Add-Widget Picker (modal) ──────────────────────────────
+   Opens over the workspace when the broker clicks [+] on a
+   pipeline insert-node. Backdrop catches outside clicks; the
+   container blocks click propagation so dialog clicks don't
+   dismiss. */
+.isw-picker {
+  position: fixed;
+  inset: 0;
+  z-index: 9200;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+}
+.isw-picker__container {
+  width: min(28rem, 100%);
+  max-height: min(80vh, 40rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  /* SLDS 2 Nested-Card radius - 12px, consistent with the
+     workspace's sidebar cards, combined pane, pipeline rows, and
+     template tiles so the picker reads as part of the same
+     visual system. */
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: isw-picker-pop 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes isw-picker-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.isw-picker__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem) var(--slds-g-spacing-var-5, 1.5rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.isw-picker__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-picker__close {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.isw-picker__close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-picker__close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.isw-picker__close svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.isw-picker__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.isw-picker__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.isw-picker__item:hover,
+.isw-picker__item:focus-visible {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  outline: none;
+}
+.isw-picker__item-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 0;
+}
+.isw-picker__item-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-picker__item-desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* Pipeline card - SLDS 2 surface-container-1 chrome with a 1px
+   border-1 stroke and 0.5rem radius. Cards are LINEAR ROWS (icon on
+   the left, title + description stacked on the right) so the
+   vertical pipeline reads as a compact stack of tappable rows
+   rather than a deep stack of tiles. Active state paints a 4px
+   accent rail via a pseudo-element; hover gets a subtle elevation
+   shadow only. */
+.isw-widget {
+  position: relative;
+  /* Body-only pipeline card - icon column was removed per spec, so
+     the card collapses to a single column hosting the title +
+     description block. */
+  display: block;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  /* SLDS 2 Nested-Card radius - 12px (`--slds-g-radius-border-3`),
+     applied to every nested card in the workspace so the visual
+     system stays consistent end-to-end. */
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 160ms ease, background 160ms ease,
+    border-color 160ms ease;
+}
+.isw-widget:hover {
+  /* SLDS 2 hover - light blue tint (electric-blue-95), same hue as
+     the active state. Previews the selected affordance without
+     flipping the border, which is reserved for the active card. */
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+}
+.isw-widget:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* Progressive-disclosure lock - applied to every non-first
+   pipeline card until the part's first step is saved via the
+   footer Next button. Matches the user directive: 50% opacity,
+   gray surface, grayscale, no pointer interactions. */
+.isw-widget.is-locked {
+  opacity: 0.5;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-border-1, #c9c9c9);
+  filter: grayscale(100%);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.isw-widget.is-locked:hover {
+  /* Override the unlocked hover (light-blue tint) so the locked
+     card stays gray on accidental cursor pass-through. */
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+/* Icon container - 2rem (sizing-9) square with a 1rem (sizing-5)
+   glyph inside. Matches the SLDS 2 sidebar icon proportions so the
+   two surfaces read as a single visual system. */
+.isw-widget__icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  flex-shrink: 0;
+}
+.isw-widget__icon-wrap svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.isw-widget__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  flex-wrap: wrap;
+}
+.isw-widget__desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  /* Tighter than the default body line-height - keeps the pipeline
+     row compact so each card reads as a single linear step rather
+     than a deep paragraph block. */
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+
+/* ── Per-card kebab menu (Edit / Move up / Move down / Delete) ──
+   Pinned to the top-right corner of every pipeline card. The card
+   body needs to reserve right padding so long titles don't collide
+   with the button. The menu itself uses a portal-like z-index above
+   the outside-click scrim so it floats over adjacent cards. */
+.isw-widget {
+  /* Body needs room on the right for the kebab. Kept as an override
+     of the base padding above so the base value stays untouched. */
+  padding-right: calc(
+    var(--slds-g-spacing-var-4, 1rem) + var(--slds-g-sizing-9, 2rem)
+  );
+}
+/* Lift the widget's `overflow: hidden` while its menu is open so
+   the floating dropdown isn't clipped by the card's rounded edge. */
+.isw-widget.is-menu-open {
+  overflow: visible;
+}
+.isw-widget__menu-anchor {
+  position: absolute;
+  top: var(--slds-g-spacing-1, 0.25rem);
+  right: var(--slds-g-spacing-1, 0.25rem);
+  /* Deliberately no z-index - a numeric z-index would create a new
+     stacking context and trap the floating menu under the scrim.
+     The menu itself carries the z-index (see .isw-widget__menu). */
+}
+.isw-widget__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.isw-widget__more svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.isw-widget__more:hover,
+.isw-widget__more.is-open {
+  /* No background fill - the color shift alone provides enough
+     feedback and keeps the card corner clean. */
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-widget__more:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+.isw-widget__menu {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-1, 0.25rem));
+  right: 0;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 12rem;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 6px 18px rgba(3, 35, 77, 0.12);
+  z-index: 10;
+}
+.isw-widget__menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-2, 0.5rem)
+    var(--slds-g-spacing-3, 0.75rem);
+  background: transparent;
+  border: none;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  text-align: left;
+  cursor: pointer;
+}
+.isw-widget__menu-item:hover:not(:disabled),
+.isw-widget__menu-item:focus-visible:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  outline: none;
+}
+.isw-widget__menu-item:disabled {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+  cursor: not-allowed;
+}
+.isw-widget__menu-item_destructive {
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.isw-widget__menu-item_destructive:hover:not(:disabled),
+.isw-widget__menu-item_destructive:focus-visible:not(:disabled) {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-on-error-2, #8a033e);
+}
+.isw-widget__menu-item_destructive:disabled {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.isw-widget__menu-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: 0 0 auto;
+}
+.isw-widget__menu-sep {
+  display: block;
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: var(--slds-g-spacing-1, 0.25rem) 0;
+  background: var(--slds-g-color-border-1, #c9c9c9);
+}
+.isw-widget__menu-scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 4;
+}
+
+/* Detail-pane crumb - step title on the left, clear-selection X on
+   the right. Pipeline stays visible in the middle column so there's
+   no "back" - the X just clears the active selection. */
+.isw-canvas__crumb {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.isw-canvas__crumb-current {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* `.isw-canvas__crumb-label` / `.isw-canvas__crumb-divider` are
+   orphan classes from the previous breadcrumb shape; the new
+   detail-pane crumb uses only `__crumb-current` (overridden
+   earlier in this file). Left here so older snapshots still
+   render the previous breadcrumb if reverted via git. */
+
+/* Drilled-step detail container - child LWC mounts. Grows to
+   fill the vertical space between the crumb and the footer, so
+   the mounted step (Initialize's hierarchy viewport, coverage
+   tabs, etc.) can flex-grow into the full available height
+   instead of hugging the crumb at the top.
+   `flex: 1` (basis 0) rather than `1 1 auto` so the mounted
+   child's natural content height doesn't push the pane past
+   the pipeline column on the left. */
+.isw-canvas__detail {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  min-width: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Legacy `.isw-parts`, `.isw-section`, `.isw-substep`, `.isw-panel*`,
+   `.isw-footer*` rules above are kept dormant so re-introducing the
+   old chrome is a one-template revert if needed.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Responsive - stack columns under 60rem viewports. ───────── */
+@media (max-width: 60rem) {
+  .isw-shell {
+    grid-template-columns: 1fr;
+  }
+  .isw-grid {
+    grid-template-columns: 1fr;
+  }
+  .isw-canvas {
+    min-height: 20rem;
+  }
+  .isw-panel__body {
+    grid-template-columns: 1fr;
+  }
+  .isw-panel__nav {
+    border-right: 0;
+    border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+      var(--slds-g-color-border-1, #c9c9c9);
+    padding-right: 0;
+    padding-bottom: var(--slds-g-spacing-var-3, 0.75rem);
+  }
+}
+
+/* ── Detail-pane action row (Cancel / Previous / Next) ───────
+   Sits at the bottom of the detail pane as the contextual
+   nav for the active step's config. `margin-top: auto` pushes
+   it to the pane's bottom even when the config content is
+   short so the row always anchors the pane visually.
+
+   Layout: Cancel on the left, spacer, Previous + Next on the
+   right - same convention as standard wizard footers. */
+.isw-canvas__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-top: auto;
+  /* Negative side + bottom margins eat into the parent
+     `.isw-combined` card's 1.5rem padding so the action row's
+     top border runs edge-to-edge across the detail pane (from
+     the divider to the card's right edge) and the buttons sit
+     flush with the card's bottom edge. Padding is re-added
+     internally to keep the buttons positioned where they were. */
+  margin-left: calc(-1 * var(--slds-g-spacing-var-5, 1.5rem));
+  margin-right: calc(-1 * var(--slds-g-spacing-var-5, 1.5rem));
+  margin-bottom: calc(-1 * var(--slds-g-spacing-var-5, 1.5rem));
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.isw-canvas__actions-spacer {
+  flex: 1;
+}
+.isw-canvas__actions-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-2, 0.5rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease,
+    color 120ms ease;
+}
+.isw-canvas__actions-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.isw-canvas__actions-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.isw-canvas__actions-btn_subtle {
+  background: transparent;
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.isw-canvas__actions-btn_subtle:hover:not(:disabled) {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.isw-canvas__actions-btn_primary {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+.isw-canvas__actions-btn_primary:hover:not(:disabled) {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+
+/* ── Landing View ─────────────────────────────────────────────
+   Full-width within the right grid cell of `.isw-shell` (sits as
+   the second grid column, taking the space the combined card
+   normally would). Reuses the same nested-card chrome as the
+   Builder so the two modes feel consistent visually. */
+.isw-landing {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  /* Equal L/R gutters, with matching vertical breathing room so the
+     header and tile grid both clear the card edge. */
+  padding: var(--slds-g-spacing-var-6, 2rem)
+    var(--slds-g-spacing-var-6, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  /* Same baseline min-height as the Builder card so the workspace
+     visual footprint stays stable when toggling between Landing
+     and Builder modes, without forcing a large empty area below
+     short landing content. */
+  min-height: 24rem;
+  min-width: 0;
+}
+.isw-landing__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.isw-landing__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.isw-landing__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* ── Builder View wrapper ─────────────────────────────────────
+   Stacks the Back-to-Templates breadcrumb above the existing
+   combined pipeline + detail card so the broker has a clear
+   escape hatch back to the Landing dashboard. */
+.isw-builder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  min-width: 0;
+}

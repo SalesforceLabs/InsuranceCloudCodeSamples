@@ -1,0 +1,753 @@
+<template>
+  <div class="page" onlaunchagentforce={handleLaunchAgentforce}>
+    <header class="head">
+      <div>
+        <h1 class="title">{appName}</h1>
+        <p class="meta">
+          {accountName} · Effective {effectiveLabel} · Response by {deadlineLabel}
+        </p>
+      </div>
+    </header>
+
+    <!-- ── Global LOC session strip (Hybrid Flow) ─────────────────────
+         Sits between the workspace header and the layout grid so
+         swapping a pill flips BOTH the left-nav pipeline and the
+         main content (each c-rfq-workspace* panel owns its own
+         c-progress-path). Rendered only when 2+ LOC sessions
+         exist on this account bundle. -->
+    <template lwc:if={showSessionStrip}>
+      <ul
+        class="p15-sessions"
+        role="tablist"
+        aria-label="Lines of coverage on this bundle"
+      >
+        <template for:each={sessionTabDisplay} for:item="s">
+          <li
+            class={s.className}
+            key={s.id}
+            id={s.tabDomId}
+            data-id={s.id}
+            role="tab"
+            tabindex="0"
+            aria-selected={s.ariaSelected}
+            aria-controls={s.panelDomId}
+            onclick={handleSessionClick}
+          >
+            <span class="p15-sess__body">
+              <!-- Primary text of the pill (SLDS 2 spec:
+                   .slds-pill__label). State is carried by the pill's
+                   own tint rather than a status subtitle. -->
+              <span class="slds-pill__label p15-sess__loc" title={s.locLabel}>{s.locLabel}</span>
+            </span>
+            <!-- .slds-pill__remove - SLDS 2 pill remove control.
+                 Rendered as a bare SLDS icon-button per the
+                 blueprint's remove-button anatomy. stopPropagation
+                 in the JS handler keeps the parent <li> onclick
+                 (session swap) from firing before the confirm
+                 modal opens. -->
+            <template lwc:if={s.showClose}>
+              <button
+                class="slds-button slds-button_icon slds-button_icon-bare slds-pill__remove p15-sess__close"
+                type="button"
+                data-id={s.id}
+                title="Remove"
+                aria-label="Remove this line of coverage"
+                onclick={handleDeleteLocClick}
+              >
+                <svg class="slds-button__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+                <span class="slds-assistive-text">Remove</span>
+              </button>
+            </template>
+          </li>
+        </template>
+      </ul>
+    </template>
+
+    <div class="layout">
+      <c-progress-path
+        active-step={activeStep}
+        onstepselect={handleStepSelect}
+      ></c-progress-path>
+
+      <main
+        class="workspace"
+        id={workspacePanelId}
+        role={workspacePanelRole}
+        aria-labelledby={workspacePanelLabelledBy}
+      >
+        <!-- ── GUIDED RFQ WIZARD (intake captured upstream in the modal) ── -->
+        <template lwc:if={isWizard}>
+          <!-- ── STEP 1: Schedule of Vehicles (asset tree + global actions) ── -->
+          <template lwc:if={isOnVehiclesStep}>
+          <section class={vehiclesSectionClass} data-step="vehicles">
+            <div class="card-surface">
+              <!-- Global action header: primary "Add Vehicle" CTA is
+                   pulled inline next to the title so the two read as a
+                   single "here is the section and here is the way to
+                   act on it" pair. Subtitle stays on the row below,
+                   aligned under the title. On narrow viewports the
+                   title-row flex-wraps so the CTA drops under the title
+                   rather than getting cropped. -->
+              <div class="asset-tree-head slds-p-bottom_medium">
+                <div class="asset-tree-head__title-row">
+                  <h2>Schedule of Vehicles ({vehiclesCount})</h2>
+                  <button
+                    class="slds-button slds-button_brand asset-tree-head__button"
+                    type="button"
+                    onclick={handleAddAsset}
+                  >
+                    Add Vehicle
+                  </button>
+                </div>
+                <p>{scheduleSubtitle}</p>
+              </div>
+
+              <!-- Tree container. -->
+              <div class="asset-tree-wrap">
+                <c-pa-asset-tree
+                  mode="roster"
+                  vehicles={vehicleView}
+                  drivers={driverView}
+                  assignments={vehicleAssignments}
+                  vehicle-child-kinds={vehicleChildKinds}
+                  onassigndriver={handleAssignDriver}
+                  oncreatedriverrequest={handleCreateDriverRequest}
+                  onremovedriverrequest={handleRemoveDriverRequest}
+                  onremovevehiclerequest={handleRemoveVehicleRequest}
+                  oneditvehiclerequest={handleEditVehicleRequest}
+                ></c-pa-asset-tree>
+              </div>
+
+              <template lwc:if={isOnVehiclesStep}>
+                <footer class="continue-row">
+                  <template lwc:if={hasPreviousStep}>
+                    <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                      Previous
+                    </button>
+                  </template>
+                  <div class="continue-row__actions">
+                    <button class="ghost" onclick={handleSaveAsDraft} type="button">
+                      Save as Draft
+                    </button>
+                    <button class="ghost" onclick={handleClose} type="button">
+                      Close
+                    </button>
+                    <button
+                      class="continue"
+                      onclick={confirmVehicles}
+                      type="button"
+                      disabled={continueVehiclesDisabled}
+                    >
+                      Proceed
+                    </button>
+                  </div>
+                </footer>
+              </template>
+            </div>
+          </section>
+          </template>
+
+          <!-- ── STEP 2: Configure Coverages - Policy → Vehicle → Driver ── -->
+          <template lwc:if={isOnCoveragesStep}>
+          <section class={coveragesSectionClass} data-step="coverages">
+            <div class="card-surface">
+              <header class="block-head">
+                <div>
+                  <h2>
+                    <span class="step-mark">2</span>
+                    Configure Coverages
+                  </h2>
+                  <p>
+                    Policy-wide limits at the top, then per-vehicle and
+                    per-driver coverages - the markets see the full
+                    Policy → Vehicle → Driver hierarchy.
+                  </p>
+                </div>
+              </header>
+
+              <c-pa-asset-tree
+                mode="coverages"
+                vehicles={vehicleView}
+                drivers={driverView}
+                assignments={vehicleAssignments}
+                policy-limits={policyLimits}
+                coverage-ranges={coverageRanges}
+                vehicle-coverages={vehicleCoverages}
+                driver-coverages={driverCoverages}
+                onpolicychange={handlePolicyLimitsChange}
+                oncoveragerangechange={handleCoverageRangeChange}
+                onvehiclecovchange={handleVehicleCoverageChange}
+                ondrivercovchange={handleDriverCoverageChange}
+                onassigndriver={handleAssignDriver}
+                oncreatedriverrequest={handleCreateDriverRequest}
+                onremovedriverrequest={handleRemoveDriverRequest}
+              ></c-pa-asset-tree>
+
+              <template lwc:if={isOnCoveragesStep}>
+                <footer class="continue-row">
+                  <template lwc:if={hasPreviousStep}>
+                    <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                      Previous
+                    </button>
+                  </template>
+                  <div class="continue-row__actions">
+                    <button class="ghost" onclick={handleSaveAsDraft} type="button">
+                      Save as Draft
+                    </button>
+                    <button class="ghost" onclick={handleClose} type="button">
+                      Close
+                    </button>
+                    <button class="continue" onclick={confirmCoverages} type="button">
+                      Proceed
+                    </button>
+                  </div>
+                </footer>
+              </template>
+            </div>
+          </section>
+          </template>
+
+          <!-- ── STEP 3: Review & Submit ──────────────────────── -->
+          <template lwc:if={isOnReviewStep}>
+            <section class="block" data-step="review">
+              <div class="card-surface review-card">
+                <div class="review-head">
+                  <h2>
+                    <span class="step-mark">3</span>
+                    Review &amp; Submit
+                  </h2>
+                </div>
+
+                <!-- Bundle Review tab bar: only renders when the
+                     broker has 2+ LOCs on the same account. Reuses
+                     the .p15-sess pill anatomy so the LOC session
+                     strip at the top of the workspace and the
+                     Review-scoped strip visually rhyme. Clicking a
+                     sibling pill swaps the card content to a
+                     read-only c-loc-review-panel; clicking self
+                     restores the live accordions below. -->
+                <template lwc:if={showBundleReviewTabs}>
+                  <ul class="bundle-review-tabs" role="tablist" aria-label="Bundle review">
+                    <template for:each={bundleReviewTabs} for:item="t">
+                      <li
+                        key={t.id}
+                        class={t.className}
+                        role="tab"
+                        aria-selected={t.isActive}
+                        tabindex="0"
+                        data-tab-id={t.id}
+                        onclick={handleReviewTabClick}
+                        onkeydown={handleReviewTabClick}
+                      >
+                        <span class="p15-sess__body">
+                          <span class="p15-sess__loc">{t.locLabel}</span>
+                        </span>
+                      </li>
+                    </template>
+                  </ul>
+                </template>
+
+                <!-- ── Local review content (self's LOC) ────────────
+                     AF Summary + Quote Details accordions render
+                     ONLY when the broker is looking at their own
+                     LOC. If they've clicked a sibling pill in the
+                     tab bar above, this block is skipped and
+                     c-loc-review-panel takes over below. -->
+                <template lwc:if={isReviewingSelf}>
+                <template lwc:if={showAgentforceSummary}>
+                <div class="af-summary" role="region" aria-label="Agentforce summary">
+                  <div class="af-summary__head">
+                    <span class="af-summary__pill">
+                      <span class="af-summary__spark" aria-hidden="true">
+                        <svg aria-hidden="true" viewBox="0 0 13 13" focusable="false"><path fill="currentColor" d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738ZM12.865 10.8392L12.0796 10.4465C11.8421 10.3308 11.6532 10.1372 11.5344 9.90313L11.1404 9.12035C11.0864 9.00737 10.9245 9.00737 10.8678 9.12035L10.4738 9.90313C10.3577 10.1398 10.1634 10.3281 9.92858 10.4465L9.1432 10.8392C9.02985 10.893 9.02985 11.0544 9.1432 11.1109L9.92858 11.5037C10.1661 11.6193 10.355 11.813 10.4738 12.047L10.8678 12.8298C10.9218 12.9428 11.0837 12.9428 11.1404 12.8298L11.5344 12.047C11.6505 11.8103 11.8448 11.622 12.0796 11.5037L12.865 11.1109C12.9783 11.0571 12.9783 10.8957 12.865 10.8392ZM12.865 1.80363L12.0796 1.41089C11.8421 1.29522 11.6532 1.10154 11.5344 0.867516L11.1404 0.0847341C11.0864 -0.0282447 10.9245 -0.0282447 10.8678 0.0847341L10.4738 0.867516C10.3577 1.10423 10.1634 1.29253 9.92858 1.41089L9.1432 1.80363C9.02985 1.85742 9.02985 2.01882 9.1432 2.07531L9.92858 2.46805C10.1661 2.58372 10.355 2.7774 10.4738 3.01142L10.8678 3.7942C10.9218 3.90718 11.0837 3.90718 11.1404 3.7942L11.5344 3.01142C11.6505 2.77471 11.8448 2.58641 12.0796 2.46805L12.865 2.07531C12.9783 2.02151 12.9783 1.86011 12.865 1.80363Z"/></svg>
+                      </span>
+                      Agentforce Summary
+                    </span>
+                    <span class="af-summary__badge">AI generated</span>
+                  </div>
+
+                  <p class="af-summary__intro">
+                    For {accountName}, here's the executive summary before routing to the markets.
+                  </p>
+
+                  <dl class="af-summary__highlights">
+                    <template for:each={agentforceHighlights} for:item="h">
+                      <div key={h.key} class="af-summary__item">
+                        <dt class="af-summary__term">{h.label}</dt>
+                        <dd class="af-summary__value">{h.value}</dd>
+                      </div>
+                    </template>
+                  </dl>
+
+                  <template lwc:if={hasPriorPolicy}>
+                    <div class="af-summary__foot">
+                      <button type="button" class="base-policy-link" onclick={openBasePolicyModal}>
+                        See Base Policy
+                      </button>
+                    </div>
+                  </template>
+                </div>
+                </template>
+
+                <!--
+                  Review card body - two always-visible sections
+                  stacked directly under the card. These used to be
+                  <details> accordions (open-by-default with a
+                  chevron + summary meta), but the broker was
+                  opening both of them every time and the summary
+                  meta lines duplicated content already rendered in
+                  the body. Post-flatten they render as plain
+                  <section class="review-panel"> siblings that share
+                  the same border / radius / surface as the old
+                  .review-acc[open] visual so the two panels still
+                  read as sibling cards on the Review card.
+                    1. Application Details - key/value grid with inline
+                       pencil-edit on the two date rows.
+                    2. Assets & Coverages - unified read-only tree
+                       (c-pa-asset-tree mode="review") that folds
+                       Schedule of Vehicles + Schedule of Drivers +
+                       Policy Coverages into one hierarchical view.
+                       Its header carries a single pencil that
+                       jumps back to Step 1 so the broker can edit
+                       anything in the tree, and doubles as the
+                       collapse control - the tree is a deep
+                       hierarchy, so it stays closed until the
+                       broker asks for it.
+                -->
+                <div class="review-accordion">
+                    <!--
+                      Application Details - key/value grid.
+                      Rows come from `quoteDetailsHighlights`. The
+                      first two (Application ID / Application Name)
+                      are pure read-only identity fields; the next two
+                      (Policy Start / End) carry the inline pencil-
+                      edit pattern - click the pencil, the read-only
+                      text swaps for an <input type="date">, blur or
+                      Enter commits and collapses the row back to
+                      formatted text. LOC + Prior Policy round out
+                      the list. Prior Policy also carries a "See Base
+                      Policy" link CTA that opens the existing modal.
+                    -->
+                    <section
+                      class="review-panel"
+                      aria-labelledby="application-details-heading"
+                    >
+                      <header class="review-panel__head">
+                        <h3
+                          id="application-details-heading"
+                          class="review-panel__title"
+                        >Application Details</h3>
+                      </header>
+                      <div class="review-panel__body">
+                        <dl class="quote-details__highlights">
+                          <template for:each={quoteDetailsHighlights} for:item="h">
+                            <div key={h.key} class="quote-details__item">
+                              <dt class="quote-details__term">{h.label}</dt>
+                              <dd class="quote-details__value">
+                                <!--
+                                  Editable date rows: two branches -
+                                  read-only text + pencil, OR the
+                                  actual <input type="date"> when the
+                                  broker has clicked the pencil. Only
+                                  Policy Start / End carry
+                                  `isEditable: true`; every other row
+                                  falls through to the plain
+                                  read-only branch below.
+                                -->
+                                <template lwc:if={h.isEditable}>
+                                  <template lwc:if={h.isEditing}>
+                                    <c-date-input
+                                      class="quote-details__date-input"
+                                      data-field={h.dateField}
+                                      value={h.dateInputValue}
+                                      size="s"
+                                      onchange={handlePolicyDateChange}
+                                      onblur={handlePolicyDateBlur}
+                                      onkeydown={handlePolicyDateKeydown}
+                                    ></c-date-input>
+                                  </template>
+                                  <template lwc:else>
+                                    <span class="quote-details__value-row">
+                                      <span class="quote-details__value-text">{h.value}</span>
+                                      <button
+                                        type="button"
+                                        class="quote-details__pencil"
+                                        data-field={h.dateField}
+                                        onclick={handleEditPolicyDate}
+                                        title="Edit"
+                                        aria-label="Edit"
+                                      >
+                                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                                      </button>
+                                    </span>
+                                  </template>
+                                </template>
+
+                                <template lwc:else>
+                                  <span class="quote-details__value-text">{h.value}</span>
+                                </template>
+                              </dd>
+                            </div>
+                          </template>
+                        </dl>
+                        <!--
+                          "See Base Policy" CTA. Deliberately a sibling
+                          of the <dl> rather than a child of the Prior
+                          Policy <dd>: inside the cell it inherited
+                          column 3's left edge and read as a stray link
+                          floating at the card's right side. As a block
+                          under the grid it lines up with the grid's own
+                          left edge - the same edge as the Application
+                          ID / Policy Start column.
+                        -->
+                        <template lwc:if={showBasePolicyCta}>
+                          <button
+                            type="button"
+                            class="base-policy-link"
+                            onclick={openBasePolicyModal}
+                          >See Base Policy</button>
+                        </template>
+                      </div>
+                    </section>
+
+                    <!--
+                      Assets & Coverages - unified read-only tree.
+                      Body renders c-pa-asset-tree in the new "review"
+                      mode which paints the same vehicle -> vehicle
+                      coverages -> assigned drivers -> driver-specific
+                      coverages hierarchy as Step 2, but with every
+                      editable control (picklists, checkboxes,
+                      overflow menu, driver-picker combobox) suppressed
+                      and coverage values rendered as static status
+                      pills + a text detail line. The single pencil
+                      button on the summary jumps back to Step 1 so
+                      the broker can edit anything in the tree - one
+                      pencil replaces what used to be three (Vehicles
+                      + Drivers + Coverages) because the tree itself
+                      carries all three.
+                    -->
+                    <section
+                      class="review-panel"
+                      aria-labelledby="assets-coverages-heading"
+                    >
+                      <header
+                        class="review-panel__head review-panel__head_toggle"
+                        role="button"
+                        tabindex="0"
+                        aria-expanded={assetsCoveragesAriaExpanded}
+                        aria-controls="assets-coverages-body"
+                        onclick={toggleAssetsCoverages}
+                        onkeydown={handleAssetsCoveragesKeydown}
+                      >
+                        <span class="review-panel__chevron-slot" aria-hidden="true">
+                          <svg class={assetsCoveragesChevronClass} viewBox="0 0 52 52" fill="currentColor" focusable="false"><path d="M17.7 4.6l21.9 20.2c.6.6.6 1.7 0 2.3L17.7 47.4c-.6.6-1.7.6-2.3 0l-2.3-2.3c-.6-.6-.6-1.7 0-2.3l18-16.8-18-16.8c-.6-.6-.6-1.7 0-2.3l2.3-2.3c.6-.6 1.7-.6 2.3 0z"/></svg>
+                        </span>
+                        <h3
+                          id="assets-coverages-heading"
+                          class="review-panel__title"
+                        >Assets &amp; Coverages</h3>
+                        <!-- Pencil-edit → goToStep('vehicles'). The
+                             handler still calls preventDefault +
+                             stopPropagation defensively so a stray
+                             submit / bubbling ancestor listener
+                             can't interfere with the click. -->
+                        <button
+                          type="button"
+                          class="review-panel__pencil"
+                          onclick={handleEditAssetsCoverages}
+                          title="Edit assets and coverages"
+                          aria-label="Edit assets and coverages"
+                        >
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                        </button>
+                      </header>
+                      <template lwc:if={assetsCoveragesExpanded}>
+                        <div
+                          id="assets-coverages-body"
+                          class="review-panel__body review-panel__body_tree"
+                        >
+                          <c-pa-asset-tree
+                            mode="review"
+                            vehicles={vehicleRows}
+                            drivers={driverRows}
+                            assignments={vehicleAssignments}
+                            policy-limits={policyLimits}
+                            coverage-ranges={coverageRanges}
+                            vehicle-coverages={vehicleCoverages}
+                            driver-coverages={driverCoverages}
+                          ></c-pa-asset-tree>
+                        </div>
+                      </template>
+                    </section>
+                  </div>
+                </template>
+
+                <!-- ── Sibling LOC preview (read-only) ────────────
+                     Renders when the broker has clicked another
+                     LOC's pill in the tab bar. c-loc-review-panel
+                     paints the same accordion layout using the
+                     sibling's snapshot; empty siblings show a
+                     "Nothing to review yet" placeholder. -->
+                <template lwc:if={activeSiblingPayload}>
+                  <c-loc-review-panel
+                    payload={activeSiblingPayload}
+                  ></c-loc-review-panel>
+                </template>
+
+                <!-- Target-market picker + Agentforce routing input used
+                     to live here so a broker could submit straight to
+                     carriers from Review. In the Multi-LOC bundle model
+                     those pickers now live on the Submission Board, where
+                     the broker chooses carriers per-bundle instead of per-
+                     RFQ. Review keeps the content read-only and branches
+                     the broker into "add another LOC" vs. "route the
+                     bundle" via the highlighted footer below. -->
+
+                <footer class="review-footer">
+                  <template lwc:if={hasPreviousStep}>
+                    <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                      Previous
+                    </button>
+                  </template>
+                  <div class="review-footer__actions">
+                    <button class="ghost" onclick={handleOpenAddLob} type="button">
+                      + Add Another Line of Coverage
+                    </button>
+                    <button class="continue solid" onclick={handleSaveToBoard} type="button">
+                      Add to Submission Board
+                    </button>
+                  </div>
+                </footer>
+              </div>
+            </section>
+          </template>
+        </template>
+
+        <!-- ── SAVED-TO-BUNDLE INTERSTITIAL ─────────────────────────────
+             The wizard no longer routes straight to carriers on submit.
+             Saving the RFQ lands it in the account's submission bundle
+             as "Ready". This bridge screen offers the two natural next
+             steps: capture another line of coverage for the same
+             account, or head to the Submission Board to bundle + route
+             the Ready RFQs to carriers. -->
+        <template lwc:if={isSubmitted}>
+          <section class="submitted-page">
+            <div class="submitted-check" aria-hidden="true">
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+            </div>
+            <div class="submitted-eyebrow">RFQ SAVED · READY TO BUNDLE</div>
+            <h2 class="submitted-title">Saved to submission bundle</h2>
+            <p class="submitted-sub">
+              This RFQ is now <strong>Ready</strong>. Add another line
+              of coverage for {accountName} to bundle with it, or head
+              to the Submission Board to route the bundle to carriers.
+            </p>
+            <div class="submitted-meta">
+              <span class="submitted-meta-row">
+                <strong>Application</strong> {appName}
+              </span>
+              <span class="submitted-meta-row">
+                <strong>Insured</strong> {accountName}
+              </span>
+              <span class="submitted-meta-row">
+                <strong>Line of Coverage</strong> {interstitialLocLabel}
+              </span>
+              <span class="submitted-meta-row">
+                <strong>Effective</strong> {interstitialEffectiveLabel}
+              </span>
+            </div>
+            <footer class="submitted-foot">
+              <div class="submitted-cta">
+                <button class="ghost" type="button" onclick={handleAddAnotherLoc}>
+                  + Add Another Line of Coverage
+                </button>
+                <span class="submitted-cta__desc">
+                  Open a fresh RFQ for {accountName} to bundle with this one.
+                </span>
+              </div>
+              <div class="submitted-cta">
+                <button class="brand solid" type="button" onclick={handleProceedToBoard}>
+                  Add to Submission Board
+                </button>
+                <span class="submitted-cta__desc">
+                  Head to the board to bundle Ready RFQs and submit to markets.
+                </span>
+              </div>
+            </footer>
+          </section>
+        </template>
+      </main>
+    </div>
+
+
+    <!-- Two-step Add Asset modal: Step 1 picker + Step 2 form.
+         Fired by the root-level "Add Vehicle" button. -->
+    <c-add-asset-modal
+      open={addAssetModalOpen}
+      options={assetPickerOptions}
+      available-vehicles={availableVehiclesForLookup}
+      available-drivers={availableDriversForLookup}
+      onsave={handleAddAssetModalSave}
+      oncancel={handleAddAssetModalCancel}
+    ></c-add-asset-modal>
+
+    <!-- Standalone vehicle modal - kept for the Edit Vehicle path
+         (row overflow menu). Add path routes through
+         c-add-asset-modal above. -->
+    <c-pa-vehicle-modal
+      open={addVehicleModalOpen}
+      vehicle={editingVehicle}
+      available-vehicles={availableVehiclesForLookup}
+      onsave={handleVehicleModalSave}
+      oncancel={handleVehicleModalCancel}
+    ></c-pa-vehicle-modal>
+
+    <!-- Standalone driver modal - kept for the per-vehicle "Create
+         New Driver" popover path (auto-assigns to the launching
+         vehicle). Root-level driver adds route through
+         c-add-asset-modal above. -->
+    <c-pa-driver-modal
+      open={addDriverModalOpen}
+      vehicle-name={pendingDriverVehicleName}
+      available-drivers={availableDriversForLookup}
+      onsave={handleDriverModalSave}
+      oncancel={handleDriverModalCancel}
+    ></c-pa-driver-modal>
+
+    <c-pa-driver-remove-modal
+      open={removeDriverModal.open}
+      driver-name={removeDriverModal.driverName}
+      vehicle-name={removeDriverModal.vehicleName}
+      other-vehicle-names={removeDriverModal.otherVehicleNames}
+      onunassign={handleRemoveDriverUnassign}
+      ondelete={handleRemoveDriverDelete}
+      oncancel={handleRemoveDriverModalCancel}
+    ></c-pa-driver-remove-modal>
+
+    <!-- "See Base Policy" modal (Step 3). Hosted inline at the workspace
+         level so it sits above all step content. Opens only when the broker
+         clicks the link on the Agentforce Summary card; the CTA itself is
+         visibility-gated by hasPriorPolicy. -->
+    <template lwc:if={basePolicyModalOpen}>
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="base-policy-heading"
+        class="slds-modal slds-fade-in-open slds-modal_medium"
+        onclick={handleBasePolicyBackdrop}
+      >
+        <div class="slds-modal__container base-policy-modal__container" onclick={stopBasePolicyPropagation}>
+          <header class="slds-modal__header base-policy-modal__head">
+            <button
+              class="slds-button slds-button_icon slds-modal__close"
+              type="button"
+              title="Close"
+              aria-label="Close this window"
+              onclick={closeBasePolicyModal}
+            >
+              <svg stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+            </button>
+            <h1 id="base-policy-heading" class="slds-modal__title base-policy-modal__title">Base Policy</h1>
+            <p class="base-policy-modal__meta">The incumbent policy used to create this RFQ</p>
+          </header>
+
+          <div class="slds-modal__content base-policy-modal__body">
+            <dl class="base-policy-modal__grid">
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Prior Carrier</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.carrier}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Policy / Group Number</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.number}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Annual Premium</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.premium}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">{priorPolicyDetails.fourthLabel}</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.fourthValue}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <footer class="slds-modal__footer base-policy-modal__foot">
+            <button class="slds-button slds-button_neutral" type="button" onclick={closeBasePolicyModal}>
+              Close
+            </button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- ── Delete-LOC confirmation modal ─────────────────────────────
+         Fired by the × button on any pill in the session strip. Header
+         names the LOC, body prompts on tab closure and (when the LOC
+         has captured content) shows an SLDS warning banner summarizing
+         what will be discarded. Confirm dispatches `tabclose` which
+         c-app listens for via c-account-record-page; Cancel just
+         closes the modal without side effects. -->
+    <template lwc:if={_deleteLocOpen}>
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="delete-loc-heading"
+        class="slds-modal slds-fade-in-open slds-modal_small p15-delete-modal"
+        onclick={handleDeleteLocCancel}
+      >
+        <div class="slds-modal__container p15-delete-modal__container" onclick={stopDeleteLocPropagation}>
+          <header class="slds-modal__header p15-delete-modal__head">
+            <button
+              class="slds-button slds-button_icon slds-modal__close"
+              type="button"
+              title="Close"
+              aria-label="Close this window"
+              onclick={handleDeleteLocCancel}
+            >
+              <svg stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+            </button>
+            <h1 id="delete-loc-heading" class="slds-modal__title p15-delete-modal__title">{_deleteLocHeading}</h1>
+          </header>
+
+          <div class="slds-modal__content p15-delete-modal__body">
+            <template lwc:if={_deleteLocWarningText}>
+              <div class="p15-delete__warning" role="alert">
+                <span class="p15-delete__warning-icon" aria-hidden="true">
+                  <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M26 4L1.6 46.4c-.3.6.1 1.4.9 1.4h48.9c.7 0 1.2-.8.9-1.4L28.1 4c-.4-.8-1.5-.8-2.1 0zM28 40h-4v-4h4v4zm0-8h-4V20h4v12z"/></svg>
+                </span>
+                <span class="p15-delete__warning-text">{_deleteLocWarningText}</span>
+              </div>
+            </template>
+            <p class="p15-delete-modal__prompt">
+              Please confirm you wish to close this line of coverage. You can add a new line of coverage for this RFQ at any time from the RFQ tab in your account.
+            </p>
+          </div>
+
+          <footer class="slds-modal__footer p15-delete-modal__foot">
+            <button
+              class="slds-button slds-button_neutral"
+              type="button"
+              onclick={handleDeleteLocCancel}
+            >Cancel</button>
+            <button
+              class="slds-button slds-button_brand p15-delete-modal__confirm"
+              type="button"
+              onclick={handleDeleteLocConfirm}
+            >Confirm Delete</button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Docked Agentforce side panel. Mounted once at the workspace level.
+         Inline contextual prompts (c-agentforce-inline-chat) dispatch a
+         bubbling `launchagentforce` event that this panel handles via
+         startContextualChat(). -->
+    <c-agentforce-panel lwc:ref="agentforcePanel"></c-agentforce-panel>
+  </div>
+</template>

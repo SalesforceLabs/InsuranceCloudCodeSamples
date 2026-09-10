@@ -1,0 +1,484 @@
+/* Document Classification — global threshold + two-column taxonomy. */
+
+.dc-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+}
+
+/* Plain text button — used inline with the threshold row. */
+.dc-text-btn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.dc-text-btn:hover {
+  color: var(--slds-g-color-accent-2);
+  text-decoration: underline;
+}
+.dc-text-btn:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: 2px;
+}
+
+/* Document Taxonomy heading sits inside Card title — pull the font scale
+ * down so it reads as a section label, not a page heading. */
+.slds2-card .dc-taxonomy-title {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+}
+
+/* Tighten the spacing above the Document Taxonomy card header so it
+ * sits closer to the threshold card above it. The body keeps its default
+ * padding (handled by .dc-col internally). */
+.dc-taxonomy-card .slds2-card__header {
+  padding-block-start: var(--slds-g-spacing-2);
+  padding-block-end: var(--slds-g-spacing-1);
+}
+
+/* ── Threshold card ─────────────────────────────────────────────── */
+.dc-threshold {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dc-threshold__label {
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+/* Inline edit row: read-mode shows value + pencil icon button; edit-mode
+ * shows the input with Cancel / Save text buttons to its right. */
+.dc-threshold__edit-row {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+  flex-wrap: wrap;
+}
+.dc-threshold__edit-row > .slds2-field {
+  /* Cap the input width so it doesn't push the action buttons off-screen
+   * for short numeric / single-select values. */
+  flex: 0 1 320px;
+  min-width: 200px;
+  margin-bottom: 0;
+}
+
+/* Pencil-icon button. Accent (blue) glyph; subtle surface hover. */
+.dc-inline-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease,
+    color 100ms ease;
+}
+.dc-inline-edit:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-accent-2);
+}
+.dc-inline-edit:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15);
+}
+.dc-threshold__value {
+  font-size: var(--slds-g-font-scale-3);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.2;
+}
+.dc-threshold__hint {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  line-height: 1.4;
+  max-width: 60ch;
+}
+
+/* ── Taxonomy ──────────────────────────────────────────────────── */
+.dc-taxonomy {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  min-height: 320px;
+}
+.dc-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--slds-g-spacing-4);
+}
+.dc-col + .dc-col {
+  border-left: 1px solid var(--slds-g-color-border-1);
+}
+.dc-col--disabled {
+  background: var(--slds-g-color-surface-3);
+}
+
+.dc-col__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  margin-bottom: var(--slds-g-spacing-2);
+}
+.dc-col__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.dc-col__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+.dc-col__sub {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+.dc-col__add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.dc-col__add:hover:not(:disabled) {
+  color: var(--slds-g-color-accent-2);
+  text-decoration: underline;
+}
+.dc-col__add:disabled {
+  color: var(--slds-g-color-on-surface-1);
+  cursor: not-allowed;
+}
+.dc-col__add:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: 2px;
+}
+
+.dc-col__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.dc-empty {
+  padding: 16px 8px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+
+/* ── Row ────────────────────────────────────────────────────────── */
+.dc-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom-color: var(--slds-g-color-border-1);
+  font: inherit;
+  color: var(--slds-g-color-on-surface-2);
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+.dc-row:last-child {
+  border-bottom-color: transparent;
+}
+.dc-row:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.dc-row--focus {
+  background: var(--slds-g-color-brand-base-95);
+  border-radius: var(--slds-g-radius-border-2);
+  border-color: var(--slds-g-color-accent-1);
+  border-bottom-color: var(--slds-g-color-accent-1);
+}
+.dc-row--editing {
+  cursor: default;
+  background: var(--slds-g-color-surface-container-1);
+}
+
+.dc-row__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dc-row__count {
+  flex: 0 0 auto;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* Inline editor ------------------------------------------------------ */
+.dc-row__editor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+}
+.dc-row__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-3);
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-accent-1);
+  border-radius: var(--slds-g-radius-border-1);
+  outline: none;
+}
+.dc-row__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-on-surface-2);
+  cursor: pointer;
+}
+.dc-row__icon-btn:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+/* Row kebab --------------------------------------------------------- */
+.dc-row__menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+.dc-row__menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: var(--slds-g-color-brand-base-95);
+  border: 1px solid var(--slds-g-color-brand-base-90, var(--slds-g-color-border-1));
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease,
+    color 100ms ease;
+}
+.dc-row__menu-trigger:hover {
+  background: var(--slds-g-color-accent-1);
+  border-color: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-on-accent-1, white);
+}
+.dc-row__menu-trigger:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15);
+}
+.dc-row__menu-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 10;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  box-shadow: var(--slds-g-shadow-2);
+}
+.dc-row__menu-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  text-align: left;
+  cursor: pointer;
+}
+.dc-row__menu-item:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+.dc-row__menu-item--destructive {
+  color: var(--slds-g-color-error-1);
+}
+.dc-row__menu-item--destructive:hover {
+  background: var(--slds-g-color-error-container-1);
+  color: var(--slds-g-color-on-error-container-1);
+}
+
+@media (max-width: 720px) {
+  .dc-taxonomy {
+    grid-template-columns: 1fr;
+  }
+  .dc-col + .dc-col {
+    border-left: 0;
+    border-top: 1px solid var(--slds-g-color-border-1);
+  }
+}
+
+/* Default Prompt Template — inline-edit row above the two columns, mirroring
+ * the Classification Confidence Score. Applies when a type has no template. */
+.dsp-default {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+  margin-top: var(--slds-g-spacing-4);
+  margin-bottom: var(--slds-g-spacing-4);
+}
+.dsp-default__lookup {
+  flex: 0 1 360px;
+  min-width: 240px;
+}
+
+/* ── Doc Summary Prompt — 30:70 category / prompt-template editor ──── */
+/* No bounding box: mirrors Document Classification's two-column layout with a
+ * single vertical divider between the category list and the prompt table. */
+.dsp {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  align-items: stretch;
+  min-height: 320px;
+}
+.dsp__left {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-inline-end: var(--slds-g-spacing-4);
+}
+.dsp__right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-inline-start: var(--slds-g-spacing-4);
+  border-left: 1px solid var(--slds-g-color-border-1);
+}
+.dsp__head {
+  padding-block: var(--slds-g-spacing-2);
+  margin-bottom: var(--slds-g-spacing-2);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-2);
+  border-block-end: 1px solid var(--slds-g-color-border-1);
+}
+.dsp__list {
+  display: flex;
+  flex-direction: column;
+}
+.dsp-empty {
+  padding: 20px 16px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+
+/* Doc Type cell text inside the standard table. */
+.dsp-cell--type {
+  color: var(--slds-g-color-on-surface-3);
+}
+/* Prompt-template cell: value + hover pencil, standard inline-edit affordance. */
+.dsp-cell--prompt {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+  min-width: 0;
+}
+.dsp-cell__value {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dsp-cell__placeholder {
+  color: var(--slds-g-color-on-surface-1);
+}
+
+/* Salesforce OOTB inline edit: pencil is invisible until the row is hovered
+ * (or the button itself is focused), then reveals as a quiet accent glyph. */
+.dsp-cell__edit {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 100ms ease, background-color 100ms ease,
+    border-color 100ms ease, color 100ms ease;
+}
+.slds2-table tbody tr:hover .dsp-cell__edit,
+.dsp-cell--prompt:hover .dsp-cell__edit {
+  opacity: 1;
+}
+.dsp-cell__edit:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-accent-2);
+}
+.dsp-cell__edit:focus-visible {
+  opacity: 1;
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15);
+}
+
+@media (max-width: 720px) {
+  .dsp {
+    grid-template-columns: 1fr;
+  }
+  .dsp__right {
+    border-left: 0;
+    border-top: 1px solid var(--slds-g-color-border-1);
+  }
+}

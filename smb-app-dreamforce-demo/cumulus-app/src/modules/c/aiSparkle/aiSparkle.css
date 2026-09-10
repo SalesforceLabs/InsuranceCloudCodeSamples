@@ -1,0 +1,34 @@
+/* Brand blue by default, since most placements are a card title on a
+   light surface. Callers that sit on a filled or gradient background
+   set --c-ai-sparkle-color: currentColor so the glyph tracks the text
+   it sits beside instead of disappearing into the fill. */
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-ai-sparkle-color, var(--slds-g-color-accent-1, #066afe));
+}
+
+.spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sized in em so the glyph tracks the title it sits beside rather than
+   locking to one card's font scale.
+
+   1.24em, not 1.15em: the verbatim utility:sparkles glyph only fills 92.5% of
+   its viewBox because SLDS reserves a live-area inset, where the previous
+   hand-traced path bled to the edge. Scaling the box up by 1/0.925 keeps the
+   painted glyph the same optical size it was at every existing call site.
+
+   --c-ai-sparkle-size opts out of that compensation entirely, for call sites
+   reproducing an org control that sets the SVG box itself. The org's own
+   button icon is a 0.875rem box around this same 520 viewBox, so re-applying
+   the 1/0.925 scale there would render the glyph a quarter larger than the
+   org's. Leave it unset to keep the em behaviour. */
+svg {
+  width: var(--c-ai-sparkle-size, 1.24em);
+  height: var(--c-ai-sparkle-size, 1.24em);
+}

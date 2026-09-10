@@ -1,0 +1,1349 @@
+/* =============================================================
+   Run My Day - layout scaffold
+   Kept as a single stylesheet because the new Action Items pane
+   composes many tightly coupled subgrids; splitting it would
+   fragment the layout tokens.
+   ============================================================= */
+.page {
+  max-width: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-4, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.awe-page { color: var(--atlas-ink); font-family: var(--atlas-font); }
+
+/* =============================================================
+   Principal tabstrip (My Renewals | Agency Revenue)
+   Uses `rmd-htab` (home-tab) - distinct from the vertical category
+   nav which owns .rmd-vertical-nav-link.
+   ============================================================= */
+.rmd-htabstrip {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--atlas-border);
+}
+.rmd-htab {
+  border: 0;
+  background: transparent;
+  padding: var(--slds-g-spacing-3, 12px) 18px;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 14px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.rmd-htab:hover { color: var(--atlas-ink); }
+.rmd-htab.is-active {
+  color: var(--atlas-ink);
+  border-bottom-color: var(--atlas-brand);
+}
+
+/* =============================================================
+   Greeting banner (persona-aware)
+   ============================================================= */
+.awe-banner {
+  padding: var(--slds-g-spacing-5, 24px) 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.awe-banner__title {
+  margin: 0 0 var(--slds-g-spacing-2, 8px);
+  font-size: var(--atlas-type-title-size);
+  font-weight: var(--atlas-type-title-weight);
+  color: var(--atlas-type-title-color);
+  line-height: var(--atlas-type-title-lh);
+}
+.awe-banner__copy {
+  margin: 0;
+  font-size: var(--atlas-type-body-size);
+  font-weight: var(--atlas-type-body-weight);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--atlas-type-body-lh);
+}
+.awe-banner__meta {
+  margin: 0;
+  font-size: var(--atlas-type-body-size);
+  font-weight: var(--atlas-type-body-weight);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--atlas-type-body-lh);
+}
+
+/* =============================================================
+   Meetings carousel + calendar popover
+   ============================================================= */
+.meetings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  padding: var(--slds-g-spacing-4, 16px);
+  border-radius: var(--slds-g-radius-border-4, 1.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  margin-bottom: var(--slds-g-spacing-3, 12px);
+}
+.meetings-header {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  position: relative;
+  margin-bottom: var(--slds-g-spacing-4, 16px);
+}
+.meetings-event-icon {
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.calendar-icon-btn {
+  margin-left: auto;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  background: var(--atlas-surface);
+  color: var(--atlas-ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.calendar-icon-btn:hover {
+  background: var(--slds-g-color-palette-electric-blue-50, rgba(6,106,254,0.06));
+  border-color: var(--atlas-brand);
+}
+.meetings-header__title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.meetings-header__title h2 {
+  margin: 0;
+  font-size: var(--atlas-type-section-size);
+  font-weight: var(--atlas-type-section-weight);
+  color: var(--atlas-type-section-color);
+  line-height: var(--atlas-type-section-lh);
+}
+.meetings-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-4, 16px) 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.meetings-header__count {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--atlas-muted);
+}
+.calendar-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: auto;
+  right: 0;
+  z-index: 20;
+  width: 260px;
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: var(--atlas-shadow-lift);
+  padding: 10px;
+  display: none;
+}
+.calendar-popover.visible { display: block; }
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--slds-g-spacing-1, 4px) 6px var(--slds-g-spacing-2, 8px);
+}
+.calendar-nav-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border-radius: var(--atlas-radius-sm);
+  color: var(--atlas-ink);
+}
+.calendar-nav-btn:hover { background: var(--slds-g-color-palette-electric-blue-50, rgba(6,106,254,0.08)); }
+.calendar-month-year {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.calendar-day-header {
+  font-size: var(--slds-g-font-scale-neg-2, 10px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+  text-align: center;
+  padding: var(--slds-g-spacing-1, 4px) 0;
+  letter-spacing: 0.06em;
+}
+.calendar-day {
+  border: 0;
+  background: transparent;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--atlas-ink);
+  cursor: pointer;
+  padding: var(--slds-g-spacing-2, 8px) 0;
+  border-radius: var(--atlas-radius-sm);
+}
+.calendar-day:hover { background: var(--slds-g-color-palette-electric-blue-50, rgba(6,106,254,0.08)); }
+.calendar-day.other-month { color: var(--atlas-muted); opacity: 0.55; }
+.calendar-day.today {
+  color: var(--atlas-brand);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.calendar-day.selected {
+  background: var(--atlas-brand);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+
+.meetings-carousel {
+  /* Org carousel is a flex strip of content-width cards that overflow
+     horizontally, not an equal-column grid that stretches them to fill
+     the row. */
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: var(--slds-g-spacing-4, 16px);
+  overflow-x: auto;
+  /* overflow-x:auto implicitly clips overflow-y too (browsers upgrade
+     overflow-y from visible → auto whenever the other axis is auto/
+     hidden/scroll). Without vertical padding, the meeting-card hover
+     state's translateY(-1px) lift + 12px accent glow shadow get
+     clipped, so the hover reads as "just a border color change" with
+     no depth. Reserve room top & bottom for that shadow so hover
+     renders cleanly, plus a hair of side padding so the leftmost /
+     rightmost card's shadow isn't sheared at the scroll edges. */
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-3, 12px);
+  scroll-snap-type: x mandatory;
+}
+.meeting-card {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 4px);
+  scroll-snap-align: start;
+  /* One fixed width for every card so the strip reads as a set rather
+     than a ragged row sized by whichever title happens to be longest.
+     Long names wrap inside that width; equal heights come from the
+     carousel's align-items: stretch, which sizes every card to the
+     tallest one in view.
+     388px is not a guess. Sweeping this basis a pixel at a time in the
+     browser and reading the real line boxes gives three bands where no
+     row strands a trailing word: 381-389 with default wrapping, 364-390
+     with text-wrap: pretty, and the whole range tested with balance.
+     388 is the only round figure inside all three, so the layout holds
+     whether or not the engine supports balance. It also puts the
+     longest event subject 19px clear of the 369px where that row stops
+     fitting on one line, which is the headroom for a platform whose
+     system font measures wider than this one.
+     Wider is not safer: past 431px the third meeting leaves the
+     viewport at 1400px, and the title bands above are bands, not
+     floors, so overshooting re-introduces the orphan it was meant to
+     avoid. */
+  box-sizing: border-box;
+  flex: 0 0 388px;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+.meeting-card:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 4px 12px rgba(6, 106, 254, 0.12);
+  transform: translateY(-1px);
+}
+.meeting-card:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 2px);
+}
+/* One-shot highlight on the card the broker just booked. Scheduling
+   returns them to a strip of four look-alike cards, so landing on the
+   right day is not enough - this says WHICH one is new. Two brand-blue
+   ring pulses over a tinted card, settling back to the resting card by
+   the end, and the class is pulled after ~2s (JUST_BOOKED_MS) so it
+   cannot loop or replay. */
+@keyframes meeting-card-just-booked {
+  0% {
+    background: var(--slds-g-color-brand-base-95, #edf4ff);
+    border-color: var(--slds-g-color-border-accent-1, #066afe);
+    box-shadow: 0 0 0 0 rgba(6, 106, 254, 0.35);
+  }
+  20% {
+    box-shadow: 0 0 0 0.4375rem rgba(6, 106, 254, 0);
+  }
+  40% {
+    box-shadow: 0 0 0 0 rgba(6, 106, 254, 0.3);
+  }
+  60% {
+    background: var(--slds-g-color-brand-base-95, #edf4ff);
+    border-color: var(--slds-g-color-border-accent-1, #066afe);
+    box-shadow: 0 0 0 0.4375rem rgba(6, 106, 254, 0);
+  }
+  100% {
+    background: var(--slds-g-color-surface-container-1, #fff);
+    border-color: var(--slds-g-color-border-1, #c9c9c9);
+    box-shadow: 0 0 0 0 rgba(6, 106, 254, 0);
+  }
+}
+.meeting-card.is-just-booked {
+  animation: meeting-card-just-booked 2s ease-out 1;
+}
+/* Reduced motion keeps the cue but drops the movement: a flat tint plus
+   accent border for the same window, removed by the same timer. */
+@media (prefers-reduced-motion: reduce) {
+  .meeting-card.is-just-booked {
+    animation: none;
+    background: var(--slds-g-color-brand-base-95, #edf4ff);
+    border-color: var(--slds-g-color-border-accent-1, #066afe);
+  }
+}
+.meeting-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-3, 12px);
+}
+/* The playbook name carries accent ink because the whole card routes to
+   Meeting Center; the org renders it as a record link in the same spot.
+   Size and weight are addressed straight at the SLDS scale rather than
+   through an --atlas-type-* role because no role lands on 14px: the
+   ladder steps 16px (subsection) to 13px (body) to 12px (label), and
+   this element sits in the gap. Spelling the 600 out is deliberate for
+   the same reason every role resolves weight to 400, so borrowing a
+   role here would silently strip the bold.
+   text-wrap: balance is load-bearing rather than cosmetic. Measured in
+   the browser, default wrapping leaves only a 9px window (381-389) where
+   none of the three names strands its last word, because the width that
+   rescues one name breaks another. Balancing evens the lines instead and
+   held across every width tested from 300px to 480px, which turns a
+   knife edge into a property of the rule. The span is a flex item, so it
+   is blockified and balance applies even though it is authored inline. */
+.meeting-card-name {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  min-width: 0;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+.meeting-card-account-link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1, 4px);
+}
+.meeting-card-account-link:hover,
+.meeting-card-account-link:focus-visible {
+  text-decoration: underline;
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.meeting-card-account-link:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 2px);
+}
+/* Status carries meaning, so it carries colour. The base rule is the
+   "prep is not finished" treatment (In Prep), and the modifiers below
+   move a badge off it once the state changes. Every pair is a feedback
+   container plus its matching on- ink, never a container with arbitrary
+   text colour, which is what keeps the 12px label above 4.5:1.
+   This vocabulary already has a palette in Meeting Center, which is
+   where the card routes to, so the values are taken from there rather
+   than invented: a badge must not change colour just because the user
+   crossed a navigation boundary.
+   The modifier suffix is derived from the status text in runMyDay.js,
+   so these selectors are coupled to that vocabulary: a status whose
+   slug matches nothing here keeps only the base class and renders as
+   In Prep. */
+.meeting-card-badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  padding: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  white-space: nowrap;
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+}
+/* Prep is done and the meeting is good to go. In Session shares this
+   treatment rather than getting a third hue: from the producer's point
+   of view both mean "the prep landed", and the remaining feedback
+   colours would misread - warning implies something needs attention and
+   error implies something is broken, neither of which is true of a
+   meeting that is simply underway. */
+.meeting-card-badge_prep-complete,
+.meeting-card-badge_in-session {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-2, #023434);
+}
+/* Terminal states drop out of the feedback palette entirely so they
+   stop competing with the meetings still needing work. */
+.meeting-card-badge_post-meeting,
+.meeting-card-badge_completed {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+/* Reads as plain metadata rather than a record link - the org paints
+   this row accent blue, but nothing here is navigable. */
+.meeting-card-timerange {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.meeting-card-fields {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 4px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.meeting-card-field {
+  display: flex;
+  gap: var(--slds-g-spacing-1, 4px);
+}
+.meeting-card-field dt {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  flex-shrink: 0;
+}
+/* Inert at the current card width: measured, every event subject fits on
+   one line from 369px up, and the card is 388px. It is here so that a
+   longer subject, or a platform whose system font measures wider, breaks
+   into two balanced lines instead of stranding the trailing "Renewal"
+   that this row is prone to. */
+.meeting-card-field dd {
+  margin: 0;
+  min-width: 0;
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-wrap: balance;
+}
+/* =============================================================
+   Action Items - header (metrics + category tabstrip)
+   ============================================================= */
+.rmd-action-items {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.rmd-action-items__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+}
+.rmd-action-items__header {
+  display: flex;
+  flex-direction: column;
+}
+.rmd-metrics-split {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+  gap: 20px;
+}
+.rmd-metrics {
+  display: grid;
+  gap: 0;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius);
+  overflow: hidden;
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+.rmd-metrics--part1 { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.rmd-metrics--agents {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(6, 106, 254, 0.08));
+}
+.rmd-metric {
+  padding: var(--slds-g-spacing-3, 12px) 14px;
+  border-right: 1px solid var(--atlas-border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--atlas-surface);
+}
+.rmd-metric:last-child { border-right: 0; }
+.rmd-metrics--agents .rmd-metric { background: transparent; }
+.rmd-metric__value {
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.rmd-metric__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--atlas-muted);
+  letter-spacing: 0.02em;
+}
+.rmd-metric.highlight .rmd-metric__value { color: var(--atlas-brand); }
+.rmd-metric.overdue  .rmd-metric__value { color: var(--slds-g-color-error-1, #b60554); }
+.rmd-metric.sla      .rmd-metric__value { color: var(--slds-g-color-palette-orange-40, #825101); }
+
+/* Agent Observability sub-tabset (Analytics / Optimization / Health) */
+.rmd-agent-tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-2, 6px);
+  align-items: center;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+}
+.rmd-agent-tab {
+  border: 0;
+  background: transparent;
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+  cursor: pointer;
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  margin-bottom: -1px;
+  transition: color 120ms ease, border-color 120ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 8px);
+}
+.rmd-agent-tab:hover { color: var(--atlas-ink); }
+.rmd-agent-tab.active {
+  color: var(--atlas-ink);
+  border-bottom-color: var(--atlas-brand);
+}
+
+/* =============================================================
+   Action Items - 3-column body (nav | cards | tiles)
+   Category filtering (Retain / Grow / Service / Comply / All) lives
+   in the .rmd-vertical-nav rail; there is no header tabstrip.
+   ============================================================= */
+/* Figma: outer gradient-tinted container holding the 3-column card */
+.rmd-insights-shell {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.rmd-action-items__body {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 432px;
+  background: transparent;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius-lg);
+  padding: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+.rmd-action-items__body > *:last-child {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 432px;
+}
+.rmd-left-panel {
+  display: flex;
+  flex-direction: row;
+  gap: var(--slds-g-spacing-4, 16px);
+  flex: 1 1 0;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  padding: var(--slds-g-spacing-4, 16px);
+  min-width: 0;
+  align-items: stretch;
+  border-radius: var(--atlas-radius);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  /* Same lilac as --atlas-agentic-glow, which the insight drawer uses.
+     Held at 30% via color-mix so the two stay tied to one hook: the
+     alpha step at the seam between the two surfaces is intentional. */
+  box-shadow: 4px 0 0 0
+    color-mix(in srgb, var(--slds-g-color-palette-purple-80, #d7bff2) 30%, transparent);
+}
+
+/* =============================================================
+   Groups column (Frame 18-6770)
+   Pill layout: [icon] [label] [warn icon-set if unread] [count on right]
+   • Inactive: white bg, 1px border-1 stroke, --slds-g-color-on-surface-2 text
+   • Active:   solid --slds-g-color-accent-container-2 fill + white text/icon
+   ============================================================= */
+.rmd-vertical-nav {
+  position: relative;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  transition: width 160ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  flex: 3 1 0;
+}
+.rmd-vertical-nav.collapsed { width: 60px; }
+
+/* Column header row (title + trailing collapse chevron) */
+.rmd-column-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 8px);
+  padding: 0;
+}
+.rmd-column-head__title {
+  margin: 0 0 var(--slds-g-spacing-2, 8px);
+  font-size: var(--atlas-type-subsection-size);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-type-subsection-color);
+  line-height: var(--atlas-type-subsection-lh);
+}
+.rmd-column-head__title_padded {
+  padding: 0 var(--slds-g-spacing-4, 16px);
+}
+.rmd-vertical-nav__collapse {
+  width: var(--slds-g-sizing-6, 20px);
+  height: var(--slds-g-sizing-6, 20px);
+  border-radius: var(--slds-g-radius-border-circle, 9999px);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+.rmd-vertical-nav.collapsed .rmd-vertical-nav__collapse svg { transform: rotate(180deg); }
+.rmd-vertical-nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 8px);
+}
+.rmd-vertical-nav__item { padding: 0; }
+.rmd-vertical-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 8px);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  text-decoration: none;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 1;
+  min-height: 54px;
+  height: 54px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background 120ms ease, color 120ms ease;
+  position: relative;
+}
+.rmd-vertical-nav-link:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.rmd-vertical-nav-link.active {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+  box-shadow:
+    inset 2px 2px 5px 0 rgba(0, 0, 0, 0.08),
+    inset 0 0.5px 2px 0 rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 0 rgba(0, 0, 0, 0.15);
+}
+/* The glyph does not track the pill's label colour: idle pills pair
+   grey text with an accent-blue mark, and only the active pill flips
+   the mark to white against the accent fill. */
+.rmd-vertical-nav__icon-wrap {
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-accent-1, #066afe);
+  flex-shrink: 0;
+  overflow: visible;
+}
+.rmd-vertical-nav-link.active .rmd-vertical-nav__icon-wrap {
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.rmd-vertical-nav__text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.rmd-vertical-nav.collapsed .rmd-vertical-nav__text { display: none; }
+
+/* Warn "there are new items" indicator. Frame 18-6770 renders this as a
+   bordered pink circle with a warning glyph - kept as an inline chip so
+   collapsing the nav still hides the label but preserves the affordance. */
+.rmd-vertical-nav__warn {
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+  box-sizing: border-box;
+  border-radius: var(--slds-g-radius-border-circle, 9999px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* The ring, the glyph and the tone share one colour, so each variant
+     below only has to set `background` and `color`. */
+  border: var(--slds-g-sizing-border-1, 1px) solid currentColor;
+}
+.rmd-vertical-nav__warn_attention {
+  background: var(--slds-g-color-warning-base-80, #fcc003);
+  color: var(--slds-g-color-warning-base-30, #6f3400);
+}
+.rmd-vertical-nav__warn_urgent {
+  background: var(--slds-g-color-error-base-90, #fddde3);
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.rmd-vertical-nav-link.active .rmd-vertical-nav__warn_attention {
+  background: var(--slds-g-color-warning-base-80, #fcc003);
+  color: var(--slds-g-color-warning-base-30, #6f3400);
+}
+.rmd-vertical-nav-link.active .rmd-vertical-nav__warn_urgent {
+  background: var(--slds-g-color-error-base-90, #fddde3);
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.rmd-vertical-nav__count {
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: 1.375;
+  color: inherit;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  min-width: 37px;
+}
+.rmd-vertical-nav.collapsed .rmd-vertical-nav__count { display: none; }
+.rmd-vertical-nav.collapsed .rmd-vertical-nav__warn { display: none; }
+.rmd-vertical-nav.collapsed .rmd-vertical-nav-link {
+  padding: var(--slds-g-spacing-3, 12px);
+  justify-content: center;
+}
+
+/* =============================================================
+   Cards column (Insight - <Category> Alerts)
+   Figma-parity: rounded 12px card, white bg, 1px border-1 stroke.
+   Active card: light-blue tint fill + 2px accent-1 outline (Screenshot 1)
+   ============================================================= */
+.rmd-cards-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: auto;
+  max-height: 620px;
+  padding: 0;
+  flex: 4 1 0;
+  min-width: 0;
+}
+.rmd-card {
+  background: transparent;
+  border: 0;
+  border-radius: var(--atlas-radius-sm);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--slds-g-spacing-1, 4px);
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  appearance: none;
+  transition: background 120ms ease;
+}
+.rmd-card + .rmd-card {
+  margin-top: var(--slds-g-spacing-4, 16px);
+}
+.rmd-card:hover { background: var(--slds-g-color-surface-container-2, #f3f3f3); }
+.rmd-card:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.rmd-card.selected {
+  border-color: transparent;
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  box-shadow: none;
+}
+.rmd-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 8px);
+}
+.rmd-card__title {
+  font-size: var(--atlas-type-subsection-size);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-type-subsection-color);
+  line-height: var(--atlas-type-subsection-lh);
+  padding-bottom: 2px;
+}
+.rmd-card__count {
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: inherit;
+}
+.rmd-card__urgency {
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+  border-radius: var(--slds-g-radius-border-circle, 9999px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.rmd-card__urgency_attention {
+  background: var(--slds-g-color-warning-base-80, #fcc003);
+  color: var(--slds-g-color-palette-neutral-10, #181818);
+}
+.rmd-card__urgency_urgent {
+  background: var(--slds-g-color-error-base-90, #fddde3);
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.rmd-card__summary {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-neutral-base-30, #444444);
+  line-height: 1.5;
+  padding-bottom: 2px;
+}
+
+/* =============================================================
+   Details column (right pane)
+   Header + AI banner + last-updated + account rows + "+ View More"
+   ============================================================= */
+.rmd-tiles-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 12px);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0 0 0 var(--slds-g-spacing-1, 4px);
+  min-width: 0;
+  max-height: 620px;
+  overflow: auto;
+}
+.rmd-tiles-column__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+/* Figma: Agentforce AI insight banner (info-container fill + violet AI border) */
+.rmd-alert-panel {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-4, 16px);
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  border-radius: var(--atlas-radius);
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-palette-violet-50, #ba01ff);
+}
+.rmd-alert-panel svg {
+  color: var(--slds-g-color-palette-violet-50, #ba01ff);
+  flex-shrink: 0;
+  width: var(--slds-g-sizing-5, 16px);
+  height: var(--slds-g-sizing-5, 16px);
+}
+.rmd-alert-panel__msg {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rmd-tiles-updated {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.rmd-tiles-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 12px);
+}
+.rmd-nested-card {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius);
+  padding: var(--slds-g-spacing-3, 12px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--slds-g-spacing-3, 12px);
+  align-items: flex-start;
+}
+.rmd-row-info { min-width: 0; }
+.rmd-row-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 12px);
+  flex-wrap: wrap;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.rmd-row-name-link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+.rmd-row-name-link:hover { text-decoration: underline; }
+.rmd-name-badge {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  padding: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+/* Fallback treatment for legacy "Prospect / Rounding / Agency" labels - kept
+   on brand-base tint so they still read as informational. */
+.rmd-name-badge.hni {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+/* SLA-Exceeded / escalation chip - amber warning with left warning icon.
+   Matches Frame 18-6770 "Badge - Warning" pattern. */
+.rmd-escalation-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 4px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-warning-1, #8c4b02);
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  padding: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+}
+.rmd-escalation-flag svg {
+  color: var(--slds-g-color-border-warning-1, #dd7a01);
+  flex-shrink: 0;
+}
+.rmd-row-detail {
+  margin-top: var(--slds-g-spacing-1, 4px);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* Row-action: circular bordered chevron button (Figma "⚡ Button Icon - Bordered")
+   Kept as a dropdown trigger so the existing action-menu behavior still works. */
+.rmd-row-actions { position: relative; }
+.rmd-action-menu { position: relative; }
+.rmd-action-btn {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  width: var(--slds-g-sizing-7, 24px);
+  height: var(--slds-g-sizing-7, 24px);
+  border-radius: var(--slds-g-radius-border-circle, 9999px);
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.rmd-action-btn:hover {
+  border-color: var(--slds-g-color-accent-1, #066afe);
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+.rmd-action-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.rmd-action-dropdown {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-1, 4px));
+  right: 0;
+  min-width: 210px;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  box-shadow: var(--atlas-shadow-lift);
+  padding: var(--slds-g-spacing-2, 8px);
+  display: none;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 4px);
+  z-index: 30;
+}
+.rmd-action-dropdown.open { display: flex; }
+.rmd-row-action {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: var(--slds-g-spacing-2, 8px) var(--slds-g-spacing-3, 12px);
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  cursor: pointer;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.rmd-row-action:hover {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.rmd-row-action.primary {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.rmd-row-action.dismiss { color: var(--slds-g-color-on-error-1, #b60554); }
+.rmd-row-action.dismiss:hover {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-on-error-1, #b60554);
+}
+
+/* "+ View More" footer link (Figma "Add Insight" / "Group Card States" button)
+   Sits centered under the last row card, accent-blue pill link, semibold. */
+.rmd-view-more-row {
+  display: flex;
+  justify-content: center;
+  padding: var(--slds-g-spacing-1, 4px) 0;
+}
+.rmd-view-more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 8px);
+  border: 0;
+  background: transparent;
+  padding: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-3, 12px);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.rmd-view-more:hover {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+.rmd-view-more svg { flex-shrink: 0; }
+
+/* =============================================================
+   Agent Observability
+   ============================================================= */
+.rmd-agent-card { border-style: solid; }
+.rmd-analytics-card {
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius);
+  padding: var(--slds-g-spacing-3, 12px) 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rmd-analytics-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rmd-analytics-card__title {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+}
+.rmd-analytics-card__sub {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--atlas-muted);
+}
+.rmd-chart-container { padding: var(--slds-g-spacing-1, 4px) 0; }
+.rmd-bar-chart, .rmd-hbar-chart { width: 100%; height: auto; }
+
+/* =============================================================
+   Agency Revenue home strip (Finance + Principal tab 2)
+   Unchanged wiring - retained under `rmd-rev-card` prefix to avoid
+   colliding with the new `rmd-card` in Action Items.
+   ============================================================= */
+.rmd-kpis-banner {
+  background: var(--atlas-banner-blue);
+  border-radius: var(--atlas-radius-lg);
+  padding: 22px 28px;
+  color: var(--slds-g-color-on-accent-1, #fff);
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  box-shadow: 0 14px 40px rgba(0, 57, 107, 0.18);
+}
+.banner-left { flex: 1; min-width: 220px; }
+.banner-eyebrow {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.72);
+  display: block;
+  margin-bottom: 6px;
+}
+.banner-title {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: -0.01em;
+}
+.rmd-kpis {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  flex: 1;
+  min-width: var(--slds-g-sizing-15, 320px);
+}
+.rmd-kpi {
+  padding: 6px 22px;
+  border-right: 1px solid rgba(255, 255, 255, 0.18);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rmd-kpi:last-child { border-right: 0; }
+.rmd-kpi__value {
+  font-size: var(--slds-g-font-scale-5, 1.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.rmd-kpi__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.04em;
+}
+.rmd-kpi__trend {
+  margin-top: var(--slds-g-spacing-1, 4px);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: rgba(255, 255, 255, 0.92);
+}
+.rmd-kpi__trend_up::before  { content: '▲ '; color: var(--slds-g-color-palette-green-80, #5efc82); }
+.rmd-kpi__trend_down::before { content: '▼ '; color: var(--slds-g-color-palette-red-80, #ffb0b0); }
+
+.rmd-revenue-split {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 20px;
+  align-items: start;
+}
+.rmd-rev-card {
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: var(--atlas-shadow-card);
+  padding: 18px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.rmd-rev-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.rmd-rev-card__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 16px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: -0.01em;
+  color: var(--atlas-ink);
+}
+.rmd-rev-card__sub {
+  margin: 2px 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  color: var(--atlas-muted);
+}
+.rmd-rev-card__cta {
+  border: 0;
+  background: transparent;
+  color: var(--atlas-brand);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  padding: var(--slds-g-spacing-1, 4px) 6px;
+  border-radius: var(--atlas-radius-sm);
+  transition: background 120ms ease;
+}
+.rmd-rev-card__cta:hover { background: var(--slds-g-color-palette-electric-blue-50, rgba(6,106,254,0.08)); }
+
+/* Expected vs Received leakage rows */
+.rmd-leak {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rmd-leak__row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 148px;
+  gap: 14px;
+  align-items: center;
+}
+.rmd-leak__period {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+  letter-spacing: 0.04em;
+}
+.rmd-leak__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.rmd-leak__bar {
+  height: 18px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--slds-g-spacing-2, 8px);
+  min-width: 60px;
+  overflow: hidden;
+}
+.rmd-leak__bar_expected {
+  background: var(--slds-g-color-palette-electric-blue-50, rgba(6,106,254,0.15));
+  color: var(--atlas-ink);
+}
+.rmd-leak__bar_received {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.rmd-leak__bar-lbl {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rmd-leak__gap {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+  text-align: right;
+}
+.rmd-leak__gap_ok    { color: var(--slds-g-color-palette-green-50, #2e844a); }
+.rmd-leak__gap_warn  { color: var(--slds-g-color-palette-hot-orange-40, #b83c14); }
+
+/* Producer Leaderboard */
+.rmd-lb {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: rmd-lb;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rmd-lb__row {
+  display: grid;
+  grid-template-columns: 20px minmax(80px, 1fr) minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: var(--slds-g-spacing-2, 8px) 10px;
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  transition: background 120ms ease;
+}
+.rmd-lb__row:hover { background: rgba(15, 23, 42, 0.03); }
+.rmd-lb__row.is-self {
+  background: var(--slds-g-color-palette-electric-blue-50, rgba(6,106,254,0.06));
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-palette-electric-blue-50, rgba(6,106,254,0.16));
+  padding: 7px 9px;
+}
+.rmd-lb__rank {
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-muted);
+  text-align: center;
+}
+.rmd-lb__name {
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rmd-lb__bar-wrap {
+  height: var(--slds-g-sizing-3, 8px);
+  background: rgba(15, 23, 42, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.rmd-lb__bar {
+  height: 100%;
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-radius: 999px;
+}
+.rmd-lb__meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--atlas-muted);
+  white-space: nowrap;
+}
+
+/* =============================================================
+   Responsive
+   ============================================================= */
+@media (max-width: 1180px) {
+  .rmd-vertical-nav__count { font-size: var(--slds-g-font-scale-2, 1rem); }
+}
+@media (max-width: 960px) {
+  .rmd-metrics-split { grid-template-columns: 1fr; }
+  .rmd-metrics--part1 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .rmd-metric:nth-child(4n) { border-right: 0; }
+  .rmd-revenue-split { grid-template-columns: 1fr; }
+  .rmd-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); border-left: 0; }
+  .rmd-kpi:nth-child(2n) { border-right: 0; }
+  .rmd-leak__row { grid-template-columns: 28px minmax(0, 1fr); }
+  .rmd-leak__gap { grid-column: 2; text-align: left; }
+  .rmd-lb__row { grid-template-columns: 20px 1fr; }
+  .rmd-lb__bar-wrap, .rmd-lb__meta { grid-column: 2; }
+}
+
+/* Retention-Alert Detail chrome now lives in c-retention-alert-drawer,
+   rendered inline as the third column of the insights grid above.
+   See src/modules/c/retentionAlertDrawer/retentionAlertDrawer.css */

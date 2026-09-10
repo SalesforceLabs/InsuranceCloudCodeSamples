@@ -1,0 +1,6897 @@
+{
+  "fields": [
+    {
+      "id": 1,
+      "label": "Submission Name",
+      "api": "Name",
+      "type": "Text",
+      "required": true,
+      "description": "Unique name / reference number for the submission.",
+      "picklistValues": []
+    },
+    {
+      "id": 2,
+      "label": "Broker",
+      "api": "Broker__c",
+      "type": "Text",
+      "required": true,
+      "description": "Name or ID of the broker submitting on behalf of the insured.",
+      "picklistValues": []
+    },
+    {
+      "id": 3,
+      "label": "Carrier",
+      "api": "Carrier__c",
+      "type": "Text",
+      "required": true,
+      "description": "Target insurance carrier for this submission.",
+      "picklistValues": []
+    },
+    {
+      "id": 4,
+      "label": "Submission Status",
+      "api": "Submission_Status__c",
+      "type": "Picklist",
+      "required": true,
+      "description": "Current status of the submission in the workflow.",
+      "picklistValues": [
+        "Draft",
+        "Submitted",
+        "Under Review",
+        "Quoted",
+        "Bound",
+        "Declined",
+        "Withdrawn"
+      ]
+    },
+    {
+      "id": 5,
+      "label": "Line of Business",
+      "api": "Line_of_Business__c",
+      "type": "Picklist",
+      "required": true,
+      "description": "Insurance line being placed.",
+      "picklistValues": [
+        "General Liability",
+        "Property",
+        "Auto",
+        "Cyber"
+      ]
+    },
+    {
+      "id": 6,
+      "label": "Insured Name",
+      "api": "Insured_Name__c",
+      "type": "Text",
+      "required": true,
+      "description": "Legal name of the insured entity.",
+      "picklistValues": []
+    },
+    {
+      "id": 7,
+      "label": "Insured State",
+      "api": "Insured_State__c",
+      "type": "Picklist",
+      "required": false,
+      "description": "State of domicile for the insured.",
+      "picklistValues": [
+        "AL",
+        "AK",
+        "AZ",
+        "AR",
+        "CA",
+        "CO",
+        "CT",
+        "DE",
+        "FL",
+        "GA",
+        "HI",
+        "ID",
+        "IL",
+        "IN",
+        "IA",
+        "KS",
+        "KY",
+        "LA",
+        "ME",
+        "MD",
+        "MA",
+        "MI",
+        "MN",
+        "MS",
+        "MO",
+        "MT",
+        "NE",
+        "NV",
+        "NH",
+        "NJ",
+        "NM",
+        "NY",
+        "NC",
+        "ND",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "VT",
+        "VA",
+        "WA",
+        "WV",
+        "WI",
+        "WY"
+      ]
+    },
+    {
+      "id": 8,
+      "label": "Effective Date",
+      "api": "Effective_Date__c",
+      "type": "Date",
+      "required": true,
+      "description": "Policy effective date requested by the insured.",
+      "picklistValues": []
+    },
+    {
+      "id": 9,
+      "label": "Expiration Date",
+      "api": "Expiration_Date__c",
+      "type": "Date",
+      "required": false,
+      "description": "Policy expiration / renewal date.",
+      "picklistValues": []
+    },
+    {
+      "id": 10,
+      "label": "Date Submitted",
+      "api": "Date_Submitted__c",
+      "type": "Date/Time",
+      "required": false,
+      "description": "Timestamp when the submission was sent to the carrier.",
+      "picklistValues": []
+    },
+    {
+      "id": 11,
+      "label": "Requested Premium",
+      "api": "Requested_Premium__c",
+      "type": "Currency",
+      "required": false,
+      "description": "Target or estimated premium amount requested.",
+      "picklistValues": []
+    },
+    {
+      "id": 12,
+      "label": "Quoted Premium",
+      "api": "Quoted_Premium__c",
+      "type": "Currency",
+      "required": false,
+      "description": "Premium as quoted by the carrier.",
+      "picklistValues": []
+    },
+    {
+      "id": 13,
+      "label": "Bound Premium",
+      "api": "Bound_Premium__c",
+      "type": "Currency",
+      "required": false,
+      "description": "Final bound premium.",
+      "picklistValues": []
+    },
+    {
+      "id": 14,
+      "label": "Total Insured Value",
+      "api": "Total_Insured_Value__c",
+      "type": "Currency",
+      "required": false,
+      "description": "Total value of assets being insured.",
+      "picklistValues": []
+    },
+    {
+      "id": 15,
+      "label": "Commission Rate",
+      "api": "Commission_Rate__c",
+      "type": "Percent",
+      "required": false,
+      "description": "Broker commission percentage on this submission.",
+      "picklistValues": []
+    },
+    {
+      "id": 16,
+      "label": "Number of Employees",
+      "api": "Number_of_Employees__c",
+      "type": "Number",
+      "required": false,
+      "description": "Headcount of the insured entity.",
+      "picklistValues": []
+    },
+    {
+      "id": 17,
+      "label": "Annual Revenue",
+      "api": "Annual_Revenue__c",
+      "type": "Currency",
+      "required": false,
+      "description": "Reported annual revenue of the insured.",
+      "picklistValues": []
+    },
+    {
+      "id": 18,
+      "label": "Is Renewal",
+      "api": "Is_Renewal__c",
+      "type": "Boolean",
+      "required": false,
+      "description": "Indicates whether this is a renewal of an existing policy.",
+      "picklistValues": []
+    },
+    {
+      "id": 19,
+      "label": "Is Bound",
+      "api": "Is_Bound__c",
+      "type": "Boolean",
+      "required": false,
+      "description": "True once the submission has been bound into a policy.",
+      "picklistValues": []
+    },
+    {
+      "id": 20,
+      "label": "Priority",
+      "api": "Priority__c",
+      "type": "Picklist",
+      "required": false,
+      "description": "Internal priority flag for queue management.",
+      "picklistValues": [
+        "Low",
+        "Medium",
+        "High",
+        "Urgent"
+      ]
+    },
+    {
+      "id": 21,
+      "label": "Coverage Types",
+      "api": "Coverage_Types__c",
+      "type": "Multi-Select Picklist",
+      "required": false,
+      "description": "All coverage types included in this submission.",
+      "picklistValues": [
+        "Occurrence",
+        "Claims-Made",
+        "Per Location",
+        "Per Project",
+        "Blanket"
+      ]
+    },
+    {
+      "id": 22,
+      "label": "Broker Email",
+      "api": "Broker_Email__c",
+      "type": "Email",
+      "required": false,
+      "description": "Primary email address of the broker contact.",
+      "picklistValues": []
+    },
+    {
+      "id": 23,
+      "label": "Broker Phone",
+      "api": "Broker_Phone__c",
+      "type": "Phone",
+      "required": false,
+      "description": "Direct phone number for the broker.",
+      "picklistValues": []
+    },
+    {
+      "id": 24,
+      "label": "Carrier Portal URL",
+      "api": "Carrier_Portal_URL__c",
+      "type": "URL",
+      "required": false,
+      "description": "Link to the carrier submission portal for this record.",
+      "picklistValues": []
+    },
+    {
+      "id": 25,
+      "label": "Underwriting Notes",
+      "api": "Underwriting_Notes__c",
+      "type": "Long Text Area",
+      "required": false,
+      "description": "Free-form notes from the underwriter during review.",
+      "picklistValues": []
+    },
+    {
+      "id": 26,
+      "label": "Stages",
+      "api": "Stage__c",
+      "type": "Picklist",
+      "required": false,
+      "description": "Master list of underwriting stages.",
+      "picklistValues": [
+        "Intake and Clearance",
+        "Data Enrichment",
+        "Risk Evaluation",
+        "Pricing and Quoting",
+        "Binding and Policy Issuance"
+      ]
+    },
+    {
+      "id": 27,
+      "label": "Test Field",
+      "api": "Test_Field__c",
+      "type": "Text",
+      "required": false,
+      "description": "Test field to verify persistence",
+      "picklistValues": []
+    },
+    {
+      "id": 28,
+      "label": "Submission Stages",
+      "api": "Submission_Stage__c",
+      "type": "Picklist",
+      "required": false,
+      "description": "Master list of parent-submission stages.",
+      "picklistValues": [
+        "Draft",
+        "In Progress",
+        "Declined",
+        "Processed"
+      ]
+    }
+  ],
+  "nextFieldId": 29,
+  "reusableActivities": [
+    {
+      "id": 2,
+      "name": "Clearance Check",
+      "description": "Clearance check",
+      "action": "Omniscript",
+      "actionDetails": {
+        "omniscriptName": ""
+      }
+    },
+    {
+      "id": 3,
+      "name": "Clearance Check",
+      "description": "",
+      "action": "Agent",
+      "actionDetails": {
+        "agentName": "Submission_Triage_Agent"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Submission Intake Form",
+      "description": "Capture broker submission details and required ACORD attachments via a guided intake flow.",
+      "action": "Omniscript",
+      "actionDetails": {
+        "omniscriptName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Clearance Check",
+      "description": "Run carrier clearance to detect duplicate submissions and broker conflicts before underwriting starts.",
+      "action": "Integration Procedure",
+      "actionDetails": {
+        "ipName": "Property_ClearanceCheck"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Broker Validation",
+      "description": "Verify broker license status, appointment, and producer code before clearance is issued.",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": "Property_BrokerValidationFlow"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 8,
+      "name": "Property Characteristics Enrichment",
+      "description": "Pull Verisk 360 building characteristics and replacement cost values for each location.",
+      "action": "Omniscript",
+      "actionDetails": {
+        "omniscriptName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 9,
+      "name": "Location & CAT Exposure Enrichment",
+      "description": "Geocode addresses and pull CoreLogic CAT exposure (flood, EQ, wildfire, hurricane, hail).",
+      "action": "Enrichment Definition",
+      "actionDetails": {
+        "lob": "Commercial Property",
+        "categoryId": "location-cat-exposure",
+        "enrichmentDefinitionId": "2",
+        "enrichmentDefinitionName": "Location & CAT Exposure — CoreLogic"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 10,
+      "name": "Fire Protection Enrichment",
+      "description": "Fetch ISO PPC, hydrant distance, and water-supply data for each insured location.",
+      "action": "Enrichment Definition",
+      "actionDetails": {
+        "lob": "Commercial Property",
+        "categoryId": "fire-protection-response",
+        "enrichmentDefinitionId": "3",
+        "enrichmentDefinitionName": "Fire Protection — ISO PPC"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 11,
+      "name": "Claims History Enrichment",
+      "description": "Pull LexisNexis CLUE 5-year claims history and aggregate by peril.",
+      "action": "Enrichment Definition",
+      "actionDetails": {
+        "lob": "Commercial Property",
+        "categoryId": "claims-history",
+        "enrichmentDefinitionId": "4",
+        "enrichmentDefinitionName": "Claims History — LexisNexis CLUE"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 12,
+      "name": "Appetite Check",
+      "description": "Evaluate the submission against carrier appetite rules: occupancy, TIV bands, and excluded classes.",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": "Property_AppetiteCheckFlow"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 13,
+      "name": "Run Risk Score",
+      "description": "Compute the property risk score by combining enrichment, claims, and CAT exposure inputs.",
+      "action": "Enrichment Definition",
+      "actionDetails": {
+        "lob": "Commercial Property",
+        "categoryId": "property-characteristics",
+        "enrichmentDefinitionId": "1",
+        "enrichmentDefinitionName": "Property Characteristics — Verisk 360"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 14,
+      "name": "Loss Ratio Review",
+      "description": "Agent reviews historical loss ratio against industry benchmarks and flags outliers.",
+      "action": "Agent",
+      "actionDetails": {
+        "agentName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 15,
+      "name": "Generate Indicative Quote",
+      "description": "Produce an indicative premium and per-location pricing breakdown for underwriter review.",
+      "action": "Integration Procedure",
+      "actionDetails": {
+        "ipName": "Property_IndicativeQuoteIP"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 16,
+      "name": "Apply Pricing Adjustments",
+      "description": "Apply schedule rating credits and debits, broker commission, and any manual UW adjustments.",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": "Property_PricingAdjustmentsFlow"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 17,
+      "name": "Underwriter Review",
+      "description": "Senior underwriter signs off on pricing, terms, and any non-standard exceptions.",
+      "action": "Agent",
+      "actionDetails": {
+        "agentName": "Property_UnderwriterReviewAgent"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 18,
+      "name": "Quote Acceptance",
+      "description": "Capture broker acceptance, confirm bind authority, and record subjectivities cleared.",
+      "action": "Omniscript",
+      "actionDetails": {
+        "omniscriptName": "Property_QuoteAcceptance"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 19,
+      "name": "Generate Binder Document",
+      "description": "Render the binder document with quoted limits, deductibles, and effective dates.",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": "Property_BinderGenerationFlow"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 20,
+      "name": "Issue Policy",
+      "description": "Push the bound submission to the policy admin system and emit the policy number.",
+      "action": "Enrichment Definition",
+      "actionDetails": {
+        "lob": "Commercial Property",
+        "categoryId": "property-characteristics",
+        "enrichmentDefinitionId": "1",
+        "enrichmentDefinitionName": "Property Characteristics — Verisk 360"
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 21,
+      "name": "Send Welcome Packet",
+      "description": "Email the welcome packet, policy documents, and broker commission statement.",
+      "action": "Omniscript",
+      "actionDetails": {
+        "omniscriptName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 37,
+      "name": "Data Extraction",
+      "description": "",
+      "action": "Agent",
+      "actionDetails": {
+        "agentName": "Document_Reviewer_Agent"
+      },
+      "scope": "Parent Submission"
+    },
+    {
+      "id": 43,
+      "name": "Broker Validation",
+      "description": "Verify broker license status, appointment, and producer code — applies to every line of business.",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": "BrokerValidationFlow"
+      },
+      "scope": "Lines of Submission"
+    },
+    {
+      "id": 44,
+      "name": "Duplicate & Clearance Check",
+      "description": "Detect duplicate submissions and broker conflicts across all lines before underwriting starts.",
+      "action": "Integration Procedure",
+      "actionDetails": {
+        "ipName": "Global_ClearanceCheck"
+      },
+      "scope": "Lines of Submission"
+    },
+    {
+      "id": 45,
+      "name": "Sanctions & Watchlist Screening",
+      "description": "Screen the insured and related parties against OFAC and global sanctions/watchlists.",
+      "action": "Integration Procedure",
+      "actionDetails": {
+        "ipName": "Global_SanctionsScreening"
+      },
+      "scope": "Lines of Submission"
+    },
+    {
+      "id": 46,
+      "name": "Document Completeness Review",
+      "description": "Confirm all required documents are present and legible before the submission advances.",
+      "action": "Agent",
+      "actionDetails": {
+        "agentName": "Document_Completeness_Agent"
+      },
+      "scope": "Lines of Submission"
+    },
+    {
+      "id": 47,
+      "name": "Submission Summary Generation",
+      "description": "Generate an AI summary of the submission and its documents for underwriter review.",
+      "action": "Agent",
+      "actionDetails": {
+        "agentName": "Submission_Summary_Agent"
+      },
+      "scope": "Lines of Submission"
+    },
+    {
+      "id": 48,
+      "name": "Assign Underwriter",
+      "description": "Route the submission to the appropriate underwriter or queue based on assignment rules.",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": "AssignUnderwriterFlow"
+      },
+      "scope": "Lines of Submission"
+    },
+    {
+      "id": 51,
+      "name": "Data Completion Check",
+      "description": "",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": ""
+      },
+      "scope": "Lines of Submission"
+    },
+    {
+      "id": 52,
+      "name": "N",
+      "description": "",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 53,
+      "name": "Data Extraction",
+      "description": "",
+      "action": "Agent",
+      "actionDetails": {
+        "agentName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 54,
+      "name": "New Activity",
+      "description": "",
+      "action": "No Process",
+      "actionDetails": {},
+      "scope": "Lines of Submission",
+      "runtimeTaskCreation": true
+    },
+    {
+      "id": 55,
+      "name": "New Activity",
+      "description": "",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 56,
+      "name": "New Activity",
+      "description": "",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": "Submission_Intake_Flow"
+      },
+      "scope": "Lines of Submission",
+      "runtimeTaskCreation": true
+    },
+    {
+      "id": 57,
+      "name": "New Activity",
+      "description": "",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 58,
+      "name": "New Activity",
+      "description": "",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": ""
+      },
+      "scope": {
+        "lob": "Property"
+      }
+    },
+    {
+      "id": 59,
+      "name": "New Activity",
+      "description": "",
+      "action": "Flow",
+      "actionDetails": {
+        "flowName": ""
+      },
+      "scope": "Lines of Submission"
+    }
+  ],
+  "nextReusableActivityId": 60,
+  "activityConfigs": [
+    {
+      "id": 1,
+      "name": "Submission Management V1",
+      "active": true,
+      "effectiveFrom": "2026-06-01",
+      "effectiveTo": ""
+    }
+  ],
+  "nextActivityConfigId": 2,
+  "stageConfigs": [
+    {
+      "id": 1,
+      "name": "Commercial Property V1",
+      "object": "Submission",
+      "recordType": "Property",
+      "picklist": "Stages",
+      "stages": [
+        "Data Enrichment",
+        "Intake and Clearance",
+        "Risk Evaluation",
+        "Binding and Policy Issuance"
+      ],
+      "active": true,
+      "effectiveFrom": "2026-06-01",
+      "effectiveTo": "",
+      "stageTransitionRules": {
+        "Data Enrichment": [
+          {
+            "id": 1,
+            "toStage": "Risk Evaluation",
+            "trigger": "Manual",
+            "conditions": [
+              {
+                "activityId": 1781456687010,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": ""
+              },
+              {
+                "activityId": 1782380955693,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": ""
+              }
+            ],
+            "expression": "1 AND 2"
+          },
+          {
+            "id": 2,
+            "toStage": "Risk Evaluation",
+            "trigger": "Automated",
+            "conditions": [
+              {
+                "activityId": 1782380968039,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": ""
+              }
+            ],
+            "expression": "1"
+          },
+          {
+            "id": 3,
+            "toStage": "Binding and Policy Issuance",
+            "trigger": "Automated",
+            "conditions": [
+              {
+                "activityId": 1781456687010,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": "fail"
+              }
+            ],
+            "expression": ""
+          }
+        ]
+      },
+      "prompt": "Document Summary — Standard"
+    },
+    {
+      "id": 2,
+      "name": "Property V2",
+      "object": "Submission",
+      "recordType": "Property",
+      "picklist": "Stages",
+      "stages": [
+        "Intake and Clearance",
+        "Data Enrichment",
+        "Risk Evaluation",
+        "Binding and Policy Issuance"
+      ],
+      "active": false,
+      "effectiveFrom": "2026-06-15",
+      "effectiveTo": "",
+      "stageTransitionRules": {
+        "Intake and Clearance": [
+          {
+            "id": 1,
+            "toStage": "Data Enrichment",
+            "trigger": "Manual",
+            "conditions": [
+              {
+                "activityId": 1786012994600,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": "true"
+              },
+              {
+                "activityId": 1786012766763,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": "true"
+              }
+            ],
+            "expression": ""
+          },
+          {
+            "id": 2,
+            "toStage": "Data Enrichment",
+            "trigger": "Automated",
+            "conditions": [
+              {
+                "activityId": 1786013674055,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": "true"
+              }
+            ],
+            "expression": ""
+          },
+          {
+            "id": 3,
+            "toStage": "Risk Evaluation",
+            "trigger": "Automated",
+            "conditions": [
+              {
+                "activityId": 0,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": "6767"
+              }
+            ],
+            "expression": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "name": "New Config",
+      "object": "Submission",
+      "recordType": "Submission",
+      "picklist": "Stages",
+      "stages": [
+        "Draft",
+        "In Progress",
+        "Declined",
+        "Processed"
+      ],
+      "active": true,
+      "effectiveFrom": "2026-06-25",
+      "effectiveTo": "",
+      "stageTransitionRules": {
+        "Data Enrichment": [
+          {
+            "id": 1,
+            "toStage": "Pricing and Quoting",
+            "trigger": "Manual",
+            "conditions": [
+              {
+                "activityId": 1782380955693,
+                "response": "Outcome",
+                "operator": "equals",
+                "value": ""
+              },
+              {
+                "activityId": "",
+                "response": "Outcome",
+                "operator": "equals",
+                "value": ""
+              }
+            ],
+            "expression": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "name": "Copy of Property V2",
+      "object": "Submission",
+      "recordType": "Property",
+      "picklist": "Stages",
+      "stages": [
+        "Intake and Clearance",
+        "Data Enrichment",
+        "Risk Evaluation",
+        "Binding and Policy Issuance"
+      ],
+      "active": false,
+      "effectiveFrom": "2026-06-15",
+      "effectiveTo": ""
+    }
+  ],
+  "nextStageConfigId": 5,
+  "assignmentRules": [
+    {
+      "id": 1,
+      "name": "My Rule",
+      "active": true,
+      "createdBy": "Admin User",
+      "createdOn": "6/14/2026, 8:11:52 PM",
+      "entries": []
+    }
+  ],
+  "nextAssignmentRuleId": 2,
+  "connections": [
+    {
+      "id": 1,
+      "name": "D&B Direct+ Sandbox",
+      "description": "Sandbox tenant for Dun & Bradstreet Direct+ API.",
+      "baseUrl": "https://plus.dnb.com",
+      "testEndpoint": "/v1/health",
+      "authType": "OAuth 2.0",
+      "providerId": "dnb",
+      "status": "Connected",
+      "avgLatency": 320,
+      "errors24h": 0,
+      "totalCalls24h": 480,
+      "lastTested": "2026-06-16"
+    },
+    {
+      "id": 2,
+      "name": "D&B Direct+ Production",
+      "description": "Production tenant for D&B Direct+ business credit lookups.",
+      "baseUrl": "https://plus.dnb.com",
+      "testEndpoint": "/v1/health",
+      "authType": "OAuth 2.0",
+      "providerId": "dnb",
+      "status": "Connected",
+      "lastTested": "2026-06-17"
+    },
+    {
+      "id": 3,
+      "name": "Verisk PolicyDecisions",
+      "description": "Policy decision support and prior-claim lookup.",
+      "baseUrl": "https://api.verisk.com/policydecisions",
+      "testEndpoint": "/v2/ping",
+      "authType": "API Key",
+      "providerId": "verisk",
+      "status": "Connected",
+      "avgLatency": 410,
+      "errors24h": 2,
+      "totalCalls24h": 1240,
+      "lastTested": "2026-06-15"
+    },
+    {
+      "id": 4,
+      "name": "CoreLogic RCT Express",
+      "description": "Replacement Cost Estimator for residential and commercial property.",
+      "baseUrl": "https://api.corelogic.com/rct",
+      "testEndpoint": "/v1/heartbeat",
+      "authType": "API Key",
+      "providerId": "corelogic",
+      "status": "Connected",
+      "avgLatency": 290,
+      "errors24h": 0,
+      "totalCalls24h": 215,
+      "lastTested": "2026-06-17"
+    },
+    {
+      "id": 5,
+      "name": "LexisNexis ID Verify",
+      "description": "Real-time identity verification service.",
+      "baseUrl": "https://identity.lexisnexis.com",
+      "testEndpoint": "/healthz",
+      "authType": "OAuth 2.0",
+      "providerId": "lexisnexis",
+      "status": "Needs Attention",
+      "avgLatency": 540,
+      "errors24h": 14,
+      "totalCalls24h": 360,
+      "lastTested": "2026-06-14"
+    }
+  ],
+  "nextConnectionId": 8,
+  "activitiesData": {
+    "1:0": [
+      {
+        "id": 1781456687010,
+        "activityRefId": 12,
+        "nameOverride": "Appetite Check",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "1:0",
+          "conditions": [
+            {
+              "activityId": 1781456733080,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "false"
+            }
+          ],
+          "expression": ""
+        },
+        "reentryRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1781456733080,
+        "activityRefId": 13,
+        "nameOverride": "Run Risk Score",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "1:0",
+          "conditions": [
+            {
+              "activityId": 1781456687010,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      },
+      {
+        "id": 1781456839265,
+        "activityRefId": 14,
+        "nameOverride": "Loss Ratio Review",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "On Stage Change",
+        "triggerRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1781456847182,
+        "activityRefId": 15,
+        "nameOverride": "Generate Indicative Quote",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "On Stage Change",
+        "triggerRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1781460216915,
+        "activityRefId": 18,
+        "nameOverride": "Quote Acceptance",
+        "availability": "Conditional",
+        "availabilityRules": [],
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "1:0",
+          "conditions": [
+            {
+              "activityId": 1781456733080,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      },
+      {
+        "id": 1781460257512,
+        "activityRefId": 7,
+        "nameOverride": "Broker Validation Run Time",
+        "description": "Verify broker license status, appointment, and producer code before clearance is issued.",
+        "availability": "Conditional",
+        "availabilityRules": [
+          {
+            "activityId": 1781456687010,
+            "response": "Outcome",
+            "operator": "equals",
+            "value": ""
+          },
+          {
+            "activityId": 1781456847182,
+            "response": "Outcome",
+            "operator": "equals",
+            "value": ""
+          },
+          {
+            "activityId": 1781456733080,
+            "response": "Outcome",
+            "operator": "equals",
+            "value": ""
+          },
+          {
+            "activityId": 1782380955693,
+            "response": "Outcome",
+            "operator": "equals",
+            "value": ""
+          }
+        ],
+        "availabilityExpression": "",
+        "trigger": "Manual",
+        "triggerRules": null,
+        "reentryRules": null,
+        "mandatory": false,
+        "buttonName": ""
+      },
+      {
+        "id": 1785232257554,
+        "activityRefId": 17,
+        "nameOverride": "Underwriter Review",
+        "description": "Senior underwriter signs off on pricing, terms, and any non-standard exceptions.",
+        "availability": "Conditional",
+        "availabilityRules": [
+          {
+            "activityId": 1781456733080,
+            "response": "Outcome",
+            "operator": "equals",
+            "value": "False"
+          }
+        ],
+        "availabilityExpression": "1",
+        "trigger": "Manual",
+        "triggerRules": null,
+        "reentryRules": null,
+        "mandatory": false,
+        "buttonName": "Email Broker"
+      }
+    ],
+    "1:1": [
+      {
+        "id": 1781500000001,
+        "activityRefId": 16,
+        "nameOverride": "Apply Pricing Adjustments",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "1:1",
+          "conditions": [
+            {
+              "activityId": 1781456733080,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      },
+      {
+        "id": 1781500000002,
+        "activityRefId": 17,
+        "nameOverride": "Underwriter Review",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "1:1",
+          "conditions": [
+            {
+              "activityId": 1782380955693,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            },
+            {
+              "activityId": 1781456839265,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      }
+    ],
+    "1:2": [
+      {
+        "id": 1781500000003,
+        "activityRefId": 19,
+        "nameOverride": "Generate Binder Document",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "1:2",
+          "conditions": [
+            {
+              "activityId": 1781500000002,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      }
+    ],
+    "1:3": [
+      {
+        "id": 1781500000004,
+        "activityRefId": 20,
+        "nameOverride": "Issue Policy",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "1:3",
+          "conditions": [
+            {
+              "activityId": 1781500000003,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      },
+      {
+        "id": 1781500000005,
+        "activityRefId": 21,
+        "nameOverride": "Send Welcome Packet",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "1:3",
+          "conditions": [
+            {
+              "activityId": 1781500000004,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      }
+    ],
+    "3:0": [
+      {
+        "id": 1782380955693,
+        "activityRefId": 37,
+        "nameOverride": "Data Extraction",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "On Stage Change",
+        "triggerRules": null,
+        "mandatory": false
+      }
+    ],
+    "3:1": [
+      {
+        "id": 1782380968039,
+        "activityRefId": 3,
+        "nameOverride": "Clearance Check",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "3:1",
+          "conditions": [
+            {
+              "activityId": 1782380955693,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      },
+      {
+        "id": 1782885730507,
+        "activityRefId": 2,
+        "nameOverride": "Clearance Check",
+        "availability": "Conditional",
+        "availabilityRules": [
+          {
+            "activityId": 1782380968039,
+            "response": "Outcome",
+            "operator": "equals",
+            "value": "cvbn"
+          },
+          {
+            "activityId": 1782380955693,
+            "response": "Outcome",
+            "operator": "equals",
+            "value": ""
+          }
+        ],
+        "availabilityExpression": "1 AND 2",
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "3:1",
+          "conditions": [
+            {
+              "activityId": 1782380968039,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": ""
+            }
+          ],
+          "expression": ""
+        },
+        "reentryRules": null,
+        "mandatory": false
+      }
+    ],
+    "4:0": [],
+    "4:1": [],
+    "4:2": [],
+    "4:3": [],
+    "2:0": [
+      {
+        "id": 1786012761002,
+        "activityRefId": 6,
+        "nameOverride": "Clearance Check",
+        "description": "Run carrier clearance to detect duplicate submissions and broker conflicts before underwriting starts.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "2:0",
+          "conditions": [
+            {
+              "activityId": 1786012994600,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "true"
+            }
+          ],
+          "expression": ""
+        },
+        "reentryRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1786012766763,
+        "activityRefId": 12,
+        "nameOverride": "Appetite Check",
+        "description": "Evaluate the submission against carrier appetite rules: occupancy, TIV bands, and excluded classes.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "2:0",
+          "conditions": [
+            {
+              "activityId": 1786012994600,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "true"
+            }
+          ],
+          "expression": ""
+        },
+        "reentryRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1786012782375,
+        "activityRefId": 44,
+        "nameOverride": "Duplicate & Clearance Check",
+        "description": "Detect duplicate submissions and broker conflicts across all lines before underwriting starts.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "2:0",
+          "conditions": [
+            {
+              "activityId": 1786012994600,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "true"
+            }
+          ],
+          "expression": ""
+        },
+        "reentryRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1786012994600,
+        "activityRefId": 51,
+        "nameOverride": "Data Completion Check",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "2:0",
+          "conditions": [
+            {
+              "activityId": 1786013674055,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "Complete"
+            }
+          ],
+          "expression": "1"
+        },
+        "reentryRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1786013674055,
+        "activityRefId": 53,
+        "nameOverride": "Data Extraction",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "On Stage Change",
+        "triggerRules": null,
+        "reentryRules": null,
+        "mandatory": false
+      }
+    ],
+    "2:1": [
+      {
+        "id": 1786012907335,
+        "activityRefId": 11,
+        "nameOverride": "Claims History Enrichment",
+        "description": "Pull LexisNexis CLUE 5-year claims history and aggregate by peril.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Manual",
+        "triggerRules": null,
+        "reentryRules": null,
+        "mandatory": false,
+        "buttonName": "Run Enrichment"
+      },
+      {
+        "id": 1786012916511,
+        "activityRefId": 8,
+        "nameOverride": "Property Characteristics Enrichment",
+        "description": "Pull Verisk 360 building characteristics and replacement cost values for each location.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Manual",
+        "triggerRules": null,
+        "reentryRules": null,
+        "mandatory": false,
+        "buttonName": "Run Enrichment"
+      },
+      {
+        "id": 1786012920331,
+        "activityRefId": 10,
+        "nameOverride": "Fire Protection Enrichment",
+        "description": "Fetch ISO PPC, hydrant distance, and water-supply data for each insured location.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Manual",
+        "triggerRules": null,
+        "reentryRules": null,
+        "mandatory": false,
+        "buttonName": "Run Enrichment"
+      }
+    ],
+    "2:2": [
+      {
+        "id": 1786012925026,
+        "activityRefId": 13,
+        "nameOverride": "Run Risk Score",
+        "description": "Compute the property risk score by combining enrichment, claims, and CAT exposure inputs.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "2:2",
+          "conditions": [
+            {
+              "activityId": 1786012907335,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "Done"
+            },
+            {
+              "activityId": 1786012916511,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "Done"
+            },
+            {
+              "activityId": 1786012920331,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "Done"
+            }
+          ],
+          "expression": "1 AND 2 AND 3"
+        },
+        "reentryRules": null,
+        "mandatory": false
+      }
+    ],
+    "2:3": [
+      {
+        "id": 1786012932694,
+        "activityRefId": 15,
+        "nameOverride": "Generate Indicative Quote",
+        "description": "Produce an indicative premium and per-location pricing breakdown for underwriter review.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "2:3",
+          "conditions": [
+            {
+              "activityId": 1786012935917,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "Done"
+            }
+          ],
+          "expression": "1"
+        },
+        "reentryRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1786012935917,
+        "activityRefId": 16,
+        "nameOverride": "Apply Pricing Adjustments",
+        "description": "Apply schedule rating credits and debits, broker commission, and any manual UW adjustments.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Manual",
+        "triggerRules": null,
+        "reentryRules": null,
+        "mandatory": false,
+        "buttonName": "Run"
+      },
+      {
+        "id": 1786012943314,
+        "activityRefId": 19,
+        "nameOverride": "Generate Binder Document",
+        "description": "Render the binder document with quoted limits, deductibles, and effective dates.",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "2:3",
+          "conditions": [
+            {
+              "activityId": 1786012945889,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "Done"
+            }
+          ],
+          "expression": "1"
+        },
+        "reentryRules": null,
+        "mandatory": false
+      },
+      {
+        "id": 1786012945889,
+        "activityRefId": 18,
+        "nameOverride": "Quote Acceptance",
+        "description": "Capture broker acceptance, confirm bind authority, and record subjectivities cleared.",
+        "availability": "Conditional",
+        "availabilityRules": [
+          {
+            "activityId": 1786012932694,
+            "response": "Outcome",
+            "operator": "equals",
+            "value": "True"
+          }
+        ],
+        "availabilityExpression": "",
+        "trigger": "Manual",
+        "triggerRules": null,
+        "reentryRules": null,
+        "mandatory": false,
+        "buttonName": "Accept Quote"
+      }
+    ]
+  },
+  "stmActivitiesData": {
+    "1": [
+      {
+        "id": 3,
+        "activityRefId": 2,
+        "nameOverride": "Submission Task 1",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Manual",
+        "triggerRules": null,
+        "mandatory": true,
+        "buttonName": "Run Task"
+      },
+      {
+        "id": 4,
+        "activityRefId": 3,
+        "nameOverride": "Submission Task 2",
+        "availability": "On Stage Change",
+        "availabilityRules": null,
+        "trigger": "Conditional",
+        "triggerRules": {
+          "stageKey": "stm-1",
+          "conditions": [
+            {
+              "activityId": 3,
+              "response": "Outcome",
+              "operator": "equals",
+              "value": "True"
+            }
+          ],
+          "expression": ""
+        },
+        "mandatory": false
+      }
+    ]
+  },
+  "nextActivityId": 1,
+  "nextStmActivityId": 5,
+  "enrichmentConfigs": [
+    {
+      "id": 1,
+      "lob": "Commercial Property",
+      "active": true,
+      "categories": [
+        {
+          "id": "property-characteristics",
+          "name": "Property Characteristics",
+          "description": "Construction, age, size, roof, and structural attributes used to rate and price the building.",
+          "fields": [
+            {
+              "name": "Building Construction Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Year Built",
+              "type": "Number"
+            },
+            {
+              "name": "Total Building Square Footage",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Stories",
+              "type": "Number"
+            },
+            {
+              "name": "Basement Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Roof Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Roof Covering Material",
+              "type": "Picklist"
+            },
+            {
+              "name": "Roof Age",
+              "type": "Number"
+            },
+            {
+              "name": "Roof Condition",
+              "type": "Picklist"
+            },
+            {
+              "name": "Overall Building Condition",
+              "type": "Picklist"
+            },
+            {
+              "name": "Wiring Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Electrical System Updated Year",
+              "type": "Number"
+            },
+            {
+              "name": "Plumbing Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Heating System Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "HVAC Age",
+              "type": "Number"
+            },
+            {
+              "name": "Exterior Wall Material",
+              "type": "Picklist"
+            },
+            {
+              "name": "Foundation Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "New Field",
+              "type": "Text"
+            }
+          ]
+        },
+        {
+          "id": "location-cat-exposure",
+          "name": "Location & CAT Exposure",
+          "description": "Geocoded catastrophe exposure — flood, wind, wildfire, and earthquake — from the risk address.",
+          "fields": [
+            {
+              "name": "Property Address",
+              "type": "Text"
+            },
+            {
+              "name": "Latitude",
+              "type": "Number"
+            },
+            {
+              "name": "Longitude",
+              "type": "Number"
+            },
+            {
+              "name": "FEMA Flood Zone",
+              "type": "Text"
+            },
+            {
+              "name": "Flood Zone Panel Number",
+              "type": "Text"
+            },
+            {
+              "name": "Base Flood Elevation (BFE)",
+              "type": "Number"
+            },
+            {
+              "name": "Building First Floor Elevation",
+              "type": "Number"
+            },
+            {
+              "name": "Distance to Coast",
+              "type": "Number"
+            },
+            {
+              "name": "Distance to Major Water Body",
+              "type": "Number"
+            },
+            {
+              "name": "Earthquake Zone",
+              "type": "Picklist"
+            },
+            {
+              "name": "Peak Ground Acceleration (PGA)",
+              "type": "Number"
+            },
+            {
+              "name": "Probable Maximum Loss (PML) - EQ",
+              "type": "Percent"
+            },
+            {
+              "name": "Soil Liquefaction Risk",
+              "type": "Picklist"
+            },
+            {
+              "name": "Wildfire Hazard Severity Zone",
+              "type": "Picklist"
+            },
+            {
+              "name": "Wildfire Risk Score",
+              "type": "Number"
+            },
+            {
+              "name": "Distance to Fire Station",
+              "type": "Number"
+            },
+            {
+              "name": "Tornado Risk Zone",
+              "type": "Picklist"
+            },
+            {
+              "name": "Hurricane Wind Zone",
+              "type": "Picklist"
+            },
+            {
+              "name": "Hail Risk Zone",
+              "type": "Picklist"
+            },
+            {
+              "name": "Windstorm Deductible Required",
+              "type": "Boolean"
+            },
+            {
+              "name": "Aggregate Annual Loss (AAL)",
+              "type": "Currency"
+            },
+            {
+              "name": "Total Insured Value (TIV)",
+              "type": "Currency"
+            }
+          ]
+        },
+        {
+          "id": "fire-protection-response",
+          "name": "Fire Protection & Response",
+          "description": "Sprinklers, alarms, ISO PPC class, and distance to the responding fire station and hydrant.",
+          "fields": [
+            {
+              "name": "ISO Public Protection Class (PPC)",
+              "type": "Number"
+            },
+            {
+              "name": "Fire Hydrant Distance",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Hydrants within 1000 ft",
+              "type": "Number"
+            },
+            {
+              "name": "Water Supply Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Water Supply Capacity (GPM)",
+              "type": "Number"
+            },
+            {
+              "name": "Fire Department Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Fire Station Response Time",
+              "type": "Number"
+            },
+            {
+              "name": "Automatic Sprinkler System",
+              "type": "Picklist"
+            },
+            {
+              "name": "Sprinkler System Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Sprinkler Coverage Percentage",
+              "type": "Percent"
+            },
+            {
+              "name": "Sprinkler System Install Date",
+              "type": "Date"
+            },
+            {
+              "name": "Sprinkler System Last Inspection",
+              "type": "Date"
+            },
+            {
+              "name": "Fire Alarm System",
+              "type": "Picklist"
+            },
+            {
+              "name": "Fire Alarm Monitoring Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Smoke Detection System",
+              "type": "Boolean"
+            },
+            {
+              "name": "Fire Extinguishers",
+              "type": "Boolean"
+            },
+            {
+              "name": "Fire Suppression System (Kitchen)",
+              "type": "Picklist"
+            },
+            {
+              "name": "Emergency Exit Lighting",
+              "type": "Boolean"
+            }
+          ]
+        },
+        {
+          "id": "occupancy-operations",
+          "name": "Occupancy & Operations",
+          "description": "How the building is used — primary occupancy, tenant mix, and on-site operations or hazards.",
+          "fields": [
+            {
+              "name": "Primary Occupancy Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Specific Operations Description",
+              "type": "Long Text Area"
+            },
+            {
+              "name": "ISO Classification Code",
+              "type": "Text"
+            },
+            {
+              "name": "Percentage of Building - Office",
+              "type": "Percent"
+            },
+            {
+              "name": "Percentage of Building - Manufacturing",
+              "type": "Percent"
+            },
+            {
+              "name": "Percentage of Building - Warehouse",
+              "type": "Percent"
+            },
+            {
+              "name": "Combustible Loading",
+              "type": "Picklist"
+            },
+            {
+              "name": "Hazardous Materials Present",
+              "type": "Boolean"
+            },
+            {
+              "name": "Hazardous Materials Description",
+              "type": "Long Text Area"
+            },
+            {
+              "name": "Maximum Storage Height",
+              "type": "Number"
+            },
+            {
+              "name": "Hours of Operation",
+              "type": "Text"
+            },
+            {
+              "name": "Number of Shifts",
+              "type": "Number"
+            },
+            {
+              "name": "24-Hour Watchman/Security",
+              "type": "Boolean"
+            },
+            {
+              "name": "Burglar Alarm System",
+              "type": "Picklist"
+            },
+            {
+              "name": "Security Camera System",
+              "type": "Boolean"
+            }
+          ]
+        },
+        {
+          "id": "claims-history",
+          "name": "Claims History",
+          "description": "Prior loss experience from CLUE and carrier records — frequency, severity, and open claims by peril.",
+          "fields": [
+            {
+              "name": "Number of Claims (5 years)",
+              "type": "Number"
+            },
+            {
+              "name": "Total Incurred Losses (5 years)",
+              "type": "Currency"
+            },
+            {
+              "name": "Number of Fire Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Water Damage Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Theft Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Wind/Hail Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Largest Single Claim Amount",
+              "type": "Currency"
+            },
+            {
+              "name": "Most Recent Claim Date",
+              "type": "Date"
+            },
+            {
+              "name": "Most Recent Claim Description",
+              "type": "Long Text Area"
+            },
+            {
+              "name": "Claim Frequency (per $1M TIV)",
+              "type": "Number"
+            },
+            {
+              "name": "Claim Severity Average",
+              "type": "Currency"
+            },
+            {
+              "name": "Industry Average Claim Frequency",
+              "type": "Number"
+            },
+            {
+              "name": "Industry Average Claim Severity",
+              "type": "Currency"
+            },
+            {
+              "name": "Open Claims Count",
+              "type": "Number"
+            },
+            {
+              "name": "Subrogation Recoveries",
+              "type": "Currency"
+            }
+          ]
+        },
+        {
+          "id": "valuation-itv",
+          "name": "Valuation & Insurance-to-Value",
+          "description": "Replacement-cost valuation and insurance-to-value adequacy against the stated building limit.",
+          "fields": [
+            {
+              "name": "Building Replacement Cost",
+              "type": "Currency"
+            },
+            {
+              "name": "Contents/PP&E Replacement Cost",
+              "type": "Currency"
+            },
+            {
+              "name": "Business Income Annual Value",
+              "type": "Currency"
+            },
+            {
+              "name": "Business Income Indemnity Period",
+              "type": "Number"
+            },
+            {
+              "name": "Extra Expense Value",
+              "type": "Currency"
+            },
+            {
+              "name": "Total Insured Value (TIV)",
+              "type": "Currency"
+            },
+            {
+              "name": "Building Insurance Amount",
+              "type": "Currency"
+            },
+            {
+              "name": "Contents Insurance Amount",
+              "type": "Currency"
+            },
+            {
+              "name": "BI/EE Insurance Amount",
+              "type": "Currency"
+            },
+            {
+              "name": "Insurance-to-Value Ratio (Building)",
+              "type": "Percent"
+            },
+            {
+              "name": "Insurance-to-Value Ratio (Total)",
+              "type": "Percent"
+            },
+            {
+              "name": "Coinsurance Penalty Potential",
+              "type": "Currency"
+            }
+          ]
+        },
+        {
+          "id": "building-code-compliance",
+          "name": "Building Code & Compliance",
+          "description": "Applicable building-code year, permits, and code-upgrade exposure affecting rebuild cost.",
+          "fields": [
+            {
+              "name": "Building Code Year",
+              "type": "Number"
+            },
+            {
+              "name": "ADA Compliance Status",
+              "type": "Picklist"
+            },
+            {
+              "name": "Asbestos Present",
+              "type": "Boolean"
+            },
+            {
+              "name": "Lead Paint Present",
+              "type": "Boolean"
+            },
+            {
+              "name": "Underground Storage Tanks",
+              "type": "Boolean"
+            },
+            {
+              "name": "Radon Mitigation System",
+              "type": "Boolean"
+            },
+            {
+              "name": "Fire Code Compliance",
+              "type": "Picklist"
+            },
+            {
+              "name": "Occupancy Permit Current",
+              "type": "Boolean"
+            },
+            {
+              "name": "Recent Building Violations",
+              "type": "Number"
+            },
+            {
+              "name": "Renovations in Last 5 Years",
+              "type": "Boolean"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "lob": "General Liability",
+      "active": true,
+      "categories": [
+        {
+          "id": "business-operations-exposure",
+          "name": "Business Operations & Exposure",
+          "description": "Nature of the insured's operations — industry class, revenue, payroll, and exposure base for GL rating.",
+          "fields": [
+            {
+              "name": "Legal Business Name",
+              "type": "Text"
+            },
+            {
+              "name": "DBA (Doing Business As)",
+              "type": "Text"
+            },
+            {
+              "name": "Legal Entity Type",
+              "type": "Picklist"
+            },
+            {
+              "name": "Federal Tax ID (EIN)",
+              "type": "Text"
+            },
+            {
+              "name": "DUNS Number",
+              "type": "Text"
+            },
+            {
+              "name": "Years in Business",
+              "type": "Number"
+            },
+            {
+              "name": "Years Under Current Management",
+              "type": "Number"
+            },
+            {
+              "name": "Primary SIC Code",
+              "type": "Text"
+            },
+            {
+              "name": "Primary NAICS Code",
+              "type": "Text"
+            },
+            {
+              "name": "Business Description",
+              "type": "Long Text Area"
+            },
+            {
+              "name": "Annual Gross Revenue",
+              "type": "Currency"
+            },
+            {
+              "name": "Annual Payroll",
+              "type": "Currency"
+            },
+            {
+              "name": "Number of Full-Time Employees",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Part-Time Employees",
+              "type": "Number"
+            },
+            {
+              "name": "Total Employee Count",
+              "type": "Number"
+            },
+            {
+              "name": "Products Manufactured",
+              "type": "Long Text Area"
+            },
+            {
+              "name": "Annual Product Sales",
+              "type": "Currency"
+            },
+            {
+              "name": "Services Provided",
+              "type": "Long Text Area"
+            },
+            {
+              "name": "Annual Service Revenue",
+              "type": "Currency"
+            },
+            {
+              "name": "Installation Services Provided",
+              "type": "Boolean"
+            },
+            {
+              "name": "Percentage Work On-Site",
+              "type": "Percent"
+            },
+            {
+              "name": "Percentage Work Off-Site",
+              "type": "Percent"
+            },
+            {
+              "name": "Subcontractors Used",
+              "type": "Boolean"
+            },
+            {
+              "name": "Annual Subcontractor Costs",
+              "type": "Currency"
+            }
+          ]
+        },
+        {
+          "id": "gl-claims-history",
+          "name": "GL Claims History",
+          "description": "General-liability loss history — claim counts, products-liability claims, and open reserves over 5 years.",
+          "fields": [
+            {
+              "name": "Number of GL Claims (5 years)",
+              "type": "Number"
+            },
+            {
+              "name": "Total GL Incurred (5 years)",
+              "type": "Currency"
+            },
+            {
+              "name": "Number of Bodily Injury Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Property Damage Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Products Liability Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Completed Ops Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Largest GL Claim Amount",
+              "type": "Currency"
+            },
+            {
+              "name": "Most Recent GL Claim Date",
+              "type": "Date"
+            },
+            {
+              "name": "Most Recent GL Claim Description",
+              "type": "Long Text Area"
+            },
+            {
+              "name": "GL Claim Frequency Rate",
+              "type": "Number"
+            },
+            {
+              "name": "Industry Average GL Frequency",
+              "type": "Number"
+            },
+            {
+              "name": "Open GL Claims Count",
+              "type": "Number"
+            }
+          ]
+        },
+        {
+          "id": "safety-programs-osha",
+          "name": "Safety Programs & OSHA",
+          "description": "Formal safety programs, training, and OSHA inspection and citation history.",
+          "fields": [
+            {
+              "name": "Written Safety Program",
+              "type": "Boolean"
+            },
+            {
+              "name": "Safety Director/Officer",
+              "type": "Boolean"
+            },
+            {
+              "name": "Regular Safety Training",
+              "type": "Picklist"
+            },
+            {
+              "name": "New Employee Safety Orientation",
+              "type": "Boolean"
+            },
+            {
+              "name": "PPE Program",
+              "type": "Boolean"
+            },
+            {
+              "name": "Machine Guarding Program",
+              "type": "Boolean"
+            },
+            {
+              "name": "Lockout/Tagout Program",
+              "type": "Boolean"
+            },
+            {
+              "name": "Hazard Communication Program",
+              "type": "Boolean"
+            },
+            {
+              "name": "Emergency Action Plan",
+              "type": "Boolean"
+            },
+            {
+              "name": "OSHA 300 Log Maintained",
+              "type": "Boolean"
+            },
+            {
+              "name": "OSHA Inspections (5 years)",
+              "type": "Number"
+            },
+            {
+              "name": "OSHA Violations (5 years)",
+              "type": "Number"
+            },
+            {
+              "name": "OSHA Serious Violations",
+              "type": "Number"
+            },
+            {
+              "name": "OSHA Violations Abated",
+              "type": "Boolean"
+            },
+            {
+              "name": "DART Rate (Days Away/Restricted)",
+              "type": "Number"
+            },
+            {
+              "name": "TRIR (Total Recordable Incident Rate)",
+              "type": "Number"
+            }
+          ]
+        },
+        {
+          "id": "workers-comp-experience",
+          "name": "Workers Compensation Experience",
+          "description": "Experience-modification factor and prior workers' comp loss runs indicating workforce risk.",
+          "fields": [
+            {
+              "name": "Experience Modification Rate (EMR)",
+              "type": "Number"
+            },
+            {
+              "name": "EMR Effective Date",
+              "type": "Date"
+            },
+            {
+              "name": "Prior Year EMR",
+              "type": "Number"
+            },
+            {
+              "name": "EMR Trend",
+              "type": "Picklist"
+            },
+            {
+              "name": "Number of WC Claims (5 years)",
+              "type": "Number"
+            },
+            {
+              "name": "Total WC Incurred (5 years)",
+              "type": "Currency"
+            },
+            {
+              "name": "Number of Lost Time Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Number of Medical Only Claims",
+              "type": "Number"
+            },
+            {
+              "name": "Largest WC Claim Amount",
+              "type": "Currency"
+            },
+            {
+              "name": "Return to Work Program",
+              "type": "Boolean"
+            },
+            {
+              "name": "WC Claim Frequency Rate",
+              "type": "Number"
+            },
+            {
+              "name": "Industry Average EMR",
+              "type": "Number"
+            },
+            {
+              "name": "Open WC Claims Count",
+              "type": "Number"
+            },
+            {
+              "name": "WC Coverage Current",
+              "type": "Boolean"
+            }
+          ]
+        },
+        {
+          "id": "financial-stability-credit",
+          "name": "Financial Stability & Credit",
+          "description": "Business credit score, liens, and financial-health signals that inform account stability.",
+          "fields": [
+            {
+              "name": "D&B Credit Rating",
+              "type": "Text"
+            },
+            {
+              "name": "D&B Credit Rating Score",
+              "type": "Number"
+            },
+            {
+              "name": "D&B Credit Risk Level",
+              "type": "Picklist"
+            },
+            {
+              "name": "D&B PAYDEX Score",
+              "type": "Number"
+            },
+            {
+              "name": "D&B Financial Stress Score",
+              "type": "Number"
+            },
+            {
+              "name": "D&B Failure Score",
+              "type": "Number"
+            },
+            {
+              "name": "D&B Delinquency Score",
+              "type": "Percent"
+            },
+            {
+              "name": "Annual Revenue (D&B)",
+              "type": "Currency"
+            },
+            {
+              "name": "Number of Employees (D&B)",
+              "type": "Number"
+            },
+            {
+              "name": "Years in Business (D&B)",
+              "type": "Number"
+            },
+            {
+              "name": "Out of Business Score",
+              "type": "Percent"
+            },
+            {
+              "name": "Public Records - Liens",
+              "type": "Number"
+            },
+            {
+              "name": "Public Records - Judgments",
+              "type": "Number"
+            },
+            {
+              "name": "Public Records - Bankruptcies",
+              "type": "Number"
+            },
+            {
+              "name": "Trade Payment Experiences",
+              "type": "Number"
+            },
+            {
+              "name": "Average Days to Pay",
+              "type": "Number"
+            },
+            {
+              "name": "Revenue Growth Rate (3 yr)",
+              "type": "Percent"
+            },
+            {
+              "name": "Financial Statement Available",
+              "type": "Boolean"
+            }
+          ]
+        },
+        {
+          "id": "products-liability-exposure",
+          "name": "Products Liability Exposure",
+          "description": "Exposure from products manufactured, sold, or distributed — recalls, warnings, and high-hazard lines.",
+          "fields": [
+            {
+              "name": "Products Sold Annually (Units)",
+              "type": "Number"
+            },
+            {
+              "name": "Products Sold - Dollar Volume",
+              "type": "Currency"
+            },
+            {
+              "name": "Product Categories",
+              "type": "Picklist"
+            },
+            {
+              "name": "Product Testing Program",
+              "type": "Boolean"
+            },
+            {
+              "name": "Product Recalls (5 years)",
+              "type": "Number"
+            },
+            {
+              "name": "Product Warranty Period",
+              "type": "Text"
+            },
+            {
+              "name": "Product Instructions/Warnings",
+              "type": "Boolean"
+            },
+            {
+              "name": "FDA Regulated Products",
+              "type": "Boolean"
+            },
+            {
+              "name": "UL Listed/Certified Products",
+              "type": "Boolean"
+            },
+            {
+              "name": "Product Shelf Life",
+              "type": "Text"
+            },
+            {
+              "name": "Export Sales Percentage",
+              "type": "Percent"
+            },
+            {
+              "name": "Product Liability Limit Purchased",
+              "type": "Currency"
+            }
+          ]
+        },
+        {
+          "id": "contractual-operations-risk",
+          "name": "Contractual & Operations Risk",
+          "description": "Contractual liability assumed through leases, subcontractor agreements, and hold-harmless provisions.",
+          "fields": [
+            {
+              "name": "Percentage Work via Written Contract",
+              "type": "Percent"
+            },
+            {
+              "name": "Hold Harmless Agreements Signed",
+              "type": "Boolean"
+            },
+            {
+              "name": "Additional Insured Required by Contract",
+              "type": "Boolean"
+            },
+            {
+              "name": "Waiver of Subrogation Required",
+              "type": "Boolean"
+            },
+            {
+              "name": "Maximum Contract Size",
+              "type": "Currency"
+            },
+            {
+              "name": "Government Contracts",
+              "type": "Boolean"
+            },
+            {
+              "name": "Professional Services Provided",
+              "type": "Boolean"
+            },
+            {
+              "name": "Pollution Exposure",
+              "type": "Picklist"
+            },
+            {
+              "name": "Liquor Liability Exposure",
+              "type": "Boolean"
+            },
+            {
+              "name": "Employee Benefits Liability",
+              "type": "Boolean"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "lob": "Submission",
+      "active": true,
+      "categories": []
+    }
+  ],
+  "nextEnrichmentConfigId": 4,
+  "enrichmentDefinitions": [
+    {
+      "id": 1,
+      "name": "Property Characteristics — Verisk 360",
+      "lob": "Commercial Property",
+      "categoryId": "property-characteristics",
+      "categoryName": "Property Characteristics",
+      "integrationProcedureName": "Verisk360_GetPropertyValuation",
+      "active": true,
+      "lastModified": "2026-06-09T10:32:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Location & CAT Exposure — CoreLogic",
+      "lob": "Commercial Property",
+      "categoryId": "location-cat-exposure",
+      "categoryName": "Location & CAT Exposure",
+      "integrationProcedureName": "CoreLogic_GetCATExposure",
+      "active": true,
+      "lastModified": "2026-06-09T11:10:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Fire Protection — ISO PPC",
+      "lob": "Commercial Property",
+      "categoryId": "fire-protection-response",
+      "categoryName": "Fire Protection & Response",
+      "integrationProcedureName": "ISO_GetPublicProtectionClass",
+      "active": true,
+      "lastModified": "2026-08-07",
+      "description": "",
+      "connectionInstanceIds": [
+        7
+      ],
+      "endpointId": "dnb-credit-score",
+      "mappingMode": "fieldMapper",
+      "apexClass": "",
+      "fieldMappings": [
+        {
+          "fieldName": "organization.duns::name",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.duns::value",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.standardRating.rating::name",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.standardRating.rating::value",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.paydexScore.value::name",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.paydexScore.value::value",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.failureScore.classScore::name",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.failureScore.classScore::value",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.failureScore.nationalPercentile::name",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.failureScore.nationalPercentile::value",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.delinquencyScore.classScore::name",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.delinquencyScore.classScore::value",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.delinquencyScore.nationalPercentile::name",
+          "apiPath": ""
+        },
+        {
+          "fieldName": "organization.dnbAssessment.delinquencyScore.nationalPercentile::value",
+          "apiPath": ""
+        }
+      ],
+      "aliasMappings": []
+    },
+    {
+      "id": 4,
+      "name": "Claims History — LexisNexis CLUE",
+      "lob": "Commercial Property",
+      "categoryId": "claims-history",
+      "categoryName": "Claims History",
+      "integrationProcedureName": "LexisNexis_GetClaimsHistory",
+      "active": true,
+      "lastModified": "2026-06-09T08:21:00Z"
+    }
+  ],
+  "nextEnrichmentDefinitionId": 5,
+  "integrationProcedures": [
+    {
+      "id": 1,
+      "name": "Verisk360_GetPropertyValuation",
+      "procName": "Verisk360",
+      "versionLabel": "GetPropertyValuation",
+      "description": "Pull 360Value building replacement-cost report and building characteristics.",
+      "lob": "Commercial Property",
+      "provider": "Verisk 360",
+      "active": true,
+      "lastModified": "2026-06-09T10:32:00Z",
+      "invocationMode": "Standalone",
+      "steps": [
+        {
+          "id": 1,
+          "name": "setRequestPayload",
+          "type": "Set Values",
+          "description": "Map ACORD 140 location + structural fields into Verisk request."
+        },
+        {
+          "id": 2,
+          "name": "callVerisk360Api",
+          "type": "HTTP Action",
+          "description": "POST /v1/360value/properties — fetch valuation + characteristics."
+        },
+        {
+          "id": 3,
+          "name": "cacheValuation",
+          "type": "Cache Block",
+          "description": "Cache by latitude/longitude for 24h."
+        },
+        {
+          "id": 4,
+          "name": "extractFields",
+          "type": "Set Values",
+          "description": "Map response to Property Characteristics + Valuation enrichment fields."
+        },
+        {
+          "id": 5,
+          "name": "returnEnrichment",
+          "type": "Response Action",
+          "description": "Return building replacement cost, construction type, year built, square footage."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "CoreLogic_GetCATExposure",
+      "procName": "CoreLogic",
+      "versionLabel": "GetCATExposure",
+      "description": "Geocode the address and pull all CAT-exposure data (flood, EQ, wildfire, hurricane, hail).",
+      "lob": "Commercial Property",
+      "provider": "CoreLogic",
+      "active": true,
+      "lastModified": "2026-06-09T11:10:00Z",
+      "invocationMode": "Standalone",
+      "steps": [
+        {
+          "id": 1,
+          "name": "geocodeAddress",
+          "type": "HTTP Action",
+          "description": "POST /geocode — resolve street address to lat/lng."
+        },
+        {
+          "id": 2,
+          "name": "lookupFloodZone",
+          "type": "HTTP Action",
+          "description": "GET /risk/flood — FEMA flood zone, BFE, panel id."
+        },
+        {
+          "id": 3,
+          "name": "lookupEarthquakeRisk",
+          "type": "HTTP Action",
+          "description": "GET /risk/earthquake — PGA, soil liquefaction, PML."
+        },
+        {
+          "id": 4,
+          "name": "lookupWildfireRisk",
+          "type": "HTTP Action",
+          "description": "GET /risk/wildfire — hazard severity zone + wildfire risk score."
+        },
+        {
+          "id": 5,
+          "name": "lookupHurricaneRisk",
+          "type": "HTTP Action",
+          "description": "GET /risk/hurricane — wind zone, distance to coast."
+        },
+        {
+          "id": 6,
+          "name": "aggregateExposureRisks",
+          "type": "Set Values",
+          "description": "Combine all CAT outputs into a single response object."
+        },
+        {
+          "id": 7,
+          "name": "returnEnrichment",
+          "type": "Response Action",
+          "description": "Return Location & CAT Exposure fields."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "ISO_GetPublicProtectionClass",
+      "procName": "ISO",
+      "versionLabel": "GetPublicProtectionClass",
+      "description": "Fetch ISO PPC, fire-department type, hydrant distance, water supply data.",
+      "lob": "Commercial Property",
+      "provider": "ISO Public Protection",
+      "active": true,
+      "lastModified": "2026-06-09T09:50:00Z",
+      "invocationMode": "Standalone",
+      "steps": [
+        {
+          "id": 1,
+          "name": "setRequestPayload",
+          "type": "Set Values",
+          "description": "Build ISO request from address + lat/lng."
+        },
+        {
+          "id": 2,
+          "name": "callIsoPpcApi",
+          "type": "HTTP Action",
+          "description": "GET /ppc/lookup — ISO PPC class + fire protection."
+        },
+        {
+          "id": 3,
+          "name": "cachePpc",
+          "type": "Cache Block",
+          "description": "Cache by ZIP + protection district for 30 days."
+        },
+        {
+          "id": 4,
+          "name": "extractProtectionFields",
+          "type": "Set Values",
+          "description": "Map PPC, hydrant distance, water supply, FD type, response time."
+        },
+        {
+          "id": 5,
+          "name": "returnEnrichment",
+          "type": "Response Action",
+          "description": "Return Fire Protection & Response fields."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "LexisNexis_GetClaimsHistory",
+      "procName": "LexisNexis",
+      "versionLabel": "GetClaimsHistory",
+      "description": "Pull 5-year commercial CLUE history and aggregate by peril.",
+      "lob": "Commercial Property",
+      "provider": "LexisNexis CLUE Commercial",
+      "active": true,
+      "lastModified": "2026-06-09T08:21:00Z",
+      "invocationMode": "Standalone",
+      "steps": [
+        {
+          "id": 1,
+          "name": "authenticate",
+          "type": "HTTP Action",
+          "description": "Exchange API key for short-lived bearer token."
+        },
+        {
+          "id": 2,
+          "name": "requestClueReport",
+          "type": "HTTP Action",
+          "description": "POST /clue/commercial/v2/lookup — request 5y claims history."
+        },
+        {
+          "id": 3,
+          "name": "parseClaims",
+          "type": "Loop Block",
+          "description": "Iterate claims; bucket by peril (fire, water, theft, wind/hail)."
+        },
+        {
+          "id": 4,
+          "name": "computeAggregates",
+          "type": "Set Values",
+          "description": "Total incurred, claim frequency, severity, largest claim."
+        },
+        {
+          "id": 5,
+          "name": "fetchIndustryBenchmarks",
+          "type": "Remote Action",
+          "description": "Look up ISO industry-average frequency + severity."
+        },
+        {
+          "id": 6,
+          "name": "returnEnrichment",
+          "type": "Response Action",
+          "description": "Return Claims History fields."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "DnB_GetBusinessProfile",
+      "procName": "DnB",
+      "versionLabel": "GetBusinessProfile",
+      "description": "Pull D&B business profile, credit scores, public records.",
+      "lob": "General Liability",
+      "provider": "D&B (Dun & Bradstreet)",
+      "active": true,
+      "lastModified": "2026-06-09T07:45:00Z",
+      "invocationMode": "Standalone",
+      "steps": [
+        {
+          "id": 1,
+          "name": "matchByDuns",
+          "type": "Conditional Block",
+          "description": "If DUNS provided, lookup by DUNS; else match by legal name + address."
+        },
+        {
+          "id": 2,
+          "name": "fetchProfile",
+          "type": "HTTP Action",
+          "description": "GET /v1/data/duns/{duns} — base profile + entity info."
+        },
+        {
+          "id": 3,
+          "name": "fetchCreditScores",
+          "type": "HTTP Action",
+          "description": "GET /v1/data/duns/{duns}/credit — PAYDEX, failure score, financial stress."
+        },
+        {
+          "id": 4,
+          "name": "fetchPublicRecords",
+          "type": "HTTP Action",
+          "description": "GET /v1/data/duns/{duns}/public-records — liens, judgments, bankruptcies."
+        },
+        {
+          "id": 5,
+          "name": "mergeFields",
+          "type": "Set Values",
+          "description": "Combine into Business Operations + Financial Stability output."
+        },
+        {
+          "id": 6,
+          "name": "returnEnrichment",
+          "type": "Response Action",
+          "description": "Return Business Operations + Financial Stability fields."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "OSHA_GetSafetyHistory",
+      "procName": "OSHA",
+      "versionLabel": "GetSafetyHistory",
+      "description": "Look up OSHA inspections, violations, abatement status by establishment.",
+      "lob": "General Liability",
+      "provider": "OSHA Enforcement API",
+      "active": true,
+      "lastModified": "2026-06-09T07:15:00Z",
+      "invocationMode": "Standalone",
+      "steps": [
+        {
+          "id": 1,
+          "name": "matchEstablishment",
+          "type": "HTTP Action",
+          "description": "GET /v1/establishments?ein=… — find establishment ids."
+        },
+        {
+          "id": 2,
+          "name": "fetchInspections",
+          "type": "HTTP Action",
+          "description": "GET /v1/inspections?establishmentId=… (5-year window)."
+        },
+        {
+          "id": 3,
+          "name": "fetchViolations",
+          "type": "Loop Block",
+          "description": "For each inspection, fetch citations + abatement status."
+        },
+        {
+          "id": 4,
+          "name": "aggregateOshaMetrics",
+          "type": "Set Values",
+          "description": "Inspection count, violation count, serious violations, abatement %."
+        },
+        {
+          "id": 5,
+          "name": "returnEnrichment",
+          "type": "Response Action",
+          "description": "Return Safety Programs & OSHA fields."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "NCCI_GetWorkersCompEMR",
+      "procName": "NCCI",
+      "versionLabel": "GetWorkersCompEMR",
+      "description": "Fetch experience modification factor and recent WC claim history.",
+      "lob": "General Liability",
+      "provider": "NCCI",
+      "active": true,
+      "lastModified": "2026-06-09T06:55:00Z",
+      "invocationMode": "Standalone",
+      "steps": [
+        {
+          "id": 1,
+          "name": "lookupRiskId",
+          "type": "HTTP Action",
+          "description": "GET /risk-id/lookup?ein=… — resolve NCCI risk id."
+        },
+        {
+          "id": 2,
+          "name": "fetchEmr",
+          "type": "HTTP Action",
+          "description": "GET /experience-mod/{riskId} — current + prior EMR."
+        },
+        {
+          "id": 3,
+          "name": "computeTrend",
+          "type": "Set Values",
+          "description": "Compare current vs prior EMR → Improving / Stable / Declining."
+        },
+        {
+          "id": 4,
+          "name": "fetchWcClaims",
+          "type": "Remote Action",
+          "description": "Pull WC claims from current carrier."
+        },
+        {
+          "id": 5,
+          "name": "returnEnrichment",
+          "type": "Response Action",
+          "description": "Return Workers Compensation Experience fields."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Enrichment_RunAllForSubmission",
+      "procName": "Enrichment",
+      "versionLabel": "RunAllForSubmission",
+      "description": "Orchestrator — fans out to all relevant provider IPs based on submission LOB and aggregates results.",
+      "lob": "All",
+      "provider": "Orchestrator",
+      "active": true,
+      "lastModified": "2026-06-10T14:00:00Z",
+      "invocationMode": "Standalone",
+      "steps": [
+        {
+          "id": 1,
+          "name": "detectLineOfBusiness",
+          "type": "Set Values",
+          "description": "Inspect submission to determine which IPs to invoke."
+        },
+        {
+          "id": 2,
+          "name": "isCommercialProperty",
+          "type": "Conditional Block",
+          "description": "If submission contains Property line, run Verisk + CoreLogic + ISO + LexisNexis."
+        },
+        {
+          "id": 3,
+          "name": "isGeneralLiability",
+          "type": "Conditional Block",
+          "description": "If submission contains GL line, run D&B + OSHA + NCCI."
+        },
+        {
+          "id": 4,
+          "name": "callPropertyEnrichments",
+          "type": "Loop Block",
+          "description": "Fan-out to property IPs in parallel and collect results."
+        },
+        {
+          "id": 5,
+          "name": "callGeneralLiabilityEnrichments",
+          "type": "Loop Block",
+          "description": "Fan-out to GL IPs in parallel and collect results."
+        },
+        {
+          "id": 6,
+          "name": "mergeAndDedupe",
+          "type": "Set Values",
+          "description": "Combine outputs; resolve overlaps using source priority."
+        },
+        {
+          "id": 7,
+          "name": "persistEnrichmentRecord",
+          "type": "Remote Action",
+          "description": "Persist combined enrichment record on the submission."
+        },
+        {
+          "id": 8,
+          "name": "returnSummary",
+          "type": "Response Action",
+          "description": "Return enrichment summary + any provider errors."
+        }
+      ]
+    }
+  ],
+  "nextIntegrationProcedureId": 9,
+  "rmdGroupLibrary": [
+    {
+      "id": 1,
+      "name": "Retain",
+      "api": "Retain",
+      "icon": "shield",
+      "order": 1
+    },
+    {
+      "id": 2,
+      "name": "Grow",
+      "api": "Grow",
+      "icon": "trending_up",
+      "order": 2
+    },
+    {
+      "id": 3,
+      "name": "Service",
+      "api": "Service",
+      "icon": "service",
+      "order": 3
+    },
+    {
+      "id": 4,
+      "name": "Comply",
+      "api": "Comply",
+      "icon": "check_circle",
+      "order": 4
+    }
+  ],
+  "nextRmdGroupId": 5,
+  "rmdInsightLibrary": [
+    {
+      "id": 1,
+      "name": "High-Priority Renewals Expiring in 7 Days",
+      "api": "High_Priority_Renewals_7d",
+      "description": "Renewal · Expiring in 7 days · Within $0-$25K authority",
+      "capabilityType": "calculated",
+      "capabilityValue": "High_Priority_Renewals",
+      "order": 1
+    },
+    {
+      "id": 2,
+      "name": "Renewals with Premium Increases >15%",
+      "api": "Renewals_Premium_Increase_15",
+      "description": "Renewal · Premium increase >15% · Within $0-$25K authority",
+      "capabilityType": "flow",
+      "capabilityValue": "Renewal_Expiring_Flow",
+      "order": 2
+    },
+    {
+      "id": 3,
+      "name": "Renewal with New Loss Activity",
+      "api": "Renewal_New_Loss_Activity",
+      "description": "Renewal · New loss activity since last term",
+      "capabilityType": "calculated",
+      "capabilityValue": "Recent_Loss_Activity",
+      "order": 3
+    },
+    {
+      "id": 4,
+      "name": "New Business - Preferred Broker Submission",
+      "api": "New_Business_Preferred_Broker",
+      "description": "New business · Preferred broker · Within $0-$25K authority · Clean loss history",
+      "capabilityType": "calculated",
+      "capabilityValue": "New_Business_Opportunities",
+      "order": 1
+    },
+    {
+      "id": 5,
+      "name": "Broker RFI - Certificate of Insurance",
+      "api": "Broker_RFI_COI",
+      "description": "In-force policy · Broker RFI · COI request",
+      "capabilityType": "flow",
+      "capabilityValue": "Quote_Followup_Flow",
+      "order": 1
+    },
+    {
+      "id": 6,
+      "name": "Appetite Violation - High Hazard Manufacturing",
+      "api": "Appetite_Violation_High_Hazard",
+      "description": "Appetite violation · Restricted class · Learning required",
+      "capabilityType": "calculated",
+      "capabilityValue": "Pending_Compliance_Reviews",
+      "order": 1
+    }
+  ],
+  "nextRmdInsightId": 7,
+  "rmdActionLibrary": [],
+  "nextRmdActionId": 1,
+  "playbooks": [
+    {
+      "id": 1,
+      "name": "Underwriter Playbook",
+      "api": "Underwriter_Playbook",
+      "description": "Default Run My Day playbook for commercial underwriters. Surfaces high-priority renewals, growth opportunities, broker service requests, and appetite-compliance items.",
+      "active": true,
+      "groups": [
+        {
+          "libraryId": null,
+          "name": "Retain",
+          "api": "Retain",
+          "icon": "briefcase",
+          "order": 1,
+          "insights": [
+            {
+              "libraryId": 1,
+              "name": "High-Priority Renewals Expiring in 7 Days",
+              "api": "High_Priority_Renewals_7d",
+              "description": "Renewal · Expiring in 7 days · Within $0-$25K authority",
+              "capabilityType": "calculated",
+              "capabilityValue": "High_Priority_Renewals",
+              "order": 1,
+              "snoozeEnabled": false,
+              "dismissEnabled": false,
+              "actions": []
+            },
+            {
+              "libraryId": 2,
+              "name": "Renewals with Premium Increases >15%",
+              "api": "Renewals_Premium_Increase_15",
+              "description": "Renewal · Premium increase >15% · Within $0-$25K authority",
+              "capabilityType": "flow",
+              "capabilityValue": "Renewal_Expiring_Flow",
+              "order": 2,
+              "snoozeEnabled": false,
+              "dismissEnabled": false,
+              "actions": []
+            },
+            {
+              "libraryId": 3,
+              "name": "Renewal with New Loss Activity",
+              "api": "Renewal_New_Loss_Activity",
+              "description": "Renewal · New loss activity since last term",
+              "capabilityType": "calculated",
+              "capabilityValue": "Recent_Loss_Activity",
+              "order": 3,
+              "snoozeEnabled": false,
+              "dismissEnabled": false,
+              "actions": []
+            }
+          ]
+        },
+        {
+          "libraryId": 2,
+          "name": "Grow",
+          "api": "Grow",
+          "icon": "trending_up",
+          "order": 2,
+          "insights": [
+            {
+              "libraryId": 4,
+              "name": "New Business - Preferred Broker Submission",
+              "api": "New_Business_Preferred_Broker",
+              "description": "New business · Preferred broker · Within $0-$25K authority · Clean loss history",
+              "capabilityType": "calculated",
+              "capabilityValue": "New_Business_Opportunities",
+              "order": 1,
+              "snoozeEnabled": false,
+              "dismissEnabled": false,
+              "actions": []
+            }
+          ]
+        },
+        {
+          "libraryId": 3,
+          "name": "Service",
+          "api": "Service",
+          "icon": "service",
+          "order": 3,
+          "insights": [
+            {
+              "libraryId": 5,
+              "name": "Broker RFI - Certificate of Insurance",
+              "api": "Broker_RFI_COI",
+              "description": "In-force policy · Broker RFI · COI request",
+              "capabilityType": "flow",
+              "capabilityValue": "Quote_Followup_Flow",
+              "order": 1,
+              "snoozeEnabled": false,
+              "dismissEnabled": false,
+              "actions": []
+            }
+          ]
+        },
+        {
+          "libraryId": null,
+          "name": "Comply",
+          "api": "Comply",
+          "icon": "shield",
+          "order": 4,
+          "insights": [
+            {
+              "libraryId": 6,
+              "name": "Appetite Violation - High Hazard Manufacturing",
+              "api": "Appetite_Violation_High_Hazard",
+              "description": "Appetite violation · Restricted class · Learning required",
+              "capabilityType": "calculated",
+              "capabilityValue": "Pending_Compliance_Reviews",
+              "order": 1,
+              "snoozeEnabled": false,
+              "dismissEnabled": false,
+              "actions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "sdfg",
+      "api": "sdfg",
+      "description": "",
+      "active": true,
+      "groups": []
+    }
+  ],
+  "nextPlaybookId": 3,
+  "rnEntities": [
+    {
+      "id": 2,
+      "name": "Location",
+      "attributes": [
+        {
+          "id": 13,
+          "name": "Prop City",
+          "type": "Text",
+          "canonicalNames": []
+        },
+        {
+          "id": 1,
+          "name": "Address"
+        },
+        {
+          "id": 2,
+          "name": "City"
+        },
+        {
+          "id": 3,
+          "name": "State"
+        },
+        {
+          "id": 4,
+          "name": "Zip"
+        },
+        {
+          "id": 5,
+          "name": "Country"
+        },
+        {
+          "id": 6,
+          "name": "Sprinklered"
+        },
+        {
+          "id": 7,
+          "name": "Fire Alarm"
+        },
+        {
+          "id": 8,
+          "name": "Security"
+        },
+        {
+          "id": 9,
+          "name": "Protection Class",
+          "type": "Text",
+          "canonicalNames": [
+            "Pro Class",
+            "Prot class"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Building",
+      "attributes": [
+        {
+          "id": 1,
+          "name": "Construction Type"
+        },
+        {
+          "id": 2,
+          "name": "Year Built"
+        },
+        {
+          "id": 3,
+          "name": "Square Footage"
+        },
+        {
+          "id": 4,
+          "name": "Stories"
+        },
+        {
+          "id": 5,
+          "name": "Roof Type"
+        },
+        {
+          "id": 6,
+          "name": "Roof Year"
+        },
+        {
+          "id": 7,
+          "name": "Occupancy"
+        },
+        {
+          "id": 8,
+          "name": "Building Value"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Equipment / Contents",
+      "attributes": [
+        {
+          "id": 1,
+          "name": "Coverage"
+        },
+        {
+          "id": 2,
+          "name": "Valuation"
+        },
+        {
+          "id": 3,
+          "name": "Equipment Type"
+        },
+        {
+          "id": 4,
+          "name": "Contents Type"
+        },
+        {
+          "id": 5,
+          "name": "Breakdown Coverage"
+        },
+        {
+          "id": 6,
+          "name": "Peak Season Increase"
+        },
+        {
+          "id": 7,
+          "name": "Contents Value"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Coverage",
+      "attributes": [
+        {
+          "id": 1,
+          "name": "Coverage Form"
+        },
+        {
+          "id": 2,
+          "name": "Perils"
+        },
+        {
+          "id": 3,
+          "name": "Coverage"
+        },
+        {
+          "id": 4,
+          "name": "Valuation"
+        },
+        {
+          "id": 5,
+          "name": "Agreed Value"
+        },
+        {
+          "id": 6,
+          "name": "Ordinance or Law"
+        },
+        {
+          "id": 7,
+          "name": "Coverage Limit"
+        },
+        {
+          "id": 8,
+          "name": "Sublimit"
+        },
+        {
+          "id": 9,
+          "name": "Deductible"
+        },
+        {
+          "id": 10,
+          "name": "Deductible Type"
+        },
+        {
+          "id": 11,
+          "name": "Wind/Hail Deductible"
+        },
+        {
+          "id": 12,
+          "name": "Collapse Coverage"
+        }
+      ]
+    }
+  ],
+  "nextRnEntityId": 6,
+  "rnCoverages": [
+    {
+      "id": 1,
+      "name": "Blanket Location Coverage",
+      "baseEntityId": 5,
+      "values": {
+        "1": "Blanket",
+        "2": "Special Form",
+        "10": "Per Occurrence",
+        "11": "2% TIV"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Building Coverage",
+      "baseEntityId": 5,
+      "values": {
+        "3": "Building",
+        "4": "Replacement Cost",
+        "5": "Yes",
+        "6": "10%"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Business Personal Property",
+      "baseEntityId": 5,
+      "values": {
+        "3": "Business Personal Property",
+        "4": "ACV"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Equipment Coverage",
+      "baseEntityId": 5,
+      "values": {
+        "3": "Equipment",
+        "4": "Replacement Cost"
+      }
+    }
+  ],
+  "nextRnCoverageId": 5,
+  "rnHierarchies": [
+    {
+      "id": 1,
+      "name": "Commercial Property Hierarchy",
+      "lob": "Property",
+      "nodes": [
+        {
+          "id": 1,
+          "kind": "entity",
+          "refId": 2,
+          "label": "Location",
+          "children": [
+            {
+              "id": 2,
+              "kind": "coverage",
+              "refId": 1,
+              "label": "Blanket Location Coverage",
+              "children": []
+            },
+            {
+              "id": 3,
+              "kind": "entity",
+              "refId": 3,
+              "label": "Building",
+              "children": [
+                {
+                  "id": 4,
+                  "kind": "coverage",
+                  "refId": 2,
+                  "label": "Building Coverage",
+                  "children": []
+                },
+                {
+                  "id": 5,
+                  "kind": "entity",
+                  "refId": 4,
+                  "label": "Equipment / Contents",
+                  "children": [
+                    {
+                      "id": 6,
+                      "kind": "coverage",
+                      "refId": 3,
+                      "label": "Business Personal Property",
+                      "children": []
+                    },
+                    {
+                      "id": 7,
+                      "kind": "coverage",
+                      "refId": 4,
+                      "label": "Equipment Coverage",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "attributes": [
+            {
+              "name": "Prop City",
+              "category": "Location & CAT Exposure",
+              "aliases": [
+                "City",
+                "Property City"
+              ],
+              "duplicationCheck": false,
+              "strategy": "Source Priority",
+              "sources": [
+                {
+                  "id": 3,
+                  "type": "Enrichment",
+                  "enrichmentDefinitionId": "1",
+                  "enrichmentDefinitionName": "Property Characteristics — Verisk 360"
+                },
+                {
+                  "id": 1,
+                  "type": "Document",
+                  "docCategory": "ACORDS",
+                  "docType": "ACORD 126"
+                },
+                {
+                  "id": 2,
+                  "type": "Email"
+                }
+              ],
+              "id": 2
+            },
+            {
+              "id": 3,
+              "name": "Protection Class",
+              "aliases": [
+                "Pro Class",
+                "Prot class"
+              ],
+              "duplicationCheck": false,
+              "strategy": "Most Common",
+              "category": "Fire Protection & Response"
+            },
+            {
+              "id": 4,
+              "name": "Security",
+              "aliases": [],
+              "duplicationCheck": false,
+              "strategy": "Most Common",
+              "category": "Fire Protection & Response"
+            },
+            {
+              "id": 5,
+              "name": "Fire Alarm",
+              "aliases": [],
+              "duplicationCheck": false,
+              "strategy": "Most Common",
+              "category": "Fire Protection & Response"
+            },
+            {
+              "id": 6,
+              "name": "Sprinklered",
+              "aliases": [],
+              "duplicationCheck": false,
+              "strategy": "Most Common",
+              "category": "Fire Protection & Response"
+            },
+            {
+              "id": 7,
+              "name": "Country",
+              "aliases": [],
+              "duplicationCheck": false,
+              "strategy": "Most Common",
+              "category": "Location & CAT Exposure"
+            },
+            {
+              "id": 8,
+              "name": "Zip",
+              "aliases": [],
+              "duplicationCheck": false,
+              "strategy": "Most Common",
+              "category": "Location & CAT Exposure"
+            },
+            {
+              "id": 9,
+              "name": "State",
+              "aliases": [],
+              "duplicationCheck": false,
+              "strategy": "Most Common",
+              "category": "Location & CAT Exposure"
+            },
+            {
+              "id": 10,
+              "name": "City",
+              "aliases": [],
+              "duplicationCheck": false,
+              "strategy": "Most Common",
+              "category": "Location & CAT Exposure"
+            },
+            {
+              "id": 1,
+              "name": "Address",
+              "category": "Location & CAT Exposure",
+              "aliases": [],
+              "duplicationCheck": true,
+              "strategy": "Most Common"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "General Liability Hierarchy",
+      "lob": "General Liability",
+      "nodes": []
+    }
+  ],
+  "nextRnHierarchyId": 3,
+  "hierarchyConfigs": [
+    {
+      "id": 1,
+      "lob": "Property",
+      "name": "Property Hierarchy",
+      "startDate": "",
+      "endDate": "",
+      "active": true,
+      "nodes": [
+        {
+          "id": 0,
+          "label": "Property Hierarchy",
+          "children": [
+            {
+              "id": 1,
+              "kind": "entity",
+              "refId": 2,
+              "label": "Location",
+              "children": [
+                {
+                  "id": 2,
+                  "kind": "entity",
+                  "refId": 1,
+                  "label": "Building",
+                  "children": [
+                    {
+                      "id": 3,
+                      "kind": "entity",
+                      "refId": 3,
+                      "label": "Equipment",
+                      "children": [
+                        {
+                          "id": 4,
+                          "kind": "coverage",
+                          "refId": 7,
+                          "label": "Equipment Breakdown",
+                          "children": []
+                        },
+                        {
+                          "id": 5,
+                          "kind": "coverage",
+                          "refId": 14,
+                          "label": "Spoilage",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": 8,
+                      "kind": "coverage",
+                      "refId": 11,
+                      "label": "Debris Removal",
+                      "children": []
+                    },
+                    {
+                      "id": 6,
+                      "kind": "coverage",
+                      "refId": 6,
+                      "label": "Business Income & Extra Expense",
+                      "children": [
+                        {
+                          "id": 7,
+                          "kind": "coverage",
+                          "refId": 5,
+                          "label": "Business Personal Property",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": 9,
+                  "kind": "coverage",
+                  "refId": 10,
+                  "label": "Signs",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "lob": "Submission",
+      "name": "Submission Hierarchy",
+      "startDate": "",
+      "endDate": "",
+      "active": true,
+      "nodes": [
+        {
+          "id": 0,
+          "label": "Submission",
+          "children": [
+            {
+              "id": 1,
+              "kind": "entity",
+              "refId": 15,
+              "label": "Account",
+              "children": [
+                {
+                  "id": 2,
+                  "kind": "entity",
+                  "refId": 16,
+                  "label": "Contact",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "kind": "entity",
+              "refId": 17,
+              "label": "Shared Location",
+              "children": []
+            },
+            {
+              "id": 4,
+              "kind": "entity",
+              "refId": 18,
+              "label": "Loss History",
+              "children": []
+            },
+            {
+              "id": 5,
+              "kind": "entity",
+              "refId": 19,
+              "label": "Previous Policies",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "nextHierarchyConfigId": 3,
+  "lineCoverageEntities": [
+    {
+      "id": 2,
+      "lob": "Property",
+      "kind": "Line Item",
+      "developerName": "Location",
+      "label": "Location",
+      "description": "A physical premises / site being insured. Groups one or more buildings and their contents at a single address.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [
+        "Building",
+        "Equipment"
+      ],
+      "aiMatchPromptTemplate": "Match incoming location records by street address, city, state and ZIP. Treat suite/unit differences as the same location when the street address matches.",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 1,
+          "developerName": "Location_Number",
+          "label": "Location Number",
+          "dataType": "Text",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Loc #"
+            },
+            {
+              "id": 2,
+              "name": "Location ID"
+            },
+            {
+              "id": 3,
+              "name": "Premises No"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 2,
+          "developerName": "Address",
+          "label": "Street Address",
+          "dataType": "Text",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Addr"
+            },
+            {
+              "id": 2,
+              "name": "Street"
+            },
+            {
+              "id": 3,
+              "name": "Premises Address"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 3,
+          "developerName": "City",
+          "label": "City",
+          "dataType": "Text",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        },
+        {
+          "id": 4,
+          "developerName": "State",
+          "label": "State",
+          "dataType": "Text",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "ST"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "developerName": "Postal_Code",
+          "label": "ZIP Code",
+          "dataType": "Text",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "ZIP"
+            },
+            {
+              "id": 2,
+              "name": "Zip Code"
+            },
+            {
+              "id": 3,
+              "name": "Postal Code"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "developerName": "County",
+          "label": "County",
+          "dataType": "Text",
+          "category": "Location & CAT Exposure",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        },
+        {
+          "id": 7,
+          "developerName": "Latitude",
+          "label": "Latitude",
+          "dataType": "Decimal",
+          "category": "Location & CAT Exposure",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Lat"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "developerName": "Longitude",
+          "label": "Longitude",
+          "dataType": "Decimal",
+          "category": "Location & CAT Exposure",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Long"
+            },
+            {
+              "id": 2,
+              "name": "Lng"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "developerName": "Distance_To_Coast",
+          "label": "Distance to Coast (mi)",
+          "dataType": "Decimal",
+          "category": "Location & CAT Exposure",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Coast Distance"
+            },
+            {
+              "id": 2,
+              "name": "DTC"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "developerName": "Flood_Zone",
+          "label": "FEMA Flood Zone",
+          "dataType": "Picklist",
+          "category": "Location & CAT Exposure",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Flood Zone"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "developerName": "Earthquake_Zone",
+          "label": "Earthquake Zone",
+          "dataType": "Text",
+          "category": "Location & CAT Exposure",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "EQ Zone"
+            },
+            {
+              "id": 2,
+              "name": "Seismic Zone"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "developerName": "Wind_Hail_Deductible",
+          "label": "Wind/Hail Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false
+        },
+        {
+          "id": 13,
+          "developerName": "Protection_Class",
+          "label": "ISO Protection Class",
+          "dataType": "Text",
+          "category": "Fire Protection & Response",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "PPC"
+            },
+            {
+              "id": 2,
+              "name": "Protection Class"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "lob": "Property",
+      "kind": "Line Item",
+      "developerName": "Building",
+      "label": "Building",
+      "description": "An individual structure at a location. Carries construction, occupancy and valuation characteristics used for property rating.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [
+        "Location"
+      ],
+      "allowedChildTypes": [
+        "Equipment"
+      ],
+      "aiMatchPromptTemplate": "Match building records within a location by building number first, then by description/occupancy. A building with the same number at the same location is the same building.",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 14,
+          "developerName": "Building_Number",
+          "label": "Building Number",
+          "dataType": "Text",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Bldg #"
+            },
+            {
+              "id": 2,
+              "name": "Building No"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 15,
+          "developerName": "Description",
+          "label": "Building Description",
+          "dataType": "Text",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Bldg Desc"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "developerName": "Year_Built",
+          "label": "Year Built",
+          "dataType": "Integer",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "YOC"
+            },
+            {
+              "id": 2,
+              "name": "Year of Construction"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "developerName": "Construction_Type",
+          "label": "Construction Type",
+          "dataType": "Picklist",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Construction"
+            },
+            {
+              "id": 2,
+              "name": "ISO Construction"
+            },
+            {
+              "id": 3,
+              "name": "Const Type"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "developerName": "Number_Of_Stories",
+          "label": "Number of Stories",
+          "dataType": "Integer",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Stories"
+            },
+            {
+              "id": 2,
+              "name": "Floors"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "developerName": "Total_Square_Footage",
+          "label": "Total Square Footage",
+          "dataType": "Integer",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Sq Ft"
+            },
+            {
+              "id": 2,
+              "name": "Total Area"
+            },
+            {
+              "id": 3,
+              "name": "TIV Sq Ft"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "developerName": "Occupancy_Type",
+          "label": "Occupancy Type",
+          "dataType": "Picklist",
+          "category": "Occupancy & Operations",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Occupancy"
+            },
+            {
+              "id": 2,
+              "name": "Occ Type"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "developerName": "Roof_Type",
+          "label": "Roof Type",
+          "dataType": "Picklist",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Roof"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "developerName": "Roof_Age",
+          "label": "Roof Age (yrs)",
+          "dataType": "Integer",
+          "category": "Property Characteristics",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Roof Year"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "developerName": "Building_Value",
+          "label": "Building Value",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Build Val"
+            },
+            {
+              "id": 2,
+              "name": "Value"
+            },
+            {
+              "id": 3,
+              "name": "Bldg Value"
+            },
+            {
+              "id": 4,
+              "name": "Building Limit"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 24,
+          "developerName": "Replacement_Cost",
+          "label": "Replacement Cost",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "RC"
+            },
+            {
+              "id": 2,
+              "name": "RCV"
+            },
+            {
+              "id": 3,
+              "name": "Replacement Value"
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "developerName": "Sprinklered",
+          "label": "Sprinklered",
+          "dataType": "Boolean",
+          "category": "Fire Protection & Response",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Sprinkler"
+            },
+            {
+              "id": 2,
+              "name": "Fully Sprinklered"
+            }
+          ]
+        },
+        {
+          "id": 26,
+          "developerName": "Fire_Alarm",
+          "label": "Central Fire Alarm",
+          "dataType": "Boolean",
+          "category": "Fire Protection & Response",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Fire Alarm"
+            },
+            {
+              "id": 2,
+              "name": "Alarm"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "developerName": "Distance_To_Fire_Station",
+          "label": "Distance to Fire Station (mi)",
+          "dataType": "Decimal",
+          "category": "Fire Protection & Response",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "DTFS"
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "developerName": "Distance_To_Hydrant",
+          "label": "Distance to Fire Hydrant (ft)",
+          "dataType": "Decimal",
+          "category": "Fire Protection & Response",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "DTH"
+            },
+            {
+              "id": 2,
+              "name": "Hydrant Distance"
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "developerName": "Wind_Rated",
+          "label": "Wind-Rated Openings",
+          "dataType": "Boolean",
+          "category": "Building Code & Compliance",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Impact Glass"
+            },
+            {
+              "id": 2,
+              "name": "Wind Rated"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "lob": "Property",
+      "kind": "Line Item",
+      "developerName": "Equipment",
+      "label": "Equipment",
+      "description": "Machinery, boilers, and mechanical/electrical equipment at a building or location — the exposure basis for Equipment Breakdown coverage.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [
+        "Location",
+        "Building"
+      ],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "Match equipment records by serial number when present, otherwise by manufacturer + model + building. Distinct serial numbers are distinct equipment.",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 30,
+          "developerName": "Equipment_ID",
+          "label": "Equipment ID",
+          "dataType": "Text",
+          "category": "Occupancy & Operations",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Equip ID"
+            },
+            {
+              "id": 2,
+              "name": "Asset ID"
+            },
+            {
+              "id": 3,
+              "name": "Tag"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 31,
+          "developerName": "Equipment_Type",
+          "label": "Equipment Type",
+          "dataType": "Picklist",
+          "category": "Occupancy & Operations",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Equip Type"
+            },
+            {
+              "id": 2,
+              "name": "Object Type"
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "developerName": "Manufacturer",
+          "label": "Manufacturer",
+          "dataType": "Text",
+          "category": "Occupancy & Operations",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Mfr"
+            },
+            {
+              "id": 2,
+              "name": "Make"
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "developerName": "Model",
+          "label": "Model",
+          "dataType": "Text",
+          "category": "Occupancy & Operations",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        },
+        {
+          "id": 34,
+          "developerName": "Serial_Number",
+          "label": "Serial Number",
+          "dataType": "Text",
+          "category": "Occupancy & Operations",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Serial"
+            },
+            {
+              "id": 2,
+              "name": "S/N"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 35,
+          "developerName": "Year_Manufactured",
+          "label": "Year Manufactured",
+          "dataType": "Integer",
+          "category": "Occupancy & Operations",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Year Mfd"
+            },
+            {
+              "id": 2,
+              "name": "Mfg Year"
+            }
+          ]
+        },
+        {
+          "id": 36,
+          "developerName": "Replacement_Value",
+          "label": "Replacement Value",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Equip Value"
+            },
+            {
+              "id": 2,
+              "name": "RCV"
+            }
+          ]
+        },
+        {
+          "id": 37,
+          "developerName": "Pressure_Vessel",
+          "label": "Boiler / Pressure Vessel",
+          "dataType": "Boolean",
+          "category": "Building Code & Compliance",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Boiler"
+            },
+            {
+              "id": 2,
+              "name": "Pressure Vessel"
+            }
+          ]
+        },
+        {
+          "id": 38,
+          "developerName": "Last_Inspection_Date",
+          "label": "Last Inspection Date",
+          "dataType": "Date",
+          "category": "Building Code & Compliance",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Inspection Date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Building_Coverage",
+      "label": "Building",
+      "description": "Covers the insured structure itself — walls, roof, permanently installed fixtures and building equipment.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 39,
+          "developerName": "Building_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Building Limit"
+            },
+            {
+              "id": 2,
+              "name": "Building Value"
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "developerName": "Building_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        },
+        {
+          "id": 41,
+          "developerName": "Building_Valuation",
+          "label": "Valuation Basis",
+          "dataType": "Picklist",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Valuation"
+            },
+            {
+              "id": 2,
+              "name": "RC/ACV"
+            }
+          ]
+        },
+        {
+          "id": 42,
+          "developerName": "Building_Coinsurance",
+          "label": "Coinsurance %",
+          "dataType": "Text",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Coins"
+            },
+            {
+              "id": 2,
+              "name": "Coinsurance"
+            }
+          ]
+        },
+        {
+          "id": 43,
+          "developerName": "Building_Cause_Of_Loss",
+          "label": "Cause of Loss Form",
+          "dataType": "Picklist",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "COL"
+            },
+            {
+              "id": 2,
+              "name": "Perils"
+            },
+            {
+              "id": 3,
+              "name": "Cause of Loss"
+            }
+          ]
+        }
+      ],
+      "aliases": [
+        {
+          "id": 1,
+          "name": "Building Coverage"
+        },
+        {
+          "id": 2,
+          "name": ""
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Business_Personal_Property",
+      "label": "Business Personal Property",
+      "description": "Covers contents — furniture, inventory, machinery and equipment the insured owns or is responsible for.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 44,
+          "developerName": "BPP_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Contents Limit"
+            },
+            {
+              "id": 2,
+              "name": "BPP Limit"
+            }
+          ]
+        },
+        {
+          "id": 45,
+          "developerName": "BPP_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        },
+        {
+          "id": 46,
+          "developerName": "BPP_Valuation",
+          "label": "Valuation Basis",
+          "dataType": "Picklist",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Valuation"
+            },
+            {
+              "id": 2,
+              "name": "RC/ACV"
+            }
+          ]
+        },
+        {
+          "id": 47,
+          "developerName": "BPP_Coinsurance",
+          "label": "Coinsurance %",
+          "dataType": "Text",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Coins"
+            }
+          ]
+        },
+        {
+          "id": 48,
+          "developerName": "BPP_Cause_Of_Loss",
+          "label": "Cause of Loss Form",
+          "dataType": "Picklist",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "COL"
+            },
+            {
+              "id": 2,
+              "name": "Perils"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Business_Income",
+      "label": "Business Income & Extra Expense",
+      "description": "Replaces lost net income and covers extra expense during the period of restoration after a covered loss.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 49,
+          "developerName": "BI_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "BI Limit"
+            },
+            {
+              "id": 2,
+              "name": "Business Income Limit"
+            }
+          ]
+        },
+        {
+          "id": 50,
+          "developerName": "BI_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        },
+        {
+          "id": 51,
+          "developerName": "BI_Indemnity_Period",
+          "label": "Period of Indemnity (mo)",
+          "dataType": "Integer",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Indemnity Period"
+            },
+            {
+              "id": 2,
+              "name": "POI"
+            }
+          ]
+        },
+        {
+          "id": 52,
+          "developerName": "BI_Waiting_Period",
+          "label": "Waiting Period (hrs)",
+          "dataType": "Integer",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Time Deductible"
+            }
+          ]
+        },
+        {
+          "id": 53,
+          "developerName": "BI_Extra_Expense_Limit",
+          "label": "Extra Expense Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "EE Limit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Equipment_Breakdown",
+      "label": "Equipment Breakdown",
+      "description": "Covers sudden and accidental mechanical or electrical breakdown of boilers, machinery and equipment (formerly Boiler & Machinery).",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 54,
+          "developerName": "EQB_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Equipment Breakdown Limit"
+            }
+          ]
+        },
+        {
+          "id": 55,
+          "developerName": "EQB_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        },
+        {
+          "id": 56,
+          "developerName": "EQB_Comprehensive",
+          "label": "Comprehensive Coverage",
+          "dataType": "Boolean",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Comprehensive"
+            }
+          ]
+        },
+        {
+          "id": 57,
+          "developerName": "EQB_Spoilage_Limit",
+          "label": "Spoilage Sublimit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Spoilage"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Ordinance_Or_Law",
+      "label": "Ordinance or Law",
+      "description": "Covers the increased cost to rebuild to current building codes, including demolition of undamaged portions.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 58,
+          "developerName": "OrdLaw_A_Limit",
+          "label": "Coverage A — Undamaged Portion",
+          "dataType": "Currency",
+          "category": "Building Code & Compliance",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ord Law A"
+            }
+          ]
+        },
+        {
+          "id": 59,
+          "developerName": "OrdLaw_B_Limit",
+          "label": "Coverage B — Demolition Cost",
+          "dataType": "Currency",
+          "category": "Building Code & Compliance",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ord Law B"
+            },
+            {
+              "id": 2,
+              "name": "Demolition"
+            }
+          ]
+        },
+        {
+          "id": 60,
+          "developerName": "OrdLaw_C_Limit",
+          "label": "Coverage C — Increased Cost of Construction",
+          "dataType": "Currency",
+          "category": "Building Code & Compliance",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ord Law C"
+            },
+            {
+              "id": 2,
+              "name": "ICC"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Loss_Of_Rents",
+      "label": "Loss of Rents / Rental Value",
+      "description": "Reimburses rental income lost while a covered property is untenantable after a loss.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 61,
+          "developerName": "Rents_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Rental Value Limit"
+            },
+            {
+              "id": 2,
+              "name": "Loss of Rents Limit"
+            }
+          ]
+        },
+        {
+          "id": 62,
+          "developerName": "Rents_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        },
+        {
+          "id": 63,
+          "developerName": "Rents_Indemnity_Period",
+          "label": "Period of Indemnity (mo)",
+          "dataType": "Integer",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Indemnity Period"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Signs",
+      "label": "Signs",
+      "description": "Covers exterior building and freestanding signs against covered perils.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 64,
+          "developerName": "Signs_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Sign Limit"
+            }
+          ]
+        },
+        {
+          "id": 65,
+          "developerName": "Signs_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Debris_Removal",
+      "label": "Debris Removal",
+      "description": "Pays the cost to remove debris of covered property following a covered cause of loss.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 66,
+          "developerName": "Debris_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Debris Removal Limit"
+            }
+          ]
+        },
+        {
+          "id": 67,
+          "developerName": "Debris_Pct_Of_Loss",
+          "label": "% of Direct Loss",
+          "dataType": "Text",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "% of Loss"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Tenant_Improvements",
+      "label": "Tenant Improvements & Betterments",
+      "description": "Covers permanent improvements a tenant makes to a leased space they do not own.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 68,
+          "developerName": "TIB_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "TIB Limit"
+            },
+            {
+              "id": 2,
+              "name": "Improvements Limit"
+            }
+          ]
+        },
+        {
+          "id": 69,
+          "developerName": "TIB_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        },
+        {
+          "id": 70,
+          "developerName": "TIB_Valuation",
+          "label": "Valuation Basis",
+          "dataType": "Picklist",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Valuation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Outdoor_Property",
+      "label": "Outdoor Property",
+      "description": "Covers fences, antennas, trees, shrubs and plants and other outdoor property against specified perils.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 71,
+          "developerName": "Outdoor_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Outdoor Property Limit"
+            }
+          ]
+        },
+        {
+          "id": 72,
+          "developerName": "Outdoor_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        },
+        {
+          "id": 73,
+          "developerName": "Outdoor_Per_Tree_Limit",
+          "label": "Per Tree/Shrub Sublimit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Per Item Limit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "lob": "Property",
+      "kind": "Coverage",
+      "developerName": "Spoilage",
+      "label": "Spoilage",
+      "description": "Covers perishable stock spoilage from breakdown or contamination, power interruption and refrigeration failure.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 74,
+          "developerName": "Spoilage_Limit",
+          "label": "Limit",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Source Priority",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Spoilage Limit"
+            }
+          ]
+        },
+        {
+          "id": 75,
+          "developerName": "Spoilage_Deductible",
+          "label": "Deductible",
+          "dataType": "Currency",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Ded"
+            },
+            {
+              "id": 2,
+              "name": "AOP Deductible"
+            }
+          ]
+        },
+        {
+          "id": 76,
+          "developerName": "Spoilage_Breakdown",
+          "label": "Includes Breakdown",
+          "dataType": "Boolean",
+          "category": "Valuation & Insurance-to-Value",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Mechanical Breakdown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "lob": "Submission",
+      "kind": "Account",
+      "developerName": "Account",
+      "label": "Account",
+      "description": "The named insured / applicant on the submission. The legal entity seeking coverage.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "Match incoming account records by legal name and FEIN. Treat DBA/trade-name variations as the same account when the FEIN matches.",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 1,
+          "developerName": "Account_Name",
+          "label": "Account Name",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": true,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Insured Name"
+            },
+            {
+              "id": 2,
+              "name": "Named Insured"
+            },
+            {
+              "id": 3,
+              "name": "Applicant Name"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 2,
+          "developerName": "DBA_Name",
+          "label": "DBA Name",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Doing Business As"
+            },
+            {
+              "id": 2,
+              "name": "Trade Name"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "developerName": "FEIN",
+          "label": "FEIN / Tax ID",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Tax ID"
+            },
+            {
+              "id": 2,
+              "name": "EIN"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 4,
+          "developerName": "Industry",
+          "label": "Industry",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        },
+        {
+          "id": 5,
+          "developerName": "NAICS_Code",
+          "label": "NAICS Code",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "NAICS"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "developerName": "SIC_Code",
+          "label": "SIC Code",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "SIC"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "developerName": "Website",
+          "label": "Website",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "URL"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "developerName": "Years_In_Business",
+          "label": "Years in Business",
+          "dataType": "Integer",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        },
+        {
+          "id": 9,
+          "developerName": "Annual_Revenue",
+          "label": "Annual Revenue",
+          "dataType": "Currency",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        },
+        {
+          "id": 10,
+          "developerName": "Total_Employees",
+          "label": "Total Employees",
+          "dataType": "Integer",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Employee Count"
+            },
+            {
+              "id": 2,
+              "name": "# Employees"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "lob": "Submission",
+      "kind": "Contact",
+      "developerName": "Contact",
+      "label": "Contact",
+      "description": "A person associated with the account — the applicant contact, owner, or producing broker.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 1,
+          "developerName": "First_Name",
+          "label": "First Name",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        },
+        {
+          "id": 2,
+          "developerName": "Last_Name",
+          "label": "Last Name",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": true
+        },
+        {
+          "id": 3,
+          "developerName": "Title",
+          "label": "Title",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        },
+        {
+          "id": 4,
+          "developerName": "Email",
+          "label": "Email",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Email Address"
+            },
+            {
+              "id": 2,
+              "name": "E-mail"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 5,
+          "developerName": "Phone",
+          "label": "Phone",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Phone Number"
+            },
+            {
+              "id": 2,
+              "name": "Tel"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "developerName": "Role",
+          "label": "Role",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "description": "e.g. Broker, Owner, Risk Manager, Applicant"
+        },
+        {
+          "id": 7,
+          "developerName": "Preferred_Contact_Method",
+          "label": "Preferred Contact Method",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "lob": "Submission",
+      "kind": "Location",
+      "developerName": "Shared_Location",
+      "label": "Shared Location",
+      "description": "A physical premises shared across lines. Its attributes are common keys usable by both General Liability and Commercial Property.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "Match incoming location records by street address, city, state and ZIP. Treat suite/unit differences as the same location when the street address matches.",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 1,
+          "developerName": "Location_Number",
+          "label": "Location Number",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Loc #"
+            },
+            {
+              "id": 2,
+              "name": "Location ID"
+            },
+            {
+              "id": 3,
+              "name": "Premises No"
+            }
+          ],
+          "commonKey": "location_number",
+          "duplicationCheck": true
+        },
+        {
+          "id": 2,
+          "developerName": "Address",
+          "label": "Street Address",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Addr"
+            },
+            {
+              "id": 2,
+              "name": "Street"
+            },
+            {
+              "id": 3,
+              "name": "Premises Address"
+            }
+          ],
+          "commonKey": "address_line_1",
+          "duplicationCheck": true
+        },
+        {
+          "id": 3,
+          "developerName": "City",
+          "label": "City",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "commonKey": "city"
+        },
+        {
+          "id": 4,
+          "developerName": "State",
+          "label": "State",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "ST"
+            }
+          ],
+          "commonKey": "state"
+        },
+        {
+          "id": 5,
+          "developerName": "Postal_Code",
+          "label": "ZIP Code",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "ZIP"
+            },
+            {
+              "id": 2,
+              "name": "Postal Code"
+            }
+          ],
+          "commonKey": "postal_code",
+          "duplicationCheck": true
+        },
+        {
+          "id": 6,
+          "developerName": "County",
+          "label": "County",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "commonKey": "county"
+        },
+        {
+          "id": 7,
+          "developerName": "Occupancy",
+          "label": "Occupancy / Business Type",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "description": "Occupancy classification used by GL class rating and Property COPE.",
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Occupancy Type"
+            },
+            {
+              "id": 2,
+              "name": "Class of Business"
+            }
+          ],
+          "commonKey": "occupancy"
+        },
+        {
+          "id": 8,
+          "developerName": "Square_Footage",
+          "label": "Total Square Footage",
+          "dataType": "Integer",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "description": "Total area — a Property COPE attribute and a GL exposure basis.",
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Sq Ft"
+            },
+            {
+              "id": 2,
+              "name": "Area"
+            }
+          ],
+          "commonKey": "square_footage"
+        },
+        {
+          "id": 9,
+          "developerName": "Year_Built",
+          "label": "Year Built",
+          "dataType": "Integer",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "commonKey": "year_built"
+        },
+        {
+          "id": 10,
+          "developerName": "Num_Stories",
+          "label": "Number of Stories",
+          "dataType": "Integer",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Stories"
+            },
+            {
+              "id": 2,
+              "name": "# Floors"
+            }
+          ],
+          "commonKey": "num_stories"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "lob": "Submission",
+      "kind": "Loss History/Claims",
+      "developerName": "Loss_History",
+      "label": "Loss History",
+      "description": "Prior claims / losses reported on the submission, used for loss-run analysis.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 1,
+          "developerName": "Claim_Number",
+          "label": "Claim Number",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Claim #"
+            },
+            {
+              "id": 2,
+              "name": "Claim ID"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 2,
+          "developerName": "Date_Of_Loss",
+          "label": "Date of Loss",
+          "dataType": "Date",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Loss Date"
+            },
+            {
+              "id": 2,
+              "name": "DOL"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "developerName": "Loss_Type",
+          "label": "Loss Type",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Cause of Loss"
+            },
+            {
+              "id": 2,
+              "name": "Peril"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "developerName": "Line_Of_Business",
+          "label": "Line of Business",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "LOB"
+            },
+            {
+              "id": 2,
+              "name": "Coverage Line"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "developerName": "Paid_Amount",
+          "label": "Paid Amount",
+          "dataType": "Currency",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Paid Losses"
+            },
+            {
+              "id": 2,
+              "name": "Paid"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "developerName": "Reserved_Amount",
+          "label": "Reserved Amount",
+          "dataType": "Currency",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Reserves"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "developerName": "Total_Incurred",
+          "label": "Total Incurred",
+          "dataType": "Currency",
+          "conflictStrategy": "Most Recent",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Incurred"
+            },
+            {
+              "id": 2,
+              "name": "Total Loss"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "developerName": "Claim_Status",
+          "label": "Claim Status",
+          "dataType": "Picklist",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Status"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "developerName": "Loss_Description",
+          "label": "Loss Description",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Description"
+            },
+            {
+              "id": 2,
+              "name": "Loss Narrative"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "lob": "Submission",
+      "kind": "Policy",
+      "developerName": "Previous_Policies",
+      "label": "Previous Policies",
+      "description": "Expiring / prior policies disclosed on the submission, used for renewal comparison and rating.",
+      "source": "User-defined",
+      "active": true,
+      "allowedParentTypes": [],
+      "allowedChildTypes": [],
+      "aiMatchPromptTemplate": "",
+      "isSubCoverage": false,
+      "parentCoverage": "",
+      "attributes": [
+        {
+          "id": 1,
+          "developerName": "Policy_Number",
+          "label": "Policy Number",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Policy #"
+            },
+            {
+              "id": 2,
+              "name": "Policy ID"
+            }
+          ],
+          "duplicationCheck": true
+        },
+        {
+          "id": 2,
+          "developerName": "Carrier",
+          "label": "Carrier",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Insurer"
+            },
+            {
+              "id": 2,
+              "name": "Prior Carrier"
+            },
+            {
+              "id": 3,
+              "name": "Current Carrier"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "developerName": "Line_Of_Business",
+          "label": "Line of Business",
+          "dataType": "Text",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "LOB"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "developerName": "Effective_Date",
+          "label": "Effective Date",
+          "dataType": "Date",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Inception Date"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "developerName": "Expiration_Date",
+          "label": "Expiration Date",
+          "dataType": "Date",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Expiry Date"
+            },
+            {
+              "id": 2,
+              "name": "Exp Date"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "developerName": "Annual_Premium",
+          "label": "Annual Premium",
+          "dataType": "Currency",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Premium"
+            },
+            {
+              "id": 2,
+              "name": "Expiring Premium"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "developerName": "Total_Insured_Value",
+          "label": "Total Insured Value",
+          "dataType": "Currency",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "TIV"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "developerName": "Policy_Status",
+          "label": "Policy Status",
+          "dataType": "Picklist",
+          "conflictStrategy": "Most Common",
+          "isRequired": false,
+          "aliases": [
+            {
+              "id": 1,
+              "name": "Status"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "nextLineCoverageEntityId": 20,
+  "nextCanonicalAttributeId": 121,
+  "lobMeta": {
+    "Property": {
+      "icon": "company",
+      "apiName": "Property__c",
+      "source": "",
+      "description": ""
+    },
+    "General Liability": {
+      "icon": "locker_service",
+      "apiName": "General_Liability__c",
+      "source": "",
+      "description": ""
+    },
+    "Auto": {
+      "icon": "travel_and_places",
+      "apiName": "Auto__c",
+      "source": "Out Of The Box",
+      "description": ""
+    },
+    "Cyber": {
+      "icon": "target_mode",
+      "apiName": "Cyber__c",
+      "source": "",
+      "description": ""
+    }
+  },
+  "extractionTemplates": [
+    {
+      "id": 1,
+      "name": "ACORD 125 for Property",
+      "description": "",
+      "model": "Gemini 2.5",
+      "confidenceScoreThreshold": 90,
+      "documentCategory": "ACORD",
+      "documentType": "ACORD 125",
+      "active": true
+    }
+  ],
+  "nextExtractionTemplateId": 2,
+  "authentications": [
+    {
+      "id": 10,
+      "name": "Bridge FT — Bridge FT DCC",
+      "providerId": "bridge-ft",
+      "serviceId": "bridge-ft-dcc",
+      "authType": "OAuth 2.0",
+      "baseUrl": "https://api.bridgeft.com/v2",
+      "testEndpoint": "/health",
+      "credentials": {
+        "clientId": "vbn",
+        "clientSecret": "bnm,"
+      },
+      "headers": [],
+      "timeoutMs": 5000,
+      "maxRetries": 3,
+      "status": "Authenticated",
+      "lastTested": "2026-07-27 15:17:01",
+      "avgLatency": 347
+    },
+    {
+      "id": 9,
+      "name": "Dun & Bradstreet — D&B Credit",
+      "providerId": "dnb",
+      "serviceId": "dnb-credit",
+      "authType": "OAuth 2.0",
+      "baseUrl": "https://plus.dnb.com",
+      "testEndpoint": "/v1/token",
+      "credentials": {
+        "clientId": "fghj",
+        "clientSecret": "vbnm,",
+        "tokenUrl": "vbnm,"
+      },
+      "headers": [],
+      "timeoutMs": 5000,
+      "maxRetries": 3,
+      "status": "Authenticated",
+      "lastTested": "2026-07-27 15:12:09",
+      "avgLatency": 260
+    },
+    {
+      "id": 7,
+      "name": "Bridge FT — Bridge FT DCC",
+      "providerId": "bridge-ft",
+      "serviceId": "bridge-ft-dcc",
+      "authType": "OAuth 2.0",
+      "baseUrl": "https://api.bridgeft.com/v2",
+      "testEndpoint": "/health",
+      "credentials": {
+        "clientId": "rtgyhuj",
+        "clientSecret": "tyuio"
+      },
+      "headers": [],
+      "timeoutMs": 5000,
+      "maxRetries": 3,
+      "status": "Unauthenticated",
+      "lastTested": "2026-07-27 13:42:23",
+      "avgLatency": 370
+    },
+    {
+      "id": 6,
+      "name": "Dun & Bradstreet — D&B Direct+",
+      "providerId": "dnb",
+      "serviceId": "dnb-direct-plus",
+      "authType": "OAuth 2.0",
+      "baseUrl": "https://plus.dnb.com",
+      "testEndpoint": "/v1/token",
+      "credentials": {
+        "clientId": "cvbnm",
+        "clientSecret": "ghjk",
+        "tokenUrl": "fgh"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "timeoutMs": 5000,
+      "maxRetries": 3,
+      "status": "Authenticated",
+      "lastTested": "2026-07-27 08:16:30",
+      "avgLatency": 317
+    },
+    {
+      "id": 1,
+      "name": "LexisNexis — Risk Solutions",
+      "providerId": "lexisnexis",
+      "serviceId": "lexisnexis-risk",
+      "authType": "API Key",
+      "baseUrl": "https://api.lexisnexisrisk.com/v1",
+      "testEndpoint": "/status",
+      "credentials": {
+        "apiKey": "••••••••"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "apikey",
+          "value": "••••••••"
+        }
+      ],
+      "timeoutMs": 5000,
+      "maxRetries": 3,
+      "status": "Authenticated",
+      "lastTested": "2026-06-18 06:14:14",
+      "avgLatency": 360
+    },
+    {
+      "id": 2,
+      "name": "CoreLogic — Property Intelligence",
+      "providerId": "corelogic",
+      "serviceId": "corelogic-property",
+      "authType": "OAuth 2.0",
+      "baseUrl": "https://api.corelogic.com/property/v2",
+      "testEndpoint": "/oauth/token",
+      "credentials": {
+        "clientId": "corelogic-client",
+        "clientSecret": "••••••••",
+        "tokenUrl": "https://api.corelogic.com/property/v2/oauth/token"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "timeoutMs": 5000,
+      "maxRetries": 3,
+      "status": "Authenticated",
+      "lastTested": "2026-06-17 07:11:45",
+      "avgLatency": 151
+    }
+  ],
+  "nextAuthenticationId": 11,
+  "connectionInstances": [
+    {
+      "id": 9,
+      "authId": 2,
+      "templateId": 0,
+      "name": "CoreLogic — Property Attributes",
+      "providerId": "corelogic",
+      "serviceId": "corelogic-property",
+      "enabledEndpointIds": [
+        "corelogic-attributes"
+      ],
+      "endpointTests": {
+        "corelogic-attributes": {
+          "ok": true,
+          "latency": 317,
+          "testedAt": "2026-07-28 12:09:25"
+        }
+      },
+      "authType": "OAuth 2.0",
+      "baseUrl": "https://api.corelogic.com/property/v2",
+      "testEndpoint": "/oauth/token",
+      "status": "Connected",
+      "lastTested": "2026-08-05 12:59:10",
+      "errors24h": 0,
+      "totalCalls24h": 0,
+      "usedBy": [],
+      "usageType": "Underwriter",
+      "categories": [
+        "Firmographic Data",
+        "Compliance & Screening"
+      ],
+      "namedCredential": "UW_DataProviders_NC"
+    },
+    {
+      "id": 7,
+      "authId": 9,
+      "templateId": 0,
+      "name": "Dun & Bradstreet — D&B Credit",
+      "providerId": "dnb",
+      "serviceId": "dnb-credit",
+      "enabledEndpointIds": [
+        "dnb-credit-score"
+      ],
+      "authType": "OAuth 2.0",
+      "baseUrl": "https://plus.dnb.com",
+      "testEndpoint": "/v2/token",
+      "status": "Connected",
+      "lastTested": "2026-08-07 11:06:31",
+      "errors24h": 0,
+      "totalCalls24h": 0,
+      "usedBy": [],
+      "usageType": "Underwriter",
+      "categories": [
+        "Credit & Financial",
+        "AI Underwriting"
+      ],
+      "namedCredential": "UW_DataProviders_NC"
+    },
+    {
+      "id": 4,
+      "authId": 2,
+      "templateId": 0,
+      "name": "CoreLogic — Property Intelligence",
+      "providerId": "corelogic",
+      "serviceId": "corelogic-property",
+      "enabledEndpointIds": [
+        "corelogic-rcv",
+        "corelogic-clip"
+      ],
+      "authType": "OAuth 2.0",
+      "baseUrl": "https://api.corelogic.com/property/v2",
+      "testEndpoint": "/oauth/token",
+      "status": "Connected",
+      "errors24h": 0,
+      "totalCalls24h": 0,
+      "usedBy": [],
+      "usageType": "Underwriter",
+      "categories": [
+        "Other",
+        "Firmographic Data"
+      ],
+      "namedCredential": "UW_Firmographics_NC",
+      "lastTested": "2026-08-07 11:06:49"
+    }
+  ],
+  "nextConnectionInstanceId": 11,
+  "providerStatusOverrides": {},
+  "customProviders": [
+    {
+      "id": "bridge-ft",
+      "name": "Bridge FT",
+      "description": "Financial-transaction data streams ingested through Data Cloud.",
+      "status": "Available",
+      "logo": "BF",
+      "fallbackColor": "#2E7D6B",
+      "services": [
+        {
+          "id": "bridge-ft-dcc",
+          "name": "Bridge FT DCC",
+          "description": "Data Cloud Connector ingesting Bridge FT financial-transaction data streams.",
+          "baseUrl": "https://api.bridgeft.com/v2",
+          "type": "Data Cloud Connector",
+          "authType": "OAuth 2.0",
+          "testEndpoint": "/health",
+          "contract": {
+            "rateLimit": "10 req/s · 20,000/day",
+            "docsUrl": "https://docs.bridgeft.com",
+            "notes": "Data Cloud Connector; ingests data streams into Data Cloud."
+          },
+          "endpoints": [
+            {
+              "id": "bridge-ft-dcc-ep-1",
+              "name": "Transactions Stream",
+              "method": "GET",
+              "path": "/transactions",
+              "category": "Other",
+              "description": "Financial-transaction records streamed into a Data Cloud DLO.",
+              "requestExample": "{\n  \"accountId\": \"acct_10482\",\n  \"since\": \"2026-01-01\"\n}",
+              "responseExample": "{\n  \"transactions\": [\n    { \"id\": \"txn_88213\", \"amount\": 4200.00, \"type\": \"credit\", \"postedAt\": \"2026-01-04\" }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "hiddenProviderIds": [],
+  "documentClassificationThreshold": 90,
+  "documentSummaryPrompt": "",
+  "documentSummaryPrompts": {},
+  "documentSummaryPromptTemplates": [],
+  "documentSummaryDefaultTemplate": "Document Summary — Standard",
+  "reconciliationAgent": "Default Reconciliation Agent",
+  "normalizationAgent": "Default Normalization Agent",
+  "normalizationEnabled": true,
+  "normalizationThreshold": 50,
+  "fuzzMatchingThreshold": 80,
+  "lineDefinitionSummaryPromptTemplate": "Line Summary — Standard",
+  "lineDefinitionReconciliationPromptTemplate": "Line Reconciliation — Standard",
+  "submissionContext": "Submission Context",
+  "emailToSubmission": {
+    "enabled": false,
+    "saveAttachmentsAsFiles": true,
+    "deleteDuplicateAttachments": true,
+    "saveRepliesAsDrafts": true,
+    "autoUpdateMessageStatus": true,
+    "notifyExternalSenderOnErrors": true,
+    "setCaseSourceToEmail": true,
+    "unauthorizedSenderAction": "Discard",
+    "overRateLimitAction": "Requeue",
+    "defaultOwnerKind": "User",
+    "defaultOwner": ""
+  },
+  "routingAddresses": [
+    {
+      "id": 1,
+      "emailAddress": "nakul.saxena@salesforce.com",
+      "displayName": "Test",
+      "routingType": "Create New Submission",
+      "assigneeType": "User",
+      "assignee": "user",
+      "priority": "",
+      "origin": "",
+      "acceptEmailsFrom": ""
+    }
+  ],
+  "nextRoutingAddressId": 2,
+  "documentTaxonomy": [
+    {
+      "name": "ACORDS",
+      "types": [
+        "ACORD 125",
+        "ACORD 126",
+        "ACORD 127",
+        "ACORD 140"
+      ]
+    },
+    {
+      "name": "Statement Of Value",
+      "types": [
+        "General",
+        "Statement of Values"
+      ]
+    },
+    {
+      "name": "Loss Run",
+      "types": [
+        "Carrier Loss Run",
+        "Broker Loss Summary"
+      ]
+    },
+    {
+      "name": "Carrier Submission",
+      "types": [
+        "Carrier Submission Cover"
+      ]
+    },
+    {
+      "name": "Other",
+      "types": [
+        "Generic"
+      ]
+    }
+  ],
+  "personas": [
+    {
+      "id": 1,
+      "name": "Junior Underwriter",
+      "role": "Junior Underwriter",
+      "kpis": [
+        {
+          "id": 1,
+          "name": "New KPI",
+          "description": "Description",
+          "source": ""
+        }
+      ],
+      "nextKpiId": 2,
+      "playbookId": 1,
+      "listReportColumns": [
+        "Name",
+        "Quoted_Premium__c",
+        "Number_of_Employees__c",
+        "Broker_Email__c"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Underwriter",
+      "role": "Underwriter"
+    },
+    {
+      "id": 3,
+      "name": "Senior Underwriter",
+      "role": "Senior Underwriter"
+    }
+  ],
+  "nextPersonaId": 4,
+  "underwriters": [],
+  "nextUnderwriterId": 1,
+  "territoryDecisionTables": [],
+  "nextTerritoryTableId": 1,
+  "territoryDecisionTableId": null,
+  "brokers": [],
+  "nextBrokerId": 1,
+  "brokerTierDecisionTables": [],
+  "nextBrokerTierTableId": 1,
+  "brokerTierDefaultTableId": null,
+  "brokerTierConfigs": [],
+  "nextBrokerTierConfigId": 1,
+  "brokerTierDefinitions": [],
+  "nextBrokerTierDefinitionId": 1,
+  "skillTypes": [
+    {
+      "id": 1,
+      "name": "Country",
+      "developerName": "Country"
+    },
+    {
+      "id": 2,
+      "name": "Line Of Business",
+      "developerName": "Line_Of_Business"
+    },
+    {
+      "id": 3,
+      "name": "Max TIV",
+      "developerName": "Max_TIV"
+    },
+    {
+      "id": 4,
+      "name": "Broker Tiers",
+      "developerName": "Broker_Tiers"
+    }
+  ],
+  "nextSkillTypeId": 5,
+  "skills": [
+    {
+      "id": 1,
+      "skillTypeId": 1,
+      "name": "India",
+      "developerName": "India",
+      "description": "Registered to work in India"
+    },
+    {
+      "id": 2,
+      "skillTypeId": 1,
+      "name": "USA",
+      "developerName": "USA",
+      "description": "Registered to work in USA"
+    },
+    {
+      "id": 3,
+      "skillTypeId": 2,
+      "name": "Commercial Property",
+      "developerName": "Commercial_Property",
+      "description": ""
+    },
+    {
+      "id": 4,
+      "skillTypeId": 2,
+      "name": "Cyber",
+      "developerName": "Cyber",
+      "description": ""
+    },
+    {
+      "id": 5,
+      "skillTypeId": 2,
+      "name": "General Liability",
+      "developerName": "General_Liability",
+      "description": ""
+    },
+    {
+      "id": 6,
+      "skillTypeId": 3,
+      "name": "100,000",
+      "developerName": "X100_000",
+      "description": ""
+    },
+    {
+      "id": 7,
+      "skillTypeId": 3,
+      "name": "200,000",
+      "developerName": "X200_000",
+      "description": ""
+    },
+    {
+      "id": 8,
+      "skillTypeId": 3,
+      "name": "500,000",
+      "developerName": "X500_000",
+      "description": ""
+    },
+    {
+      "id": 9,
+      "skillTypeId": 3,
+      "name": "1,000,000",
+      "developerName": "X1_000_000",
+      "description": ""
+    },
+    {
+      "id": 10,
+      "skillTypeId": 4,
+      "name": "Gold",
+      "developerName": "Gold",
+      "description": ""
+    },
+    {
+      "id": 11,
+      "skillTypeId": 4,
+      "name": "Silver",
+      "developerName": "Silver",
+      "description": ""
+    },
+    {
+      "id": 12,
+      "skillTypeId": 4,
+      "name": "Bronze",
+      "developerName": "Bronze",
+      "description": ""
+    }
+  ],
+  "nextSkillId": 13,
+  "skillMappings": [
+    {
+      "id": 1,
+      "conditions": [
+        {
+          "field": "Line_of_Business__c",
+          "operator": "equals",
+          "value": "Property"
+        }
+      ],
+      "skillTypeId": 1,
+      "skillId": 1,
+      "expression": "1 OR 2"
+    },
+    {
+      "id": 2,
+      "conditions": [
+        {
+          "field": "Annual_Revenue__c",
+          "operator": "equals",
+          "value": "100,000"
+        }
+      ],
+      "expression": "",
+      "skillTypeId": 3,
+      "skillId": 6
+    }
+  ],
+  "nextSkillMappingId": 3,
+  "routingRules": [
+    {
+      "id": 1,
+      "conditions": [
+        {
+          "field": "Name",
+          "operator": "equals",
+          "value": "Value"
+        },
+        {
+          "field": "Name",
+          "operator": "equals",
+          "value": ""
+        }
+      ],
+      "expression": "1 AND 2",
+      "queue": "Casualty Underwriting"
+    }
+  ],
+  "nextRoutingRuleId": 2,
+  "routingQueues": [],
+  "routingDefaultQueue": "Unassigned"
+}

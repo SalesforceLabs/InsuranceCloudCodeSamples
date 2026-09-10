@@ -1,0 +1,336 @@
+<template>
+  <div class="arl">
+    <header class="arl__head">
+      <div class="arl__title-block">
+        <h2 class="arl__title">RFQs</h2>
+        <p class="arl__count">
+          <template lwc:if={hasRows}>{countLabel}</template>
+          <template lwc:else>No items to display</template>
+        </p>
+      </div>
+    </header>
+
+    <template lwc:if={hasRows}>
+      <table
+        class="slds-table slds-table_cell-buffer slds-table_bordered arl__table"
+        role="grid"
+        aria-label="RFQs"
+      >
+        <thead>
+          <tr class="slds-line-height_reset">
+            <th class="arl__th arl__col-toggle" scope="col">
+              <span class="slds-assistive-text">Expand</span>
+            </th>
+            <th class="arl__th" scope="col">
+              <div class="slds-truncate" title="RFQ Name">RFQ name</div>
+            </th>
+            <th class="arl__th" scope="col">
+              <div class="slds-truncate" title="Line of Business">
+                Line of Business
+              </div>
+            </th>
+            <th class="arl__th" scope="col">
+              <div class="slds-truncate" title="Line of Coverage">
+                Line of Coverage
+              </div>
+            </th>
+            <th class="arl__th" scope="col">
+              <div class="slds-truncate" title="Quotes received">
+                Quotes received
+              </div>
+            </th>
+            <th class="arl__th" scope="col">
+              <div class="slds-truncate" title="Status">Status</div>
+            </th>
+            <th class="arl__th arl__col-actions" scope="col">
+              <span class="slds-assistive-text">Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <template for:each={unifiedRows} for:item="r">
+            <!-- Bundle parent row - RFQs stamped with a shared
+                 bundleId via the Add-Another-LOC intake path. Child
+                 rows appear directly under it when expanded. -->
+            <template lwc:if={r.isBundleParent}>
+              <tr key={r.key} class={r.parentCls} data-bundle-id={r.bundleId}>
+                <td role="gridcell" class="arl__col-toggle">
+                  <button
+                    type="button"
+                    class="arl__toggle-btn"
+                    data-id={r.bundleId}
+                    onclick={handleBundleExpandToggle}
+                    aria-expanded={r.expandAria}
+                    aria-label="Toggle lines of coverage"
+                    title="Toggle lines of coverage"
+                  >
+                    <svg
+                      class="arl-chevron"
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      focusable="false"
+                    ><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </td>
+                <td role="gridcell">
+                  <a
+                    href="#toggle-bundle"
+                    class="arl__name-link"
+                    data-id={r.bundleId}
+                    onclick={handleBundleExpandToggle}
+                  >{r.bundleName}</a>
+                  <div class="arl__row-sub">{r.childSummary}</div>
+                </td>
+                <!-- Bundle parents carry no line of their own; the
+                     specific lines sit on the child rows and the meta
+                     under the bundle name already lists them. -->
+                <td role="gridcell"></td>
+                <td role="gridcell"></td>
+                <td role="gridcell" class="arl__col-quotes">
+                  <template lwc:if={r.hasQuotes}>
+                    <span class="arl__quotes-count">{r.quotesLabel}</span>
+                  </template>
+                  <template lwc:else>
+                    <span class="arl__quotes-none">No quotes yet</span>
+                  </template>
+                </td>
+                <td role="gridcell">
+                  <span class={r.badgeClass}>{r.status}</span>
+                </td>
+                <td role="gridcell" class="arl__col-actions">
+                  <template lwc:if={r.hasMenu}>
+                    <div class="arl__menu-wrap">
+                      <button
+                        class="arl__row-menu-btn"
+                        type="button"
+                        aria-haspopup="menu"
+                        aria-expanded={r.menuBtnAria}
+                        title={r.actionsLabel}
+                        data-id={r.id}
+                        onclick={handleMenuToggle}
+                      >
+                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M8 20c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm18 0c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm18 0c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6z"/></svg>
+                        <span class="slds-assistive-text">{r.actionsLabel}</span>
+                      </button>
+                      <template lwc:if={r.menuOpen}>
+                        <div
+                          class="slds-dropdown slds-dropdown_right slds-dropdown_small arl__row-menu"
+                          style={r.menuStyle}
+                        >
+                          <ul class="slds-dropdown__list" role="menu">
+                            <template for:each={r.menuItems} for:item="m">
+                              <template lwc:if={m.isDivider}>
+                                <li
+                                  key={m.key}
+                                  class="slds-dropdown__divider"
+                                  role="separator"
+                                ></li>
+                              </template>
+                              <template lwc:else>
+                                <li
+                                  key={m.key}
+                                  class="slds-dropdown__item"
+                                  role="presentation"
+                                >
+                                  <a
+                                    href="#action"
+                                    role="menuitem"
+                                    data-id={r.id}
+                                    data-action={m.id}
+                                    onclick={handleMenuAction}
+                                  >{m.label}</a>
+                                </li>
+                              </template>
+                            </template>
+                          </ul>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </td>
+              </tr>
+            </template>
+
+            <!-- Bundle child row - single-line, indented off the
+                 parent's name column. The empty leading cell keeps
+                 children on the parent's column grid. -->
+            <template lwc:elseif={r.isBundleChild}>
+              <tr class="arl__loc-row" key={r.key} data-id={r.id}>
+                <td role="gridcell" class="arl__col-toggle"></td>
+                <td role="gridcell" class="arl__name-cell_child">
+                  <a
+                    href="#open-rfq"
+                    class="arl__loc-name arl__loc-name-link"
+                    data-id={r.id}
+                    onclick={handleNameClick}
+                  >{r.name}</a>
+                </td>
+                <td role="gridcell">{r.lobLabel}</td>
+                <td role="gridcell">{r.locLabel}</td>
+                <td role="gridcell" class="arl__col-quotes">
+                  <template lwc:if={r.hasQuotes}>
+                    <span class="arl__quotes-count">{r.quotesLabel}</span>
+                  </template>
+                  <template lwc:else>
+                    <span class="arl__quotes-none">No quotes yet</span>
+                  </template>
+                </td>
+                <td role="gridcell">
+                  <span class={r.badgeClass}>{r.status}</span>
+                </td>
+                <td role="gridcell" class="arl__col-actions">
+                  <template lwc:if={r.hasMenu}>
+                    <div class="arl__menu-wrap">
+                      <button
+                        class="arl__row-menu-btn"
+                        type="button"
+                        aria-haspopup="menu"
+                        aria-expanded={r.menuBtnAria}
+                        title={r.actionsLabel}
+                        data-id={r.id}
+                        onclick={handleMenuToggle}
+                      >
+                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M8 20c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm18 0c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm18 0c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6z"/></svg>
+                        <span class="slds-assistive-text">{r.actionsLabel}</span>
+                      </button>
+                      <template lwc:if={r.menuOpen}>
+                        <div
+                          class="slds-dropdown slds-dropdown_right slds-dropdown_small arl__row-menu"
+                          style={r.menuStyle}
+                        >
+                          <ul class="slds-dropdown__list" role="menu">
+                            <template for:each={r.menuItems} for:item="m">
+                              <template lwc:if={m.isDivider}>
+                                <li
+                                  key={m.key}
+                                  class="slds-dropdown__divider"
+                                  role="separator"
+                                ></li>
+                              </template>
+                              <template lwc:else>
+                                <li
+                                  key={m.key}
+                                  class="slds-dropdown__item"
+                                  role="presentation"
+                                >
+                                  <a
+                                    href="#action"
+                                    role="menuitem"
+                                    data-id={r.id}
+                                    data-action={m.id}
+                                    onclick={handleMenuAction}
+                                  >{m.label}</a>
+                                </li>
+                              </template>
+                            </template>
+                          </ul>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </td>
+              </tr>
+            </template>
+
+            <!-- Standalone RFQ - not part of a bundle. -->
+            <template lwc:else>
+              <tr class="arl__parent-row" key={r.key} data-id={r.id}>
+                <td role="gridcell" class="arl__col-toggle"></td>
+                <td role="gridcell">
+                  <a
+                    href="#open-rfq"
+                    class="arl__name-link"
+                    data-id={r.id}
+                    onclick={handleNameClick}
+                  >{r.name}</a>
+                </td>
+                <td role="gridcell">{r.lobLabel}</td>
+                <td role="gridcell">{r.locLabel}</td>
+                <td role="gridcell" class="arl__col-quotes">
+                  <template lwc:if={r.hasQuotes}>
+                    <span class="arl__quotes-count">{r.quotesLabel}</span>
+                  </template>
+                  <template lwc:else>
+                    <span class="arl__quotes-none">No quotes yet</span>
+                  </template>
+                </td>
+                <td role="gridcell">
+                  <span class={r.badgeClass}>{r.status}</span>
+                </td>
+                <td role="gridcell" class="arl__col-actions">
+                  <template lwc:if={r.hasMenu}>
+                    <div class="arl__menu-wrap">
+                      <button
+                        class="arl__row-menu-btn"
+                        type="button"
+                        aria-haspopup="menu"
+                        aria-expanded={r.menuBtnAria}
+                        title={r.actionsLabel}
+                        data-id={r.id}
+                        onclick={handleMenuToggle}
+                      >
+                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M8 20c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm18 0c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6zm18 0c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6z"/></svg>
+                        <span class="slds-assistive-text">{r.actionsLabel}</span>
+                      </button>
+                      <template lwc:if={r.menuOpen}>
+                        <div
+                          class="slds-dropdown slds-dropdown_right slds-dropdown_small arl__row-menu"
+                          style={r.menuStyle}
+                        >
+                          <ul class="slds-dropdown__list" role="menu">
+                            <template for:each={r.menuItems} for:item="m">
+                              <template lwc:if={m.isDivider}>
+                                <li
+                                  key={m.key}
+                                  class="slds-dropdown__divider"
+                                  role="separator"
+                                ></li>
+                              </template>
+                              <template lwc:else>
+                                <li
+                                  key={m.key}
+                                  class="slds-dropdown__item"
+                                  role="presentation"
+                                >
+                                  <a
+                                    href="#action"
+                                    role="menuitem"
+                                    data-id={r.id}
+                                    data-action={m.id}
+                                    onclick={handleMenuAction}
+                                  >{m.label}</a>
+                                </li>
+                              </template>
+                            </template>
+                          </ul>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </td>
+              </tr>
+            </template>
+          </template>
+        </tbody>
+      </table>
+    </template>
+
+    <template lwc:else>
+      <div class="arl__empty">
+        <c-empty-state
+          illustration-name="success:new"
+          title="No RFQs yet"
+          size="medium"
+        >
+          No RFQs have been created for this account. Start one to
+          gather submissions and compare quotes side-by-side.
+          <button
+            slot="cta"
+            type="button"
+            class="slds-button slds-button_brand"
+          >New RFQ</button>
+        </c-empty-state>
+      </div>
+    </template>
+  </div>
+</template>

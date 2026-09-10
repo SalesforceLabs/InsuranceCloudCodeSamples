@@ -1,0 +1,468 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   SLDS 2 token bridge.
+
+   The app inherited a legacy `--atlas-*` palette. Rather than hand-edit
+   hundreds of `var(--atlas-*)` references in every component, this file
+   re-defines each legacy token as a thin alias over the canonical SLDS 2
+   styling hooks (--slds-g-*). The right-hand hex stays as a fallback so
+   the values render correctly even when SLDS 2 isn't loaded.
+
+   See: https://www.lightningdesignsystem.com/2e1ef8501/p/591960-global-styling-hooks
+   ───────────────────────────────────────────────────────────────────── */
+:root {
+  /* ── SLDS 2 global hooks (loaded here so they're available everywhere) ── */
+
+  /* Surfaces & on-surface text */
+  --slds-g-color-surface-1: #ffffff;
+  --slds-g-color-surface-2: #f3f3f3;
+  --slds-g-color-surface-3: #f3f3f3;
+  --slds-g-color-surface-container-1: #ffffff;
+  --slds-g-color-surface-container-2: #f3f3f3;
+  --slds-g-color-surface-container-3: #e5e5e5;
+  --slds-g-color-surface-inverse-1: #032d60;
+  --slds-g-color-surface-inverse-2: #03234d;
+  --slds-g-color-on-surface-1: #5c5c5c;
+  --slds-g-color-on-surface-2: #2e2e2e;
+  --slds-g-color-on-surface-3: #03234d;
+  --slds-g-color-on-surface-inverse-1: #ffffff;
+  --slds-g-color-on-surface-inverse-2: #a8cbff;
+
+  /* Accent (brand) */
+  --slds-g-color-accent-1: #066afe;
+  --slds-g-color-accent-2: #0250d9;
+  --slds-g-color-accent-3: #022ac0;
+  --slds-g-color-accent-container-1: #066afe;
+  --slds-g-color-accent-container-2: #0250d9;
+  --slds-g-color-accent-container-3: #022ac0;
+  --slds-g-color-border-accent-1: #066afe;
+  --slds-g-color-border-accent-2: #0250d9;
+  --slds-g-color-border-accent-3: #022ac0;
+  --slds-g-color-on-accent-1: #ffffff;
+  --slds-g-color-on-accent-2: #ffffff;
+  --slds-g-color-on-accent-3: #ffffff;
+
+  /* Borders */
+  --slds-g-color-border-1: #c9c9c9;
+  --slds-g-color-border-2: #5c5c5c;
+  --slds-g-color-border-disabled-1: #757575;
+
+  /* Feedback - Error / Warning / Success / Info / Disabled */
+  --slds-g-color-error-1: #b60554;
+  --slds-g-color-error-container-1: #fddde3;
+  --slds-g-color-on-error-1: #b60554;
+  --slds-g-color-border-error-1: #b60554;
+  --slds-g-color-warning-1: #8c4b02;
+  --slds-g-color-warning-container-1: #f9e3b6;
+  --slds-g-color-on-warning-1: #8c4b02;
+  --slds-g-color-border-warning-1: #dd7a01;
+  --slds-g-color-success-1: #056764;
+  --slds-g-color-success-container-1: #acf3e4;
+  --slds-g-color-on-success-1: #056764;
+  --slds-g-color-border-success-1: #056764;
+  --slds-g-color-info-1: #0b5cab;
+  --slds-g-color-info-container-1: #d8e6fe;
+  --slds-g-color-on-info-1: #0b5cab;
+  --slds-g-color-disabled-1: #757575;
+  --slds-g-color-disabled-container-1: #e5e5e5;
+  --slds-g-color-disabled-container-2: #c9c9c9;
+  --slds-g-color-on-disabled-1: #757575;
+  --slds-g-color-on-disabled-2: #757575;
+  --slds-g-color-border-disabled-1: #757575;
+
+  /* Neutral palette */
+  --slds-g-color-neutral-base-10: #181818;
+  --slds-g-color-neutral-base-15: #242424;
+  --slds-g-color-neutral-base-20: #2e2e2e;
+  --slds-g-color-neutral-base-30: #444444;
+  --slds-g-color-neutral-base-40: #5c5c5c;
+  --slds-g-color-neutral-base-50: #747474;
+  --slds-g-color-neutral-base-60: #939393;
+  --slds-g-color-neutral-base-70: #aeaeae;
+  --slds-g-color-neutral-base-80: #c9c9c9;
+  --slds-g-color-neutral-base-90: #e5e5e5;
+  --slds-g-color-neutral-base-95: #f3f3f3;
+  --slds-g-color-neutral-base-100: #ffffff;
+
+  /* Brand palette (electric blue) - the SLDS 2 accent ramp. The full ramp is
+     declared here so the primary blue has exactly one definition; component
+     `var(..., #hex)` fallbacks are a safety net, not the source of truth. */
+  --slds-g-color-brand-base-30: #022ac0;
+  --slds-g-color-brand-base-40: #0250d9;
+  --slds-g-color-brand-base-50: #066afe;
+  --slds-g-color-brand-base-60: #4992fe;
+  --slds-g-color-brand-base-80: #a8cbff;
+  --slds-g-color-brand-base-90: #d6e6ff;
+  --slds-g-color-brand-base-95: #edf4ff;
+
+  /* Electric-blue palette aliases - same ramp, palette-namespaced. */
+  --slds-g-color-palette-electric-blue-30: var(
+    --slds-g-color-brand-base-30,
+    #022ac0
+  );
+  --slds-g-color-palette-electric-blue-40: var(
+    --slds-g-color-brand-base-40,
+    #0250d9
+  );
+  --slds-g-color-palette-electric-blue-50: var(
+    --slds-g-color-brand-base-50,
+    #066afe
+  );
+  --slds-g-color-palette-electric-blue-60: var(
+    --slds-g-color-brand-base-60,
+    #4992fe
+  );
+  --slds-g-color-palette-electric-blue-80: var(
+    --slds-g-color-brand-base-80,
+    #a8cbff
+  );
+  --slds-g-color-palette-electric-blue-90: var(
+    --slds-g-color-brand-base-90,
+    #d6e6ff
+  );
+  --slds-g-color-palette-electric-blue-95: var(
+    --slds-g-color-brand-base-95,
+    #edf4ff
+  );
+
+  /* Expressive palettes (purple for Agentforce, etc.) */
+  --slds-g-color-palette-purple-40: #7526e3;
+  --slds-g-color-palette-purple-50: #9050e9;
+  --slds-g-color-palette-purple-80: #d7bff2;
+  --slds-g-color-palette-purple-90: #ece1f9;
+  --slds-g-color-palette-purple-95: #f6f2fb;
+
+  /* Indigo - object-icon fills (Account, Dashboard) and setup accents. */
+  --slds-g-color-palette-indigo-30: #2f2cb7;
+  --slds-g-color-palette-indigo-40: #3a49da;
+  --slds-g-color-palette-indigo-50: #5867e8;
+  --slds-g-color-palette-indigo-90: #e0e5f8;
+  --slds-g-color-palette-indigo-95: #f1f3fb;
+
+  /* Blue - the SLDS 2 informational/expressive ramp. Distinct from the
+     electric-blue brand ramp above; never use it as the primary accent. */
+  --slds-g-color-palette-blue-20: #032d60;
+  --slds-g-color-palette-blue-60: #1b96ff;
+
+  /* Spacing - modular scale of 4 */
+  --slds-g-spacing-1: 0.25rem;
+  --slds-g-spacing-2: 0.5rem;
+  --slds-g-spacing-3: 0.75rem;
+  --slds-g-spacing-4: 1rem;
+  --slds-g-spacing-5: 1.5rem;
+  --slds-g-spacing-6: 2rem;
+  --slds-g-spacing-7: 2.5rem;
+  --slds-g-spacing-8: 3rem;
+  --slds-g-spacing-9: 3.5rem;
+  --slds-g-spacing-10: 4rem;
+
+  /* Density-aware spacing (defaults to comfy values) */
+  --slds-g-spacing-var-1: 0.25rem;
+  --slds-g-spacing-var-2: 0.5rem;
+  --slds-g-spacing-var-3: 0.75rem;
+  --slds-g-spacing-var-4: 1rem;
+  --slds-g-spacing-var-5: 1.5rem;
+  --slds-g-spacing-var-6: 2rem;
+  --slds-g-spacing-var-7: 2.5rem;
+  --slds-g-spacing-var-8: 3rem;
+
+  /* Sizing */
+  --slds-g-sizing-border-1: 1px;
+  --slds-g-sizing-border-2: 2px;
+  --slds-g-sizing-border-3: 3px;
+  --slds-g-sizing-border-4: 4px;
+
+  /* Radius */
+  --slds-g-radius-border-1: 0.25rem;
+  --slds-g-radius-border-2: 0.5rem;
+  --slds-g-radius-border-3: 0.75rem;
+  --slds-g-radius-border-4: 1.25rem;
+  --slds-g-radius-border-circle: 100%;
+  --slds-g-radius-border-pill: 15rem;
+
+  /* SLDS 2 buttons are fully-rounded (pill) per the SLDS 2 Components Figma
+     spec. Set the button component radius hook so every button that reads it
+     renders as a pill. */
+  --slds-c-button-radius-border: var(--slds-g-radius-border-pill, 9999px);
+
+  /* Typography */
+  --slds-g-font-size-base: 0.8125rem;
+  --slds-g-font-scale-neg-2: 0.625rem;
+  --slds-g-font-scale-neg-1: 0.75rem;
+  --slds-g-font-scale-1: 0.875rem;
+  --slds-g-font-scale-2: 1rem;
+  --slds-g-font-scale-3: 1.25rem;
+  --slds-g-font-scale-4: 1.5rem;
+  --slds-g-font-scale-5: 1.75rem;
+  --slds-g-font-scale-6: 2rem;
+  --slds-g-font-scale-7: 2.5rem;
+
+  --slds-g-font-weight-3: 300;
+  --slds-g-font-weight-4: 400;
+  --slds-g-font-weight-5: 500;
+  --slds-g-font-weight-6: 600;
+  --slds-g-font-weight-7: 700;
+
+  /* Live LEX (preetiorg2) uses the SLDS 2 system-ui stack, not Inter. */
+  --slds-g-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol';
+  --slds-g-font-family-base: var(--slds-g-font-family);
+
+  --slds-g-font-lineheight-2: 1.25;
+  --slds-g-font-lineheight-3: 1.375;
+  --slds-g-font-lineheight-4: 1.5;
+  --slds-g-font-lineheight-var-base: 1.5;
+
+  /* ───────────────────────────────────────────────────────────────
+     Legacy --atlas-* tokens now resolve through SLDS 2 hooks.
+     This brings every `var(--atlas-*)` reference in the codebase
+     into SLDS 2 compliance without per-component edits.
+     ─────────────────────────────────────────────────────────────── */
+
+  --atlas-bg: var(--slds-g-color-surface-2, #f3f3f3);
+  --atlas-surface: var(--slds-g-color-surface-container-1, #ffffff);
+  --atlas-ink: var(--slds-g-color-on-surface-3, #03234d);
+  --atlas-ink-2: var(--slds-g-color-on-surface-2, #2e2e2e);
+  --atlas-muted: var(--slds-g-color-on-surface-1, #5c5c5c);
+  --atlas-border: var(--slds-g-color-border-1, #c9c9c9);
+  --atlas-divider: var(--slds-g-color-border-1, #e5e5e5);
+
+  --atlas-brand: var(--slds-g-color-accent-1, #066afe);
+  --atlas-brand-dark: var(--slds-g-color-accent-2, #0250d9);
+  --atlas-brand-light: var(--slds-g-color-brand-base-95, #edf4ff);
+
+  --atlas-purple: var(--slds-g-color-palette-purple-40, #7526e3);
+  --atlas-purple-light: var(--slds-g-color-palette-purple-95, #f6f2fb);
+  --atlas-banner-blue: var(--slds-g-color-surface-inverse-2, #03234d);
+  --atlas-success: var(--slds-g-color-success-1, #056764);
+  --atlas-success-light: var(--slds-g-color-success-container-1, #acf3e4);
+  --atlas-warning: var(--slds-g-color-warning-1, #8c4b02);
+  --atlas-warning-light: var(--slds-g-color-warning-container-1, #f9e3b6);
+  --atlas-danger: var(--slds-g-color-error-1, #b60554);
+
+  /* Universal gap between two adjacent buttons (button rows, modal
+     footers, action groups). Single source of truth across the app. */
+  --atlas-button-gap: var(--slds-g-spacing-3, 0.75rem);
+
+  /* Radii - SLDS 2 radius scale. Corner radius is tiered by how deeply
+     a surface is nested, so a card always reads as one step softer than
+     the surface it sits on:
+
+       --atlas-radius-lg  20px  Top-level card / panel / widget that sits
+                                directly on the page background.
+       --atlas-radius     12px  Card nested inside a top-level card
+                                (list rows, sub-cards, tiles in a grid).
+       --atlas-radius-sm   8px  Controls and small chrome inside a card -
+                                inputs, buttons, table shells, dropdowns.
+
+     Cards must go through these three, never through a raw
+     --slds-g-radius-border-N or a literal px value, so the tier rule
+     stays enforceable from one place. Pills and circles are exempt and
+     keep --slds-g-radius-border-pill / -circle. */
+  --atlas-radius-sm: var(--slds-g-radius-border-2, 0.5rem);
+  --atlas-radius: var(--slds-g-radius-border-3, 0.75rem);
+  --atlas-radius-lg: var(--slds-g-radius-border-4, 1.25rem);
+
+  /* Type roles - measured off the live org and expressed through the SLDS
+     scale, so a screen built here reads identically to a Lightning page:
+
+       title        28px / 400 / 1.25   Record or page title, one per screen.
+       section      20px / 400 / 1.25   Card and section header.
+       subsection   16px / 400 / 1.25   Heading inside a card.
+       body         13px / 400 / 1.5    Paragraphs, list items, field values.
+       label        12px / 400 / 1.25   Meta labels, eyebrows, field labels.
+
+     Weight is what drifts hardest. In SLDS 2, 400 carries titles *and*
+     body, 600 is reserved for buttons and tabs, and 700 is emphasis used
+     sparingly - so a heading at 600 or 700 is the bug, not the default.
+     Headings are on-surface-3, body and labels on-surface-1; neither
+     should reach for a neutral or brand ramp directly. */
+  --atlas-type-title-size: var(--slds-g-font-scale-5, 1.75rem);
+  --atlas-type-title-weight: var(--slds-g-font-weight-4, 400);
+  --atlas-type-title-lh: var(--slds-g-font-lineheight-2, 1.25);
+  --atlas-type-title-color: var(--slds-g-color-on-surface-3, #03234d);
+
+  --atlas-type-section-size: var(--slds-g-font-scale-3, 1.25rem);
+  --atlas-type-section-weight: var(--slds-g-font-weight-4, 400);
+  --atlas-type-section-lh: var(--slds-g-font-lineheight-2, 1.25);
+  --atlas-type-section-color: var(--slds-g-color-on-surface-3, #03234d);
+
+  --atlas-type-subsection-size: var(--slds-g-font-scale-2, 1rem);
+  --atlas-type-subsection-weight: var(--slds-g-font-weight-4, 400);
+  --atlas-type-subsection-lh: var(--slds-g-font-lineheight-2, 1.25);
+  --atlas-type-subsection-color: var(--slds-g-color-on-surface-3, #03234d);
+
+  --atlas-type-body-size: var(--slds-g-font-size-base, 0.8125rem);
+  --atlas-type-body-weight: var(--slds-g-font-weight-4, 400);
+  --atlas-type-body-lh: var(--slds-g-font-lineheight-4, 1.5);
+  --atlas-type-body-color: var(--slds-g-color-on-surface-1, #5c5c5c);
+
+  --atlas-type-label-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  --atlas-type-label-weight: var(--slds-g-font-weight-4, 400);
+  --atlas-type-label-lh: var(--slds-g-font-lineheight-2, 1.25);
+  --atlas-type-label-color: var(--slds-g-color-on-surface-1, #5c5c5c);
+
+  /* Tabs are the one heading-like role the org sets at 600. Line-height is
+     left to the tab bar, which sizes it against its own row height. */
+  --atlas-type-tab-size: var(--slds-g-font-scale-2, 1rem);
+  --atlas-type-tab-weight: var(--slds-g-font-weight-6, 600);
+  --atlas-type-tab-color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  --atlas-type-tab-color-active: var(--slds-g-color-accent-3, #022ac0);
+
+  /* Shadows - kept as custom (SLDS 2 doesn't define elevation tokens) */
+  --atlas-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 8px 24px rgba(15, 23, 42, 0.05);
+  --atlas-shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.05),
+    0 12px 32px rgba(15, 23, 42, 0.06);
+  --atlas-shadow-lift: 0 12px 36px rgba(15, 23, 42, 0.12);
+  --atlas-shadow-nav: 0 1px 0 rgba(15, 23, 42, 0.06);
+
+  --atlas-glow-purple: 0 0 32px rgba(117, 38, 227, 0.22),
+    0 8px 28px rgba(15, 23, 42, 0.08);
+
+  /* ─────────────────────────────────────────────────────────────
+     Agentic (Agentforce / AI-provenance) gradient - canonical
+     Figma spec: linear 90°, violet-50 (#BA01FF) → blue-60 (#1B96FF).
+     Every AI-marked surface (agentic card border, drawer summary
+     card border, sparkle icon tile fill, etc.) MUST reference this
+     token so a single edit re-tunes the whole AI visual language.
+     - `--atlas-agentic-gradient`: the raw 2-stop gradient, use as
+       a paint value.
+     - `--atlas-agentic-wash`: same gradient at 7% alpha, for
+       ambient container tints behind AI content.
+     - `--atlas-agentic-glow`: lilac radial falloff for a panel that
+       reveals AI-assembled detail. Radial rather than linear so it
+       reads as light spilling into the panel corner.
+     ───────────────────────────────────────────────────────────── */
+  --atlas-agentic-gradient: linear-gradient(
+    90deg,
+    var(--slds-g-color-palette-violet-50, #ba01ff) 0%,
+    var(--slds-g-color-palette-blue-60, #1b96ff) 100%
+  );
+  --atlas-agentic-wash: linear-gradient(
+    90deg,
+    rgba(186, 1, 255, 0.07) 40%,
+    rgba(27, 150, 255, 0.07) 90%
+  );
+  /* Alpha is capped at ~50% of purple-80 because panel headings sit
+     directly on this layer and must hold WCAG AA unassisted. */
+  --atlas-agentic-glow: radial-gradient(
+    130% 100% at 100% 0%,
+    color-mix(
+        in srgb,
+        var(--slds-g-color-palette-purple-80, #d7bff2) 50%,
+        transparent
+      )
+      0%,
+    color-mix(
+        in srgb,
+        var(--slds-g-color-palette-purple-80, #d7bff2) 18%,
+        transparent
+      )
+      45%,
+    transparent 80%
+  );
+
+  --atlas-font: var(--slds-g-font-family);
+
+  /* Tabular surfaces that need digits to line up in a column: policy and
+     quote numbers, ids, effective dates. SLDS 2 ships no mono hook, so
+     this is the app's own stack rather than an alias for one. */
+  --atlas-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Density-aware token overrides - Compact mode.
+
+   Triggered by `[data-density="compact"]` on <html>. Per the SLDS 2
+   density spec, components that consume `--slds-g-spacing-var-*`,
+   `--slds-g-font-scale-var-*`, and `--slds-g-font-lineheight-var-base`
+   automatically pick up tighter values when this attribute flips.
+   ──────────────────────────────────────────────────────────────────── */
+:root[data-density="compact"] {
+  --slds-g-spacing-var-1: 0.125rem;
+  --slds-g-spacing-var-2: 0.125rem;
+  --slds-g-spacing-var-3: 0.25rem;
+  --slds-g-spacing-var-4: 0.5rem;
+  --slds-g-spacing-var-5: 0.75rem;
+  --slds-g-spacing-var-6: 1rem;
+  --slds-g-spacing-var-7: 1.5rem;
+  --slds-g-spacing-var-8: 2rem;
+
+  --slds-g-spacing-var-block-1: 0.125rem;
+  --slds-g-spacing-var-block-2: 0.25rem;
+  --slds-g-spacing-var-block-3: 0.5rem;
+  --slds-g-spacing-var-block-4: 0.5rem;
+  --slds-g-spacing-var-block-5: 0.75rem;
+  --slds-g-spacing-var-block-6: 1rem;
+
+  --slds-g-spacing-var-inline-1: 0.125rem;
+  --slds-g-spacing-var-inline-2: 0.25rem;
+  --slds-g-spacing-var-inline-3: 0.5rem;
+  --slds-g-spacing-var-inline-4: 0.75rem;
+  --slds-g-spacing-var-inline-5: 0.75rem;
+  --slds-g-spacing-var-inline-6: 1rem;
+
+  --slds-g-font-scale-var-2: 0.875rem;
+  --slds-g-font-scale-var-3: 1rem;
+  --slds-g-font-scale-var-4: 1.25rem;
+  --slds-g-font-lineheight-var-base: 1.2;
+}
+
+/* Comfy is the default - declare the var hooks here so components can
+   consume them by name and switch automatically. */
+:root,
+:root[data-density="comfy"] {
+  --slds-g-spacing-var-block-1: 0.25rem;
+  --slds-g-spacing-var-block-2: 0.5rem;
+  --slds-g-spacing-var-block-3: 0.75rem;
+  --slds-g-spacing-var-block-4: 1rem;
+  --slds-g-spacing-var-block-5: 1.5rem;
+  --slds-g-spacing-var-block-6: 2rem;
+
+  --slds-g-spacing-var-inline-1: 0.25rem;
+  --slds-g-spacing-var-inline-2: 0.5rem;
+  --slds-g-spacing-var-inline-3: 0.75rem;
+  --slds-g-spacing-var-inline-4: 1rem;
+  --slds-g-spacing-var-inline-5: 1.5rem;
+  --slds-g-spacing-var-inline-6: 2rem;
+
+  --slds-g-font-scale-var-2: 1rem;
+  --slds-g-font-scale-var-3: 1.25rem;
+  --slds-g-font-scale-var-4: 1.5rem;
+  --slds-g-font-lineheight-var-base: 1.5;
+}
+
+/* Keep the browser-default 16px root font-size so `1rem` resolves to 16px
+   for icon sizing and the rest of the SLDS 2 scale. The SLDS 2 application
+   base font-size (--slds-g-font-size-base = 0.8125rem ≈ 13px) is applied
+   to <body> only - so text inherits 13px, but rem-based hooks stay tied
+   to a stable 16px root. */
+html {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  /* The bundled SLDS sheet paints `html` with its own #eef4ff (the SLDS 1
+     pale blue). <body> hides it in normal flow, but it shows through on
+     overscroll, so pin the canvas to the SLDS 2 surface. */
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--atlas-font);
+  background: var(--atlas-bg);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: inherit;
+}

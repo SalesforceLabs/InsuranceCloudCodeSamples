@@ -1,0 +1,21 @@
+<template>
+  <div class="dc-layer" aria-hidden="true">
+    <!-- Synthetic pointer. Follows either real pointer movement or
+         scripted moveTo() coordinates from the autoplay runner. -->
+    <template lwc:if={showPointer}>
+      <div class="dc-pointer" style={pointerStyle}></div>
+    </template>
+
+    <!-- Click hotspots. Each entry self-removes on animationend so the
+         list never grows unbounded during a long demo run. -->
+    <template for:each={hotspots} for:item="h">
+      <div
+        class="dc-hotspot"
+        key={h.id}
+        style={h.style}
+        onanimationend={handleHotspotEnd}
+        data-id={h.id}
+      ></div>
+    </template>
+  </div>
+</template>

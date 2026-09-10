@@ -1,0 +1,409 @@
+<template>
+    <article class="rfq-page">
+        <!-- Record header -->
+        <header class="rfq-record-header">
+            <nav class="rfq-breadcrumb" aria-label="Breadcrumb">
+                <a href="#">Accounts</a>
+                <span aria-hidden="true">›</span>
+                <a href="#">RFQs</a>
+                <span aria-hidden="true">›</span>
+                <span>{rfqTitle}</span>
+            </nav>
+            <div class="rfq-record-header__row">
+                <span class="rfq-record-header__icon" aria-hidden="true">
+                    <lightning-icon icon-name="standard:quotes" size="medium" alternative-text="Request for Quote"></lightning-icon>
+                </span>
+                <div class="rfq-record-header__title-group">
+                    <div class="rfq-record-header__subtitle">Request for Quotation · {rfqNumber}</div>
+                    <h1 class="rfq-record-header__title">
+                        {rfqTitle}
+                        <span class="slds-badge slds-badge_lightest rfq-status-badge">{rfqStatusLabel}</span>
+                    </h1>
+                </div>
+                <div class="rfq-record-header__actions">
+                    <button class="slds-button slds-button_destructive-text" type="button" onclick={cancel}>Cancel</button>
+                    <button class="slds-button slds-button_neutral" type="button" onclick={saveDraft}>Save as Draft</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress path -->
+        <ol class="rfq-path" role="list">
+            <template for:each={pathSteps} for:item="step">
+                <li key={step.num} class={step.classes}>
+                    <span class="rfq-path__num">{step.num}.</span> {step.label}
+                </li>
+            </template>
+        </ol>
+
+        <!-- Form -->
+        <div class="rfq-step-view">
+
+            <!-- ── Insured ── -->
+            <section class="rfq-card">
+                <header class="rfq-card__header">
+                    <lightning-icon icon-name="utility:user" size="x-small" alternative-text=""></lightning-icon>
+                    <span>Insured</span>
+                </header>
+                <div class="rfq-card__body">
+                    <div class="rfq-form-grid">
+                        <div class="rfq-field rfq-field--span2 rfq-lookup">
+                            <label>Insured (Account) <span class="rfq-required">*</span></label>
+
+                            <template lwc:if={hasInsured}>
+                                <span class="rfq-lookup__pill">
+                                    <lightning-icon icon-name="standard:account" size="xx-small" alternative-text=""></lightning-icon>
+                                    <span>{insured.name}</span>
+                                    <button type="button" class="rfq-lookup__clear" onclick={clearInsured} aria-label="Clear insured">×</button>
+                                </span>
+                            </template>
+
+                            <template lwc:else>
+                                <div class="rfq-lookup__input-wrap">
+                                    <input type="text" class="slds-input rfq-lookup__input"
+                                           placeholder="Search accounts..."
+                                           value={insuredSearch}
+                                           oninput={handleInsuredInput}
+                                           onfocus={handleInsuredFocus}
+                                           onblur={handleInsuredBlur}
+                                           autocomplete="off" />
+                                    <template lwc:if={showInsuredResults}>
+                                        <ul class="rfq-lookup__results" role="listbox">
+                                            <template for:each={insuredResults} for:item="acc">
+                                                <li key={acc.id}>
+                                                    <button type="button" class="rfq-lookup__result"
+                                                            data-id={acc.id} onmousedown={selectInsured}>
+                                                        <strong>{acc.name}</strong>
+                                                        <span>{acc.industry} · {acc.city}</span>
+                                                    </button>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </template>
+                                </div>
+                            </template>
+                            <p class="rfq-helper">The insured for this quote request.</p>
+                        </div>
+                        <div class="rfq-field">
+                            <label>Primary Contact</label>
+                            <input type="text" class="slds-input" placeholder="e.g. John Smith"
+                                   data-field="primaryContact" value={primaryContact} oninput={handleHeaderField} />
+                        </div>
+                        <div class="rfq-field">
+                            <label>Contact Email</label>
+                            <input type="email" class="slds-input" placeholder="john@example.com"
+                                   data-field="contactEmail" value={contactEmail} oninput={handleHeaderField} />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Line of Business ── -->
+            <section class="rfq-card">
+                <header class="rfq-card__header">
+                    <lightning-icon icon-name="utility:filter" size="x-small" alternative-text=""></lightning-icon>
+                    <span>Line of Business</span>
+                </header>
+                <div class="rfq-card__body">
+                    <div class="rfq-field">
+                        <label>Select a coverage line <span class="rfq-required">*</span></label>
+                        <div class="rfq-radio-group">
+                            <template for:each={lobCards} for:item="card">
+                                <button type="button" key={card.value} class={card.classes}
+                                        data-value={card.value} onclick={selectLob}>
+                                    <span class="rfq-radio-card__icon" style={card.iconStyle}>
+                                        <template lwc:if={card.selected}>
+                                            <lightning-icon icon-name="utility:check" size="x-small"
+                                                            variant="inverse" alternative-text=""></lightning-icon>
+                                        </template>
+                                    </span>
+                                    <span class="rfq-radio-card__body">
+                                        <span class="rfq-radio-card__title">{card.title}</span>
+                                        <span class="rfq-radio-card__desc">{card.description}</span>
+                                    </span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Insured Line Items ── -->
+            <section class="rfq-card">
+                <header class="rfq-card__header rfq-card__header--with-action">
+                    <div class="rfq-card__header-left">
+                        <lightning-icon icon-name="utility:rows" size="x-small" alternative-text=""></lightning-icon>
+                        <span>Insured Line Items</span>
+                        <span class="rfq-card__subtitle">ACORD 125 + ACORD 140</span>
+                    </div>
+                    <div class="rfq-card__header-right">
+                        <span class="rfq-tiv">Total Insured Value: <strong>{totalInsuredValue}</strong></span>
+                        <button type="button" class="slds-button slds-button_brand" onclick={openAddLineItem}>
+                            <lightning-icon icon-name="utility:add" size="xx-small" variant="inverse"
+                                            alternative-text="" class="slds-button__icon slds-button__icon_left"></lightning-icon>
+                            Add Line Item
+                        </button>
+                    </div>
+                </header>
+
+                <div class="rfq-card__body rfq-card__body--flush">
+                    <template lwc:if={hasLineItems}>
+                        <ul class="rfq-tree" role="list">
+                            <template for:each={flattenedLineItems} for:item="row">
+                                <li key={row.id} class="rfq-tree__row" style={row.indentStyle}>
+                                    <span class="rfq-tree__type">{row.typeLabel}</span>
+                                    <span class="rfq-tree__name">{row.displayName}</span>
+                                    <span class="rfq-tree__value">{row.displayValue}</span>
+                                    <span class="rfq-tree__coverage-count">
+                                        <template lwc:if={row.coverageCount}>
+                                            {row.coverageCount} coverage(s)
+                                        </template>
+                                    </span>
+                                    <span class="rfq-tree__actions">
+                                        <button type="button" class="slds-button slds-button_icon"
+                                                title="Edit" data-id={row.id} onclick={editLineItem}>
+                                            <lightning-icon icon-name="utility:edit" size="xx-small" alternative-text="Edit"></lightning-icon>
+                                        </button>
+                                        <button type="button" class="slds-button slds-button_icon"
+                                                title="Remove" data-id={row.id} onclick={removeLineItem}>
+                                            <lightning-icon icon-name="utility:delete" size="xx-small" alternative-text="Remove"></lightning-icon>
+                                        </button>
+                                    </span>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template lwc:else>
+                        <div class="rfq-empty">
+                            <lightning-icon icon-name="standard:document" size="medium" alternative-text=""></lightning-icon>
+                            <div class="rfq-empty__title">No line items yet</div>
+                            <div class="rfq-empty__sub">Add locations, buildings, and equipment to describe what is being insured.</div>
+                        </div>
+                    </template>
+                </div>
+            </section>
+
+            <!-- ── Policy-Level Coverages ── -->
+            <section class="rfq-card">
+                <header class="rfq-card__header rfq-card__header--with-action">
+                    <div class="rfq-card__header-left">
+                        <lightning-icon icon-name="utility:shield" size="x-small" alternative-text=""></lightning-icon>
+                        <span>Policy-Level Coverages</span>
+                        <span class="rfq-card__subtitle">General liability, umbrella, and other policy-wide coverages</span>
+                    </div>
+                    <div class="rfq-card__header-right">
+                        <button type="button" class="slds-button slds-button_brand" onclick={openAddPolicyCoverage}>
+                            <lightning-icon icon-name="utility:add" size="xx-small" variant="inverse"
+                                            alternative-text="" class="slds-button__icon slds-button__icon_left"></lightning-icon>
+                            Add Coverage
+                        </button>
+                    </div>
+                </header>
+                <div class="rfq-card__body">
+                    <template lwc:if={policyCoverages.length}>
+                        <ul class="rfq-coverage-list" role="list">
+                            <template for:each={policyCoverages} for:item="cov">
+                                <li key={cov.id} class="rfq-coverage-item" style={cov.accentStyle}>
+                                    <div class="rfq-coverage-item__main">
+                                        <div class="rfq-coverage-item__name">{cov.name}</div>
+                                        <div class="rfq-coverage-item__meta">{cov.code} · {cov.form}</div>
+                                        <div class="rfq-coverage-item__summary">{cov.summary}</div>
+                                    </div>
+                                    <button type="button" class="slds-button slds-button_icon"
+                                            title="Remove coverage" data-id={cov.id} onclick={removePolicyCoverage}>
+                                        <lightning-icon icon-name="utility:delete" size="xx-small" alternative-text="Remove"></lightning-icon>
+                                    </button>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template lwc:else>
+                        <div class="rfq-empty rfq-empty--inline">
+                            <span>No policy-level coverages yet. Add one to define umbrella, GL, cyber, etc.</span>
+                        </div>
+                    </template>
+                </div>
+            </section>
+
+            <!-- ── Policy Period & Requirements ── -->
+            <section class="rfq-card">
+                <header class="rfq-card__header">
+                    <lightning-icon icon-name="utility:date_input" size="x-small" alternative-text=""></lightning-icon>
+                    <span>Policy Period &amp; Requirements</span>
+                </header>
+                <div class="rfq-card__body">
+                    <div class="rfq-form-grid rfq-form-grid--3">
+                        <div class="rfq-field">
+                            <label>Effective Date <span class="rfq-required">*</span></label>
+                            <input type="date" class="slds-input"
+                                   data-field="effectiveDate" value={effectiveDate} onchange={handleHeaderField} />
+                        </div>
+                        <div class="rfq-field">
+                            <label>Expiration Date <span class="rfq-required">*</span></label>
+                            <input type="date" class="slds-input"
+                                   data-field="expirationDate" value={expirationDate} onchange={handleHeaderField} />
+                        </div>
+                        <div class="rfq-field">
+                            <label>Response Deadline</label>
+                            <input type="date" class="slds-input"
+                                   data-field="responseDeadline" value={responseDeadline} onchange={handleHeaderField} />
+                            <p class="rfq-helper">When carriers must respond by.</p>
+                        </div>
+                    </div>
+                    <div class="rfq-form-grid">
+                        <div class="rfq-field rfq-field--span2">
+                            <label>Additional Notes / Underwriting Info</label>
+                            <textarea class="slds-textarea" rows="3"
+                                      placeholder="Loss history, prior carrier, unique risk characteristics..."
+                                      data-field="notes" value={notes} oninput={handleHeaderField}></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="rfq-footer">
+                <span class="rfq-footer__hint">Step 1 of 4 · Saved as Draft after each change</span>
+                <div class="rfq-footer__actions">
+                    <button type="button" class="slds-button slds-button_neutral" onclick={saveDraft}>Save as Draft</button>
+                    <button type="button" class="slds-button slds-button_brand" onclick={goNext}>Continue to Publish</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════ Line Item Modal ═══════════════ -->
+        <template lwc:if={lineItemModalOpen}>
+            <section role="dialog" aria-modal="true" class="rfq-modal-backdrop">
+                <div class="rfq-modal">
+                    <header class="rfq-modal__header">
+                        <h2>{lineItemModalTitle}</h2>
+                        <button type="button" class="rfq-modal__close" onclick={closeLineItemModal} aria-label="Close">×</button>
+                    </header>
+                    <div class="rfq-modal__body">
+                        <div class="rfq-field rfq-field--span2">
+                            <label>Item Type <span class="rfq-required">*</span></label>
+                            <div class="rfq-type-picker">
+                                <template for:each={lineItemTypeCards} for:item="type">
+                                    <button type="button" key={type.key} class={type.classes}
+                                            data-value={type.key} onclick={handleLineItemTypeChange}>
+                                        {type.label}
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+
+                        <template lwc:if={showParentRow}>
+                            <div class="rfq-field rfq-field--span2">
+                                <label>Parent Line Item</label>
+                                <select class="slds-select" value={editingLineItem.parentId} onchange={handleLineItemParentChange}>
+                                    <template for:each={lineItemParentOptions} for:item="opt">
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    </template>
+                                </select>
+                                <p class="rfq-helper">Child items belong to their parent (e.g. equipment belongs to a building).</p>
+                            </div>
+                        </template>
+
+                        <div class="rfq-form-grid">
+                            <template for:each={lineItemFormFields} for:item="field">
+                                <div key={field.key} class={field.spanClass}>
+                                    <label>
+                                        {field.label}
+                                        <template lwc:if={field.required}><span class="rfq-required">*</span></template>
+                                    </label>
+                                    <template lwc:if={field.isText}>
+                                        <input type="text" class="slds-input" placeholder={field.placeholder}
+                                               data-key={field.key} value={field.value} oninput={handleLineItemFieldChange} />
+                                    </template>
+                                    <template lwc:elseif={field.isNumber}>
+                                        <input type="number" class="slds-input" placeholder={field.placeholder}
+                                               data-key={field.key} value={field.value} oninput={handleLineItemFieldChange} />
+                                    </template>
+                                    <template lwc:elseif={field.isSelect}>
+                                        <select class="slds-select" data-key={field.key} value={field.value}
+                                                onchange={handleLineItemFieldChange}>
+                                            <template for:each={field.selectOptions} for:item="opt">
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            </template>
+                                        </select>
+                                    </template>
+                                    <template lwc:elseif={field.isDate}>
+                                        <input type="date" class="slds-input"
+                                               data-key={field.key} value={field.value} onchange={handleLineItemFieldChange} />
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <footer class="rfq-modal__footer">
+                        <button type="button" class="slds-button slds-button_neutral" onclick={closeLineItemModal}>Cancel</button>
+                        <button type="button" class="slds-button slds-button_brand" onclick={saveLineItem}>Save Line Item</button>
+                    </footer>
+                </div>
+            </section>
+        </template>
+
+        <!-- ═══════════════ Coverage Modal ═══════════════ -->
+        <template lwc:if={coverageModalOpen}>
+            <section role="dialog" aria-modal="true" class="rfq-modal-backdrop">
+                <div class="rfq-modal rfq-modal--wide">
+                    <header class="rfq-modal__header">
+                        <h2>{coverageModalTitle}</h2>
+                        <button type="button" class="rfq-modal__close" onclick={closeCoverageModal} aria-label="Close">×</button>
+                    </header>
+                    <div class="rfq-modal__body">
+                        <div class="rfq-field">
+                            <label>Select a coverage <span class="rfq-required">*</span></label>
+                            <div class="rfq-coverage-picker">
+                                <template for:each={coverageTypeCards} for:item="cov">
+                                    <button type="button" key={cov.key} class={cov.classes} style={cov.accentStyle}
+                                            data-value={cov.key} onclick={handleCoverageTypeChange}>
+                                        <span class="rfq-coverage-card__title">{cov.name}</span>
+                                        <span class="rfq-coverage-card__meta">{cov.code} · {cov.form}</span>
+                                        <span class="rfq-coverage-card__desc">{cov.description}</span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="rfq-form-grid" style="margin-top:0.75rem">
+                            <template for:each={coverageFormFields} for:item="field">
+                                <div key={field.key} class={field.spanClass}>
+                                    <label>
+                                        {field.label}
+                                        <template lwc:if={field.required}><span class="rfq-required">*</span></template>
+                                    </label>
+                                    <template lwc:if={field.isText}>
+                                        <input type="text" class="slds-input"
+                                               data-key={field.key} value={field.value} oninput={handleCoverageFieldChange} />
+                                    </template>
+                                    <template lwc:elseif={field.isNumber}>
+                                        <input type="number" class="slds-input" placeholder={field.placeholder}
+                                               data-key={field.key} value={field.value} oninput={handleCoverageFieldChange} />
+                                    </template>
+                                    <template lwc:elseif={field.isSelect}>
+                                        <select class="slds-select" data-key={field.key} value={field.value}
+                                                onchange={handleCoverageFieldChange}>
+                                            <template for:each={field.selectOptions} for:item="opt">
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            </template>
+                                        </select>
+                                    </template>
+                                    <template lwc:elseif={field.isDate}>
+                                        <input type="date" class="slds-input"
+                                               data-key={field.key} value={field.value} onchange={handleCoverageFieldChange} />
+                                    </template>
+                                    <template lwc:if={field.hint}>
+                                        <p class="rfq-helper">{field.hint}</p>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <footer class="rfq-modal__footer">
+                        <button type="button" class="slds-button slds-button_neutral" onclick={closeCoverageModal}>Cancel</button>
+                        <button type="button" class="slds-button slds-button_brand" onclick={saveCoverage}>Add Coverage</button>
+                    </footer>
+                </div>
+            </section>
+        </template>
+    </article>
+</template>

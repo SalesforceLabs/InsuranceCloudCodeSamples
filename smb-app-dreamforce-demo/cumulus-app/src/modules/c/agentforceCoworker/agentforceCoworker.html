@@ -1,0 +1,109 @@
+<template>
+  <div class="afc">
+    <!-- Two painted layers, matching the org: a fixed peach/lavender wash
+         and a rotated blue wave sweeping the lower right. Both are inert. -->
+    <div class="afc__bg" aria-hidden="true"></div>
+    <div class="afc__wave" aria-hidden="true"></div>
+
+    <div class="afc__stage">
+      <div class="afc__col">
+        <h1 class="afc__greeting">{greeting}</h1>
+        <p class="afc__subline">Just ask. We're on it.</p>
+
+        <div class="afc__composer">
+          <div class="afc__composer-box">
+            <textarea
+              class="afc__textarea"
+              placeholder='Try "What&apos;s changed with my top accounts this week?"'
+              aria-label="Ask Agentforce"
+              value={draft}
+              oninput={handleInput}
+            ></textarea>
+            <div class="afc__composer-actions">
+              <button class={sendClass} type="button" aria-label="Send">
+                <svg viewBox="0 0 520 520" aria-hidden="true" focusable="false">
+                  <path
+                    fill="currentColor"
+                    d="M497 244L37 14a17 17 0 00-24 19l43 195c2 8 8 14 16 15l188 17-188 17c-8 1-14 7-16 15L13 487a17 17 0 0024 19l460-230a18 18 0 000-32"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="afc__footer">
+            <div class="afc__connections">
+              <span class="afc__connections-label">Connections</span>
+              <span class="afc__source" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path
+                    fill="#0176d3"
+                    d="M9.9 6.4a4.2 4.2 0 013.2 1.4 5 5 0 016-.3 5.2 5.2 0 011.1 7.2 4.4 4.4 0 01-2.7 7.8 4.3 4.3 0 01-2-.5 4.9 4.9 0 01-8.9-.6 4 4 0 01-.9.1 4.5 4.5 0 01-3-7.8 5.2 5.2 0 014-8.5 5 5 0 013.2 1.2z"
+                  />
+                </svg>
+              </span>
+              <button class="afc__link" type="button">View all</button>
+            </div>
+
+            <span class="afc__disclaimer">
+              Generative AI can produce inaccurate responses. Review responses
+              carefully.
+            </span>
+
+            <button class="afc__link" type="button">Share feedback</button>
+          </div>
+        </div>
+
+        <div class="afc__prompts">
+          <button class="afc__prompt" type="button">
+            <svg class="afc__prompt-glyph" viewBox="0 0 520 520" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M496 453L360 317a201 201 0 10-43 43l136 136a15 15 0 0021 0l22-22a17 17 0 000-21M210 338a128 128 0 11128-128 128 128 0 01-128 128"
+              />
+            </svg>
+            <span>Find</span>
+            <svg class="afc__prompt-caret" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"
+              />
+            </svg>
+          </button>
+
+          <button class="afc__prompt" type="button">
+            <svg class="afc__prompt-glyph" viewBox="0 0 520 520" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M482 60H38a18 18 0 00-18 18v34a18 18 0 0018 18h444a18 18 0 0018-18V78a18 18 0 00-18-18m-90 170H38a18 18 0 00-18 18v34a18 18 0 0018 18h354a18 18 0 0018-18v-34a18 18 0 00-18-18m-120 170H38a18 18 0 00-18 18v34a18 18 0 0018 18h234a18 18 0 0018-18v-34a18 18 0 00-18-18"
+              />
+            </svg>
+            <span>Catch Up</span>
+            <svg class="afc__prompt-caret" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"
+              />
+            </svg>
+          </button>
+
+          <button class="afc__prompt" type="button">
+            <svg class="afc__prompt-glyph" viewBox="0 0 520 520" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M180 40h160a20 20 0 0120 20v20h60a40 40 0 0140 40v320a40 40 0 01-40 40H120a40 40 0 01-40-40V120a40 40 0 0140-40h60V60a20 20 0 0120-20m-40 180a16 16 0 0016 16h228a16 16 0 0016-16v-8a16 16 0 00-16-16H156a16 16 0 00-16 16zm0 100a16 16 0 0016 16h228a16 16 0 0016-16v-8a16 16 0 00-16-16H156a16 16 0 00-16 16zm0 100a16 16 0 0016 16h132a16 16 0 0016-16v-8a16 16 0 00-16-16H156a16 16 0 00-16 16z"
+              />
+            </svg>
+            <span>Plan</span>
+            <svg class="afc__prompt-caret" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

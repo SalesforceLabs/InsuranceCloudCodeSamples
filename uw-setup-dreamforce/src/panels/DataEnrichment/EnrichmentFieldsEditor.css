@@ -1,0 +1,74 @@
+/* Enrichment Fields editor — refines tile state styling.
+ *
+ * Tiles in this editor have two distinct visual states:
+ *
+ *   --focus    Fill only. Indicates which LOB / Group is currently being
+ *              browsed (drives what shows in the next column). No stroke.
+ *
+ *   --selected Fill + accent stroke. Indicates which item the right-hand
+ *              editor panel is currently targeting. Strongest emphasis.
+ *
+ * Field tiles only ever use --selected (no children to navigate into).
+ * Closing the editor clears --selected; --focus is preserved.
+ */
+
+/* Reset the base wizard selected look — we redefine both states below. */
+.rmdw-prev-item.rmdw-prev-item--selected {
+  border: var(--slds-g-sizing-border-2) solid var(--slds-g-color-accent-1);
+  background: var(--slds-g-color-brand-base-95);
+  /* The base rule has padding: 9px (compensating for the 2px border).
+   * Keep that padding stable so the tile doesn't reflow on state changes. */
+  padding: 9px;
+}
+
+.rmdw-prev-item.rmdw-prev-item--focus {
+  border-color: transparent;
+  background: var(--slds-g-color-brand-base-95);
+}
+
+/* "Add" button at the top-right of each column header. Compact pill that
+ * matches the column header's vertical rhythm. */
+.ef-col-add {
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: 600;
+  color: var(--slds-g-color-accent-1);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--slds-g-radius-border-pill);
+  padding: 2px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ef-col-add:hover:not(:disabled) {
+  background: var(--slds-g-color-brand-base-95);
+  border-color: var(--slds-g-color-accent-1);
+}
+.ef-col-add:disabled {
+  color: var(--slds-g-color-on-surface-1);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Close button on the right-hand config panel. */
+.rmdw-cp-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: var(--slds-g-sizing-border-1) solid var(--slds-g-color-border-2);
+  background: var(--slds-g-color-surface-container-1);
+  color: var(--slds-g-color-on-surface-1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+.rmdw-cp-close:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}

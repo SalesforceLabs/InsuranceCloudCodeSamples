@@ -1,0 +1,564 @@
+/* LOB → Reconciliation And Normalization → Line Types and Coverages.
+ * Tile grid + a two-tab modal (Details / Attributes). The Attributes tab is a
+ * three-column categories / list / detail layout. Consumes SLDS 2 globals
+ * only — no component hooks reached from here. */
+
+.ltc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4);
+  min-width: 0;
+}
+
+/* Type filter dropdown in the toolbar — fixed width so the search field keeps
+ * flexing and the New action stays right-aligned. */
+.ltc-type-filter {
+  flex: 0 0 auto;
+  min-width: 150px;
+}
+
+/* Wide, near-fullscreen shell matching the Run My Day playbook wizard. */
+.slds2-modal.ltc-modal {
+  max-width: 92vw;
+  width: 92vw;
+  max-height: 92vh;
+}
+
+.ltc__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-4);
+}
+
+.ltc__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+.ltc__sub {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+.ltc__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--slds-g-spacing-4);
+  padding: 48px 20px;
+  border: 1px dashed var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  color: var(--slds-g-color-on-surface-1);
+  text-align: center;
+}
+
+.ltc__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+}
+
+/* ── Modal ────────────────────────────────────────────────────────── */
+
+.ltc-modal__body {
+  margin-top: var(--slds-g-spacing-4);
+  min-height: 420px;
+}
+
+/* ── Details form ─────────────────────────────────────────────────── */
+
+.ltc-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--slds-g-spacing-4);
+  align-items: start;
+}
+
+.ltc-form__full {
+  grid-column: 1 / -1;
+}
+
+.ltc-form__check {
+  display: flex;
+  align-items: center;
+  padding-top: 26px;
+}
+
+.ltc-form__label {
+  display: block;
+  margin-bottom: var(--slds-g-spacing-1);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+
+/* ── Attributes tab ───────────────────────────────────────────────── */
+
+/* Two side-by-side sections: (1) category nav + attribute list,
+ * (2) attribute detail — only rendered once an attribute is picked. */
+.ltc-attrs {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-4);
+  min-width: 0;
+}
+
+/* Section 1 — vertical nav beside the attribute list. */
+.ltc-attrs__browse {
+  flex: 1 1 0;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  overflow: hidden;
+  min-height: 320px;
+}
+
+.ltc-attrs__col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ltc-attrs__mid {
+  border-inline-start: 1px solid var(--slds-g-color-border-1);
+}
+
+/* SLDS base vertical navigation for the category list. */
+.ltc-vnav {
+  display: flex;
+  flex-direction: column;
+  background: var(--slds-g-color-surface-container-1);
+  padding-block: var(--slds-g-spacing-2);
+}
+
+.ltc-vnav__title {
+  padding: var(--slds-g-spacing-1) var(--slds-g-spacing-4);
+  font-size: var(--slds-g-font-scale-neg-2);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.0625rem;
+  color: var(--slds-g-color-on-surface-1);
+}
+
+.ltc-vnav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ltc-vnav__item {
+  margin: 0;
+}
+
+.ltc-vnav__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  width: 100%;
+  padding: var(--slds-g-spacing-2) var(--slds-g-spacing-4);
+  border: none;
+  background: transparent;
+  border-inline-start: 3px solid transparent;
+  text-align: start;
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-2);
+  font-size: var(--slds-g-font-scale-base);
+}
+
+.ltc-vnav__link:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+
+.ltc-vnav__link--active {
+  background: var(--slds-g-color-surface-1);
+  border-inline-start-color: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-accent-2);
+  font-weight: var(--slds-g-font-weight-6);
+}
+
+.ltc-vnav__link--uncat .ltc-vnav__label {
+  font-style: italic;
+}
+
+.ltc-vnav__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ltc-vnav__count {
+  flex: none;
+  font-size: var(--slds-g-font-scale-neg-2);
+  color: var(--slds-g-color-on-surface-1);
+  background: var(--slds-g-color-surface-container-2);
+  border-radius: var(--slds-g-radius-border-pill);
+  padding: 1px 8px;
+}
+
+.ltc-vnav__link--active .ltc-vnav__count {
+  color: var(--slds-g-color-accent-2);
+  background: var(--slds-g-color-surface-container-1);
+}
+
+.ltc-attrs__col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  padding: var(--slds-g-spacing-2) var(--slds-g-spacing-3);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+  background: var(--slds-g-color-surface-container-1);
+  border-block-end: 1px solid var(--slds-g-color-border-1);
+  min-height: 36px;
+}
+
+.ltc-attrs__add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  color: var(--slds-g-color-accent-1);
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  cursor: pointer;
+}
+
+.ltc-attrs__add:hover {
+  text-decoration: underline;
+}
+
+.ltc-attrs__list {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--slds-g-spacing-2);
+  gap: var(--slds-g-spacing-2);
+  max-height: 420px;
+}
+
+.ltc-attrs__empty {
+  padding: var(--slds-g-spacing-4);
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  text-align: center;
+}
+
+/* Selected attribute tile: light blue fill only, no accent border. */
+.ltc-attrs__list .act-tile--compact.act-tile--selected {
+  border-color: transparent;
+  border-bottom-color: var(--slds-g-color-border-1);
+  background: var(--slds-g-color-brand-base-95);
+}
+
+/* Section 2 — attribute detail, to the right of section 1. */
+.ltc-attrs__detail-section {
+  flex: 1 1 0;
+  align-self: stretch;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ── Attribute detail form ────────────────────────────────────────── */
+
+.ltc-attr-form {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ltc-attr-form__head {
+  position: sticky;
+  top: 0;
+}
+
+.ltc-attr-form__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--slds-g-color-on-surface-1);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--slds-g-radius-border-1);
+}
+
+.ltc-attr-form__close:hover {
+  color: var(--slds-g-color-on-surface-3);
+  background: var(--slds-g-color-surface-container-2);
+}
+
+.ltc-attr-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  padding: var(--slds-g-spacing-4);
+  overflow-y: auto;
+  max-height: 420px;
+}
+
+.ltc-attr-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  padding: var(--slds-g-spacing-4);
+  border-block-start: 1px solid var(--slds-g-color-border-1);
+}
+.ltc-attr-form__footer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+}
+
+/* ── Hierarchy v2 → Structure tab ─────────────────────────────────── */
+
+/* Base-Salesforce tree-grid look: flat, full-width rows separated by a
+ * hairline; selection is a full-width light-blue fill with a left accent
+ * bar (no rounded box); the row action is a quiet borderless chevron. */
+.lob-hierv2-tree .dc-row {
+  padding: 6px 8px;
+  border: 0;
+  border-block-end: 1px solid var(--slds-g-color-border-1);
+  border-inline-start: 3px solid transparent;
+  border-radius: 0;
+}
+.lob-hierv2-tree .dc-row:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.lob-hierv2-tree .dc-row--focus,
+.lob-hierv2-tree .dc-row--focus:hover {
+  background: var(--slds-g-color-brand-base-95);
+  border-inline-start-color: var(--slds-g-color-accent-1);
+  border-block-end-color: var(--slds-g-color-border-1);
+  border-radius: 0;
+}
+.lob-hierv2-tree .dc-row--focus .dc-row__label {
+  font-weight: var(--slds-g-font-weight-6);
+}
+.lob-hierv2-tree .dc-row[draggable='true'] {
+  cursor: grab;
+}
+.lob-hierv2-tree .dc-row--dragging {
+  opacity: 0.5;
+}
+.lob-hierv2-tree .dc-row--drop,
+.lob-hierv2-tree .dc-row--drop:hover {
+  background: var(--slds-g-color-brand-base-95);
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: -2px;
+  border-block-end-color: transparent;
+}
+
+/* Quiet action button — no filled blue box until hovered. */
+.lob-hierv2-tree .dc-row__menu-trigger {
+  background: transparent;
+  border-color: transparent;
+  color: var(--slds-g-color-on-surface-2);
+}
+.lob-hierv2-tree .dc-row__menu-trigger:hover {
+  background: var(--slds-g-color-surface-container-3);
+  border-color: transparent;
+  color: var(--slds-g-color-on-surface-3);
+}
+
+
+/* Add-child popover — a fixed-position dropdown anchored beside the node's
+ * "Add Child" action. Search box on top, scrollable list below; each row's
+ * "+" adds directly to the tree. */
+.lob-hierv2-pop {
+  width: 640px;
+  max-height: 360px;
+  display: flex;
+  flex-direction: column;
+  background: var(--slds-g-color-surface-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  box-shadow: var(--slds-g-shadow-3);
+  overflow: hidden;
+}
+
+.lob-hierv2-pop__title {
+  padding: var(--slds-g-spacing-3) var(--slds-g-spacing-3) var(--slds-g-spacing-1);
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+}
+
+.lob-hierv2-pop__search {
+  padding: var(--slds-g-spacing-2);
+  border-block-end: 1px solid var(--slds-g-color-border-1);
+}
+
+.lob-hierv2-pop__list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.lob-hierv2-pop__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+  padding: 8px 12px;
+}
+.lob-hierv2-pop__item + .lob-hierv2-pop__item {
+  border-block-start: 1px solid var(--slds-g-color-border-1);
+}
+
+.lob-hierv2-pop__item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lob-hierv2-pop__item-label {
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lob-hierv2-pop__item-sub {
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lob-hierv2-pop__add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  transition: color 100ms ease;
+}
+.lob-hierv2-pop__add:hover {
+  color: var(--slds-g-color-accent-2);
+}
+
+/* Read-only detail column. */
+.lob-hierv2-ro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4);
+  min-width: 0;
+}
+.lob-hierv2-ro__head {
+  display: flex;
+  flex-direction: column;
+}
+.lob-hierv2-ro__field {
+  display: flex;
+  flex-direction: column;
+}
+.lob-hierv2-ro__text {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+}
+.lob-hierv2-ro__text--muted {
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+.lob-hierv2-ro__attrs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lob-hierv2-ro__attr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  background: var(--slds-g-color-surface-1);
+}
+.lob-hierv2-ro__attr-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Alias table — Name + three attribute columns + remove button. No bounding
+ * box; sits inline with the other attribute fields. */
+.ltc-alias {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ltc-alias__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2);
+}
+.ltc-alias-table {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ltc-alias-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 32px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.ltc-alias-row--head {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-on-surface-1);
+  padding-bottom: 0;
+}
+.ltc-alias-remove {
+  cursor: pointer;
+}
+.ltc-alias-remove:hover {
+  color: var(--slds-g-color-error-1);
+}
+
+/* Right-align the line-type badge in the line definition list tiles.
+ * Reserve room on the right for the absolutely-positioned kebab menu
+ * (.act-tile__actions) so the badge never slides under it or gets clipped. */
+.ltc-tile__type {
+  margin-left: auto;
+  margin-right: 28px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}

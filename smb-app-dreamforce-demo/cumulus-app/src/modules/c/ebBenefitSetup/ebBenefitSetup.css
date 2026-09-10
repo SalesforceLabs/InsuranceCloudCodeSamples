@@ -1,0 +1,304 @@
+/* c-eb-benefit-setup - Plan Benefits & Copays widget for the EB
+   blueprint inside c-rfq-playbook-setup. Mirrors the structure of
+   c-eb-coverage-setup but uses category-level tabs (with a small
+   root-product subtitle) and allows tabs to overflow horizontally. */
+
+:host {
+  display: block;
+}
+
+.eb-bs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  font-family: var(--atlas-font);
+}
+
+/* ── Tabs (one per Benefit Category whose parent root is in scope) ──
+   Fixed-width strip. Tabs that don't fit collapse into the trailing
+   "More" popover (see _adjustOverflow in JS). The minimum-width:0
+   override is critical so scrollWidth > clientWidth detection works
+   inside the parent flex layout. */
+.eb-bs__tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  align-items: flex-start;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+.eb-bs__tab {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  max-width: var(--slds-g-sizing-14, 15rem);
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-3, 3px) solid transparent;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+  text-align: left;
+}
+.eb-bs__tab-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.eb-bs__tab-root {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-bs__tab:hover .eb-bs__tab-label {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-bs__tab_active .eb-bs__tab-label {
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.eb-bs__tab_active {
+  border-bottom-color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-bs__tab:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+/* ── More popover (overflow trigger + dropdown menu) ───────────── */
+.eb-bs__more-wrap {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: auto; /* hug the right edge of the strip */
+}
+.eb-bs__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  height: 40px;
+  padding: 0 var(--slds-g-spacing-3, 0.75rem);
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-3, 3px) solid transparent;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: color 120ms ease, background 120ms ease;
+}
+.eb-bs__more:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.eb-bs__more_active {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  border-bottom-color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-bs__more.is-open {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.eb-bs__more:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.eb-bs__more-chev {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  flex-shrink: 0;
+  transition: transform 160ms ease;
+}
+.eb-bs__more.is-open .eb-bs__more-chev {
+  transform: rotate(180deg);
+}
+
+/* Scrim closes the menu on any outside click without a global
+   listener. Positioned fixed so it covers the whole viewport. */
+.eb-bs__more-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: transparent;
+}
+.eb-bs__more-menu {
+  /* Fixed coordinates are supplied inline (see _positionMoreMenu in
+     ebBenefitSetup.js) so the popover escapes the tab strip's
+     `overflow: hidden` clipping. */
+  position: fixed;
+  z-index: 61;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 16rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+}
+.eb-bs__more-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: transparent;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  text-align: left;
+  cursor: pointer;
+}
+.eb-bs__more-item:hover {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eb-bs__more-item.is-active {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.eb-bs__more-item-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.eb-bs__more-item-root {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Panel + empty state ─────────────────────────────────────── */
+.eb-bs__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.eb-bs__empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* ── Grid header + rows ──────────────────────────────────────── */
+.eb-bs__grid-head,
+.eb-bs__row {
+  display: grid;
+  /* 2 cols now (include + name) - Data Type column was removed.
+     Was: auto 2fr 1.4fr (include / name / type). */
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-inline-4, 1rem);
+  padding: var(--slds-g-spacing-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+}
+.eb-bs__grid-head {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.eb-bs__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.eb-bs__row {
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.eb-bs__row:last-child {
+  border-bottom: 0;
+}
+.eb-bs__col_include {
+  justify-self: start;
+}
+
+.eb-bs__row-label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* ── Data-type picker + hint ─────────────────────────────────── */
+/* Uses c-picklist (the custom SLDS 2 combobox) so the OPEN menu is
+   styled too - a native <select> would fall back to the OS-native
+   (Apple/Windows) dark dropdown. Width is set on the picklist host
+   here so the column doesn't shift between attributes. */
+.eb-bs__type-picklist {
+  display: inline-block;
+  width: 11rem;
+  margin-right: var(--slds-g-spacing-2, 0.5rem);
+}
+.eb-bs__type-hint {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Checkbox (native input with styled faux box) ───────────── */
+.eb-bs__check {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+.eb-bs__check input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+/* SLDS 2 standard checkbox geometry - 1rem (16px) square with a 1px
+   border so this faux box matches the visual weight of every other
+   checkbox across the setup workspace. */
+.eb-bs__check-faux {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  position: relative;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.eb-bs__check input:checked + .eb-bs__check-faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-accent-container-1, #066afe);
+}
+/* Checkmark - re-centered for the 1rem (16px) faux box. The 4px x
+   8px tick keeps SLDS proportions and reads cleanly at 100% zoom. */
+.eb-bs__check input:checked + .eb-bs__check-faux::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: var(--slds-g-sizing-3, 8px);
+  border: solid var(--slds-g-color-on-accent-1, #fff);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+.eb-bs__check input:focus-visible + .eb-bs__check-faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}

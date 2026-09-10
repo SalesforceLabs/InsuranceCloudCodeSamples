@@ -1,0 +1,120 @@
+<template>
+  <div class="tlt" role="region" aria-label="Filter and sort templates" onkeydown={handleToolbarKeydown}>
+    <div class="tlt__row">
+      <div class="tlt__actions" role="group" aria-label="Filter and sort">
+      <template lwc:if={showClear}>
+        <button
+          type="button"
+          class="tlt__clear"
+          onclick={handleClear}
+        >Clear filters</button>
+      </template>
+      <div class={filterWrapClass}>
+        <button
+          type="button"
+          class={filterBtnClass}
+          aria-label="Filter templates"
+          title="Filter templates"
+          aria-haspopup="menu"
+          aria-expanded={isFilterOpen}
+          aria-pressed={filtersActive}
+          onclick={handleFilterToggle}
+        >
+          <!-- utility:filterList -->
+          <svg class="slds-button__icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M483 40H39c-15 0-22 17-13 28l194 227c6 7 9 17 9 26v144c0 8 8 15 16 15h30c8 0 14-7 14-15V321c0-10 4-19 11-26L496 68c9-11 2-28-13-28"/>
+          </svg>
+        </button>
+        <template lwc:if={isFilterOpen}>
+          <div class="tlt-menu" role="menu" aria-label="Filter templates">
+            <div class="tlt-menu__heading" role="separator">Line of Business</div>
+            <template for:each={decoratedLobOptions} for:item="o">
+              <button
+                key={o.value}
+                type="button"
+                class={o.cls}
+                role="menuitemradio"
+                aria-checked={o.isSelected}
+                data-group="lob"
+                data-value={o.value}
+                onclick={handleFilterSelect}
+              >
+                <span class="tlt-menu__check" aria-hidden="true">
+                  <svg viewBox="0 0 520 520" fill="currentColor" focusable="false" aria-hidden="true">
+                    <path d="M191 425 26 259c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l124 125a10 10 0 0 0 15 0L452 95c6-6 16-6 22 0l22 22c6 6 6 16 0 22L213 425c-6 7-16 7-22 0"/>
+                  </svg>
+                </span>
+                <span class="tlt-menu__label">{o.label}</span>
+              </button>
+            </template>
+            <div class="tlt-menu__heading" role="separator">Line of Coverage</div>
+            <template for:each={decoratedLocOptions} for:item="o">
+              <button
+                key={o.value}
+                type="button"
+                class={o.cls}
+                role="menuitemradio"
+                aria-checked={o.isSelected}
+                data-group="loc"
+                data-value={o.value}
+                onclick={handleFilterSelect}
+              >
+                <span class="tlt-menu__check" aria-hidden="true">
+                  <svg viewBox="0 0 520 520" fill="currentColor" focusable="false" aria-hidden="true">
+                    <path d="M191 425 26 259c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l124 125a10 10 0 0 0 15 0L452 95c6-6 16-6 22 0l22 22c6 6 6 16 0 22L213 425c-6 7-16 7-22 0"/>
+                  </svg>
+                </span>
+                <span class="tlt-menu__label">{o.label}</span>
+              </button>
+            </template>
+          </div>
+        </template>
+      </div>
+
+      <div class={sortWrapClass}>
+        <button
+          type="button"
+          class={sortBtnClass}
+          aria-label="Sort templates"
+          title="Sort templates"
+          aria-haspopup="menu"
+          aria-expanded={isSortOpen}
+          aria-pressed={sortActive}
+          onclick={handleSortToggle}
+        >
+          <!-- utility:sort -->
+          <svg class="slds-button__icon" viewBox="0 0 520 520" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M275 160c6-6 6-15 0-21L161 24c-6-6-15-6-21 0L25 139c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l36-36c6-6 17-2 17 7v212c0 8 7 15 15 15h30c8 0 15-8 15-15V152c0-9 11-13 17-7l36 36c6 6 15 6 21 0zm220 200-21-20c-6-6-15-6-21 0l-36 36c-6 6-17 2-17-7V155c0-8-7-15-15-15h-30c-8 0-15 8-15 15v212c0 9-11 13-17 7l-36-36c-6-6-15-6-21 0l-21 22c-6 6-6 15 0 21l115 115c6 6 15 6 21 0l115-115c5-6 5-16-1-21"/>
+          </svg>
+        </button>
+        <template lwc:if={isSortOpen}>
+          <div class="tlt-menu tlt-menu_sort" role="menu" aria-label="Sort templates">
+            <template for:each={decoratedSortOptions} for:item="o">
+              <button
+                key={o.value}
+                type="button"
+                class={o.cls}
+                role="menuitemradio"
+                aria-checked={o.isSelected}
+                data-value={o.value}
+                onclick={handleSortSelect}
+              >
+                <span class="tlt-menu__check" aria-hidden="true">
+                  <svg viewBox="0 0 520 520" fill="currentColor" focusable="false" aria-hidden="true">
+                    <path d="M191 425 26 259c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l124 125a10 10 0 0 0 15 0L452 95c6-6 16-6 22 0l22 22c6 6 6 16 0 22L213 425c-6 7-16 7-22 0"/>
+                  </svg>
+                </span>
+                <span class="tlt-menu__label">{o.label}</span>
+              </button>
+            </template>
+          </div>
+        </template>
+      </div>
+      </div>
+    </div>
+
+    <template lwc:if={hasOpenMenu}>
+      <div class="tlt-scrim" onclick={handleScrim}></div>
+    </template>
+  </div>
+</template>

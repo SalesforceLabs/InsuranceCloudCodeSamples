@@ -1,0 +1,40 @@
+<template>
+  <!--
+    Lightweight top strip that mirrors the Salesforce workspace tab
+    bar on the Account Record Page. Renders just the Home pill so
+    routes that lost the Atlas top nav (Run My Day, Renewals
+    Workspace, RFQ Workspace, Meeting Center) still have a
+    single-click affordance back to Home.
+  -->
+  <div class="hts-tabs" role="tablist" aria-label="Application chrome">
+    <span
+      class="hts-tab hts-tab_link"
+      role="button"
+      tabindex="0"
+      onclick={handleHomeClick}
+      onkeydown={handleHomeKey}
+      title="Open Home (Run My Day)"
+    >
+      <span class="hts-tab-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path
+            fill="currentColor"
+            d="M3 12l9-9 9 9h-3v8h-4v-6h-4v6H6v-8z"
+          />
+        </svg>
+      </span>
+      <span class="hts-tab-label">Home</span>
+      <svg
+        class="hts-tab-caret"
+        viewBox="0 0 52 52"
+        fill="currentColor"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"
+        />
+      </svg>
+    </span>
+  </div>
+</template>

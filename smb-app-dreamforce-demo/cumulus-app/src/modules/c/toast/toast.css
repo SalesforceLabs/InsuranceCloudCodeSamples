@@ -1,0 +1,180 @@
+/* c-toast — SLDS 2 Toast blueprint (top-center anchored, modal
+   backdrop). All SLDS classes are redeclared locally because LWC
+   OSS shadow roots don't inherit the SLDS base stylesheet. */
+
+:host {
+  display: contents;
+}
+
+/* Modal-style backdrop. Blankets the app underneath the toast so
+   the confirmation is the only thing the broker can act on until
+   it auto-dismisses (or they click through). */
+.slds-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: var(--slds-g-color-neutral-base-10, #181818);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, visibility 0s linear 200ms;
+}
+.slds-backdrop_open {
+  opacity: 0.4;
+  visibility: visible;
+  transition: opacity 200ms ease;
+  animation: toast-backdrop-in 200ms ease;
+}
+
+/* Notify container - fixed top-center per SLDS 2 Toast blueprint.
+   `pointer-events:none` so only the toast body itself is clickable
+   (the backdrop above handles its own click-to-dismiss). */
+.slds-notify_container {
+  position: fixed;
+  top: var(--slds-g-spacing-6, 1.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9001;
+  width: auto;
+  max-width: min(90vw, 40rem);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Toast body - SLDS 2 anatomy: icon · content · close. Themed by
+   `slds-theme_*` classes below. */
+.slds-notify_toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  min-width: 20rem;
+  padding: var(--slds-g-spacing-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow:
+    0 var(--slds-g-sizing-2, 0.5rem) var(--slds-g-sizing-6, 1.5rem) rgba(0, 0, 0, 0.24),
+    0 var(--slds-g-sizing-1, 0.25rem) var(--slds-g-sizing-4, 1rem) rgba(0, 0, 0, 0.12);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  font-family: var(
+    --slds-g-font-family-base,
+    'Salesforce Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    Arial,
+    sans-serif
+  );
+  pointer-events: auto;
+  animation: toast-slide-in 240ms cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+.slds-theme_success {
+  background: var(--slds-g-color-success-base-50, #2e844a);
+}
+.slds-theme_info {
+  background: var(--slds-g-color-brand-base-50, #066afe);
+}
+.slds-theme_error {
+  background: var(--slds-g-color-error-base-40, #ba0517);
+}
+
+/* Icon slot */
+.toast__icon.slds-icon_container {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+  color: currentColor;
+  margin-top: var(--slds-g-sizing-1, 0.125rem);
+}
+.toast__icon .slds-icon {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Content */
+.slds-notify__content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.toast__message {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-var-2, 1rem);
+  font-weight: var(--slds-g-font-weight-5, 500);
+  line-height: var(--slds-g-font-lineheight-var-base, 1.5);
+  color: inherit;
+  letter-spacing: normal;
+}
+
+/* Close */
+.slds-notify__close {
+  flex-shrink: 0;
+}
+.toast__close.slds-button_icon {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: currentColor;
+  border-radius: var(--slds-g-radius-border-circle, 100%);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 120ms ease;
+}
+.toast__close.slds-button_icon:hover {
+  background: color-mix(in srgb, currentColor 20%, transparent);
+}
+.toast__close.slds-button_icon:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid currentColor;
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.toast__close .slds-button__icon {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+
+/* SLDS assistive-text primitive (visually hidden, screen-reader
+   readable). Redeclared locally because SLDS base styles don't
+   cross the shadow DOM in this OSS build. */
+.slds-assistive-text {
+  position: absolute;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes toast-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slds-notify_toast,
+  .slds-backdrop_open {
+    animation: none;
+  }
+}

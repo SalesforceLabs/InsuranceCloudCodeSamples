@@ -1,0 +1,108 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   c-ask-agentforce-button
+
+   Every value below is the token whose value equals what the org's own
+   button computes to, read off the live element in fscee2:
+
+     color         rgb(2, 80, 217)   -> --slds-g-color-accent-2
+     background    rgb(255,255,255)  -> --slds-g-color-surface-container-1
+     border-color  rgb(92, 92, 92)   -> --slds-g-color-border-2
+     border-width  1px               -> --slds-g-sizing-border-1
+     border-radius 240px (15rem)     -> --slds-g-radius-border-pill
+     font-size     13px              -> --slds-g-font-size-base
+     font-weight   600               -> --slds-g-font-weight-6
+     padding       0 16px            -> --slds-g-spacing-4
+     height        32px              -> --slds-g-sizing-9
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:host {
+  display: inline-flex;
+}
+
+.ask {
+  position: relative;
+  display: inline-flex;
+}
+
+.ask__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-4, 1rem);
+  margin: 0;
+  box-sizing: border-box;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-1, 1);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.ask__btn:hover {
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+
+.ask__btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+
+/* The org renders the glyph at 14px in accent-2, a shade darker than
+   c-ai-sparkle's own accent-1 default.
+
+   The size is pinned rather than left to c-ai-sparkle's em scaling: the org
+   sets the SVG box itself at 0.875rem, so the component's 1/0.925 live-area
+   compensation would overshoot the org by a quarter. 0.875rem is the box
+   SLDS gives .slds-button__icon, which is the class the org's own glyph
+   carries. */
+.ask__spark {
+  --c-ai-sparkle-color: var(--slds-g-color-accent-2, #0250d9);
+  --c-ai-sparkle-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: 0;
+}
+
+.ask__label {
+  display: inline-block;
+}
+
+/* ── Tooltip ────────────────────────────────────────────────── */
+.ask__tooltip {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-2, 0.5rem));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9102;
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-inverse-2, #03234d);
+  color: var(--slds-g-color-on-surface-inverse-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.ask__btn:hover ~ .ask__tooltip,
+.ask__btn:focus-visible ~ .ask__tooltip {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ask__btn,
+  .ask__tooltip {
+    transition: none;
+  }
+}

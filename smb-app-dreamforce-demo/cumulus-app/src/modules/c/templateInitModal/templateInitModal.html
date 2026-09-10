@@ -1,0 +1,79 @@
+<template>
+  <template lwc:if={open}>
+    <!-- SLDS 2 modal: dialog over a translucent backdrop. Modal is
+         centered with a max-width that keeps the two-column field
+         row breathable on desktop and stacks on small screens. -->
+    <div
+      class="tim__backdrop"
+      role="presentation"
+      onclick={handleBackdropClick}
+      onkeydown={handleKeydown}
+    >
+      <section
+        class="tim__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tim-title"
+        onclick={handleDialogClick}
+      >
+        <header class="tim__head">
+          <h2 id="tim-title" class="tim__title">{title}</h2>
+          <button
+            type="button"
+            class="tim__close"
+            aria-label="Close"
+            onclick={handleCancel}
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M18.3 5.71L12 12.01l6.3 6.29-1.42 1.42L10.59 13.43 4.29 19.72 2.88 18.3l6.3-6.29-6.3-6.29L4.29 4.3l6.3 6.29 6.3-6.29z"/>
+            </svg>
+          </button>
+        </header>
+
+        <div class="tim__body">
+          <div class="tim__grid">
+            <div class="tim__field">
+              <span class="tim__label">
+                Line of Business <abbr class="slds-required" title="required">*</abbr>
+              </span>
+              <c-picklist
+                placeholder="Select Line of Business..."
+                accessible-label="Line of Business"
+                options={lobOptions}
+                value={lob}
+                onchange={handleLobChange}
+              ></c-picklist>
+            </div>
+            <div class="tim__field">
+              <span class="tim__label">
+                Line of Coverage <abbr class="slds-required" title="required">*</abbr>
+              </span>
+              <c-picklist
+                placeholder="Select Line of Coverage..."
+                accessible-label="Line of Coverage"
+                options={locOptions}
+                value={loc}
+                disabled={isLocDisabled}
+                onchange={handleLocChange}
+              ></c-picklist>
+            </div>
+          </div>
+        </div>
+
+        <footer class="tim__foot">
+          <button
+            type="button"
+            class="tim__btn tim__btn_neutral"
+            onclick={handleCancel}
+          >Cancel</button>
+          <button
+            type="button"
+            class="tim__btn tim__btn_brand"
+            disabled={isContinueDisabled}
+            onclick={handleContinue}
+          >{continueLabel}</button>
+        </footer>
+      </section>
+    </div>
+  </template>
+</template>

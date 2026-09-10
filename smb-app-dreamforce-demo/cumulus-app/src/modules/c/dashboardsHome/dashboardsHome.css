@@ -1,0 +1,257 @@
+/* c-dashboards-home - Setup-lookalike landing page hosting the three
+   analytics surfaces as launch tiles. Chrome mirrors c-agentforce-setup
+   so the Dashboards tab feels like a native Setup-style workspace. */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 104px);
+}
+
+.dh {
+  flex: 1;
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--atlas-font, 'Salesforce Sans', Arial, sans-serif);
+}
+
+/* ── Chrome (Home tab + close) ───────────────────────────────── */
+.dh__chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  padding: 0 var(--slds-g-spacing-var-5, 1.5rem);
+}
+.dh__chrome-tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.dh__chrome-tab {
+  background: none;
+  border: 0;
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-2, 0.5rem);
+  font-family: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  position: relative;
+}
+.dh__chrome-tab.is-active {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.dh__chrome-tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: var(--slds-g-sizing-border-2, 2px);
+  background: var(--slds-g-color-accent-1, #066afe);
+}
+.dh__chrome-tab:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.dh__chrome-close {
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border: 0;
+  background: transparent;
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.dh__chrome-close > svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.dh__chrome-close:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.dh__chrome-close:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+/* ── Body ────────────────────────────────────────────────────── */
+.dh__body {
+  flex: 1;
+  /* Symmetric block padding - the extra 3rem bottom used to leave a
+     large empty band under the tile grid. 2rem on all four sides
+     reads as breathing room without a visible trailing gap. */
+  padding: var(--slds-g-spacing-var-6, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  max-width: 72rem;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.dh__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.dh__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.08em;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.dh__eyebrow > svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.dh__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-6, 2rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.dh__subtitle {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* ── Tile grid ───────────────────────────────────────────────── */
+.dh__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+.dh__grid-cell {
+  display: flex;
+}
+
+/* Tile = full-card button. Top accent strip + icon vary per variant. */
+.dh-tile {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    border-color 120ms ease;
+  font-family: inherit;
+}
+.dh-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+.dh-tile:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.dh-tile__icon {
+  width: var(--slds-g-sizing-10, 3rem);
+  height: var(--slds-g-sizing-10, 3rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slds-g-color-on-accent-1, #fff);
+  background: var(--slds-g-color-accent-1, #066afe);
+  flex-shrink: 0;
+}
+.dh-tile__icon > svg {
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+}
+/* Per-dashboard icon tints so the three read as distinct. */
+.rid-tile_runmyday .dh-tile__icon {
+  background: var(--slds-g-color-palette-teal-50, #0b827c);
+}
+.rid-tile_client360 .dh-tile__icon {
+  background: var(--slds-g-color-accent-1, #066afe);
+}
+.rid-tile_revenue .dh-tile__icon {
+  background: var(--slds-g-color-palette-indigo-40, #3a49da);
+}
+.dh-tile__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  flex: 1;
+}
+.dh-tile__meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.dh-tile__label {
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.dh-tile__desc {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.dh-tile__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.dh-tile__cta > svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  transition: transform 120ms ease;
+}
+.dh-tile:hover .dh-tile__cta > svg {
+  transform: translateX(3px);
+}
+
+/* ── Responsive + reduced motion ─────────────────────────────── */
+@media (max-width: 48em) {
+  .dh__body {
+    padding: var(--slds-g-spacing-var-5, 1.5rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dh-tile,
+  .dh-tile__cta > svg {
+    transition: none;
+  }
+  .dh-tile:hover {
+    transform: none;
+  }
+  .dh-tile:hover .dh-tile__cta > svg {
+    transform: none;
+  }
+}

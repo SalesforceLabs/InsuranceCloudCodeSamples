@@ -1,0 +1,1328 @@
+/* c-client-360-dashboard - Tabnext (CRM Analytics) layout rendered
+   with SLDS 2 tokens. Light canvas, white widget cards, KPI banner,
+   single-series column chart, dense data tables. */
+
+:host {
+  display: block;
+}
+
+/* SLDS's screen-reader-only helper isn't inherited into LWC shadow
+   roots, so redeclare it here. Otherwise <span class="slds-assistive
+   -text"> children render as visible text next to icon-only buttons. */
+.slds-assistive-text {
+  position: absolute;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── Canvas ───────────────────────────────────────────────────── */
+.c360-canvas {
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  border-radius: var(--atlas-radius-lg);
+  font-family: var(--atlas-font);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* Embedded on the Account record page the host panel (.sf-body-main)
+   already paints the white card and supplies the inline gutter, so the
+   canvas keeps its flex layout only. Matches the flush treatment
+   c-account-rfq-list (.arl) and c-submission-board (.sb-root) use in
+   the same tab strip. Gap drops to the record page's 0.75rem rhythm so
+   the toolbar sits the same distance above its content as those two. */
+.c360-canvas_embedded {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+/* ── Toolbar ──────────────────────────────────────────────────── */
+.c360-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  flex-wrap: wrap;
+}
+.c360-toolbar__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.c360-toolbar__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.c360-toolbar__filters {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  flex-wrap: wrap;
+}
+.c360-toolbar__filter {
+  display: inline-block;
+  width: var(--slds-g-sizing-14, 15rem);
+  max-width: 100%;
+}
+
+/* Embedded, the toolbar is a record-page panel header, not a dashboard
+   page title, so it takes the .arl__head / .sb-head type treatment
+   instead of the 1.5rem/700 canvas title it keeps standalone. */
+.c360-canvas_embedded .c360-toolbar {
+  align-items: center;
+}
+.c360-canvas_embedded .c360-toolbar__titles {
+  gap: var(--slds-g-spacing-var-1, 0.25rem);
+}
+.c360-canvas_embedded .c360-toolbar__title {
+  font-size: var(--slds-g-font-scale-var-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  letter-spacing: 0;
+}
+
+/* ── Widget card (shared) ─────────────────────────────────────── */
+.c360-widget {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  min-width: 0;
+}
+.c360-widget__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  flex-wrap: wrap;
+}
+.c360-widget__title {
+  margin: 0 0 var(--slds-g-spacing-var-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.c360-widget__head .c360-widget__title {
+  margin-bottom: 0;
+}
+.c360-widget__meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Card tile grid (KPI cards + Claims + Billing/Premium pair) ─
+   Four fixed columns, so all four KPI cards share row 1 and nothing
+   else does. Cards in a row stretch to the tallest of them, which is
+   only reasonable while a row holds cards of comparable content: with
+   three columns, Outstanding Balance shared row 2 with the 7-column
+   claims table and had to match its height, so it carried a void that
+   no arrangement of the card's own internals could remove. Four KPI
+   cards size each other honestly.
+
+   Fixed tracks rather than auto-fit. Auto-fit produced a 4-up top row
+   too, but it packs as many minmax() tracks as the canvas allows, so
+   the count moved with the viewport instead of being chosen. */
+.c360-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+/* Claims Summary and the Billing/Premium pair each take a whole row,
+   below the KPI row and in that order. Four cards plus two full rows is
+   twelve slots across three rows, so no cell is left empty. */
+.c360-tiles__full {
+  grid-column: 1 / -1;
+}
+
+/* Card surface - structures the inside as a flex column with a 16px gap.
+   Radius is restated at the same specificity as .c360-widget purely so
+   the two stay visibly identical; both are Tier 1 cards on the dashboard
+   canvas. */
+.c360-kpi {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  /* 16px is the minimum gap; a stretched card shares whatever height it
+     has spare evenly between its five blocks instead of pooling it in
+     one place. Pooling is what made this card look broken: pinning the
+     pills to the floor put the whole surplus above them, so Outstanding
+     Balance carried a 108px hole between its summary line and its
+     actions while every other gap stayed at 16px. Spread across four
+     gaps the same surplus is 39px each, which reads as an airier card
+     rather than a band, and space-between still lands the pills on the
+     card floor so they share a baseline across the row. */
+  justify-content: space-between;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  border-radius: var(--atlas-radius-lg);
+  /* No height floor, and the grid's default stretch is left in place.
+     The floor was Figma's 420px card height, specced against a
+     336px-wide card, and it inflated a row of short cards for no
+     reason; a row is now only as tall as its own tallest card needs.
+
+     Stretch is deliberate: cards ending at different heights inside one
+     row read as broken, so Active Policies matching the taller
+     line-chart cards beside it is the wanted result rather than a
+     rounding artefact. It only stays honest while a row holds
+     comparable cards, which is what the 4-up KPI row buys - see
+     .c360-tiles. */
+}
+
+/* ── Title block: name + meta + menu chevron ─── */
+.c360-kpi__title-block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  padding-right: var(--slds-g-spacing-var-7, 2.5rem);
+}
+.c360-kpi__name {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.c360-kpi__meta {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  flex-wrap: wrap;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.c360-kpi__meta-sep {
+  opacity: 0.7;
+}
+
+/* Bordered chevron menu button - 24×24 circular, 1px border, white
+   background, accent-colored down-glyph. Lives at the top-right of
+   the title block as the primary drill affordance. */
+.c360-kpi__menu-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+.c360-kpi__menu-btn > svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  display: block;
+}
+.c360-kpi__menu-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.c360-kpi__menu-btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+/* ── Details: value + period-over-period change ─── */
+.c360-kpi__details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.c360-kpi__top {
+  display: flex;
+  align-items: baseline;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.c360-kpi__value {
+  font-size: var(--slds-g-font-scale-6, 2rem);
+  line-height: var(--slds-g-font-line-height-2, 1.25);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-variant-numeric: tabular-nums;
+}
+.c360-kpi__unit {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-kpi__pop {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.c360-kpi__pop_empty .c360-kpi__pop-period {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-kpi__pop-pct {
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.c360-pop_better {
+  color: var(--slds-g-color-on-success-1, #056764);
+}
+.c360-pop_worse {
+  color: var(--slds-g-color-on-warning-1, #8c4b02);
+}
+.c360-pop_flat {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.c360-kpi__pop-period {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Mini-chart: line / composition / pay-bar ─── */
+.c360-kpi__chart {
+  display: flex;
+  align-items: stretch;
+  /* Hug the chart's own content. This slot used to grow to absorb the
+     card's spare height, which pinned the summary and actions to the
+     bottom but opened a band between a short chart and its summary
+     line - most visible on Outstanding Balance, whose pay bar is a
+     track plus two legend rows against the line charts' full plot.
+     A stretched card's spare height is shared out between all five of
+     its blocks instead (see .c360-kpi), so no single slot swells.
+
+     No floor is needed here: the line chart sizes itself through
+     .c360-kpi__yaxis / .c360-kpi__svg / .c360-kpi__plot-box, all of
+     which carry an explicit height. */
+  flex: 0 0 auto;
+}
+
+/* Line chart - Y-axis stack (top + bottom labels) on the left, plot
+   area on the right with the SVG and the X-axis labels under it. */
+.c360-kpi__yaxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  /* Match the SVG plot height (130px overall minus 30px for the x-axis
+     row) so the labels align with the top/bottom of the plot. */
+  height: calc(8.625rem - 1.875rem);
+  padding-right: var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-variant-numeric: tabular-nums;
+}
+.c360-kpi__plot {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.c360-kpi__svg {
+  width: 100%;
+  height: calc(8.625rem - 1.875rem);
+  display: block;
+}
+.c360-kpi__range {
+  fill: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+.c360-kpi__frame {
+  stroke: var(--slds-g-color-border-1, #c9c9c9);
+  stroke-width: 1;
+  fill: none;
+}
+.c360-kpi__line {
+  stroke: var(--slds-g-color-brand-base-60, #4992fe);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* The plot SVG is stretched to fill its slot, so the end-of-line dot
+   and its value label are HTML pinned over it by percentage rather
+   than SVG children - inside the SVG the circle renders as an ellipse
+   and the text comes out horizontally smeared. The box below is the
+   positioning context those percentages resolve against, so it has to
+   match the SVG's own size exactly. */
+.c360-kpi__plot-box {
+  position: relative;
+  width: 100%;
+  height: calc(8.625rem - 1.875rem);
+}
+.c360-kpi__dot {
+  position: absolute;
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+  background: var(--slds-g-color-brand-base-60, #4992fe);
+  /* Centres the dot on its data point. */
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.c360-kpi__dot-label {
+  position: absolute;
+  /* Clear of the dot, vertically centred on it. A px offset rather
+     than a percentage so the gap does not stretch with the plot. */
+  transform: translate(0.75rem, -50%);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.c360-kpi__xaxis {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: var(--slds-g-spacing-var-3, 0.75rem);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Composition chart - vertical list of stacked-bar rows by type. */
+.c360-kpi__comp {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.c360-kpi__comp-title {
+  margin: 0 0 var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-kpi__comp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.c360-kpi__comp-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 1fr) 1.5fr auto;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+}
+.c360-kpi__comp-label {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.c360-kpi__comp-track {
+  display: block;
+  height: var(--slds-g-sizing-3, 0.5rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  overflow: hidden;
+  min-width: var(--slds-g-sizing-9, 2rem);
+}
+.c360-kpi__comp-fill {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  background: var(--slds-g-color-brand-base-60, #4992fe);
+  border-radius: inherit;
+}
+.c360-kpi__comp-count {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Paid-vs-outstanding bar - single stacked bar + 2-row legend. */
+.c360-kpi__pay {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.c360-kpi__pay-track {
+  display: flex;
+  width: 100%;
+  height: var(--slds-g-sizing-4, 0.75rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  overflow: hidden;
+}
+.c360-kpi__pay-fill {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+}
+.c360-kpi__pay-fill_paid {
+  background: var(--slds-g-color-brand-base-60, #4992fe);
+}
+.c360-kpi__pay-fill_outstanding {
+  background: var(--slds-g-color-warning-base-70, #e4a201);
+}
+.c360-kpi__pay-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.c360-kpi__pay-legend-row {
+  display: grid;
+  grid-template-columns: 0.5rem 1fr auto;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.c360-kpi__pay-swatch {
+  width: var(--slds-g-sizing-3, 0.5rem);
+  height: var(--slds-g-sizing-3, 0.5rem);
+  border-radius: var(--slds-g-radius-border-circle, 50%);
+}
+.c360-kpi__pay-swatch_paid {
+  background: var(--slds-g-color-brand-base-60, #4992fe);
+}
+.c360-kpi__pay-swatch_outstanding {
+  background: var(--slds-g-color-warning-base-70, #e4a201);
+}
+.c360-kpi__pay-legend-pct {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-variant-numeric: tabular-nums;
+}
+
+.c360-kpi__chart-empty {
+  margin: auto;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  text-align: center;
+}
+
+/* ── Summary line ─── */
+.c360-kpi__summary {
+  margin: 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* ── Action pills (View + secondary) ─── */
+.c360-kpi__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  flex-wrap: wrap;
+  /* No margin-top: auto. The pills already sit on the card floor, and
+     therefore on a shared baseline across the row, because .c360-kpi
+     distributes its spare height with space-between. An auto margin
+     would take that whole surplus for itself and reopen the gap above
+     the pills that space-between exists to spread out. */
+}
+.c360-kpi__action {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-var-4, 1rem);
+  font: inherit;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  letter-spacing: -0.006em;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+.c360-kpi__action:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.c360-kpi__action:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.c360-kpi__action_primary {
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+/* Trend chip - icon + delta text; color is decorative, the icon
+   shape + the sr-only word carry the meaning. */
+.c360-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.c360-trend__icon {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.c360-trend_better {
+  color: var(--slds-g-color-on-success-1, #056764);
+}
+.c360-trend_worse {
+  color: var(--slds-g-color-on-warning-1, #8c4b02);
+}
+.c360-trend_flat {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* ── Grid layouts ─────────────────────────────────────────────── */
+.c360-grid {
+  display: grid;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+/* Record tables run 5 to 8 columns, which cannot stay legible in a
+   third of the canvas, so they take the full width rather than a
+   share of the tile grid. */
+.c360-grid_full {
+  grid-template-columns: 1fr;
+}
+
+/* ── Premium History column chart ─────────────────────────────── */
+.c360-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.c360-chart__grid {
+  stroke: var(--slds-g-color-border-1, #c9c9c9);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+.c360-chart__axis {
+  stroke: var(--slds-g-color-border-2, #5c5c5c);
+  stroke-width: 1;
+}
+.c360-chart__group {
+  cursor: default;
+}
+.c360-chart__group:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+.c360-chart__bar {
+  fill: var(--slds-g-color-accent-container-1, #066afe);
+  transition: fill 120ms ease;
+}
+.c360-chart__group:hover .c360-chart__bar,
+.c360-chart__group:focus-visible .c360-chart__bar {
+  fill: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.c360-chart__amount {
+  fill: var(--slds-g-color-on-surface-3, #03234d);
+  font-size: var(--slds-g-font-size-base, 13px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-family: var(--atlas-font);
+}
+.c360-chart__year {
+  fill: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-size-base, 13px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-family: var(--atlas-font);
+}
+
+/* ── Billing and Premium History pair ─────────────────────────── */
+/* Two panes in one tile. Claims gets the wider track because it carries
+   a seven-column table against Billing's four metric rows. */
+.c360-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+.c360-pair__pane {
+  min-width: 0;
+}
+.c360-pair__pane + .c360-pair__pane {
+  padding-left: var(--slds-g-spacing-var-5, 1.5rem);
+  border-left: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+/* ── Billing summary ──────────────────────────────────────────── */
+.c360-billing {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.c360-billing__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.c360-billing__row:last-child {
+  border-bottom: 0;
+}
+.c360-billing__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-billing__value {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Data tables ──────────────────────────────────────────────── */
+.c360-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+.c360-table thead th {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  white-space: nowrap;
+}
+.c360-table tbody td {
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  vertical-align: middle;
+}
+.c360-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.c360-table__strong {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.c360-table__muted {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-table__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Urgent renewal row - within 30 days. Warning tint + left rule
+   (color is reinforced by position-in-list ordering, soonest first). */
+.c360-row_urgent td {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+}
+.c360-row_urgent td:first-child {
+  box-shadow: inset var(--slds-g-sizing-3, 0.5rem) 0 0
+    calc(-1 * var(--slds-g-sizing-3, 0.5rem) + var(--slds-g-sizing-border-3, 3px))
+    var(--slds-g-color-border-warning-1, #dd7a01);
+}
+
+/* ── Status / priority pills ──────────────────────────────────── */
+.c360-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem var(--slds-g-spacing-var-inline-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  white-space: nowrap;
+}
+.c360-pill_success {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-1, #056764);
+}
+.c360-pill_info {
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+}
+.c360-pill_warning {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-on-warning-1, #8c4b02);
+}
+
+/* ── Empty state ──────────────────────────────────────────────── */
+.c360-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  text-align: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* ── Metric detail view ───────────────────────────────────────
+   Modeled after the TabNext-on-Local detail page (Figma reference
+   "metric-detail-page"). All chrome reuses the existing widget,
+   table, pill, trend, and chart recipes; only layout-specific
+   structure is introduced here. Sticks to SLDS 2 styling hooks. */
+.c360-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+.c360-detail__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  flex-wrap: wrap;
+}
+.c360-detail__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.c360-detail__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.c360-detail__asof {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-detail__back {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-2, #0250d9);
+  align-self: flex-start;
+}
+.c360-detail__back > svg {
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+}
+.c360-detail__back:hover {
+  color: var(--slds-g-color-accent-3, #022ac0);
+  text-decoration: underline;
+}
+.c360-detail__back:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.c360-detail__actions {
+  display: flex;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.c360-detail__action {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+}
+.c360-detail__action:hover {
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+
+/* Body grid: filter sidebar + main column. */
+.c360-detail__body {
+  display: grid;
+  grid-template-columns: 16rem 1fr;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  align-items: start;
+}
+.c360-detail__sidebar {
+  position: sticky;
+  top: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.c360-detail__sidebar-section {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+.c360-detail__sidebar-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.c360-detail__sidebar-desc {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+.c360-detail__filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.c360-detail__filter-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.c360-detail__filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  padding-top: var(--slds-g-spacing-var-2, 0.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.c360-detail__btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+}
+.c360-detail__btn_ghost {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  border-color: var(--slds-g-color-border-1, #c9c9c9);
+}
+.c360-detail__btn_ghost:hover {
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+.c360-detail__btn_brand {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.c360-detail__btn_brand:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.c360-detail__btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+/* Main column. */
+.c360-detail__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  min-width: 0;
+}
+.c360-detail__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-detail__controls-value {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  padding: var(--slds-g-spacing-1, 0.25rem)
+    var(--slds-g-spacing-var-2, 0.5rem);
+}
+
+/* Value card. */
+.c360-detail__value-card {
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+}
+.c360-detail__value-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  flex-wrap: wrap;
+}
+.c360-detail__value-left {
+  display: flex;
+  align-items: baseline;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  flex-wrap: wrap;
+}
+.c360-detail__value-main {
+  font-size: var(--slds-g-font-scale-8, 3rem);
+  line-height: 1.05;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-variant-numeric: tabular-nums;
+}
+.c360-detail__value-unit {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-detail__value-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem var(--slds-g-spacing-var-inline-2, 0.5rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  background: var(--slds-g-color-info-container-1, #d8e6fe);
+  color: var(--slds-g-color-on-info-1, #0b5cab);
+}
+.c360-detail__value-right {
+  display: flex;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  flex-wrap: wrap;
+}
+.c360-detail__delta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.c360-detail__delta-empty {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.c360-detail__delta-label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Trend card - reuses the existing chart classes; only the
+   surrounding insight prose is new. */
+.c360-detail__insight {
+  margin: var(--slds-g-spacing-var-3, 0.75rem) 0 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+}
+
+/* Breakdown card. */
+.c360-bd__tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  margin: 0 0 var(--slds-g-spacing-var-3, 0.75rem);
+  flex-wrap: wrap;
+}
+.c360-bd__tab {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-3, 0.75rem);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  margin-bottom: -1px;
+}
+.c360-bd__tab:hover {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.c360-bd__tab_active {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.c360-bd__tab:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: 2px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.c360-bd__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.c360-bd__row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 14rem) 1fr auto;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-2, 0.5rem) 0;
+}
+.c360-bd__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.c360-bd__bar-track {
+  display: block;
+  height: var(--slds-g-sizing-3, 0.5rem);
+  /* min-width avoids flex/grid collapse pushing the value off-screen
+     on narrow viewports while still letting the row breathe. */
+  min-width: var(--slds-g-sizing-10, 3rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  overflow: hidden;
+}
+.c360-bd__bar-fill {
+  display: block;
+  height: 100%;
+  /* Cap the fill at 100% defensively; the JS already clamps but the
+     CSS guard prevents any visual overflow if the data-bound value
+     ever exceeds the computed max. */
+  max-width: 100%;
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-radius: inherit;
+  transition: width 200ms ease;
+}
+.c360-bd__value {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── Graph table (Figma "graph table" pattern) ────────────────
+   Replaces the previous horizontal-bar breakdown with a vertical
+   column chart: rotated Y-axis title + 5 Y-tick labels stacked on
+   the left, plot SVG with dashed gridlines + columns + value labels
+   in the middle, X-axis tick labels + axis title under it. */
+.c360-gt {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  /* y-title spans the full chart height; the y-axis stack pairs with
+     the plot SVG; x-axis labels + x-title sit under the plot only. */
+  grid-template-areas:
+    'y-title y-axis main';
+  column-gap: var(--slds-g-spacing-var-2, 0.5rem);
+  align-items: stretch;
+}
+.c360-gt__y-title {
+  grid-area: y-title;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  align-self: center;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  white-space: nowrap;
+}
+.c360-gt__y-axis {
+  grid-area: y-axis;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Match the plot height (200px viewBox; we render at 12.5rem). */
+  height: 12.5rem;
+  padding-right: var(--slds-g-spacing-var-2, 0.5rem);
+  text-align: right;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-variant-numeric: tabular-nums;
+}
+.c360-gt__y-tick {
+  line-height: var(--slds-g-font-line-height-1, 1);
+}
+.c360-gt__main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.c360-gt__svg {
+  width: 100%;
+  height: 12.5rem;
+  display: block;
+  /* Bottom border doubles as the X-axis baseline so the SVG can stay
+     coordinate-pure (no axis line of its own). */
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+}
+.c360-gt__grid {
+  stroke: var(--slds-g-color-border-1, #c9c9c9);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+.c360-gt__bar {
+  fill: var(--slds-g-color-accent-container-1, #066afe);
+  transition: fill 120ms ease;
+}
+.c360-gt__col:hover .c360-gt__bar,
+.c360-gt__col:focus-visible .c360-gt__bar {
+  fill: var(--slds-g-color-accent-container-2, #0250d9);
+}
+.c360-gt__bar-value {
+  fill: var(--slds-g-color-on-surface-3, #03234d);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-variant-numeric: tabular-nums;
+  font-family: inherit;
+}
+.c360-gt__x-axis {
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem) 0 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.c360-gt__x-tick {
+  text-align: center;
+  /* Long policy / category names truncate to keep the row tidy; the
+     full name is exposed via the tick element's title attribute. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 var(--slds-g-spacing-1, 0.25rem);
+}
+.c360-gt__x-title {
+  display: block;
+  text-align: center;
+  margin-top: var(--slds-g-spacing-var-2, 0.5rem);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+/* Four KPI cards need roughly 20rem each to hold the value + trend row
+   on one line, which a canvas narrower than this cannot give them. Drop
+   to 2-up here rather than at 64em: this bound also covers 64em, so the
+   block below no longer restates the tile columns. */
+@media (max-width: 80em) {
+  .c360-tiles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 64em) {
+  /* At 2-up the Claims pane would be too narrow for its seven columns,
+     so the pair stacks and each pane gets the full tile width. */
+  .c360-pair {
+    grid-template-columns: 1fr;
+  }
+  .c360-pair__pane + .c360-pair__pane {
+    padding-left: 0;
+    padding-top: var(--slds-g-spacing-var-5, 1.5rem);
+    border-left: 0;
+    border-top: var(--slds-g-sizing-border-1, 1px) solid
+      var(--slds-g-color-border-1, #c9c9c9);
+  }
+  /* Collapse the detail-view sidebar above the main column on
+     narrower viewports. */
+  .c360-detail__body {
+    grid-template-columns: 1fr;
+  }
+  .c360-detail__sidebar {
+    position: static;
+  }
+}
+/* 2-up would put each tile under 20rem here, below the width the KPI
+   value + trend row needs, so drop to a single column at 48em rather
+   than holding two to 30em. */
+@media (max-width: 48em) {
+  .c360-tiles {
+    grid-template-columns: 1fr;
+  }
+  /* Claims cannot fit seven columns at phone width even with wrapped
+     headers, so the remainder scrolls inside its own pane. */
+  .c360-pair__pane {
+    overflow-x: auto;
+  }
+  /* Nowrap header cells set the table's minimum width, which below 48em
+     is wider than the card and pushes a page-level scrollbar. Let the
+     column labels wrap instead of losing columns to a scroller. */
+  .c360-table thead th {
+    white-space: normal;
+  }
+  /* Wrapping alone cannot get an 8-column table under a phone-width
+     card, so the remainder scrolls inside its own card. Scoped to the
+     record-table widgets; the tile grid never needs it. */
+  .c360-canvas > .c360-widget,
+  .c360-grid_full > .c360-widget {
+    overflow-x: auto;
+  }
+}
+@media (max-width: 30em) {
+  .c360-bd__row {
+    grid-template-columns: 1fr;
+    gap: var(--slds-g-spacing-1, 0.25rem);
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────
+   Disable color/border/background transitions on interactive
+   elements for users who've requested reduced motion at the OS
+   level. State changes still apply instantly (color shifts, focus
+   ring) - only the kinetic in-betweens are suppressed. */
+@media (prefers-reduced-motion: reduce) {
+  .c360-kpi__menu-btn,
+  .c360-kpi__action,
+  .c360-detail__action,
+  .c360-bd__bar-fill,
+  .c360-chart__bar,
+  .c360-gt__bar {
+    transition: none;
+  }
+}

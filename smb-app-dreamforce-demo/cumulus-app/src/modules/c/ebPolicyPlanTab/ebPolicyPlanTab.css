@@ -1,0 +1,155 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-eb-policy-plan-tab - two SLDS related-list cards on the EB Policy
+   Plan tab. Card header + count + New action; SLDS table or empty state.
+   ════════════════════════════════════════════════════════════════════ */
+
+:host {
+  display: block;
+  font-family: var(--atlas-font);
+}
+
+.eb-plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-block-5, 1.5rem);
+  padding: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* ── Card shell ───────────────────────────────────────────────── */
+.eb-plan__card {
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #e5e5e5);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.eb-plan__card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+}
+.eb-plan__card-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  min-width: 0;
+}
+.eb-plan__card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-8, 28px);
+  height: var(--slds-g-sizing-8, 28px);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  flex-shrink: 0;
+}
+.eb-plan__card-icon_alt {
+  background: var(--slds-g-color-success-base-50, #0b827c);
+}
+.eb-plan__card-icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.eb-plan__card-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* New button (neutral, SLDS 2) */
+.eb-plan__new-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-4, 1rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.eb-plan__new-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.eb-plan__new-btn:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1, #066afe);
+  outline-offset: 2px;
+}
+
+/* ── Card body / table / empty state ──────────────────────────── */
+.eb-plan__card-body {
+  padding: 0;
+}
+.eb-plan__empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-6, 2rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  text-align: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.eb-plan__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+.eb-plan__table th {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-block-2, 0.5rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  border-bottom: 1px solid var(--slds-g-color-border-1, #c9c9c9);
+  white-space: nowrap;
+}
+.eb-plan__table td {
+  padding: var(--slds-g-spacing-var-block-3, 0.75rem)
+    var(--slds-g-spacing-var-inline-4, 1rem);
+  border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  vertical-align: middle;
+}
+.eb-plan__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.eb-plan__link {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  text-decoration: none;
+}
+.eb-plan__link:hover {
+  text-decoration: underline;
+  color: var(--slds-g-color-accent-3, #022ac0);
+}
+.eb-plan__cell-muted {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eb-plan__cell-amount {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* ── SLDS 2 conformance: pill action buttons (radius-border/circle) ── */
+.eb-plan__new-btn { border-radius: var(--slds-g-radius-border-pill, 9999px); }

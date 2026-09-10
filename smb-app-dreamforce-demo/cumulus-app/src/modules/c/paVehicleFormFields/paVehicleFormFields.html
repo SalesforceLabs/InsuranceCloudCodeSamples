@@ -1,0 +1,229 @@
+<template>
+  <div class="pvff">
+    <!-- Asset lookup - search the account's existing vehicles to
+         auto-populate the form below. Hidden in Edit mode and when no
+         existing records are available. -->
+    <template lwc:if={showLookup}>
+      <div class="pvm-lookup">
+        <span class="pvm-lookup__label">Search existing vehicles</span>
+        <div class="pvm-lookup__trigger-wrap">
+          <button
+            class={lookupTriggerClass}
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded={searchOpen}
+            onclick={handleSearchToggle}
+          >
+            <svg class="pvm-lookup__trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+            <span class="pvm-lookup__trigger-label">{lookupTriggerLabel}</span>
+          </button>
+          <template lwc:if={hasLookupSelection}>
+            <button
+              type="button"
+              class="pvm-lookup__clear"
+              aria-label="Clear selection"
+              onclick={handleClearLookup}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path d="M18.3 5.71L12 12.01l6.3 6.29-1.42 1.42L10.59 13.43 4.29 19.72 2.88 18.3l6.3-6.29-6.3-6.29L4.29 4.3l6.3 6.29 6.3-6.29z"/>
+              </svg>
+            </button>
+          </template>
+        </div>
+
+        <template lwc:if={searchOpen}>
+          <div class="pvm-lookup__scrim" onclick={handleSearchScrim}></div>
+          <div class="pvm-lookup__panel" role="dialog" aria-label="Vehicle lookup">
+            <div class="pvm-lookup__input-wrap">
+              <svg class="pvm-lookup__input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+              </svg>
+              <input
+                class="pvm-lookup__input"
+                type="search"
+                placeholder="Search by year, make, model, or VIN..."
+                value={searchQuery}
+                oninput={handleSearchInput}
+                onkeydown={handleSearchKey}
+                aria-label="Search existing vehicles"
+              />
+            </div>
+            <template lwc:if={hasLookupResults}>
+              <ul class="pvm-lookup__results" role="listbox">
+                <template for:each={lookupResults} for:item="r">
+                  <li
+                    key={r.id}
+                    class={r.cls}
+                    role="option"
+                    aria-selected={r.ariaSelected}
+                    data-id={r.id}
+                    tabindex="0"
+                    onclick={handleLookupSelection}
+                    onkeydown={handleSearchKey}
+                  >
+                    <span class="pvm-lookup__result-name">{r.displayName}</span>
+                    <span class="pvm-lookup__result-meta">VIN {r.vinLabel} &middot; {r.useLabel}</span>
+                  </li>
+                </template>
+              </ul>
+            </template>
+            <template lwc:else>
+              <p class="pvm-lookup__empty" role="status">{lookupEmptyCopy}</p>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <p class="required-legend">
+      <abbr class="slds-required" title="required">*</abbr> = Required
+    </p>
+
+    <!-- Prefilled receipt of the existing vehicle pulled in from the
+         lookup above. Disabled so it can't be edited - hidden on the
+         manual-entry path. -->
+    <template lwc:if={hasLookupSelection}>
+      <div class="pa-veh-modal__selected">
+        <label class="slds-form-element__label" for="pa-veh-selected-name">
+          Vehicle
+        </label>
+        <input
+          id="pa-veh-selected-name"
+          class="slds-input pa-veh-modal__selected-input"
+          type="text"
+          value={selectedVehicleName}
+          disabled
+          aria-readonly="true"
+        />
+      </div>
+    </template>
+
+    <div class="pa-veh-modal__grid">
+      <div class={yearClass}>
+        <label class="slds-form-element__label" for="pa-veh-year">
+          Year <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="pa-veh-year"
+          class="slds-input"
+          type="number"
+          inputmode="numeric"
+          placeholder="Enter year"
+          data-field="year"
+          value={year}
+          oninput={handleInput}
+        />
+        <template lwc:if={yearError}>
+          <span class="pa-veh-modal__error">Enter a model year.</span>
+        </template>
+      </div>
+
+      <div class={makeClass}>
+        <label class="slds-form-element__label" for="pa-veh-make">
+          Make <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="pa-veh-make"
+          class="slds-input"
+          type="text"
+          placeholder="Enter make"
+          data-field="make"
+          value={make}
+          oninput={handleInput}
+        />
+        <template lwc:if={makeError}>
+          <span class="pa-veh-modal__error">Enter a make.</span>
+        </template>
+      </div>
+
+      <div class={modelClass}>
+        <label class="slds-form-element__label" for="pa-veh-model">
+          Model <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="pa-veh-model"
+          class="slds-input"
+          type="text"
+          placeholder="Enter model"
+          data-field="model"
+          value={model}
+          oninput={handleInput}
+        />
+        <template lwc:if={modelError}>
+          <span class="pa-veh-modal__error">Enter a model.</span>
+        </template>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="pa-veh-vin">VIN</label>
+        <input
+          id="pa-veh-vin"
+          class="slds-input pa-veh-modal__mono"
+          type="text"
+          placeholder="Type VIN (optional)"
+          data-field="vin"
+          value={vin}
+          oninput={handleInput}
+        />
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="pa-veh-use">Primary Use</label>
+        <c-picklist
+          options={useOptions}
+          value={use}
+          placeholder="Select..."
+          accessible-label="Primary Use"
+          data-field="use"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="pa-veh-mileage">Annual Mileage</label>
+        <input
+          id="pa-veh-mileage"
+          class="slds-input"
+          type="number"
+          inputmode="numeric"
+          placeholder="Enter annual mileage"
+          data-field="mileage"
+          value={mileage}
+          oninput={handleInput}
+        />
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="pa-veh-body">Body Class</label>
+        <c-picklist
+          options={bodyClassOptions}
+          value={bodyClass}
+          placeholder="Select..."
+          accessible-label="Body Class"
+          data-field="bodyClass"
+          onchange={handlePicklist}
+        ></c-picklist>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="pa-veh-zip">Garaging ZIP Code</label>
+        <input
+          id="pa-veh-zip"
+          class="slds-input"
+          type="text"
+          inputmode="numeric"
+          maxlength="5"
+          pattern="[0-9]{5}"
+          placeholder="Enter ZIP"
+          data-field="garagingZip"
+          value={garagingZip}
+          oninput={handleInput}
+        />
+      </div>
+    </div>
+  </div>
+</template>

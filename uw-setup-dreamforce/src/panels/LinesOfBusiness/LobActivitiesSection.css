@@ -1,0 +1,170 @@
+/* LOB-scoped Activities list. Reuses .act-tile from
+ * ActivitiesEntityEditor.css and .rmdw-config-panel from PlaybookWizard.css
+ * — only layout chrome and the kebab menu styles live here. */
+
+.lob-activities {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3);
+  min-width: 0;
+}
+.lob-activities__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3);
+}
+.lob-activities__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-3);
+  line-height: 1.25;
+}
+.lob-activities__sub {
+  margin: 4px 0 0;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-1);
+}
+
+.lob-activities__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2);
+}
+.lob-activities__search {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 360px;
+}
+
+/* Plain text button — no background, no border, accent color. Used as the
+ * "+ New Activity" trigger next to the search field. */
+.lob-activities__new-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  border-radius: var(--slds-g-radius-border-1);
+}
+.lob-activities__new-btn:hover {
+  color: var(--slds-g-color-accent-2);
+  text-decoration: underline;
+}
+.lob-activities__new-btn:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1);
+  outline-offset: 2px;
+}
+
+.lob-activities__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2);
+}
+
+/* When the configure form is mounted inline we want it to fit the column
+ * width and not impose its modal-like sizing. The shared
+ * `.rmdw-config-panel` rule sets `flex: 1` which collapses to zero height
+ * inside a column container — override to natural flow so the form shows. */
+.lob-activities__list .rmdw-config-panel {
+  flex: 0 0 auto;
+  min-height: 0;
+  width: 100%;
+  align-self: stretch;
+}
+.lob-activities__list .act-editor-panel {
+  max-height: none;
+}
+
+.lob-activities__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  border: 1px dashed var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--slds-g-color-on-surface-1);
+  font-size: var(--slds-g-font-scale-base);
+}
+
+/* Tile actions menu. Brand-tinted chevron button so the affordance stands
+ * out against the soft tile background. Lives inside .act-tile__actions
+ * (top-right anchor). */
+.lob-tile-menu {
+  position: relative;
+}
+.lob-tile-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: var(--slds-g-color-brand-base-95);
+  border: 1px solid var(--slds-g-color-brand-base-90, var(--slds-g-color-border-1));
+  border-radius: var(--slds-g-radius-border-2);
+  color: var(--slds-g-color-accent-1);
+  cursor: pointer;
+  transition: background-color 100ms ease, border-color 100ms ease,
+    color 100ms ease;
+}
+.lob-tile-menu__trigger:hover {
+  background: var(--slds-g-color-accent-1);
+  border-color: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-on-accent-1, white);
+}
+.lob-tile-menu__trigger:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 2px var(--slds-g-color-surface-1),
+    0 0 0 4px var(--slds-g-color-brand-base-15);
+}
+
+.lob-tile-menu__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 10;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  box-shadow: var(--slds-g-shadow-2);
+}
+.lob-tile-menu__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--slds-g-radius-border-1);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  text-align: left;
+  cursor: pointer;
+}
+.lob-tile-menu__item:hover {
+  background: var(--slds-g-color-surface-container-2);
+  color: var(--slds-g-color-on-surface-3);
+}
+.lob-tile-menu__item--destructive {
+  color: var(--slds-g-color-error-1);
+}
+.lob-tile-menu__item--destructive:hover {
+  background: var(--slds-g-color-error-container-1);
+  color: var(--slds-g-color-on-error-container-1);
+}

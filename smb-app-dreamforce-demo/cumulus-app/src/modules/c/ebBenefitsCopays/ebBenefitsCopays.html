@@ -1,0 +1,439 @@
+<template>
+  <div class="ebc">
+    <template lwc:if={hasSegments}>
+      <template for:each={segments} for:item="seg">
+        <article class="ebc-seg" key={seg.id}>
+          <header
+            class="ebc-seg__head"
+            role="button"
+            tabindex="0"
+            aria-expanded={seg.ariaExpanded}
+            data-id={seg.id}
+            onclick={handleSegmentToggle}
+            onkeydown={handleSegmentKeydown}
+          >
+            <span class="ebc-seg__chev-wrap" aria-hidden="true">
+              <svg class={seg.chevronCls} viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.9 4.4l20.7 20.5c.6.6.6 1.6 0 2.2L17.9 47.6c-.6.6-1.6.6-2.2 0l-2.2-2.2c-.6-.6-.6-1.6 0-2.2l16.3-16.1c.6-.6.6-1.6 0-2.2L13.6 8.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.5 1.5-.5 2.1 0z"/></svg>
+            </span>
+            <h3 class="ebc-seg__title">{seg.label}</h3>
+          </header>
+
+          <template lwc:if={seg.expanded}>
+            <div class="ebc-seg__body">
+
+              <!-- Tier Details accordion (broker names up to 4 network
+                   tiers here; primary "+ Add tier" CTA lives in the
+                   header). -->
+              <div class="ebc-tier-acc">
+                <header
+                  class="ebc-tier-acc__head"
+                  role="button"
+                  tabindex="0"
+                  aria-expanded={seg.tierDetailsAriaExpanded}
+                  data-root={seg.id}
+                  onclick={handleTierDetailsToggle}
+                  onkeydown={handleTierDetailsKeydown}
+                >
+                  <svg class={seg.tierDetailsChevronCls} viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.9 4.4l20.7 20.5c.6.6.6 1.6 0 2.2L17.9 47.6c-.6.6-1.6.6-2.2 0l-2.2-2.2c-.6-.6-.6-1.6 0-2.2l16.3-16.1c.6-.6.6-1.6 0-2.2L13.6 8.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.5 1.5-.5 2.1 0z"/></svg>
+                  <span class="ebc-tier-acc__title">Tier Details</span>
+                </header>
+                <template lwc:if={seg.tierDetailsOpen}>
+                  <div class="ebc-tier-acc__body" onclick={stopPropagation}>
+                    <template lwc:if={seg.canAddTier}>
+                      <div class="ebc-tier-add-row">
+                        <button
+                          type="button"
+                          class="ebc-tier-add"
+                          data-root={seg.id}
+                          onclick={handleAddTier}
+                        >
+                          <span class="ebc-tier-add__plus" aria-hidden="true">+</span>
+                          <span class="ebc-tier-add__label">Add tier</span>
+                        </button>
+                      </div>
+                    </template>
+                    <template for:each={seg.tierChips} for:item="chip">
+                      <div class="ebc-tier-row" key={chip.id}>
+                        <div class="ebc-tier-row__field">
+                          <span class="ebc-tier-row__label">Tier Name</span>
+                          <div class="ebc-tier-row__input-wrap">
+                            <input
+                              type="text"
+                              class="ebc-tier-row__input"
+                              data-root={seg.id}
+                              data-tier={chip.id}
+                              value={chip.label}
+                              placeholder={chip.placeholder}
+                              aria-label="Tier name"
+                              oninput={handleTierLabelInput}
+                              onkeydown={handleTierLabelKeydown}
+                            />
+                            <button
+                              type="button"
+                              class="ebc-tier-row__remove"
+                              data-root={seg.id}
+                              data-tier={chip.id}
+                              title="Remove tier"
+                              aria-label="Remove tier"
+                              onclick={handleRemoveTier}
+                            >
+                              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
+
+              <template lwc:if={seg.hasTiers}>
+                <!-- Category accordions (single-open per app-wide
+                     rule). Each open category surfaces its include gate,
+                     a Benefit tab strip, and the active benefit's
+                     attribute rows in the tabpanel. -->
+                <template for:each={seg.categories} for:item="cat">
+                  <section class={cat.accordionClass} key={cat.key}>
+                    <!-- Selectable-accordion header: include checkbox
+                         (flush-left, stops propagation so clicking the
+                         box toggles inclusion only), title in the middle,
+                         chevron flush-right. Clicking the header outside
+                         the checkbox toggles expand/collapse. -->
+                    <header
+                      class="ebc-cat-acc__head"
+                      role="button"
+                      tabindex="0"
+                      aria-expanded={cat.ariaExpanded}
+                      data-key={cat.collapseKey}
+                      onclick={handleCategoryToggle}
+                      onkeydown={handleCategoryKeydown}
+                    >
+                      <label class="ebc-cat-include" onclick={stopPropagation}>
+                        <input
+                          type="checkbox"
+                          data-key={cat.includeKey}
+                          checked={cat.included}
+                          aria-label={cat.includeLabel}
+                          onchange={handleCategoryIncludeToggle}
+                        />
+                        <span class="ebc-cat-include__faux" aria-hidden="true"></span>
+                      </label>
+                      <span class="ebc-cat-acc__title">{cat.label}</span>
+                      <svg class={cat.chevronCls} viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.9 4.4l20.7 20.5c.6.6.6 1.6 0 2.2L17.9 47.6c-.6.6-1.6.6-2.2 0l-2.2-2.2c-.6-.6-.6-1.6 0-2.2l16.3-16.1c.6-.6.6-1.6 0-2.2L13.6 8.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.5 1.5-.5 2.1 0z"/></svg>
+                    </header>
+
+                    <template lwc:if={cat.isOpen}>
+                      <div class="ebc-cat-acc__body">
+                        <!-- Benefit tab strip: one tab per L3 Benefit
+                             in the open category. Active tab drives the
+                             tabpanel content below. Tabs mute + become
+                             non-selectable when the category checkbox is
+                             unchecked (preview + disable pattern). -->
+                        <div class="ebc-tabs" role="tablist" aria-label={cat.label}>
+                          <template for:each={cat.benefitTabs} for:item="bt">
+                            <button
+                              key={bt.key}
+                              type="button"
+                              role="tab"
+                              class={bt.tabClass}
+                              aria-selected={bt.tabAriaSelected}
+                              tabindex={bt.tabTabIndex}
+                              data-key={bt.catKey}
+                              data-benefit={bt.benefitId}
+                              onclick={handleBenefitTabSelect}
+                              onkeydown={handleBenefitTabKeydown}
+                            >
+                              {bt.label}
+                            </button>
+                          </template>
+                        </div>
+
+                        <template lwc:if={cat.activeBenefit}>
+                          <div class="ebc-tabpanel" role="tabpanel">
+                            <!-- Multi-tier: one indented tier block per
+                                 tier chip. Attribute rows lay out label
+                                 on the left + control on the right
+                                 (matches Step 2 Core Coverages). -->
+                            <template lwc:if={cat.activeBenefit.isMultiTier}>
+                              <template for:each={cat.activeBenefit.tierBlocks} for:item="tb">
+                                <div class="ebc-tier-block-inline" key={tb.key}>
+                                  <div class="ebc-tier-block-inline__head">
+                                    <span class="ebc-tier-block-inline__label">{tb.tierLabel}</span>
+                                  </div>
+
+                                  <template lwc:if={cat.activeBenefit.isCostSlots}>
+                                    <div class="ebc-attr-list">
+                                      <template for:each={tb.costRows} for:item="cost">
+                                        <div class="ebc-attr-row ebc-attr-row_cost" key={cost.key}>
+                                          <div class="ebc-attr-row__cost-select">
+                                            <c-picklist
+                                              accessible-label="Cost sharing type"
+                                              data-benefit={cost.benefitId}
+                                              data-tier={cost.tierId}
+                                              data-slot={cost.slot}
+                                              options={cost.costTypeOptions}
+                                              value={cost.costType}
+                                              disabled={cost.valueDisabled}
+                                              onchange={handleCostTypeChange}
+                                            ></c-picklist>
+                                          </div>
+                                          <div class="ebc-attr-row__control">
+                                            <template lwc:if={cost.isCopay}>
+                                              <div class="ebc-row__affix-input">
+                                                <span class="ebc-row__affix" aria-hidden="true">$</span>
+                                                <input class="ebc-input" type="number" inputmode="decimal" placeholder="0.00" aria-label="Value" data-attr={cost.attrKey} value={cost.value} disabled={cost.valueDisabled} oninput={handleAttributeInput} />
+                                              </div>
+                                            </template>
+                                            <template lwc:if={cost.isCoinsurance}>
+                                              <div class="ebc-row__affix-input ebc-row__affix-input_suffix">
+                                                <input class="ebc-input" type="number" min="0" max="100" inputmode="decimal" placeholder="0" aria-label="Value" data-attr={cost.attrKey} value={cost.value} disabled={cost.valueDisabled} oninput={handleAttributeInput} />
+                                                <span class="ebc-row__affix ebc-row__affix_suffix" aria-hidden="true">%</span>
+                                              </div>
+                                            </template>
+                                          </div>
+                                        </div>
+                                      </template>
+                                      <template lwc:if={tb.hasDeductible}>
+                                        <div class="ebc-attr-row">
+                                          <div class="ebc-attr-row__label-wrap">
+                                            <span class="ebc-attr-row__label">{tb.deductibleRow.title}</span>
+                                          </div>
+                                          <div class="ebc-attr-row__control">
+                                            <div class="ebc-row__affix-input">
+                                              <span class="ebc-row__affix" aria-hidden="true">$</span>
+                                              <input class="ebc-input" type="number" inputmode="decimal" placeholder="0.00" aria-label="Deductible" data-attr={tb.deductibleRow.attrKey} value={tb.deductibleRow.value} disabled={tb.deductibleRow.valueDisabled} oninput={handleAttributeInput} />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </template>
+                                      <template lwc:if={tb.hasWaiver}>
+                                        <div class="ebc-attr-row">
+                                          <div class="ebc-attr-row__label-wrap">
+                                            <span class="ebc-attr-row__label">{tb.waiverRow.title}</span>
+                                          </div>
+                                          <div class="ebc-attr-row__control">
+                                            <c-picklist
+                                              accessible-label={tb.waiverRow.label}
+                                              data-attr={tb.waiverRow.attrKey}
+                                              options={tb.waiverRow.options}
+                                              value={tb.waiverRow.value}
+                                              disabled={tb.waiverRow.valueDisabled}
+                                              placeholder="Select…"
+                                              onchange={handleAttributePicklist}
+                                            ></c-picklist>
+                                          </div>
+                                        </div>
+                                      </template>
+                                      <template lwc:if={tb.hasLimit}>
+                                        <div class="ebc-attr-row">
+                                          <div class="ebc-attr-row__label-wrap">
+                                            <span class="ebc-attr-row__label">{tb.limitRow.title}</span>
+                                          </div>
+                                          <div class="ebc-attr-row__control">
+                                            <input class="ebc-input" type="number" inputmode="numeric" placeholder="0" aria-label="Limit" data-attr={tb.limitRow.attrKey} value={tb.limitRow.value} disabled={tb.limitRow.valueDisabled} oninput={handleAttributeInput} />
+                                          </div>
+                                        </div>
+                                      </template>
+                                    </div>
+                                  </template>
+
+                                  <template lwc:if={cat.activeBenefit.isNative}>
+                                    <div class="ebc-attr-list">
+                                      <div class="ebc-attr-row">
+                                        <div class="ebc-attr-row__label-wrap">
+                                          <span class="ebc-attr-row__label">{tb.nativeRow.title}</span>
+                                        </div>
+                                        <div class="ebc-attr-row__control">
+                                          <template lwc:if={tb.nativeRow.isCurrency}>
+                                            <div class="ebc-row__affix-input">
+                                              <span class="ebc-row__affix" aria-hidden="true">$</span>
+                                              <input class="ebc-input" type="number" inputmode="decimal" placeholder="0.00" aria-label={tb.nativeRow.label} data-attr={tb.nativeRow.attrKey} value={tb.nativeRow.value} disabled={tb.nativeRow.valueDisabled} oninput={handleAttributeInput} />
+                                            </div>
+                                          </template>
+                                          <template lwc:if={tb.nativeRow.isPercent}>
+                                            <div class="ebc-row__affix-input ebc-row__affix-input_suffix">
+                                              <input class="ebc-input" type="number" min="0" max="100" inputmode="decimal" placeholder="0" aria-label={tb.nativeRow.label} data-attr={tb.nativeRow.attrKey} value={tb.nativeRow.value} disabled={tb.nativeRow.valueDisabled} oninput={handleAttributeInput} />
+                                              <span class="ebc-row__affix ebc-row__affix_suffix" aria-hidden="true">%</span>
+                                            </div>
+                                          </template>
+                                          <template lwc:if={tb.nativeRow.isNumber}>
+                                            <input class="ebc-input" type="number" inputmode="numeric" placeholder="0" aria-label={tb.nativeRow.label} data-attr={tb.nativeRow.attrKey} value={tb.nativeRow.value} disabled={tb.nativeRow.valueDisabled} oninput={handleAttributeInput} />
+                                          </template>
+                                          <template lwc:if={tb.nativeRow.isText}>
+                                            <input class="ebc-input ebc-input_text" type="text" placeholder="Enter value" aria-label={tb.nativeRow.label} data-attr={tb.nativeRow.attrKey} value={tb.nativeRow.value} disabled={tb.nativeRow.valueDisabled} oninput={handleAttributeInput} />
+                                          </template>
+                                          <template lwc:if={tb.nativeRow.isPicklist}>
+                                            <c-picklist
+                                              accessible-label={tb.nativeRow.label}
+                                              data-attr={tb.nativeRow.attrKey}
+                                              options={tb.nativeRow.options}
+                                              value={tb.nativeRow.value}
+                                              disabled={tb.nativeRow.valueDisabled}
+                                              placeholder="Select…"
+                                              onchange={handleAttributePicklist}
+                                            ></c-picklist>
+                                          </template>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </template>
+                                </div>
+                              </template>
+                            </template>
+
+                            <!-- Single tier: flat field group, no tier
+                                 sub-header. -->
+                            <template lwc:else>
+                              <template lwc:if={cat.activeBenefit.isCostSlots}>
+                                <div class="ebc-attr-list">
+                                  <template for:each={cat.activeBenefit.only.costRows} for:item="cost">
+                                    <div class="ebc-attr-row ebc-attr-row_cost" key={cost.key}>
+                                      <div class="ebc-attr-row__cost-select">
+                                        <c-picklist
+                                          accessible-label="Cost sharing type"
+                                          data-benefit={cost.benefitId}
+                                          data-tier={cost.tierId}
+                                          data-slot={cost.slot}
+                                          options={cost.costTypeOptions}
+                                          value={cost.costType}
+                                          disabled={cost.valueDisabled}
+                                          onchange={handleCostTypeChange}
+                                        ></c-picklist>
+                                      </div>
+                                      <div class="ebc-attr-row__control">
+                                        <template lwc:if={cost.isCopay}>
+                                          <div class="ebc-row__affix-input">
+                                            <span class="ebc-row__affix" aria-hidden="true">$</span>
+                                            <input class="ebc-input" type="number" inputmode="decimal" placeholder="0.00" aria-label="Value" data-attr={cost.attrKey} value={cost.value} disabled={cost.valueDisabled} oninput={handleAttributeInput} />
+                                          </div>
+                                        </template>
+                                        <template lwc:if={cost.isCoinsurance}>
+                                          <div class="ebc-row__affix-input ebc-row__affix-input_suffix">
+                                            <input class="ebc-input" type="number" min="0" max="100" inputmode="decimal" placeholder="0" aria-label="Value" data-attr={cost.attrKey} value={cost.value} disabled={cost.valueDisabled} oninput={handleAttributeInput} />
+                                            <span class="ebc-row__affix ebc-row__affix_suffix" aria-hidden="true">%</span>
+                                          </div>
+                                        </template>
+                                      </div>
+                                    </div>
+                                  </template>
+                                  <template lwc:if={cat.activeBenefit.only.hasDeductible}>
+                                    <div class="ebc-attr-row">
+                                      <div class="ebc-attr-row__label-wrap">
+                                        <span class="ebc-attr-row__label">{cat.activeBenefit.only.deductibleRow.title}</span>
+                                      </div>
+                                      <div class="ebc-attr-row__control">
+                                        <div class="ebc-row__affix-input">
+                                          <span class="ebc-row__affix" aria-hidden="true">$</span>
+                                          <input class="ebc-input" type="number" inputmode="decimal" placeholder="0.00" aria-label="Deductible" data-attr={cat.activeBenefit.only.deductibleRow.attrKey} value={cat.activeBenefit.only.deductibleRow.value} disabled={cat.activeBenefit.only.deductibleRow.valueDisabled} oninput={handleAttributeInput} />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </template>
+                                  <template lwc:if={cat.activeBenefit.only.hasWaiver}>
+                                    <div class="ebc-attr-row">
+                                      <div class="ebc-attr-row__label-wrap">
+                                        <span class="ebc-attr-row__label">{cat.activeBenefit.only.waiverRow.title}</span>
+                                      </div>
+                                      <div class="ebc-attr-row__control">
+                                        <c-picklist
+                                          accessible-label={cat.activeBenefit.only.waiverRow.label}
+                                          data-attr={cat.activeBenefit.only.waiverRow.attrKey}
+                                          options={cat.activeBenefit.only.waiverRow.options}
+                                          value={cat.activeBenefit.only.waiverRow.value}
+                                          disabled={cat.activeBenefit.only.waiverRow.valueDisabled}
+                                          placeholder="Select…"
+                                          onchange={handleAttributePicklist}
+                                        ></c-picklist>
+                                      </div>
+                                    </div>
+                                  </template>
+                                  <template lwc:if={cat.activeBenefit.only.hasLimit}>
+                                    <div class="ebc-attr-row">
+                                      <div class="ebc-attr-row__label-wrap">
+                                        <span class="ebc-attr-row__label">{cat.activeBenefit.only.limitRow.title}</span>
+                                      </div>
+                                      <div class="ebc-attr-row__control">
+                                        <input class="ebc-input" type="number" inputmode="numeric" placeholder="0" aria-label="Limit" data-attr={cat.activeBenefit.only.limitRow.attrKey} value={cat.activeBenefit.only.limitRow.value} disabled={cat.activeBenefit.only.limitRow.valueDisabled} oninput={handleAttributeInput} />
+                                      </div>
+                                    </div>
+                                  </template>
+                                </div>
+                              </template>
+
+                              <template lwc:if={cat.activeBenefit.isNative}>
+                                <div class="ebc-attr-list">
+                                  <div class="ebc-attr-row">
+                                    <div class="ebc-attr-row__label-wrap">
+                                      <span class="ebc-attr-row__label">{cat.activeBenefit.only.nativeRow.title}</span>
+                                    </div>
+                                    <div class="ebc-attr-row__control">
+                                      <template lwc:if={cat.activeBenefit.only.nativeRow.isCurrency}>
+                                        <div class="ebc-row__affix-input">
+                                          <span class="ebc-row__affix" aria-hidden="true">$</span>
+                                          <input class="ebc-input" type="number" inputmode="decimal" placeholder="0.00" aria-label={cat.activeBenefit.only.nativeRow.label} data-attr={cat.activeBenefit.only.nativeRow.attrKey} value={cat.activeBenefit.only.nativeRow.value} disabled={cat.activeBenefit.only.nativeRow.valueDisabled} oninput={handleAttributeInput} />
+                                        </div>
+                                      </template>
+                                      <template lwc:if={cat.activeBenefit.only.nativeRow.isPercent}>
+                                        <div class="ebc-row__affix-input ebc-row__affix-input_suffix">
+                                          <input class="ebc-input" type="number" min="0" max="100" inputmode="decimal" placeholder="0" aria-label={cat.activeBenefit.only.nativeRow.label} data-attr={cat.activeBenefit.only.nativeRow.attrKey} value={cat.activeBenefit.only.nativeRow.value} disabled={cat.activeBenefit.only.nativeRow.valueDisabled} oninput={handleAttributeInput} />
+                                          <span class="ebc-row__affix ebc-row__affix_suffix" aria-hidden="true">%</span>
+                                        </div>
+                                      </template>
+                                      <template lwc:if={cat.activeBenefit.only.nativeRow.isNumber}>
+                                        <input class="ebc-input" type="number" inputmode="numeric" placeholder="0" aria-label={cat.activeBenefit.only.nativeRow.label} data-attr={cat.activeBenefit.only.nativeRow.attrKey} value={cat.activeBenefit.only.nativeRow.value} disabled={cat.activeBenefit.only.nativeRow.valueDisabled} oninput={handleAttributeInput} />
+                                      </template>
+                                      <template lwc:if={cat.activeBenefit.only.nativeRow.isText}>
+                                        <input class="ebc-input ebc-input_text" type="text" placeholder="Enter value" aria-label={cat.activeBenefit.only.nativeRow.label} data-attr={cat.activeBenefit.only.nativeRow.attrKey} value={cat.activeBenefit.only.nativeRow.value} disabled={cat.activeBenefit.only.nativeRow.valueDisabled} oninput={handleAttributeInput} />
+                                      </template>
+                                      <template lwc:if={cat.activeBenefit.only.nativeRow.isPicklist}>
+                                        <c-picklist
+                                          accessible-label={cat.activeBenefit.only.nativeRow.label}
+                                          data-attr={cat.activeBenefit.only.nativeRow.attrKey}
+                                          options={cat.activeBenefit.only.nativeRow.options}
+                                          value={cat.activeBenefit.only.nativeRow.value}
+                                          disabled={cat.activeBenefit.only.nativeRow.valueDisabled}
+                                          placeholder="Select…"
+                                          onchange={handleAttributePicklist}
+                                        ></c-picklist>
+                                      </template>
+                                    </div>
+                                  </div>
+                                </div>
+                              </template>
+                            </template>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </section>
+                </template>
+              </template>
+
+              <template lwc:else>
+                <c-empty-state
+                  illustration-name="success:new"
+                  size="x-small"
+                >
+                  Add at least one tier above to configure benefits.
+                </c-empty-state>
+              </template>
+
+            </div>
+          </template>
+        </article>
+      </template>
+    </template>
+
+    <template lwc:else>
+      <c-empty-state
+        illustration-name="success:new"
+        title="No benefit attributes configured"
+        size="medium"
+      >
+        No benefit attributes are configured for the in-scope
+        products. Open Setup and include at least one Plan Benefit
+        attribute to surface this step.
+      </c-empty-state>
+    </template>
+  </div>
+</template>

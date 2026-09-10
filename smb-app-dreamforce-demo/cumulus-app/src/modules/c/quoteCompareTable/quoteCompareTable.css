@@ -1,0 +1,579 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-quote-compare-table - rich plan-by-plan grid.
+   Columns = plan quotes, rows = coverage attributes grouped into labelled
+   section bands. Sticky first column + sticky header. The best-value
+   column is highlighted with the accent color.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* LWC custom elements default to display:inline. Forcing block + min-width:0
+   makes the component respect its flex parent's width so the inner
+   .qct-scroll can actually trigger horizontal overflow (which is the
+   prerequisite for the sticky-left column to engage). */
+/* Flex column so .qct-scroll can inherit a real height from the modal
+   body rather than guessing one from the viewport (see .qct-scroll). */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.qct {
+  font-family: var(--atlas-font);
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Single scroll container for the whole table - sticky cells anchor to
+   this element's box. Forcing display:block + width:100% + explicit
+   overflow on both axes guarantees the browser treats this as the
+   scroll containing block (and not the modal body or the window),
+   which is what makes the sticky-left corner column + row labels
+   actually pin. overscroll-behavior keeps the scroll contained. */
+.qct-scroll {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Take the height the modal body actually has left. This used to be
+     max-height: calc(100vh - 220px), a guess at the surrounding chrome
+     that overshot it - so the box extended past the body's visible
+     area and its bottom edge, the per-column Select row included, sat
+     under the footer where scrolling could not reach it. The cap below
+     is now only a fallback for any host that gives no definite height;
+     when the flex chain resolves it never binds. */
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: calc(100vh - 220px);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  /* Establishes the positioning context for the sticky cells inside. */
+  position: relative;
+}
+
+.qct-table {
+  /* Fixed layout + explicit column widths keep the header and body columns
+     locked in alignment; max-content lets the table grow past the modal so
+     the wrapper scrolls horizontally instead of squishing columns. */
+  table-layout: fixed;
+  width: max-content;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+
+/* ── Header row ─────────────────────────────────────────────── */
+/* Stacking order - ensures rows never visually overlap each other
+   when the user scrolls in either axis:
+   - .qct-corner          (z=7)  → sticky both, always on top
+   - .qct-table thead th  (z=6)  → sticky top, covers body cells below
+   - .qct-row-label       (z=4)  → sticky left, covers body cells right
+   - .qct-band-label      (z=4)  → sticky left inside band row
+   - .qct-cell            (z=0)  → scrolling body cells (default) */
+.qct-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  vertical-align: top;
+}
+
+/* The header is a stack of quote cards, so it is tall (~320px) and its
+   height is content-driven. On a short window that exceeds the whole
+   scroll viewport, and a pinned header taller than its own viewport
+   covers every row underneath it - the per-column Select row included,
+   which then cannot be clicked no matter how far the table scrolls.
+   Releasing only the vertical pin lets the header scroll away and hand
+   the rows back. `left` is untouched, so the corner cell and the
+   attribute column keep pinning horizontally. */
+@media (max-height: 44rem) {
+  .qct-table thead th,
+  .qct-corner {
+    top: auto;
+  }
+}
+
+/* Sticky-left + sticky-top corner - the agent recommendation
+   panel that anchors the table. Higher z-index than every other
+   sticky cell so it always sits on top when the user is scrolled
+   right + down. Hard min-width keeps it from collapsing at narrow
+   viewports. The right-edge box-shadow signals to the user that
+   content is scrolling underneath it. */
+.qct-corner {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 7;
+  text-align: left;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  min-width: 17rem;
+  width: 17rem;
+  max-width: 17rem;
+  /* Clip any wrapped bullet/title content to the cell box so it
+     can't visually leak past the right edge when the user scrolls. */
+  overflow: hidden;
+  box-shadow: 4px 0 8px -4px rgba(15, 23, 42, 0.18);
+}
+/* Long bullet items wrap inside the 17rem cell - `anywhere` lets the
+   browser break long carrier / plan names without overflowing. */
+.qct-corner-list-item,
+.qct-corner-best,
+.qct-corner-reason {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.qct-corner-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.qct-corner-spark {
+  display: inline-flex;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+.qct-corner-spark svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.qct-corner-best {
+  display: block;
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.qct-corner-reason {
+  margin: var(--slds-g-spacing-2, 0.5rem) 0 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.qct-corner-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Bulleted summary inside the corner cell - replaces the old prose
+   reason paragraph. Tight rhythm so it fits the 15rem fixed column. */
+.qct-corner-list {
+  margin: var(--slds-g-spacing-2, 0.5rem) 0 0;
+  padding-left: var(--slds-g-spacing-var-inline-4, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+  list-style: disc;
+}
+.qct-corner-list-item {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.qct-corner-list-item::marker {
+  color: var(--slds-g-color-accent-1, #066afe);
+}
+
+/* Ask an Agent - primary brand pill that opens the docked chat panel
+   via the parent modal (dispatches the `askagent` event upward). */
+.qct-corner-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-top: var(--slds-g-spacing-3, 0.75rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  border: 0;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, transform 120ms ease;
+}
+.qct-corner-ask:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  transform: translateY(-1px);
+}
+.qct-corner-ask:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+/* Agentforce mascot on the Ask-an-Agent CTA - knocked out to white via
+   the brightness(0) + invert(1) filter so it reads cleanly on the blue
+   accent pill. Sized at 1.75rem for visual weight. */
+.qct-corner-ask__mascot {
+  display: inline-block;
+  width: var(--slds-g-sizing-8, 1.75rem);
+  height: var(--slds-g-sizing-8, 1.75rem);
+  object-fit: contain;
+  flex-shrink: 0;
+  user-select: none;
+  filter: brightness(0) invert(1);
+}
+
+.qct-col-head {
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  text-align: left;
+  width: 13.5rem;
+  border-left: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+
+.qct-col-head.is-best {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  border-left-color: var(--slds-g-color-border-accent-1, #066afe);
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+}
+
+.qct-col-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  margin-bottom: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.qct-col-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  color: #fff;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+/* Status tag pill */
+.qct-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.qct-tag.is-incumbent {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.qct-tag.is-reco {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.qct-tag.is-quoted {
+  background: var(--slds-g-color-success-container-1, #acf3e4);
+  color: var(--slds-g-color-on-success-1, #056764);
+}
+
+.qct-col-name {
+  display: block;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+.qct-col-plan {
+  display: block;
+  margin-top: 1px;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.qct-col-premium {
+  display: block;
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.01em;
+}
+.qct-col-per {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-5, 500);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Premium delta vs incumbent */
+.qct-delta {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.qct-delta.is-down {
+  color: var(--slds-g-color-success-1, #056764);
+}
+.qct-delta.is-up {
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.qct-delta.is-flat {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Header summary stats */
+.qct-col-stats {
+  margin: var(--slds-g-spacing-3, 0.75rem) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.qct-col-stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) dashed
+    var(--slds-g-color-border-1, #e5e5e5);
+  padding-top: 3px;
+}
+.qct-col-stat dt {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.qct-col-stat dd {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* ── Section band rows ──────────────────────────────────────────
+   The band cell spans every column and scrolls with the body (NOT
+   sticky), so band rows stay in lock-step with data rows. Only the band
+   *label* is pinned left so the section name stays readable. */
+.qct-band {
+  text-align: left;
+  padding: var(--slds-g-spacing-var-2, 0.5rem) 0;
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.qct-band-label {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  display: inline-block;
+  padding: 0 var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* ── Body rows ──────────────────────────────────────────────── */
+/* Sticky-left row label - pins to the left edge of .qct-scroll so the
+   row name (Plan Name, Deductible: Individual, etc.) stays in view as
+   the broker scrolls horizontally through the carrier columns. Matches
+   the corner cell's 17rem width + right-edge shadow for visual lockup. */
+.qct-row-label {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  text-align: left;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  min-width: 17rem;
+  width: 17rem;
+  box-shadow: 4px 0 8px -4px rgba(15, 23, 42, 0.12);
+}
+/* Tier sub-row (benefit-first layout): indented under its attribute
+   header + a slightly muted body text so the hierarchy reads at a
+   glance. Extends .qct-row-label so the sticky-left + shadow stay. */
+.qct-row-label_tier {
+  padding-left: var(--slds-g-spacing-var-7, 2.5rem);
+  font-weight: var(--slds-g-font-weight-4, 400);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Attribute-header row (benefit-first layout): a compact, mini-band
+   that spans every column and introduces the sub-rows below it.
+   Softer than .qct-band so the visual hierarchy reads Section > Attr
+   > Tier without competing with the outer band. */
+.qct-attr-header-row {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.qct-attr-header-label {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  text-align: left;
+  padding: var(--slds-g-spacing-var-2, 0.5rem) var(--slds-g-spacing-var-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+
+.qct-cell {
+  padding: var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-spacing-var-4, 1rem);
+  text-align: left;
+  vertical-align: top;
+  /* Opaque so columns don't bleed through each other (or through the
+     sticky first column) while scrolling horizontally. */
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  overflow-wrap: anywhere;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  border-left: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.qct-value {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* Cell content + the recommended-column green check marker. */
+.qct-cell-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.qct-cell-text {
+  min-width: 0;
+}
+.qct-cell-check {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--slds-g-radius-border-circle, 999px);
+  background: var(--slds-g-color-success-container-2, #04e1cb);
+  color: var(--slds-g-color-on-success-1, #056764);
+  margin-top: 1px;
+}
+.qct-cell-check svg {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.qct-total {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Highlighted (best-value) column - accent-tinted down the body. */
+.qct-cell.is-best {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+  border-left-color: var(--slds-g-color-border-accent-1, #066afe);
+  border-right: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+}
+
+/* ── Per-column Select ──────────────────────────────────────── */
+.qct-actions-row .qct-cell {
+  padding-top: var(--slds-g-spacing-var-4, 1rem);
+  padding-bottom: var(--slds-g-spacing-var-4, 1rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+}
+.qct-actions-row .qct-cell.is-best {
+  background: var(--slds-g-color-brand-base-95, #edf4ff);
+}
+
+.qct-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease;
+}
+.qct-select:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+.qct-select.is-best {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+.qct-select.is-best:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+
+/* Ticked for the proposal. The accent fill reads as "in the email",
+   and it overrides the is-best treatment so a recommended column that
+   is *not* ticked still looks unpicked. */
+.qct-select.is-picked,
+.qct-select.is-best.is-picked {
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  color: var(--slds-g-color-on-accent-2, #fff);
+}
+.qct-select.is-picked:hover,
+.qct-select.is-best.is-picked:hover {
+  background: var(--slds-g-color-accent-container-3, #022ac0);
+  border-color: var(--slds-g-color-border-accent-3, #022ac0);
+}
+.qct-select__check {
+  display: inline-flex;
+  width: var(--slds-g-sizing-4, 0.75rem);
+  height: var(--slds-g-sizing-4, 0.75rem);
+  flex: 0 0 auto;
+}
+.qct-select__check svg {
+  width: 100%;
+  height: 100%;
+}
+
+.qct-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-7, 2.5rem);
+  text-align: center;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}

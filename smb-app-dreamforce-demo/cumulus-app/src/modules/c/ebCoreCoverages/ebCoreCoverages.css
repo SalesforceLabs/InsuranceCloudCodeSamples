@@ -1,0 +1,324 @@
+/* c-eb-core-coverages - runtime Step 2 (Core Plan Coverages).
+   One accordion segment per in-scope root product; each row carries a
+   data-type-driven input control (Min/Max range, single currency,
+   percent, or picklist). */
+
+:host {
+  display: block;
+}
+.ecv {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  font-family: var(--atlas-font);
+}
+
+.ecv-empty {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-4, 1rem);
+  text-align: center;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* ── Segment accordion (flat rows - mirrors the Personal Auto tree:
+   no per-segment card chrome, just a divider between segments and a
+   chevron-led clickable header). ─────────────────────────────────── */
+.ecv-seg {
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: 0;
+}
+.ecv-seg:last-child {
+  border-bottom: 0;
+}
+.ecv-seg__head {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.ecv-seg__head:hover .ecv-seg__title {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.ecv-seg__head:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+.ecv-seg__chev-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.ecv-seg__chev {
+  width: 0.625rem;
+  height: 0.625rem;
+  transition: transform 160ms ease;
+}
+.ecv-seg__chev.is-open {
+  transform: rotate(90deg);
+}
+.ecv-seg__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-7, 1.5rem);
+  height: var(--slds-g-sizing-7, 1.5rem);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.ecv-seg__icon svg {
+  width: var(--slds-g-sizing-6, 1.25rem);
+  height: var(--slds-g-sizing-6, 1.25rem);
+}
+.ecv-seg__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+/* Chevron sits flush-right. Belt-and-braces with the title's flex:1
+   above so a future tweak to title can't accidentally re-orphan the
+   chevron. */
+.ecv-seg__head .ecv-seg__chev-wrap {
+  margin-left: auto;
+}
+.ecv-seg__body {
+  display: flex;
+  flex-direction: column;
+  /* Indent the rows under the chevron + title so they read as children
+     of the segment, the same way the PA tree nests its coverage rows. */
+  padding: 0 0 var(--slds-g-spacing-var-3, 0.75rem) var(--slds-g-sizing-9, 2rem);
+}
+
+/* ── Rows ────────────────────────────────────────────────────── */
+.ecv-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--slds-g-spacing-var-inline-4, 1rem);
+  align-items: center;
+  padding: var(--slds-g-spacing-var-2, 0.5rem) 0;
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.ecv-row:last-child {
+  border-bottom: 0;
+}
+
+/* Coverage-level include checkbox in the segment header. Same faux-
+   checkbox visual language as the (now-retired) row checkbox, sized
+   to match the surrounding chevron + title. Ticking / unticking
+   toggles every input row under the segment. */
+.ecv-seg__include {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ecv-seg__include input {
+  position: absolute;
+  opacity: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+}
+.ecv-seg__faux {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  position: relative;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  background: var(--slds-g-color-surface-container-1, #fff);
+}
+.ecv-seg__include input:checked + .ecv-seg__faux {
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.ecv-seg__include input:checked + .ecv-seg__faux::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid var(--slds-g-color-on-accent-1, #fff);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+.ecv-seg__include input:focus-visible + .ecv-seg__faux {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}
+
+.ecv-row__label-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.125rem);
+  min-width: 0;
+}
+.ecv-row__label {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+/* Mandatory attributes are marked with a subtle SLDS-red asterisk so
+   brokers still see which fields the RFQ template flagged required. */
+.ecv-row__label.is-required::after {
+  content: ' *';
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+/* Muted-body treatment when the parent coverage is unchecked (mirrors
+   how PA renders unchecked optional coverages). */
+.ecv-row.is-excluded .ecv-row__label {
+  color: var(--slds-g-color-on-disabled-1, #757575);
+}
+.ecv-row__control {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Input affix layouts ─────────────────────────────────────── */
+/* SLDS 2 input-group pattern: the affix character ($ / %) sits
+   INSIDE the input's border (position:absolute over a relative
+   wrapper) and the input picks up extra padding on the affixed
+   side so the digits don't run under the symbol. Range pairs wrap
+   each input in its own affix wrapper so both sides match. */
+.ecv-row__pair {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+}
+.ecv-row__dash {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.ecv-row__affix-input {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.ecv-row__affix {
+  position: absolute;
+  top: 50%;
+  left: var(--slds-g-spacing-var-inline-3, 0.75rem);
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-line-height-1, 1);
+}
+.ecv-row__affix_suffix {
+  left: auto;
+  right: var(--slds-g-spacing-var-inline-3, 0.75rem);
+}
+/* When the input lives inside an affix wrapper, reserve room for
+   the absolute-positioned symbol on the affixed side. */
+.ecv-row__affix-input .ecv-input {
+  padding-left: var(--slds-g-spacing-var-inline-5, 1.5rem);
+}
+.ecv-row__affix-input_suffix .ecv-input {
+  padding-left: var(--slds-g-spacing-var-inline-3, 0.75rem);
+  padding-right: var(--slds-g-spacing-var-inline-5, 1.5rem);
+}
+
+/* ── Inputs ──────────────────────────────────────────────────── */
+.ecv-input {
+  width: 7rem;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: var(--slds-g-spacing-1, 4px) var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1, #fff);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  box-sizing: border-box;
+  text-align: right;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.ecv-input::placeholder {
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  font-weight: var(--slds-g-font-weight-4, 400);
+}
+.ecv-input:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.ecv-input:focus,
+.ecv-input:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.ecv-input:disabled {
+  background: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-2, #757575);
+  cursor: not-allowed;
+}
+.ecv-row__select-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.ecv-select {
+  min-width: 12rem;
+  min-height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 calc(var(--slds-g-spacing-var-inline-3, 0.75rem) + 1.25rem)
+    0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #5c5c5c);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background-color: var(--slds-g-color-surface-container-1, #fff);
+  /* SLDS chevron baked into the trigger - keeps the control off the
+     OS-native (Apple/Windows) appearance and lets the focus halo
+     render consistently across browsers. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235c5c5c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.625rem center;
+  background-size: 16px 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.ecv-select:hover {
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+.ecv-select:focus,
+.ecv-select:focus-visible {
+  outline: none;
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  box-shadow: 0 0 0 var(--slds-g-sizing-border-2, 2px)
+    var(--slds-g-color-brand-base-90, #d6e6ff);
+}
+.ecv-select:disabled {
+  background-color: var(--slds-g-color-disabled-container-1, #e5e5e5);
+  border-color: var(--slds-g-color-border-disabled-1, #757575);
+  color: var(--slds-g-color-on-disabled-2, #757575);
+  cursor: not-allowed;
+}

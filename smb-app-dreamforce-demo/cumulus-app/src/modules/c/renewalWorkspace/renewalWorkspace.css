@@ -1,0 +1,324 @@
+:host { display: block; }
+
+.rw-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--slds-g-spacing-5, 24px) var(--slds-g-spacing-6, 32px) var(--slds-g-spacing-7, 40px);
+  font-family: var(--atlas-font);
+  color: var(--atlas-ink);
+  background: var(--atlas-page-bg, var(--slds-g-color-surface-2, #f3f3f3));
+  min-height: 100%;
+}
+
+/* =============================================================
+   KPI banner - mirrors the Hub (.rmdp-kpi*) so both views read
+   as one product. Same 4-across grid + urgent/warning/accent
+   variants + left-rail border treatment.
+   ============================================================= */
+.rw-kpi-banner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.rw-kpi {
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-left: 4px solid var(--atlas-border);
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  box-shadow: var(--atlas-shadow-card);
+  padding: 14px var(--slds-g-spacing-4, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.rw-kpi__value {
+  font-size: var(--slds-g-font-scale-5, 1.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.rw-kpi__label {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-5, 500);
+  color: var(--atlas-muted);
+  letter-spacing: 0.02em;
+}
+.rw-kpi--urgent {
+  border-left-color: var(--slds-g-color-error-1, #b60554);
+}
+.rw-kpi--urgent .rw-kpi__value {
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.rw-kpi--warning {
+  border-left-color: var(--slds-g-color-warning-1, #8c4b02);
+}
+.rw-kpi--warning .rw-kpi__value {
+  color: var(--slds-g-color-warning-1, #8c4b02);
+}
+.rw-kpi--accent {
+  border-left-color: var(--atlas-brand);
+}
+.rw-kpi--accent .rw-kpi__value {
+  color: var(--atlas-brand);
+}
+
+/* =============================================================
+   Header
+   ============================================================= */
+.rw-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rw-back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: var(--slds-g-spacing-1, 4px) 0;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-5, 500);
+  color: var(--atlas-brand);
+  cursor: pointer;
+}
+.rw-back:hover { color: var(--slds-g-color-accent-3, #022ac0); }
+.rw-back:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--atlas-brand);
+  outline-offset: var(--slds-g-sizing-1, 2px);
+  border-radius: var(--slds-g-sizing-1, 2px);
+}
+.rw-back__icon { flex: 0 0 auto; }
+
+.rw-title {
+  margin: var(--slds-g-spacing-1, 4px) 0 0;
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.rw-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  color: var(--atlas-muted);
+}
+
+/* =============================================================
+   Tabstrip
+   ============================================================= */
+.rw-tabstrip {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--atlas-border);
+  padding: 0;
+}
+.rw-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 10px var(--slds-g-spacing-4, 16px) var(--slds-g-spacing-3, 12px);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+  margin-bottom: -1px;
+}
+.rw-tab:hover { color: var(--atlas-ink); }
+.rw-tab:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--atlas-brand);
+  outline-offset: var(--slds-g-sizing-1, 2px);
+  border-radius: var(--slds-g-sizing-1, 2px);
+}
+.rw-tab--active {
+  color: var(--atlas-brand);
+  border-bottom-color: var(--atlas-brand);
+}
+.rw-tab__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: var(--slds-g-sizing-6, 20px);
+  padding: 0 6px;
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--atlas-ink);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.01em;
+}
+.rw-tab--active .rw-tab__count {
+  background: var(--atlas-brand);
+  color: var(--slds-g-color-on-accent-1, #fff);
+}
+
+/* =============================================================
+   Panel + table shell
+   ============================================================= */
+.rw-panel {
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  box-shadow: var(--atlas-shadow-card);
+  overflow: hidden;
+}
+
+/* Action Required tab renders c-renewal-alert cards (each owns its own
+   surface + shadow) rather than table rows, so this panel drops its
+   own chrome and just stacks the cards with breathing room. */
+.rw-panel--cards {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+.rw-alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+.rw-table-wrap {
+  overflow-x: auto;
+}
+.rw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+}
+.rw-table thead th {
+  text-align: left;
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-bottom: 1px solid var(--atlas-border);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.rw-table tbody td {
+  padding: var(--slds-g-spacing-3, 12px) var(--slds-g-spacing-4, 16px);
+  border-bottom: 1px solid var(--atlas-border);
+  color: var(--atlas-ink);
+  vertical-align: middle;
+}
+.rw-table tbody tr:last-child td { border-bottom: none; }
+.rw-table tbody tr:hover td { background: var(--slds-g-color-surface-container-2, #f3f3f3); }
+
+.rw-th--num, .rw-td--num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.rw-th--act, .rw-td--act {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.rw-account-link {
+  color: var(--atlas-brand);
+  text-decoration: none;
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+.rw-account-link:hover { text-decoration: underline; }
+
+/* =============================================================
+   Risk flag badges
+   ============================================================= */
+.rw-flag-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.rw-flag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--slds-g-spacing-2, 8px);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+}
+.rw-flag--premium {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-warning-1, #8c4b02);
+  border-color: var(--slds-g-color-border-warning-1, #dd7a01);
+}
+.rw-flag--claim {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-error-1, #b60554);
+  border-color: var(--slds-g-color-border-error-1, #b60554);
+}
+
+/* =============================================================
+   Row actions
+   ============================================================= */
+.rw-action {
+  border-radius: var(--slds-g-radius-border-1, 4px);
+  padding: 6px 14px;
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.rw-action--primary {
+  background: var(--atlas-brand);
+  color: var(--slds-g-color-on-accent-1, #fff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-brand);
+}
+.rw-action--primary:hover {
+  background: var(--slds-g-color-accent-3, #022ac0);
+  border-color: var(--slds-g-color-accent-3, #022ac0);
+}
+.rw-action--secondary {
+  background: var(--atlas-surface);
+  color: var(--atlas-ink);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+}
+.rw-action--secondary:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+.rw-action:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--atlas-brand);
+  outline-offset: var(--slds-g-sizing-1, 2px);
+}
+
+/* =============================================================
+   Empty states
+   ============================================================= */
+.rw-empty {
+  padding: var(--slds-g-spacing-6, 32px) 20px;
+  text-align: center;
+  color: var(--atlas-muted);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+}
+.rw-empty--positive {
+  color: var(--slds-g-color-success-1, #056764);
+}
+
+/* =============================================================
+   Responsive
+   ============================================================= */
+@media (max-width: 1024px) {
+  .rw-kpi-banner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .rw-page { padding: var(--slds-g-spacing-4, 16px) var(--slds-g-spacing-4, 16px) var(--slds-g-spacing-6, 32px); }
+  .rw-title { font-size: var(--slds-g-font-scale-3, 1.25rem); }
+  .rw-kpi-banner { grid-template-columns: 1fr; }
+}

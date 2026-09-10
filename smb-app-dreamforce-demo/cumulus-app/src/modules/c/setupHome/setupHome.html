@@ -1,0 +1,368 @@
+<template>
+  <div class="sh">
+    <!-- ── Setup context bar ─────────────────────────────────── -->
+    <div class="sh__bar">
+      <button
+        class="sh__waffle"
+        type="button"
+        title="App Launcher"
+        aria-label="App Launcher, leave Setup"
+        onclick={handleExit}
+      >
+        <span class="sh__waffle-dots" aria-hidden="true">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+
+      <span class="sh__wordmark">Setup</span>
+
+      <ul class="sh__bar-tabs" role="tablist" aria-label="Setup sections">
+        <li
+          class="sh__bar-tab sh__bar-tab_home sh__bar-tab_active"
+          role="presentation"
+        >
+          <a
+            class="sh__bar-tab-link"
+            href="#"
+            role="tab"
+            aria-selected="true"
+            onclick={preventDefault}
+          >
+            <span class="sh__bar-tab-label">Home</span>
+          </a>
+        </li>
+        <li class="sh__bar-tab sh__bar-tab_object" role="presentation">
+          <a
+            class="sh__bar-tab-link"
+            href="#"
+            role="tab"
+            aria-selected="false"
+            onclick={preventDefault}
+          >
+            <span class="sh__bar-tab-label">Object Manager</span>
+          </a>
+          <!-- Sibling of the label anchor, not a child - matches the org,
+               and keeps the label free to size itself. The wrapper is the
+               24px the li needs to reach its measured 146px. -->
+          <div class="sh__bar-tab-caret-wrap">
+            <a
+              class="sh__bar-tab-caret"
+              href="#"
+              tabindex="-1"
+              aria-label="Object Manager List"
+              onclick={preventDefault}
+            >
+              <svg
+                class="sh__bar-caret"
+                viewBox="0 0 520 520"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M476 178L271 385c-6 6-16 6-22 0L44 178c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l161 163c6 6 16 6 22 0l161-162c6-6 16-6 22 0l22 22c5 6 5 15 0 21"
+                />
+              </svg>
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ── Sidebar + canvas ──────────────────────────────────── -->
+    <div class="sh__body">
+      <div class={sideColClass}>
+        <nav class="sh__nav" aria-label="Setup navigation">
+          <div class="sh__find">
+            <svg
+              class="sh__find-icon"
+              viewBox="0 0 520 520"
+              fill="currentColor"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M496 453L362 320a189 189 0 10-340-92 190 190 0 00298 135l133 133a14 14 0 0021 0l21-21a17 17 0 001-22M210 338a129 129 0 11130-130 129 129 0 01-130 130"
+              />
+            </svg>
+            <input
+              class="sh__find-input"
+              type="text"
+              placeholder="Quick Find"
+              aria-label="Quick Find"
+              value={quickFind}
+              oninput={handleQuickFind}
+            />
+          </div>
+
+          <template for:each={navGroups} for:item="g">
+            <div key={g.id} class="sh__nav-group">
+              <template lwc:if={g.heading}>
+                <h4 class="sh__nav-heading">{g.heading}</h4>
+              </template>
+              <ul class="sh__nav-list" role="tree" aria-label={g.ariaLabel}>
+                <template for:each={g.items} for:item="it">
+                  <li key={it.id} role="none">
+                    <template lwc:if={it.isParent}>
+                      <a
+                        class={it.cls}
+                        style={it.levelStyle}
+                        href="#"
+                        role="treeitem"
+                        aria-expanded={it.ariaExpanded}
+                        aria-selected={it.ariaSelected}
+                        aria-level={it.ariaLevel}
+                        data-id={it.id}
+                        data-children={it.hasChildren}
+                        onclick={handleNavClick}
+                      >
+                        <svg
+                          class={it.chevronCls}
+                          viewBox="0 0 52 52"
+                          fill="currentColor"
+                          aria-hidden="true"
+                          focusable="false"
+                        >
+                          <path
+                            d="M17.9 4.4l20.7 20.5c.6.6.6 1.6 0 2.2L17.9 47.6c-.6.6-1.6.6-2.2 0l-2.2-2.2c-.6-.6-.6-1.6 0-2.2l16.3-16.1c.6-.6.6-1.6 0-2.2L13.6 8.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.5 1.5-.5 2.1 0z"
+                          />
+                        </svg>
+                        <span class="sh-nav__label">
+                          <template lwc:if={it.hasMatch}
+                            >{it.matchBefore}<mark class="sh-nav__mark"
+                              >{it.matchText}</mark
+                            >{it.matchAfter}</template
+                          >
+                          <template lwc:else>{it.label}</template>
+                        </span>
+                      </a>
+                    </template>
+                    <template lwc:else>
+                      <a
+                        class={it.cls}
+                        style={it.levelStyle}
+                        href="#"
+                        role="treeitem"
+                        aria-selected={it.ariaSelected}
+                        aria-level={it.ariaLevel}
+                        data-id={it.id}
+                        onclick={handleNavClick}
+                      >
+                        <span class="sh-nav__label">
+                          <template lwc:if={it.hasMatch}
+                            >{it.matchBefore}<mark class="sh-nav__mark"
+                              >{it.matchText}</mark
+                            >{it.matchAfter}</template
+                          >
+                          <template lwc:else>{it.label}</template>
+                        </span>
+                      </a>
+                    </template>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </template>
+
+          <template lwc:if={isFiltering}>
+            <p class="sh__find-footer">
+              Didn't find what you're looking for? Try using Global Search.
+            </p>
+          </template>
+        </nav>
+
+        <button
+          class="sh__collapse"
+          type="button"
+          title={collapseLabel}
+          aria-label={collapseLabel}
+          aria-expanded={navExpanded}
+          onclick={handleNavToggleCollapse}
+        >
+          <svg
+            class={collapseChevronClass}
+            viewBox="0 0 520 520"
+            fill="currentColor"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M380 83v354c0 10-13 17-22 9L146 273c-8-6-8-19 0-25L358 73c9-7 22-1 22 10"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class={canvasClass}>
+        <!-- Quote Management Settings leaves render the same templates
+             dashboard the Setup workspace shows on its landing view:
+             the category header, then the list component, which sources
+             its own catalog. Nothing from that workspace's rail,
+             heading or category cards is reproduced here. -->
+        <template lwc:if={isTemplatePanelView}>
+          <section class="sh__landing" aria-label="Templates dashboard">
+            <header class="sh__landing-head">
+              <h1 class="sh__landing-title">{landingTitle}</h1>
+              <p class="sh__landing-sub">{landingSub}</p>
+            </header>
+
+            <!-- Add New swaps the tile grid for the matching wizard,
+                 the same landing-to-builder swap the Setup workspace
+                 makes. Each wizard owns its stepper, footer and publish
+                 path, so nothing of the workspace's pipeline column is
+                 needed: c-quote-compare-setup does it behind
+                 `wizard-only`, which drops that component's own
+                 dashboard, and c-rfq-template-wizard is that surface for
+                 RFQ. Closing either remounts the list against the
+                 refreshed catalog. -->
+            <template lwc:if={isRfqTemplateView}>
+              <template lwc:if={rfqWizardOpen}>
+                <c-rfq-template-wizard
+                  embedded
+                  seeded-lob={rfqSeedLob}
+                  seeded-loc={rfqSeedLoc}
+                  onconfigurationsave={handleRfqConfigurationSave}
+                  onwizardclose={handleRfqWizardClose}
+                ></c-rfq-template-wizard>
+              </template>
+              <template lwc:else>
+                <c-rfq-template-list
+                  ontemplatepick={handleTemplatePick}
+                  ontemplatenew={handleRfqTemplateNew}
+                ></c-rfq-template-list>
+              </template>
+            </template>
+
+            <template lwc:if={isQuoteCompareView}>
+              <template lwc:if={compareWizardOpen}>
+                <c-quote-compare-setup
+                  embedded
+                  wizard-only
+                  seeded-lob={compareSeedLob}
+                  seeded-loc={compareSeedLoc}
+                  onconfigurationsave={handleConfigurationSave}
+                  onwizardclose={handleCompareWizardClose}
+                ></c-quote-compare-setup>
+              </template>
+              <template lwc:else>
+                <c-comparison-template-list
+                  ontemplatepick={handleTemplatePick}
+                  ontemplatenew={handleComparisonTemplateNew}
+                ></c-comparison-template-list>
+              </template>
+            </template>
+          </section>
+
+          <!-- Pre-builder LOB/LOC capture modals, same contract the
+               Setup workspace uses: `continue` carries the picks,
+               `cancel` just closes and leaves the dashboard alone. One
+               per dashboard so `kind` can vary the copy. -->
+          <c-template-init-modal
+            open={rfqInitOpen}
+            kind="rfq"
+            oncontinue={handleRfqInitContinue}
+            oncancel={handleRfqInitCancel}
+          ></c-template-init-modal>
+          <c-template-init-modal
+            open={templateInitOpen}
+            kind="compare"
+            oncontinue={handleTemplateInitContinue}
+            oncancel={handleTemplateInitCancel}
+          ></c-template-init-modal>
+        </template>
+
+        <template lwc:else>
+        <div class="sh__canvas-inner">
+          <!-- Welcome -->
+          <section class="sh__welcome" aria-labelledby="sh-welcome-title">
+            <h1 class="sh__welcome-title" id="sh-welcome-title">
+              Welcome, Admin
+            </h1>
+            <p class="sh__welcome-sub">
+              Set up and manage your Salesforce org, users, data, and
+              automations from one place.
+            </p>
+          </section>
+
+          <!-- Achieve Popular Business Goals -->
+          <section class="sh__goals" aria-labelledby="sh-goals-title">
+            <h2 class="sh__section-title" id="sh-goals-title">
+              Achieve Popular Business Goals
+            </h2>
+            <p class="sh__section-sub">
+              Get guided help setting up the features behind the outcomes teams
+              ask for most.
+            </p>
+
+            <ul class="sh__card-grid">
+              <template for:each={goalCards} for:item="c">
+                <li key={c.id} class="sh-card">
+                  <div class="sh-card__hero" aria-hidden="true"></div>
+                  <div class="sh-card__body">
+                    <p class="sh-card__cat">
+                      <span class={c.categoryMarkClass} aria-hidden="true"></span>
+                      <span class="sh-card__cat-text">{c.category}</span>
+                      <template lwc:if={c.hasPill}>
+                        <span class="sh-card__pill">{c.pill}</span>
+                      </template>
+                    </p>
+                    <h3 class="sh-card__title">{c.title}</h3>
+                    <p class="sh-card__desc">{c.description}</p>
+                  </div>
+                  <div class="sh-card__foot">
+                    <span class="sh-card__status">{c.status}</span>
+                    <button
+                      class="sh-card__cta"
+                      type="button"
+                      onclick={preventDefault}
+                    >
+                      {c.cta}
+                    </button>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </section>
+
+          <!-- Recent Items -->
+          <section class="sh__recent" aria-labelledby="sh-recent-title">
+            <h2 class="sh__section-title" id="sh-recent-title">Recent Items</h2>
+            <div class="sh__table-card">
+              <table class="sh__table">
+                <thead>
+                  <tr>
+                    <th class="sh__th" scope="col">Name</th>
+                    <th class="sh__th" scope="col">Type</th>
+                    <th class="sh__th sh__th_end" scope="col">Object</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template for:each={recentItems} for:item="r">
+                    <tr key={r.id} class="sh__tr">
+                      <td class="sh__td">
+                        <a class="sh__link" href="#" onclick={preventDefault}
+                          >{r.name}</a
+                        >
+                      </td>
+                      <td class="sh__td sh__td_muted">{r.type}</td>
+                      <td class="sh__td sh__td_end">
+                        <template lwc:if={r.hasObject}>
+                          <a class="sh__link" href="#" onclick={preventDefault}
+                            >{r.object}</a
+                          >
+                        </template>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</template>

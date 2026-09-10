@@ -1,0 +1,182 @@
+<template>
+  <div class="rtl">
+    <template lwc:if={hasTemplates}>
+      <div class="rtl__cluster">
+      <c-template-list-toolbar
+        lob={filterLob}
+        loc={filterLoc}
+        sort-by={sortBy}
+        lob-options={lobFilterOptions}
+        loc-options={locFilterOptions}
+        sort-options={sortOptions}
+        match-count={visibleCount}
+        total-count={totalCount}
+        onlobchange={handleFilterLob}
+        onlocchange={handleFilterLoc}
+        onsortchange={handleFilterSort}
+        onclear={handleClearFilters}
+      ></c-template-list-toolbar>
+
+      <template lwc:if={hasVisibleTiles}>
+      <ul class="rtl__tiles" role="list">
+        <template for:each={templateTiles} for:item="t">
+          <li class={t.tileClass} key={t.id}>
+            <!-- ── Nested-Card Header (SLDS spec: 52px, 12px 16px) ──
+                 Icon (24px, rounded 4px, electric-blue bg with white
+                 glyph) on the left, title (font-scale-3 regular,
+                 navy) in the middle, kebab anchored on the right. -->
+            <header class="rtl-template__head">
+              <span class="rtl-template__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm0 7V3.5L19.5 9H14zM8 12h8v2H8zm0 4h8v2H8z"/>
+                </svg>
+              </span>
+              <h2 class="rtl-template__name">{t.name}</h2>
+              <div class="rtl-menu-anchor">
+                <button
+                  type="button"
+                  class={t.moreBtnClass}
+                  aria-label="More actions"
+                  aria-haspopup="menu"
+                  aria-expanded={t.isOpen}
+                  data-id={t.id}
+                  onclick={handleToggleMenu}
+                >
+                  <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                    <path d="M20 44c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z"/>
+                  </svg>
+                </button>
+
+                <template lwc:if={t.isOpen}>
+                  <ul class="rtl-menu" role="menu" aria-label="Template actions">
+                    <li role="none">
+                      <button
+                        class="rtl-menu__item"
+                        type="button"
+                        role="menuitem"
+                        data-id={t.id}
+                        onclick={handleActivate}
+                      >
+                        <svg class="rtl-menu__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                          <path d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/>
+                        </svg>
+                        {t.activateLabel}
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button
+                        class="rtl-menu__item"
+                        type="button"
+                        role="menuitem"
+                        data-id={t.id}
+                        onclick={handleEdit}
+                      >
+                        <svg class="rtl-menu__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                          <g>
+                            <path d="M9.5 33.4l8.9 8.9c.4.4 1 .4 1.4 0L42 20c.4-.4.4-1 0-1.4l-8.8-8.8c-.4-.4-1-.4-1.4 0L9.5 32.1c-.4.4-.4 1 0 1.3zM36.1 5.7c-.4.4-.4 1 0 1.4l8.8 8.8c.4.4 1 .4 1.4 0l2.5-2.5c1.6-1.5 1.6-3.9 0-5.5l-4.7-4.7c-1.6-1.6-4.1-1.6-5.7 0l-2.3 2.5zM2.1 48.2c-.2 1 .7 1.9 1.7 1.7l10.9-2.6c.4-.1.7-.3.9-.5l.2-.2c.2-.2.3-.9-.1-1.3l-9-9c-.4-.4-1.1-.3-1.3-.1l-.2.2c-.3.3-.4.6-.5.9L2.1 48.2z"/>
+                          </g>
+                        </svg>
+                        Edit
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button
+                        class="rtl-menu__item"
+                        type="button"
+                        role="menuitem"
+                        data-id={t.id}
+                        onclick={handleClone}
+                      >
+                        <svg class="rtl-menu__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                          <path d="M44 2H18c-2.2 0-4 1.8-4 4v2h24c2.2 0 4 1.8 4 4v28h2c2.2 0 4-1.8 4-4V6c0-2.2-1.8-4-4-4z"/>
+                          <path d="M38 16c0-2.2-1.8-4-4-4H8c-2.2 0-4 1.8-4 4v30c0 2.2 1.8 4 4 4h26c2.2 0 4-1.8 4-4V16zm-18 7c0 .6-.4 1-1 1h-8c-.6 0-1-.4-1-1v-2c0-.6.4-1 1-1h8c.6 0 1 .4 1 1v2zm8 16c0 .6-.4 1-1 1H11c-.6 0-1-.4-1-1v-2c0-.6.4-1 1-1h16c.6 0 1 .4 1 1v2zm4-8c0 .6-.4 1-1 1H11c-.6 0-1-.4-1-1v-2c0-.6.4-1 1-1h20c.6 0 1 .4 1 1v2z"/>
+                        </svg>
+                        Clone
+                      </button>
+                    </li>
+                    <li role="none" class="rtl-menu__sep" aria-hidden="true"></li>
+                    <li role="none">
+                      <button
+                        class="rtl-menu__item rtl-menu__item_destructive"
+                        type="button"
+                        role="menuitem"
+                        data-id={t.id}
+                        onclick={handleDelete}
+                      >
+                        <svg class="rtl-menu__icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path fill="currentColor" d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Delete
+                      </button>
+                    </li>
+                  </ul>
+                </template>
+              </div>
+            </header>
+            <!-- ── Nested-Card Body (SLDS spec: 0 16px 16px) ──
+                 LOB · LOC as plain text, then version / live date. -->
+            <div class="rtl-template__body">
+              <p class="rtl-template__scope">{t.scopeLine}</p>
+              <p class="rtl-template__meta-line">{t.metaLine}</p>
+            </div>
+          </li>
+        </template>
+      </ul>
+      </template>
+      <template lwc:else>
+        <div class="rtl__empty" role="status">
+          <c-empty-state
+            illustration-name="noresults:filter"
+            title="No templates match these filters"
+            size="small"
+          >
+            Try a different Line of Business or Line of Coverage, or
+            clear the filters to see every template.
+            <button
+              slot="cta"
+              type="button"
+              class="rtl__cta rtl__cta_neutral"
+              onclick={handleClearFilters}
+            >Clear filters</button>
+          </c-empty-state>
+        </div>
+      </template>
+      </div>
+
+    <div class="rtl__cta-row">
+      <button
+        type="button"
+        class="rtl__cta"
+        aria-label="Add new RFQ template"
+        onclick={handleNew}
+      >
+        Add New
+      </button>
+    </div>
+    </template>
+
+    <template lwc:else>
+      <div class="rtl__empty">
+        <c-empty-state
+          illustration-name="success:new"
+          title="No RFQ templates configured"
+          size="medium"
+        >
+          Create your first collection template to define the Root
+          Product, coverage configuration, and broker RFQ layout.
+          <button
+            slot="cta"
+            type="button"
+            class="rtl__cta"
+            aria-label="Add new RFQ template"
+            onclick={handleNew}
+          >Add New</button>
+        </c-empty-state>
+      </div>
+    </template>
+
+    <template lwc:if={openMenuId}>
+      <div class="rtl-menu-scrim" onclick={handleCloseMenu}></div>
+    </template>
+  </div>
+</template>

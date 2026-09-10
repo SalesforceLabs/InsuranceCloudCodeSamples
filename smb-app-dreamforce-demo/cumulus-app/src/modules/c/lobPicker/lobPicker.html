@@ -1,0 +1,41 @@
+<template>
+  <div class="picker">
+    <template for:each={cards} for:item="opt">
+      <button
+        key={opt.value}
+        class={opt.className}
+        data-value={opt.value}
+        onclick={handleSelect}
+        type="button"
+        style={opt.accentVar}
+      >
+        <span class="check">
+          <template lwc:if={opt.selected}>
+            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+          </template>
+        </span>
+
+        <span class="icon">
+          <template lwc:if={opt.isAuto}>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81L6.85 7zM19 17H5v-5h14v5zM7.5 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm9 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+            </svg>
+          </template>
+          <template lwc:else>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M12 3l-9 8h3v9h5v-6h2v6h5v-9h3z"/>
+            </svg>
+          </template>
+        </span>
+
+        <span class="title">{opt.title}</span>
+        <span class="desc">{opt.description}</span>
+
+        <span class="radio">
+          <span class={opt.radioDotClass}></span>
+          {opt.radioLabel}
+        </span>
+      </button>
+    </template>
+  </div>
+</template>

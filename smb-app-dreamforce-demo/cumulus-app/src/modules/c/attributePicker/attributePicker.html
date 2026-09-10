@@ -1,0 +1,291 @@
+<template>
+  <div class={rootClass}>
+    <!-- ── Header row ────────────────────────────────────────
+         [✓] Select All (N of M Selected)   [🔍 Find attribute...]   [Show all]
+
+         The list below defaults to showing only currently-selected
+         rows; clicking Show all reveals every attribute. Search is
+         always visible in the header when the list is long enough
+         to warrant filtering (auto-shown for > 5 items, forceable
+         via `enable-search`); typing while collapsed auto-expands
+         the list so unselected matches can surface. -->
+    <div class="ap__header">
+      <!-- Reorder mode reserves a grip-column at row start; add a
+           matching invisible spacer to the header so the header
+           checkbox stays x-aligned with the row checkboxes below. -->
+      <template lwc:if={enableReorder}>
+        <span class="ap__grip ap__grip_placeholder" aria-hidden="true"></span>
+      </template>
+      <!-- Tree mode reserves a chevron-column on each parent row;
+           mirror it in the header so the header checkbox aligns
+           with the parent-row checkbox. -->
+      <template lwc:if={isTreeMode}>
+        <span class="ap__tree-chevron ap__tree-chevron_placeholder" aria-hidden="true"></span>
+      </template>
+      <label class="ap__header-check">
+        <input
+          type="checkbox"
+          class="ap__check-input"
+          checked={selectAllChecked}
+          aria-checked={selectAllAriaChecked}
+          aria-label={selectAllA11yLabel}
+          onchange={handleSelectAllToggle}
+        />
+        <span class={selectAllCheckClass} aria-hidden="true">
+          <svg class="ap__check-icon ap__check-icon_tick" viewBox="0 0 24 24" fill="currentColor" focusable="false">
+            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/>
+          </svg>
+          <svg class="ap__check-icon ap__check-icon_minus" viewBox="0 0 24 24" fill="currentColor" focusable="false">
+            <path d="M5 11h14v2H5z"/>
+          </svg>
+        </span>
+        <span class="ap__header-label" aria-live="polite">{selectAllLabel}</span>
+      </label>
+
+      <!-- Inline search sits centered between the status label
+           and the Show all toggle. It is always visible when the
+           list is long enough to warrant filtering (regardless of
+           expanded state) so admins can search without expanding
+           first - typing auto-expands the list. The search is
+           bracketed by two flex-1 spacers so it stays visually
+           centered while the toggle button remains flush right;
+           when the search is hidden a single spacer pushes the
+           toggle to the right instead so the toggle never shifts
+           horizontally between states. -->
+      <template lwc:if={showSearch}>
+        <span class="ap__header-spacer"></span>
+        <div class="ap__search">
+          <svg class="ap__search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+          <input
+            type="search"
+            class="ap__search-input"
+            placeholder="Find attribute..."
+            value={searchQuery}
+            aria-label="Find attribute"
+            oninput={handleSearchInput}
+          />
+          <template lwc:if={showClearSearch}>
+            <button
+              type="button"
+              class="ap__search-clear"
+              onclick={handleClearSearch}
+              aria-label="Clear search"
+              title="Clear search"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59 7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12 5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"/>
+              </svg>
+            </button>
+          </template>
+        </div>
+        <span class="ap__header-spacer"></span>
+      </template>
+      <template lwc:else>
+        <span class="ap__header-spacer"></span>
+      </template>
+
+      <button
+        type="button"
+        class="ap__toggle"
+        aria-label={toggleAriaLabel}
+        aria-expanded={toggleAriaExpanded}
+        onclick={handleToggleExpand}
+      >{toggleLabel}</button>
+    </div>
+
+    <!-- Row list. Collapsed: renders only currently-selected rows.
+         Expanded: renders every row matching the current search. -->
+      <!-- ── Empty state under filter ────────────────────────── -->
+      <template lwc:if={isEmptyFiltered}>
+        <p class="ap__empty" role="status">
+          {emptyFilteredCopy}
+          <button type="button" class="ap__empty-link" onclick={handleClearSearch}>Clear search.</button>
+        </p>
+      </template>
+
+      <!-- ── Empty state while collapsed with nothing selected ── -->
+      <template lwc:if={showCollapsedEmpty}>
+        <p class="ap__empty ap__empty_hint" role="status">
+          {collapsedEmptyCopy}
+        </p>
+      </template>
+
+      <!-- ── Hint state while collapsed with everything selected ── -->
+      <template lwc:if={showCollapsedAllSelected}>
+        <p class="ap__empty ap__empty_hint" role="status">
+          {collapsedAllSelectedCopy}
+        </p>
+      </template>
+
+      <!-- ── Flat list (full render, no chunking) ────────────── -->
+      <template lwc:if={isFlatMode}>
+        <ul class="ap__list" role="list">
+          <template for:each={flatRows} for:item="row">
+            <li
+              key={row.id}
+              class={row.rowClass}
+              data-idx={row.orderIdx}
+              draggable={row.dragAttr}
+              ondragstart={handleDragStart}
+              ondragover={handleDragOver}
+              ondrop={handleDrop}
+              ondragend={handleDragEnd}
+            >
+              <template lwc:if={enableReorder}>
+                <template lwc:if={row.canReorder}>
+                  <span class="ap__grip" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                      <path fill="currentColor" d="M9 4h2v2H9zm0 4h2v2H9zm0 4h2v2H9zm0 4h2v2H9zm4-12h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2z"/>
+                    </svg>
+                  </span>
+                </template>
+                <template lwc:else>
+                  <span class="ap__grip ap__grip_placeholder" aria-hidden="true"></span>
+                </template>
+              </template>
+
+              <label class="ap__row-main">
+                <input
+                  type="checkbox"
+                  class="ap__check-input"
+                  data-id={row.id}
+                  checked={row.isChecked}
+                  aria-checked={row.checkAriaChecked}
+                  onchange={handleAttrToggle}
+                />
+                <span class={row.checkClass} aria-hidden="true">
+                  <svg class="ap__check-icon ap__check-icon_tick" viewBox="0 0 24 24" fill="currentColor" focusable="false">
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/>
+                  </svg>
+                </span>
+                <span class="ap__row-label">{row.label}</span>
+                <template lwc:if={row.showBadge}>
+                  <span class="ap__row-badge">{row.badge}</span>
+                </template>
+              </label>
+
+              <template lwc:if={enableReorder}>
+                <template lwc:if={row.canReorder}>
+                  <span class="ap__row-actions" role="group" aria-label="Reorder attribute">
+                    <button
+                      type="button"
+                      class="ap__icon-btn"
+                      data-idx={row.orderIdx}
+                      disabled={row.isFirst}
+                      aria-label="Move up"
+                      title="Move up"
+                      onclick={handleMoveUp}
+                    >
+                      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <path fill="currentColor" d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      class="ap__icon-btn"
+                      data-idx={row.orderIdx}
+                      disabled={row.isLast}
+                      aria-label="Move down"
+                      title="Move down"
+                      onclick={handleMoveDown}
+                    >
+                      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <path fill="currentColor" d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+                      </svg>
+                    </button>
+                  </span>
+                </template>
+              </template>
+            </li>
+          </template>
+        </ul>
+      </template>
+
+      <!-- ── Tree list (parents + child leaves) ──────────────── -->
+      <template lwc:if={isTreeMode}>
+        <ul class="ap__tree" role="tree">
+          <template for:each={treeRows} for:item="p">
+            <li
+              key={p.id}
+              class="ap__tree-node"
+              role="treeitem"
+              aria-expanded={p.ariaExpanded}
+            >
+              <div class={p.rowCls}>
+                <button
+                  type="button"
+                  class="ap__tree-chevron"
+                  data-id={p.id}
+                  aria-label="Expand or collapse"
+                  onclick={handleTreeExpand}
+                >
+                  <svg class={p.chevronCls} viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                    <path d="M6 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+                <label class="ap__row-main">
+                  <input
+                    type="checkbox"
+                    class="ap__check-input"
+                    data-id={p.id}
+                    checked={p.parentAllChecked}
+                    aria-checked={p.parentAriaChecked}
+                    onchange={handleTreeParentToggle}
+                  />
+                  <span class={p.parentCheckClass} aria-hidden="true">
+                    <svg class="ap__check-icon ap__check-icon_tick" viewBox="0 0 24 24" fill="currentColor" focusable="false">
+                      <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/>
+                    </svg>
+                    <svg class="ap__check-icon ap__check-icon_minus" viewBox="0 0 24 24" fill="currentColor" focusable="false">
+                      <path d="M5 11h14v2H5z"/>
+                    </svg>
+                  </span>
+                  <span class="ap__row-label ap__row-label_parent">{p.label}</span>
+                  <template lwc:if={p.showBadge}>
+                    <span class="ap__row-badge">{p.badge}</span>
+                  </template>
+                </label>
+              </div>
+              <template lwc:if={p.expanded}>
+                <ul class="ap__tree-children" role="group">
+                  <template for:each={p.children} for:item="c">
+                    <li
+                      key={c.id}
+                      class="ap__tree-node"
+                      role="treeitem"
+                      aria-checked={c.checkAriaChecked}
+                    >
+                      <div class="ap__row ap__row_lvl-1">
+                        <span class="ap__tree-chevron ap__tree-chevron_placeholder" aria-hidden="true"></span>
+                        <label class="ap__row-main">
+                          <input
+                            type="checkbox"
+                            class="ap__check-input"
+                            data-id={c.id}
+                            checked={c.isChecked}
+                            aria-checked={c.checkAriaChecked}
+                            onchange={handleAttrToggle}
+                          />
+                          <span class={c.checkClass} aria-hidden="true">
+                            <svg class="ap__check-icon ap__check-icon_tick" viewBox="0 0 24 24" fill="currentColor" focusable="false">
+                              <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/>
+                            </svg>
+                          </span>
+                          <span class="ap__row-label">{c.label}</span>
+                          <template lwc:if={c.showBadge}>
+                            <span class="ap__row-badge">{c.badge}</span>
+                          </template>
+                        </label>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </template>
+            </li>
+          </template>
+        </ul>
+      </template>
+  </div>
+</template>

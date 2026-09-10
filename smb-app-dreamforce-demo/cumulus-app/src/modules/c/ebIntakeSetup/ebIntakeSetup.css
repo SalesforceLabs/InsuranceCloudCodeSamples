@@ -1,0 +1,142 @@
+/* c-eb-intake-setup - stub child for "Asset Data Capture" inside
+   the Insurance Setup Workspace. Shares the BEM-ish class shape used
+   by the rest of the EB setup family; all values via --slds-g-* hooks
+   with literal fallbacks. */
+
+:host {
+  display: block;
+  font-family: var(--atlas-font);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.eis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-4, 1rem);
+}
+
+/* Head - eyebrow + title + sub */
+.eis__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-1, 0.25rem);
+}
+.eis__eyebrow {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.eis__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eis__sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+/* Scaffold panel */
+.eis__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border: var(--slds-g-sizing-border-1, 1px) dashed
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+.eis__pill {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--slds-g-spacing-1, 0.25rem) var(--slds-g-spacing-3, 0.75rem);
+  background: var(--slds-g-color-palette-electric-blue-95, #edf4ff);
+  color: var(--slds-g-color-accent-3, #022ac0);
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.eis__panel-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.eis__panel-sub {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+.eis__panel-sub code,
+.eis__meta-dd code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  padding: 0 var(--slds-g-spacing-1, 0.25rem);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+.eis__meta {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+.eis__meta-row {
+  display: grid;
+  grid-template-columns: 12rem 1fr;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  align-items: baseline;
+}
+.eis__meta-dt {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.eis__meta-dd {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* SLDS 2 primary button - pill radius, 32px min-height. */
+.eis__btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-4, 1rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.eis__btn:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.eis__btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+}

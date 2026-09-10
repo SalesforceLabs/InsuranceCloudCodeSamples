@@ -1,0 +1,88 @@
+<template>
+  <template lwc:if={open}>
+    <section
+      class="slds-popover slds-nubbin_top-right nt"
+      role="dialog"
+      tabindex="-1"
+      aria-labelledby="nt-heading"
+      onkeydown={handleKeydown}
+    >
+      <header class="slds-popover__header nt__head">
+        <h2 id="nt-heading" class="nt__heading">Notifications</h2>
+        <button
+          class="nt__mark"
+          type="button"
+          disabled={markAllDisabled}
+          onclick={handleMarkAllRead}
+        >
+          Mark all as read
+        </button>
+      </header>
+
+      <div class="slds-popover__body nt__body">
+        <template lwc:if={hasItems}>
+          <ul class="nt__list">
+            <template for:each={rows} for:item="n">
+              <li key={n.id} class={n.itemClass}>
+                <div
+                  class="nt__row"
+                  role={n.rowRole}
+                  tabindex={n.rowTabIndex}
+                  data-id={n.id}
+                  onclick={handleRowClick}
+                  onkeydown={handleRowKeydown}
+                >
+                  <span class="nt__figure" aria-hidden="true">
+                    <!-- Standard "quotes" object icon. Authored on a
+                         1000x1000 grid by the org, unlike the 100x100
+                         account glyph - do not unify the viewBoxes. -->
+                    <svg
+                      class="nt__glyph"
+                      viewBox="0 0 1000 1000"
+                      fill="#fff"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path
+                        d="M720 220H501c-14-1-26 6-36 16L197 505a61 61 0 000 85l212 212c23 23 61 23 85 0l271-272c10-10 16-26 15-40V280c0-33-27-60-60-60M504 660l-14 14c-8 8-20 8-28 0L326 538c-8-8-8-20 0-28l14-14c8-8 20-8 28 0l136 136c8 8 8 20 0 28m80-80l-14 14c-8 8-20 8-28 0L406 458c-8-8-8-20 0-28l14-14c8-8 20-8 28 0l136 136c8 8 8 20 0 28m56-170c-28 0-50-22-50-50s22-50 50-50 50 22 50 50-22 50-50 50"
+                      />
+                    </svg>
+                  </span>
+
+                  <span class="nt__content">
+                    <span class="nt__title">{n.title}</span>
+                    <span class="nt__text">{n.body}</span>
+                    <template lwc:if={n.hasAction}>
+                      <button
+                        class="nt__cta"
+                        type="button"
+                        data-id={n.id}
+                        onclick={handleCtaClick}
+                      >
+                        {n.actionLabel}
+                      </button>
+                    </template>
+                    <span class="nt__time">{n.timeLabel}</span>
+                  </span>
+
+                  <template lwc:if={n.unread}>
+                    <span class="nt__dot">
+                      <span class="slds-assistive-text">Unread</span>
+                    </span>
+                  </template>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </template>
+
+        <template lwc:else>
+          <p class="nt__empty" role="status">
+            You have no notifications. Route an RFQ to carriers and quote
+            activity will land here.
+          </p>
+        </template>
+      </div>
+    </section>
+  </template>
+</template>

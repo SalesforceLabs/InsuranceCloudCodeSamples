@@ -1,0 +1,50 @@
+/* Traced from preetiorg2 Lightning Experience (SLDS 2 Cosmos):
+   related-list cards keep a 1px #c9c9c9 boundary and 12px radius,
+   with no drop shadow. Neutral buttons use pill radius, #5c5c5c
+   border, and #0250d9 label. */
+body .slds-card {
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  box-shadow: none;
+}
+
+body .slds-button {
+  font-family: var(--atlas-font);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  font-size: var(--slds-g-font-size-base, 0.8125rem);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  letter-spacing: 0;
+}
+
+body .slds-button_brand {
+  background-color: var(--slds-g-color-accent-container-1, #066afe);
+  border-color: var(--slds-g-color-border-accent-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+}
+
+body .slds-button_brand:hover {
+  background-color: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+
+body .slds-button_neutral {
+  background-color: var(--slds-g-color-surface-container-1, #ffffff);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+body .slds-button_neutral:hover {
+  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+body .slds-badge {
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+}
+
+body input,
+body textarea {
+  font-family: var(--atlas-font);
+}

@@ -1,0 +1,1175 @@
+<template>
+  <div class="page">
+    <header class="head">
+      <div>
+        <h1 class="title">{appName}</h1>
+        <p class="meta">
+          {accountName} · Effective {effectiveLabel} · Response by {deadlineLabel}
+        </p>
+      </div>
+    </header>
+
+    <!-- ── LOC Session Strip (Hybrid Flow) ────────────────────────
+         Modern pill roster of every RFQ tab on this account bundle.
+         Only renders when 2+ LOCs exist so single-LOC EB flows stay
+         uncluttered. Clicking a sibling pill fires `switchsession`
+         which the account record page uses to flip the active
+         workspace tab. -->
+    <template lwc:if={showSessionStrip}>
+      <ul
+        class="p15-sessions"
+        role="tablist"
+        aria-label="Lines of coverage on this bundle"
+      >
+        <template for:each={sessionTabDisplay} for:item="s">
+          <li
+            class={s.className}
+            key={s.id}
+            id={s.tabDomId}
+            data-id={s.id}
+            role="tab"
+            tabindex="0"
+            aria-selected={s.ariaSelected}
+            aria-controls={s.panelDomId}
+            onclick={handleSessionClick}
+          >
+            <span class="p15-sess__body">
+              <!-- Primary text of the pill (SLDS 2 spec:
+                   .slds-pill__label). State is carried by the pill's
+                   own tint rather than a status subtitle. -->
+              <span class="slds-pill__label p15-sess__loc" title={s.locLabel}>{s.locLabel}</span>
+            </span>
+            <!-- .slds-pill__remove - SLDS 2 pill remove control.
+                 Rendered as a bare SLDS icon-button per the
+                 blueprint's remove-button anatomy. stopPropagation
+                 in the JS handler keeps the parent <li> onclick
+                 (session swap) from firing before the confirm
+                 modal opens. -->
+            <template lwc:if={s.showClose}>
+              <button
+                class="slds-button slds-button_icon slds-button_icon-bare slds-pill__remove p15-sess__close"
+                type="button"
+                data-id={s.id}
+                title="Remove"
+                aria-label="Remove this line of coverage"
+                onclick={handleDeleteLocClick}
+              >
+                <svg class="slds-button__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+                <span class="slds-assistive-text">Remove</span>
+              </button>
+            </template>
+          </li>
+        </template>
+      </ul>
+    </template>
+
+    <div class="layout">
+      <c-progress-path
+        active-step={activeStep}
+        step-defs={ebStepDefs}
+        onstepselect={handleStepSelect}
+      ></c-progress-path>
+
+      <main
+        class="workspace"
+        id={workspacePanelId}
+        role={workspacePanelRole}
+        aria-labelledby={workspacePanelLabelledBy}
+      >
+        <!-- ── GUIDED RFQ WIZARD (intake captured upstream in the modal) ── -->
+        <template lwc:if={isWizard}>
+          <!-- ── STEP 1: Employee Census (CSV → headcount summary) ── -->
+          <template lwc:if={isOnCensusStep}>
+          <section class={censusSectionClass} data-step="census">
+            <div class="card-surface">
+              <header class="block-head">
+                <div>
+                  <h2>
+                    <span class="step-mark">1</span>
+                    Enrollment Headcount
+                  </h2>
+                  <p>
+                    Enter the FTE (Full Time Equivalent) headcount for each tier.
+                  </p>
+                </div>
+              </header>
+
+              <!-- New Rate Plan launcher + optional prior-plan quick
+                   seed. Left-aligned so they read as the "add"
+                   affordances for the rate-plan cards below. New Rate
+                   Plan stays as the primary; "Add Prior Rate Plan"
+                   only surfaces when a sibling EB LOC on this bundle
+                   has published a rate plan we can seed from. -->
+              <div class="slds-grid slds-grid_align-start eb-hc-actions">
+                <button
+                  class="brand eb-hc-new-plan"
+                  type="button"
+                  onclick={handleNewRatePlan}
+                  disabled={newRatePlanDisabled}
+                >
+                  <span class="eb-hc-new-plan-icon" aria-hidden="true">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z"/></svg>
+                  </span>
+                  New Rate Plan
+                </button>
+                <template lwc:if={hasPriorRatePlan}>
+                  <button
+                    class="ghost eb-hc-prior-plan"
+                    type="button"
+                    onclick={handleAddPriorRatePlan}
+                    disabled={newRatePlanDisabled}
+                    title={priorRatePlanTitle}
+                    aria-label={priorRatePlanTitle}
+                  >
+                    <span class="eb-hc-new-plan-icon" aria-hidden="true">
+                      <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M19 8l-4-4H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V10l-2-2zm-7 12H5v-6h7v6zm3-8H5V6h9v4h4v2h-3z"/></svg>
+                    </span>
+                    Add Prior Rate Plan
+                  </button>
+                </template>
+              </div>
+
+              <!-- ── Rate-plan cards ─────────────────────────────────
+                   One SLDS card per saved plan. Each card has an Edit
+                   pencil (re-opens the 2-step modal at Step 1) and a
+                   Preview toggle that expands the card inline to show
+                   the full config + per-tier FTE breakdown for this
+                   plan's scope. Headcount entry happens inside the
+                   modal's Step 2, not on this surface. -->
+              <template lwc:if={hasRatePlan}>
+                <ul class="eb-rp-cards">
+                  <template for:each={ratePlanStatusItems} for:item="p">
+                    <li key={p.id} class={p.cardClass}>
+                      <header class="eb-rp-card__head">
+                        <div class="eb-rp-card__title-block">
+                          <span class="eb-rp-card__title">{p.name}</span>
+                          <span class="eb-rp-card__meta">{p.meta}</span>
+                        </div>
+                        <div class="eb-rp-card__actions">
+                          <button
+                            class="eb-rp-card__action"
+                            type="button"
+                            data-id={p.id}
+                            onclick={handleEditRatePlan}
+                            title="Edit rate plan"
+                            aria-label="Edit rate plan"
+                          >
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            <span class="slds-assistive-text">Edit rate plan</span>
+                          </button>
+                          <button
+                            class="eb-rp-card__action eb-rp-card__toggle"
+                            type="button"
+                            data-id={p.id}
+                            onclick={handleToggleRatePlanPreview}
+                            aria-expanded={p.expanded}
+                            title={p.toggleLabel}
+                          >
+                            <span class="eb-rp-card__toggle-label">{p.toggleLabel}</span>
+                            <svg class={p.toggleChevronClass} viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+                          </button>
+                        </div>
+                      </header>
+                      <template lwc:if={p.expanded}>
+                        <div class="eb-rp-card__preview">
+                          <dl class="eb-rp-card__preview-grid">
+                            <template for:each={p.previewFields} for:item="f">
+                              <div key={f.id} class="eb-rp-card__preview-item">
+                                <dt class="eb-rp-card__preview-term">{f.label}</dt>
+                                <dd class="eb-rp-card__preview-value">{f.value}</dd>
+                              </div>
+                            </template>
+                          </dl>
+                          <table class="eb-rp-card__preview-table">
+                            <thead>
+                              <tr>
+                                <th scope="col">Category Tier</th>
+                                <th scope="col" class="eb-rp-card__preview-table-num">FTE</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <template for:each={p.tierRows} for:item="row">
+                                <tr key={row.id}>
+                                  <td>{row.label}</td>
+                                  <td class="eb-rp-card__preview-table-num">{row.value}</td>
+                                </tr>
+                              </template>
+                            </tbody>
+                            <tfoot>
+                              <tr>
+                                <td>Total Enrolled</td>
+                                <td class="eb-rp-card__preview-table-num">{p.planTotal}</td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </template>
+                    </li>
+                  </template>
+                </ul>
+              </template>
+
+              <!-- Empty state before any rate plan exists. -->
+              <template lwc:if={showEnrollmentEmptyState}>
+                <c-empty-state
+                  illustration-name="success:new"
+                  title="No rate plans yet"
+                  size="small"
+                >
+                  Use New Rate Plan to pick the rate plan type,
+                  frequency, eligible tiers, and the FTE headcount
+                  per tier. Saved plans appear here as cards.
+                </c-empty-state>
+              </template>
+
+              <footer class="continue-row">
+                <template lwc:if={hasPreviousStep}>
+                  <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                    Previous
+                  </button>
+                </template>
+                <div class="continue-row__actions">
+                  <button class="ghost" onclick={handleSaveAsDraft} type="button">
+                    Save as Draft
+                  </button>
+                  <button class="ghost" onclick={handleClose} type="button">
+                    Close
+                  </button>
+                  <button
+                    class={continueCensusClass}
+                    onclick={confirmCensus}
+                    type="button"
+                    disabled={continueCensusDisabled}
+                  >
+                    Proceed
+                  </button>
+                </div>
+              </footer>
+            </div>
+          </section>
+          </template>
+
+          <!-- ── STEP 2: Core Plan Coverages (IPC) ──────────────── -->
+          <template lwc:if={isOnCoveragesStep}>
+          <section class={coveragesSectionClass} data-step="coverages">
+            <div class="card-surface">
+              <header class="block-head">
+                <div>
+                  <h2>
+                    <span class="step-mark">2</span>
+                    Core Plan Coverages
+                  </h2>
+                  <p>
+                    Set the macro-level financial caps for each segment -
+                    deductibles, out-of-pocket maximums, and plan totals.
+                    Per-encounter copays come next.
+                  </p>
+                </div>
+              </header>
+
+              <!-- Step 2 rendering is delegated to c-eb-core-coverages,
+                   which reads the shared ebCatalog (filtered to the LOC
+                   scope + includedInRfq) and emits configchange events
+                   that handleConfigChange routes into policyConfiguration. -->
+              <c-eb-core-coverages
+                in-scope-root-ids={inScopeRootIds}
+                coverage-state={coverageState}
+                onconfigchange={handleConfigChange}
+              ></c-eb-core-coverages>
+
+              <footer class="continue-row">
+                <template lwc:if={hasPreviousStep}>
+                  <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                    Previous
+                  </button>
+                </template>
+                <div class="continue-row__actions">
+                  <button class="ghost" onclick={handleSaveAsDraft} type="button">
+                    Save as Draft
+                  </button>
+                  <button class="ghost" onclick={handleClose} type="button">
+                    Close
+                  </button>
+                  <button
+                    class={continueCoveragesClass}
+                    onclick={confirmCoverages}
+                    type="button"
+                    disabled={continueCoveragesDisabled}
+                  >
+                    Proceed
+                  </button>
+                </div>
+              </footer>
+            </div>
+          </section>
+          </template>
+
+          <!-- ── STEP 3: Benefits & Copays (IPCB) ───────────────── -->
+          <template lwc:if={isOnBenefitsStep}>
+          <section class={benefitsSectionClass} data-step="benefits">
+            <div class="card-surface">
+              <header class="block-head">
+                <div>
+                  <h2>
+                    <span class="step-mark">3</span>
+                    Benefits
+                  </h2>
+                  <p>
+                    Configure per-encounter copays - Office Visits, Virtual
+                    Care, Outpatient services, and Rx tiers. This milestone
+                    is optional; brokers can publish without it.
+                  </p>
+                </div>
+              </header>
+
+              <!-- Step 3 rendering is delegated to c-eb-benefits-copays,
+                   which mirrors Step 2's dispatch but groups attributes
+                   inside collapsible Benefit Category sections (slds-
+                   section pattern) per the dataType-driven input map. -->
+              <c-eb-benefits-copays
+                in-scope-root-ids={inScopeRootIds}
+                benefit-state={benefitState}
+                onconfigchange={handleConfigChange}
+              ></c-eb-benefits-copays>
+
+              <footer class="continue-row">
+                <template lwc:if={hasPreviousStep}>
+                  <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                    Previous
+                  </button>
+                </template>
+                <div class="continue-row__actions">
+                  <button class="ghost" onclick={handleSaveAsDraft} type="button">
+                    Save as Draft
+                  </button>
+                  <button class="ghost" onclick={handleClose} type="button">
+                    Close
+                  </button>
+                  <button
+                    class={continueBenefitsClass}
+                    onclick={confirmBenefits}
+                    type="button"
+                  >
+                    Proceed
+                  </button>
+                </div>
+              </footer>
+            </div>
+          </section>
+          </template>
+
+          <!-- ── STEP 4: Review & Publish ──────────────────────── -->
+          <template lwc:if={isOnReviewStep}>
+            <section class="block" data-step="review">
+              <div class="card-surface review-card">
+                <div class="review-head">
+                  <h2>
+                    <span class="step-mark">4</span>
+                    Review &amp; Submit
+                  </h2>
+                </div>
+
+                <!-- Bundle Review tab bar: only renders when the
+                     broker has 2+ LOCs on the same account. Reuses
+                     the .p15-sess pill anatomy from the LOC session
+                     strip up top, styled as an underline tab bar
+                     inside the review card. Clicking a sibling pill
+                     swaps the card content to a read-only
+                     c-loc-review-panel; clicking self restores the
+                     live panels below. -->
+                <template lwc:if={showBundleReviewTabs}>
+                  <ul class="bundle-review-tabs" role="tablist" aria-label="Bundle review">
+                    <template for:each={bundleReviewTabs} for:item="t">
+                      <li
+                        key={t.id}
+                        class={t.className}
+                        role="tab"
+                        aria-selected={t.isActive}
+                        tabindex="0"
+                        data-tab-id={t.id}
+                        onclick={handleReviewTabClick}
+                        onkeydown={handleReviewTabClick}
+                      >
+                        <span class="p15-sess__body">
+                          <span class="p15-sess__loc">{t.locLabel}</span>
+                        </span>
+                      </li>
+                    </template>
+                  </ul>
+                </template>
+
+                <!-- ── Local review content (self's LOC) ──────────
+                     AF Summary + always-open review panels render
+                     ONLY when the broker is looking at their own
+                     LOC. If they've clicked a sibling pill in the
+                     tab bar above, this block is skipped and
+                     c-loc-review-panel takes over below. -->
+                <template lwc:if={isReviewingSelf}>
+                <template lwc:if={showAgentforceSummary}>
+                <div class="af-summary" role="region" aria-label="Agentforce summary">
+                  <div class="af-summary__head">
+                    <span class="af-summary__pill">
+                      <span class="af-summary__spark" aria-hidden="true">
+                        <svg aria-hidden="true" viewBox="0 0 13 13" focusable="false"><path fill="currentColor" d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738ZM12.865 10.8392L12.0796 10.4465C11.8421 10.3308 11.6532 10.1372 11.5344 9.90313L11.1404 9.12035C11.0864 9.00737 10.9245 9.00737 10.8678 9.12035L10.4738 9.90313C10.3577 10.1398 10.1634 10.3281 9.92858 10.4465L9.1432 10.8392C9.02985 10.893 9.02985 11.0544 9.1432 11.1109L9.92858 11.5037C10.1661 11.6193 10.355 11.813 10.4738 12.047L10.8678 12.8298C10.9218 12.9428 11.0837 12.9428 11.1404 12.8298L11.5344 12.047C11.6505 11.8103 11.8448 11.622 12.0796 11.5037L12.865 11.1109C12.9783 11.0571 12.9783 10.8957 12.865 10.8392ZM12.865 1.80363L12.0796 1.41089C11.8421 1.29522 11.6532 1.10154 11.5344 0.867516L11.1404 0.0847341C11.0864 -0.0282447 10.9245 -0.0282447 10.8678 0.0847341L10.4738 0.867516C10.3577 1.10423 10.1634 1.29253 9.92858 1.41089L9.1432 1.80363C9.02985 1.85742 9.02985 2.01882 9.1432 2.07531L9.92858 2.46805C10.1661 2.58372 10.355 2.7774 10.4738 3.01142L10.8678 3.7942C10.9218 3.90718 11.0837 3.90718 11.1404 3.7942L11.5344 3.01142C11.6505 2.77471 11.8448 2.58641 12.0796 2.46805L12.865 2.07531C12.9783 2.02151 12.9783 1.86011 12.865 1.80363Z"/></svg>
+                      </span>
+                      Agentforce Summary
+                    </span>
+                    <span class="af-summary__badge">AI generated</span>
+                  </div>
+
+                  <p class="af-summary__intro">
+                    I've assembled the submission package for {accountName}.
+                    Here's a quick recap before it goes out to the markets.
+                  </p>
+
+                  <p class="af-summary__body">
+                    This is an <strong>Employee Benefits</strong> renewal for
+                    {accountName} ({locLabel}), covering
+                    <strong>{totalEmployees} employees</strong> across {tierCount}
+                    rating tiers. {medicalPlanSummary}. Everything's validated
+                    and ready to route to the markets you select below.
+                  </p>
+                </div>
+                </template>
+
+                <!--
+                  Review card body - always-visible .review-panel
+                  siblings (flattened from the prior <details>
+                  accordions). Application Details carries inline
+                  date pencils; each EB domain panel carries a header
+                  pencil that jumps back to the step that authored
+                  that content. Parent→child groups preserve rate
+                  plan → tiers and category → attribute hierarchy
+                  without nested container chrome.
+                -->
+                <div class="review-accordion">
+                    <section
+                      class="review-panel"
+                      aria-labelledby="eb-application-details-heading"
+                    >
+                      <header class="review-panel__head">
+                        <h3
+                          id="eb-application-details-heading"
+                          class="review-panel__title"
+                        >Application Details</h3>
+                      </header>
+                      <div class="review-panel__body">
+                        <dl class="quote-details__highlights">
+                          <template for:each={quoteDetailsHighlights} for:item="h">
+                            <div key={h.key} class="quote-details__item">
+                              <dt class="quote-details__term">{h.label}</dt>
+                              <dd class="quote-details__value">
+                                <template lwc:if={h.isEditable}>
+                                  <template lwc:if={h.isEditing}>
+                                    <c-date-input
+                                      class="quote-details__date-input"
+                                      data-field={h.dateField}
+                                      value={h.dateInputValue}
+                                      size="s"
+                                      onchange={handlePolicyDateChange}
+                                      onblur={handlePolicyDateBlur}
+                                      onkeydown={handlePolicyDateKeydown}
+                                    ></c-date-input>
+                                  </template>
+                                  <template lwc:else>
+                                    <span class="quote-details__value-row">
+                                      <span class="quote-details__value-text">{h.value}</span>
+                                      <button
+                                        type="button"
+                                        class="quote-details__pencil"
+                                        data-field={h.dateField}
+                                        onclick={handleEditPolicyDate}
+                                        title="Edit"
+                                        aria-label="Edit"
+                                      >
+                                        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                                      </button>
+                                    </span>
+                                  </template>
+                                </template>
+
+                                <template lwc:else>
+                                  <span class="quote-details__value-text">{h.value}</span>
+                                  <template lwc:if={h.showBasePolicyLink}>
+                                    <button
+                                      type="button"
+                                      class="base-policy-link"
+                                      onclick={openBasePolicyModal}
+                                    >See Base Policy</button>
+                                  </template>
+                                </template>
+                              </dd>
+                            </div>
+                          </template>
+                        </dl>
+                      </div>
+                    </section>
+
+                    <section
+                      class="review-panel"
+                      aria-labelledby="eb-headcount-heading"
+                    >
+                      <header class="review-panel__head">
+                        <h3
+                          id="eb-headcount-heading"
+                          class="review-panel__title"
+                        >Enrollment Headcount</h3>
+                        <button
+                          type="button"
+                          class="review-panel__pencil"
+                          onclick={handleEditHeadcount}
+                          title="Edit enrollment headcount"
+                          aria-label="Edit enrollment headcount"
+                        >
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                        </button>
+                      </header>
+                      <div class="review-panel__body">
+                        <template lwc:if={hasReviewHeadcountRows}>
+                          <table class="quote-details__table">
+                            <thead>
+                              <tr>
+                                <th>Tier</th>
+                                <th>FTE Count</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <template for:each={reviewHeadcountRows} for:item="h">
+                                <tr key={h.id}>
+                                  <td>{h.label}</td>
+                                  <td>{h.value}</td>
+                                </tr>
+                              </template>
+                            </tbody>
+                          </table>
+                        </template>
+                        <template lwc:else>
+                          <c-empty-state
+                            illustration-name="success:new"
+                            size="x-small"
+                          >No enrollment headcount entered.</c-empty-state>
+                        </template>
+                      </div>
+                    </section>
+
+                    <template lwc:if={hasReviewRatePlanGroups}>
+                    <section
+                      class="review-panel"
+                      aria-labelledby="eb-rate-plans-heading"
+                    >
+                      <header class="review-panel__head">
+                        <h3
+                          id="eb-rate-plans-heading"
+                          class="review-panel__title"
+                        >Rate Plans</h3>
+                        <button
+                          type="button"
+                          class="review-panel__pencil"
+                          onclick={handleEditRatePlans}
+                          title="Edit rate plans"
+                          aria-label="Edit rate plans"
+                        >
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                        </button>
+                      </header>
+                      <div class="review-panel__body">
+                        <template for:each={reviewRatePlanGroups} for:item="g">
+                          <div key={g.id} class="review-group">
+                            <h4 class="review-group__title">{g.title}</h4>
+                            <dl class="quote-details__highlights review-group__rows">
+                              <template for:each={g.rows} for:item="r">
+                                <div key={r.id} class="quote-details__item">
+                                  <dt class="quote-details__term">{r.label}</dt>
+                                  <dd class="quote-details__value">
+                                    <span class="quote-details__value-text">{r.value}</span>
+                                  </dd>
+                                </div>
+                              </template>
+                            </dl>
+                          </div>
+                        </template>
+                      </div>
+                    </section>
+                    </template>
+
+                    <section
+                      class="review-panel"
+                      aria-labelledby="eb-coverages-heading"
+                    >
+                      <header class="review-panel__head">
+                        <h3
+                          id="eb-coverages-heading"
+                          class="review-panel__title"
+                        >Core Plan Coverages</h3>
+                        <button
+                          type="button"
+                          class="review-panel__pencil"
+                          onclick={handleEditCoverages}
+                          title="Edit core plan coverages"
+                          aria-label="Edit core plan coverages"
+                        >
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                        </button>
+                      </header>
+                      <div class="review-panel__body">
+                        <template lwc:if={hasReviewCoverageGroups}>
+                          <template for:each={reviewCoverageGroups} for:item="g">
+                            <div key={g.id} class="review-group">
+                              <h4 class="review-group__title">{g.title}</h4>
+                              <dl class="quote-details__highlights review-group__rows">
+                                <template for:each={g.rows} for:item="c">
+                                  <div key={c.id} class="quote-details__item">
+                                    <dt class="quote-details__term">{c.label}</dt>
+                                    <dd class="quote-details__value">
+                                      <span class="quote-details__value-text">{c.value}</span>
+                                    </dd>
+                                  </div>
+                                </template>
+                              </dl>
+                            </div>
+                          </template>
+                        </template>
+                        <template lwc:else>
+                          <c-empty-state
+                            illustration-name="success:new"
+                            size="x-small"
+                          >No coverages included.</c-empty-state>
+                        </template>
+                      </div>
+                    </section>
+
+                    <section
+                      class="review-panel"
+                      aria-labelledby="eb-benefits-heading"
+                    >
+                      <header class="review-panel__head">
+                        <h3
+                          id="eb-benefits-heading"
+                          class="review-panel__title"
+                        >Benefits &amp; Copays</h3>
+                        <button
+                          type="button"
+                          class="review-panel__pencil"
+                          onclick={handleEditBenefits}
+                          title="Edit benefits and copays"
+                          aria-label="Edit benefits and copays"
+                        >
+                          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M45.4 11.4L40.6 6.6c-.8-.8-2-.8-2.8 0l-3.9 3.9 7.6 7.6 3.9-3.9c.7-.8.7-2 0-2.8zM4 39.6V47c0 .6.4 1 1 1h7.4c.3 0 .5-.1.7-.3l24.4-24.4-7.6-7.6L4.3 38.9c-.2.2-.3.5-.3.7z"/></svg>
+                        </button>
+                      </header>
+                      <div class="review-panel__body">
+                        <template lwc:if={hasReviewBenefitGroups}>
+                          <template for:each={reviewBenefitGroups} for:item="g">
+                            <div key={g.id} class="review-group">
+                              <h4 class="review-group__title">{g.title}</h4>
+                              <dl class="quote-details__highlights review-group__rows">
+                                <template for:each={g.rows} for:item="b">
+                                  <div key={b.id} class="quote-details__item">
+                                    <dt class="quote-details__term">{b.label}</dt>
+                                    <dd class="quote-details__value">
+                                      <span class="quote-details__value-text">{b.value}</span>
+                                    </dd>
+                                  </div>
+                                </template>
+                              </dl>
+                            </div>
+                          </template>
+                        </template>
+                        <template lwc:else>
+                          <c-empty-state
+                            illustration-name="success:new"
+                            size="x-small"
+                          >No benefits configured.</c-empty-state>
+                        </template>
+                      </div>
+                    </section>
+                  </div>
+                </template>
+
+                <!-- ── Sibling LOC preview (read-only) ────────────
+                     Renders when the broker has clicked another
+                     LOC's pill in the bundle-review bar. -->
+                <template lwc:if={activeSiblingPayload}>
+                  <c-loc-review-panel
+                    payload={activeSiblingPayload}
+                  ></c-loc-review-panel>
+                </template>
+
+                <!-- Market picker + "Submit to Markets" used to live
+                     here so a broker could route straight to carriers
+                     from Review. In the Multi-LOC bundle model the
+                     market pickers move to the Submission Board,
+                     which chooses carriers per-bundle instead of
+                     per-RFQ. The footer below branches into "add
+                     another LOC" vs. "route the bundle". -->
+
+                <footer class="review-footer">
+                  <template lwc:if={hasPreviousStep}>
+                    <button class="prev-link" type="button" onclick={handleGoPrevious}>
+                      Previous
+                    </button>
+                  </template>
+                  <div class="review-footer__actions">
+                    <button class="ghost" onclick={handleOpenAddLob} type="button">
+                      + Add Another Line of Coverage
+                    </button>
+                    <button class="continue solid" onclick={handleSaveToBoard} type="button">
+                      Add to Submission Board
+                    </button>
+                  </div>
+                </footer>
+              </div>
+            </section>
+          </template>
+        </template>
+
+        <template lwc:if={isSubmitted}>
+          <section class="submitted-page">
+            <div class="submitted-check" aria-hidden="true">
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+            </div>
+            <div class="submitted-eyebrow">RFQ PUBLISHED · ASYNC RESPONSE</div>
+            <h2 class="submitted-title">Census and Medical Plan Design Submitted</h2>
+            <p class="submitted-sub">
+              You can safely close this window. Agentforce will notify you
+              via Slack when quotes are returned.
+            </p>
+            <div class="submitted-meta">
+              <span class="submitted-meta-row">
+                <strong>Application</strong> {appName}
+              </span>
+              <span class="submitted-meta-row">
+                <strong>Insured</strong> {accountName}
+              </span>
+              <span class="submitted-meta-row">
+                <strong>Sent to</strong> {selectedMarketsLabel}
+              </span>
+            </div>
+            <footer class="submitted-foot">
+              <button class="brand solid" type="button" onclick={handleReturnToDashboard}>
+                Return to Account
+              </button>
+            </footer>
+          </section>
+        </template>
+      </main>
+    </div>
+
+    <!-- ── Rate Plan modal (create / edit) ──────────────────────────
+         SLDS 2 modal that replaces the inline form card on the
+         Enrollment Headcount step. Backdrop click + close icon both
+         dismiss; Save / Update writes back into savedRatePlans and
+         the inline status banner refreshes underneath. -->
+    <template lwc:if={isRatePlanFormOpen}>
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="eb-rp-modal-title"
+        class="slds-modal slds-fade-in-open slds-modal_medium eb-rp-modal"
+        onclick={handleRatePlanFormCancel}
+      >
+        <div class="slds-modal__container eb-rp-modal__container" onclick={stopRatePlanModalPropagation}>
+          <header class="slds-modal__header eb-rp-modal__header">
+            <button
+              class="slds-button slds-button_icon slds-modal__close eb-rp-modal__close"
+              type="button"
+              title="Close"
+              aria-label="Close this window"
+              onclick={handleRatePlanFormCancel}
+            >
+              <svg class="slds-button__icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+            </button>
+            <h2 id="eb-rp-modal-title" class="slds-modal__title slds-hyphenate eb-rp-modal__title">
+              {rpModalTitle}
+            </h2>
+          </header>
+
+          <div class="slds-modal__content slds-p-around_medium eb-rp-modal__body">
+            <template lwc:if={modalIsStep1}>
+            <div class="eb-rp-form__grid">
+              <div class="slds-form-element eb-rp-field">
+                <label class="slds-form-element__label">
+                  Plan Type
+                  <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                  <c-picklist
+                    options={rpTypeOptions}
+                    value={rpFieldType}
+                    placeholder="--None--"
+                    accessible-label="Plan Type"
+                    onchange={handleRpTypeChange}
+                  ></c-picklist>
+                </div>
+              </div>
+
+              <div class="slds-form-element eb-rp-field">
+                <label class="slds-form-element__label">
+                  Geo State
+                  <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                  <c-picklist
+                    options={rpGeoStateOptions}
+                    value={rpFieldGeoState}
+                    placeholder="--None--"
+                    accessible-label="Geo State"
+                    onchange={handleRpGeoStateChange}
+                  ></c-picklist>
+                </div>
+              </div>
+
+              <div class="slds-form-element eb-rp-field">
+                <label class="slds-form-element__label">
+                  Frequency
+                  <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                  <c-picklist
+                    options={rpFrequencyOptions}
+                    value={rpFieldFrequency}
+                    placeholder="--None--"
+                    accessible-label="Frequency"
+                    onchange={handleRpFrequencyChange}
+                  ></c-picklist>
+                </div>
+              </div>
+
+              <div class="slds-form-element eb-rp-field">
+                <label class="slds-form-element__label">
+                  Currency
+                  <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control">
+                  <c-picklist
+                    options={rpCurrencyOptions}
+                    value={rpFieldCurrency}
+                    placeholder="--None--"
+                    accessible-label="Currency"
+                    onchange={handleRpCurrencyChange}
+                  ></c-picklist>
+                </div>
+              </div>
+
+              <div class="slds-form-element eb-rp-field eb-rp-field_full">
+                <label class="slds-form-element__label" for="eb-rp-tier-trigger">
+                  Tier Structure
+                  <abbr class="slds-required" title="required">*</abbr>
+                </label>
+                <div class="slds-form-element__control eb-rate__multi">
+                  <button
+                    id="eb-rp-tier-trigger"
+                    type="button"
+                    class={rpTierTriggerCls}
+                    role="combobox"
+                    aria-haspopup="listbox"
+                    aria-expanded={rpTierMenuAriaExpanded}
+                    aria-label="Tier Structure"
+                    onclick={handleRpTierMenuToggle}
+                  >
+                    <span class={rpTierValueCls}>{rpTierTriggerLabel}</span>
+                    <svg
+                      class="eb-rate__multi-chev"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 9l6 6 6-6"
+                      />
+                    </svg>
+                  </button>
+
+                  <template lwc:if={isRpTierMenuOpen}>
+                    <div class="eb-rate__multi-scrim" onclick={handleRpTierMenuScrim}></div>
+                    <ul
+                      class="eb-rate__multi-menu"
+                      role="listbox"
+                      aria-multiselectable="true"
+                      aria-label="Tier Structure"
+                      style={rpTierMenuStyle}
+                    >
+                      <template for:each={rpTierMenuItems} for:item="m">
+                        <li
+                          key={m.id}
+                          role="option"
+                          aria-selected={m.ariaSelected}
+                          class={m.cls}
+                        >
+                          <label class="eb-rate__multi-item-label-wrap">
+                            <input
+                              type="checkbox"
+                              class="eb-rate__multi-input"
+                              data-id={m.id}
+                              checked={m.selected}
+                              onchange={handleRpTierToggle}
+                              aria-label={m.label}
+                            />
+                            <span class="eb-rate__multi-check" aria-hidden="true"></span>
+                            <span class="eb-rate__multi-item-label">{m.label}</span>
+                          </label>
+                        </li>
+                      </template>
+                    </ul>
+                  </template>
+                </div>
+              </div>
+            </div>
+            </template>
+
+            <template lwc:if={modalIsStep2}>
+              <div class="eb-rp-form__step2">
+                <p class="eb-rp-form__step2-hint">
+                  Enter the FTE headcount for each tier scoped by this rate plan.
+                  You can save with zeros and come back to fill them in later.
+                </p>
+                <template lwc:if={ratePlanFormHasHeadcountRows}>
+                  <table class="slds-table eb-hc-table eb-rp-form__hc-table">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="eb-hc-cat-col">Category Tier</th>
+                        <th scope="col" class="eb-hc-fte-col">FTE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template for:each={ratePlanFormHeadcountRows} for:item="row">
+                        <tr key={row.id}>
+                          <td class="eb-hc-cat">{row.label}</td>
+                          <td class="eb-hc-fte-cell">
+                            <input
+                              class="slds-input eb-hc-input"
+                              type="number"
+                              min="0"
+                              inputmode="numeric"
+                              placeholder="0"
+                              value={row.value}
+                              data-key={row.key}
+                              oninput={handleRatePlanFormHeadcountInput}
+                              aria-label={row.label}
+                            />
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                    <tfoot>
+                      <tr class="eb-hc-foot">
+                        <td>Total Enrolled</td>
+                        <td class="eb-hc-fte-cell">{ratePlanFormHeadcountTotal}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </template>
+                <template lwc:if={ratePlanFormHasHeadcountRows}></template>
+                <template lwc:else>
+                  <c-empty-state
+                    illustration-name="success:new"
+                    size="x-small"
+                  >
+                    No tiers picked yet. Go back to Step 1 and pick
+                    at least one tier in Tier Structure to capture
+                    FTE counts here.
+                  </c-empty-state>
+                </template>
+              </div>
+            </template>
+          </div>
+
+          <footer class="slds-modal__footer eb-rp-modal__footer">
+            <!-- SLDS 2 progress indicator (canonical slds-progress
+                 blueprint, tokenized). Sits on the left of the footer
+                 so the broker sees how far they are while the action
+                 buttons stay anchored to the right edge. -->
+            <ol class="eb-rp-modal__progress slds-progress__list" aria-label="Rate plan setup">
+              <li class={step1ItemClass}>
+                <span class="eb-rp-modal__progress-marker slds-progress__marker">
+                  <template lwc:if={modalIsStep2}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                  </template>
+                  <template lwc:else>1</template>
+                </span>
+                <span class="eb-rp-modal__progress-label">Rate Plan</span>
+              </li>
+              <li class={step2ItemClass}>
+                <span class="eb-rp-modal__progress-marker slds-progress__marker">2</span>
+                <span class="eb-rp-modal__progress-label">Enrollment Headcount</span>
+              </li>
+            </ol>
+
+            <div class="eb-rp-modal__footer-actions">
+              <template lwc:if={modalIsStep1}>
+                <button
+                  class="ghost"
+                  type="button"
+                  onclick={handleRatePlanFormCancel}
+                >
+                  Cancel
+                </button>
+                <button
+                  class="brand"
+                  type="button"
+                  onclick={handleRatePlanFormNext}
+                  disabled={rpSaveDisabled}
+                >
+                  Next
+                </button>
+              </template>
+              <template lwc:if={modalIsStep2}>
+                <button
+                  class="ghost"
+                  type="button"
+                  onclick={handleRatePlanFormBack}
+                >
+                  Back
+                </button>
+                <button
+                  class="brand"
+                  type="button"
+                  onclick={handleRatePlanSave}
+                >
+                  {rpSaveLabel}
+                </button>
+              </template>
+            </div>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open eb-rp-modal__backdrop"></div>
+    </template>
+
+    <!--
+      Base Policy modal - reached from the Quote Details "See Base
+      Policy" link CTA on the Review step. Surfaces the four canonical
+      Prior Policy fields (Carrier / Policy or Group Number / Annual
+      Premium / Years of Coverage or Term) so the broker can sanity-
+      check the incumbent without leaving the wizard. Mirrors the PA
+      workspace's base-policy modal 1:1 (markup + class names).
+    -->
+    <template lwc:if={basePolicyModalOpen}>
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="eb-base-policy-heading"
+        class="slds-modal slds-fade-in-open base-policy-modal"
+        onclick={handleBasePolicyBackdrop}
+      >
+        <div class="slds-modal__container base-policy-modal__container" onclick={stopBasePolicyPropagation}>
+          <header class="slds-modal__header base-policy-modal__head">
+            <button
+              type="button"
+              class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+              onclick={closeBasePolicyModal}
+              aria-label="Close"
+            >
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false" class="slds-button__icon slds-button__icon_large">
+                <path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2.1-2.1c-.6-.6-1.5-.6-2.1 0L26.6 21.2c-.4.4-1 .4-1.4 0L12.1 8.1c-.6-.6-1.5-.6-2.1 0L7.9 10.2c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L7.9 39.9c-.6.6-.6 1.5 0 2.1L10 44.1c.6.6 1.5.6 2.1 0L25.2 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0l2.1-2.1c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/>
+              </svg>
+            </button>
+            <h1 id="eb-base-policy-heading" class="slds-modal__title base-policy-modal__title">Base Policy</h1>
+            <p class="base-policy-modal__meta">The incumbent policy used to create this RFQ</p>
+          </header>
+
+          <div class="slds-modal__content base-policy-modal__body">
+            <dl class="base-policy-modal__grid">
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Prior Carrier</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.carrier}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Policy / Group Number</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.number}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">Annual Premium</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.premium}</dd>
+              </div>
+              <div class="base-policy-modal__item">
+                <dt class="base-policy-modal__term">{priorPolicyDetails.fourthLabel}</dt>
+                <dd class="base-policy-modal__value">{priorPolicyDetails.fourthValue}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <footer class="slds-modal__footer base-policy-modal__foot">
+            <button
+              type="button"
+              class="slds-button slds-button_neutral"
+              onclick={closeBasePolicyModal}
+            >Close</button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- ── Delete-LOC confirmation modal ─────────────────────────────
+         Fired by the × button on any pill in the session strip. Header
+         names the LOC, body prompts on tab closure and (when the LOC
+         has captured content) shows an SLDS warning banner summarizing
+         what will be discarded. Confirm dispatches `tabclose` which
+         c-app listens for via c-account-record-page; Cancel just
+         closes the modal without side effects. -->
+    <template lwc:if={_deleteLocOpen}>
+      <section
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="eb-delete-loc-heading"
+        class="slds-modal slds-fade-in-open slds-modal_small p15-delete-modal"
+        onclick={handleDeleteLocCancel}
+      >
+        <div class="slds-modal__container p15-delete-modal__container" onclick={stopDeleteLocPropagation}>
+          <header class="slds-modal__header p15-delete-modal__head">
+            <button
+              class="slds-button slds-button_icon slds-modal__close"
+              type="button"
+              title="Close"
+              aria-label="Close this window"
+              onclick={handleDeleteLocCancel}
+            >
+              <svg stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+            </button>
+            <h1 id="eb-delete-loc-heading" class="slds-modal__title p15-delete-modal__title">{_deleteLocHeading}</h1>
+          </header>
+
+          <div class="slds-modal__content p15-delete-modal__body">
+            <template lwc:if={_deleteLocWarningText}>
+              <div class="p15-delete__warning" role="alert">
+                <span class="p15-delete__warning-icon" aria-hidden="true">
+                  <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M26 4L1.6 46.4c-.3.6.1 1.4.9 1.4h48.9c.7 0 1.2-.8.9-1.4L28.1 4c-.4-.8-1.5-.8-2.1 0zM28 40h-4v-4h4v4zm0-8h-4V20h4v12z"/></svg>
+                </span>
+                <span class="p15-delete__warning-text">{_deleteLocWarningText}</span>
+              </div>
+            </template>
+            <p class="p15-delete-modal__prompt">
+              Please confirm you wish to close this line of coverage. You can add a new line of coverage for this RFQ at any time from the RFQ tab in your account.
+            </p>
+          </div>
+
+          <footer class="slds-modal__footer p15-delete-modal__foot">
+            <button
+              class="slds-button slds-button_neutral"
+              type="button"
+              onclick={handleDeleteLocCancel}
+            >Cancel</button>
+            <button
+              class="slds-button slds-button_brand p15-delete-modal__confirm"
+              type="button"
+              onclick={handleDeleteLocConfirm}
+            >Confirm Delete</button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+  </div>
+</template>

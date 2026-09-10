@@ -1,0 +1,10 @@
+/* SLDS required-field marker - red asterisk to the right of the label
+   text. Convention: every mandatory field renders the
+   <abbr class="slds-required"> AFTER the label text so the eye scans
+   the label first, then catches the requiredness cue. */
+.slds-required {
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-decoration: none;
+  margin-left: 2px;
+}

@@ -1,0 +1,92 @@
+---
+description: c-attribute-picker consumers must seed all-checked selection and never force expansion at mount
+alwaysApply: true
+---
+
+# c-attribute-picker Defaults
+
+> **For every `c-attribute-picker`:**
+> **1. `Select All` selected by default.**
+> **2. `Show All` NOT opened by default.**
+
+Two invariants apply to every consumer of the shared `c-attribute-picker` LWC (`cumulus-app/src/modules/c/attributePicker/`). No exceptions.
+
+## Rule 1 — Select All is selected by default
+
+On first render (day-zero, new record, fresh tab, whatever), the picker's `selected-ids` prop must contain **every leaf id** in `attributes`. The admin lands on the all-checked state and unticks what they don't want.
+
+The picker itself will then render its collapsed header as:
+
+```
+[✓] Select All (N of N Selected)   [🔍 Find attribute...]   Show all
+```
+
+…with a single-line hint below: `All N attributes selected. Click Show all to review.` — no row list is rendered.
+
+### How consumers satisfy this
+
+- **Flat lists (e.g. `quoteCompareSetup` metrics, `rfqPlaybookSetup` attributes):** initialize your `selectedIds`-like state with every leaf id at construction time and in every reset / new-record / hydrate path.
+- **Tree lists (e.g. `coverageLimitsSetup`):** set each leaf's `isSelected` (or equivalent) to `true` in the seed factory. Do not leave the "no persisted state → unselected" branch in place.
+- **Persistence layers:** when `_attrState`-style lookups return a default for an attribute with no persisted row, that default must be `isActive: true`, not `false`. The user has never seen this attribute, so we opt them in on their behalf; they explicitly opt out by clicking.
+- **New-template handlers (`handleNewTemplate`, `handleCloneTemplate`, embedded-hydrate paths):** every branch must seed the full id set.
+
+### Anti-patterns
+
+```js
+// ❌ Half-checked defaults — leaves 1+ ids unselected on day zero.
+@track summaryWidgets = {
+  carrier: true,
+  premium: true,
+  effective: true,
+  commission: false   // <-- must be true
+};
+
+// ❌ Empty-selection default — nothing checked on day zero.
+@track selectedMetricIds = [];   // <-- must be seeded with allIds
+
+// ❌ "No persisted state → inactive" default.
+return { isActive: false, ... };   // <-- must be true
+```
+
+```js
+// ✅ Correct: seed the full leaf-id set at every mount / reset.
+handleNewTemplate() {
+  const allIds = this._allMetricIds();
+  this.selectedMetricIds = allIds.slice();
+  this.ordering = allIds.slice();
+  // ...
+}
+```
+
+## Rule 2 — Show all is NOT opened by default
+
+The picker owns its expanded state via a private `_expanded = false` field. There is no `default-expanded`, `initial-open`, `expand-on-mount`, or equivalent prop. Consumers must not:
+
+- Reach into the picker's shadow DOM to click its toggle programmatically at mount.
+- Pass any expansion-related prop.
+- Simulate expanded state by rendering their own row list alongside the picker.
+
+The only paths that expand the picker are:
+1. The admin clicks the `Show all` button in the header.
+2. The admin types into the always-visible search input (auto-expand so unselected matches can surface).
+
+If a consumer's UX seems to require the list to be open on first render, the correct move is almost always to revisit the design against Rule 1 — an all-checked collapsed summary is the intended "here is what will ship" affordance and beats a wall of pre-opened rows for scanability.
+
+## Rationale
+
+- **Speed to first meaningful state.** Setup wizards are 80 % "keep the defaults, move on"; landing on all-checked lets that user hit `Next` immediately.
+- **Progressive disclosure.** The collapsed picker is a compact status meter (`Select All (N of N Selected)`) — the admin only pays the "scan a long list" cost when they explicitly ask for it.
+- **Consistency.** Nine wizards should feel like the same picker. Two flags (`Select All by default`, `Show all not opened by default`) are enough to codify that.
+- **Reversibility.** Uncheck is one click; recovering a missed-by-default attribute is a `Show all` + tick. Cheaper than the reverse.
+
+## Where this rule is enforced
+
+- Picker JSDoc: `cumulus-app/src/modules/c/attributePicker/attributePicker.js` header block.
+- Consumer wizards:
+  - `cumulus-app/src/modules/c/quoteCompareSetup/quoteCompareSetup.js` — `summaryWidgets` seed, `handleNewTemplate`, embedded-hydrate paths.
+  - `cumulus-app/src/modules/c/rfqPlaybookSetup/rfqPlaybookSetup.js` — `_attrState` no-persisted-state branch.
+  - `cumulus-app/src/modules/c/coverageLimitsSetup/coverageLimitsSetup.js` — `_attr` seed factory.
+- Persistence factories (not picker consumers; they mint the record a consumer later hydrates from):
+  - `cumulus-app/src/modules/data/comparisonTemplates/comparisonTemplates.js` - `_seedTemplate` `summaryWidgets` default, applied by `addTemplate` to any partial that omits the field. A partial default here reaches the picker as a partially checked state, and the wizard's `tpl.summaryWidgets || { ... }` fallback cannot catch it because the record still carries a truthy object.
+
+Any new consumer must add itself to this list and match both invariants.

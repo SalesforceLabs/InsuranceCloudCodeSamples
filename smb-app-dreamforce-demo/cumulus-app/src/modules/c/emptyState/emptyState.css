@@ -1,0 +1,127 @@
+/* SLDS 2 Empty State
+ * https://www.lightningdesignsystem.com/2e1ef8501/p/09f001-empty-state
+ * Anatomy: illustration + title + description + optional CTA(s).
+ * Sizes: medium (default) / small / x-small (no illustration). */
+
+/* No `container-type: inline-size` here. It implies `contain: inline-size`,
+   which resolves the host's intrinsic inline size to zero, so any parent
+   that sizes children shrink-to-fit - a flex column with
+   `align-items: center`, a grid with `justify-items: center`, an
+   inline-block - collapsed this to a 0px column: title and description
+   wrapped one word per line and the illustration (`width: 100%`)
+   vanished. Nothing in this sheet ever declared an `@container` query
+   against it, so the containment bought nothing.
+   `align-self` / `justify-self` then opt into the parent's inline size
+   rather than fit-content, so a centred flex/grid call site still gets a
+   full-width, centred empty state. Both are no-ops outside flex/grid. */
+:host {
+  display: block;
+  align-self: stretch;
+  justify-self: stretch;
+}
+
+.es {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-8, 2rem) var(--slds-g-spacing-5, 1.5rem);
+  color: var(--slds-g-color-neutral-base-30, var(--atlas-ink, #181818));
+}
+
+.es_size-medium {
+  /* Vertical trim (3rem → 1.5rem) applied globally on 2026-08-12: 3rem
+     reads floaty when the empty state is nested inside a card / step
+     panel (PA asset tree Step 1, meeting center, quote compare, etc.).
+     Horizontal padding kept at 1.75rem so side gutters still read as
+     the SLDS 2 spec intends. Small/x-small variants are unchanged. */
+  padding: var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-6, 1.75rem);
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+
+.es_size-small {
+  padding: var(--slds-g-spacing-6, 1.75rem) var(--slds-g-spacing-4, 1rem);
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.es_size-x-small {
+  padding: var(--slds-g-spacing-4, 1rem) var(--slds-g-spacing-3, 0.75rem);
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+/* No margin-bottom: the `.es` flex `gap` is the single source of vertical
+   rhythm, so the illustration sits the same distance from the title as the
+   title does from the description instead of carrying an extra half-step. */
+.es__illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.es__svg {
+  display: block;
+  height: auto;
+  user-select: none;
+}
+
+.es__illustration_medium .es__svg {
+  width: 100%;
+  max-width: 304px;
+}
+
+.es__illustration_small .es__svg {
+  width: 100%;
+  max-width: 200px;
+}
+
+/* x-small hides the illustration entirely (per the SLDS 2 spec). */
+
+.es__title {
+  margin: 0;
+  font-family: var(--slds-g-font-family-heading, var(--atlas-font, inherit));
+  font-weight: var(--slds-g-font-weight-7, 600);
+  font-size: var(--slds-g-font-scale-3, 1rem);
+  line-height: var(--slds-g-line-height-2, 1.35);
+  color: var(--slds-g-color-neutral-base-10, var(--atlas-ink, #181818));
+}
+
+.es_size-medium .es__title {
+  font-size: var(--slds-g-font-scale-5, 1.25rem);
+}
+
+.es_size-small .es__title {
+  font-size: var(--slds-g-font-scale-4, 1.125rem);
+}
+
+.es_size-x-small .es__title {
+  font-size: var(--slds-g-font-scale-2, 0.9375rem);
+}
+
+.es__description {
+  margin: 0;
+  max-width: 42ch;
+  font-family: var(--slds-g-font-family-base, var(--atlas-font, inherit));
+  font-size: var(--slds-g-font-scale-2, 0.9375rem);
+  line-height: var(--slds-g-line-height-3, 1.5);
+  color: var(--slds-g-color-neutral-base-30, var(--atlas-muted, #444));
+}
+
+.es_size-x-small .es__description {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+}
+
+.es__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  margin-top: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.es__cta:empty {
+  display: none;
+}

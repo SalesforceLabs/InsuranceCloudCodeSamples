@@ -1,0 +1,55 @@
+/* c-coverage-limits-setup - tabbed Coverage Limits configurator.
+   The tree markup now lives inside c-attribute-picker (group-mode
+   ="tree"); this stylesheet only styles the tab strip and the
+   panel container that hosts one picker per level. */
+
+:host {
+  display: block;
+}
+
+.cls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+
+/* ── Tabset - SLDS 2 underline tabs ───────────────────────── */
+.cls-tabs {
+  display: flex;
+  gap: var(--slds-g-spacing-var-6, 2rem);
+  border-bottom: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+.cls-tabs__btn {
+  position: relative;
+  padding: var(--slds-g-spacing-var-3, 0.75rem) 0;
+  background: transparent;
+  border: 0;
+  border-bottom: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  margin-bottom: calc(-1 * var(--slds-g-sizing-border-1, 1px));
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.cls-tabs__btn:hover {
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.cls-tabs__btn:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.cls-tabs__btn_active {
+  color: var(--slds-g-color-accent-2, #0250d9);
+  border-bottom-color: var(--slds-g-color-border-accent-1, #066afe);
+}
+
+/* ── Panel host for c-attribute-picker ─────────────────────── */
+.cls-panel {
+  display: flex;
+  flex-direction: column;
+}

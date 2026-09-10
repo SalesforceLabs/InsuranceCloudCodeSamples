@@ -1,0 +1,185 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-pa-vehicle-form - manual-entry vehicle roster.
+   SLDS form-element fields in a 2-column grid inside a flat card.
+   ════════════════════════════════════════════════════════════════════ */
+
+.pa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pa-form__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pa-form__title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 16px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+  letter-spacing: -0.01em;
+}
+.pa-form__subtitle {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-base, 13px);
+  color: var(--atlas-muted);
+}
+
+/* ── Card chrome (SLDS 2 - flat) ──────────────────────────────── */
+.pa-form__card {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #e5e5e5);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-4, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pa-form__card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pa-form__card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-brand-base-95, var(--atlas-brand-light, #edf4ff));
+  color: var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+  flex-shrink: 0;
+}
+.pa-form__card-icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.pa-form__card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-ink);
+}
+
+/* ── 2-column field grid ──────────────────────────────────────── */
+.pa-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+
+/* ── SLDS form-element ────────────────────────────────────────── */
+.slds-form-element__label {
+  display: block;
+  font-size: var(--slds-g-font-scale-base, 13px);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-ink);
+  /* SLDS 2 form element: 4px gap between label and control. */
+  margin: 0 0 var(--slds-g-spacing-1, 4px);
+}
+.slds-required {
+  color: var(--slds-g-color-error-1, #b60554);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  text-decoration: none;
+  margin-left: 2px;
+}
+
+.slds-input {
+  width: 100%;
+  box-sizing: border-box;
+  /* SLDS 2 input control height = 2rem (32px). */
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-var-inline-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  font-family: var(--atlas-font);
+  color: var(--atlas-ink);
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c7c5);
+  border-radius: var(--slds-g-radius-border-2, 0.25rem);
+}
+.slds-input::placeholder {
+  color: var(--atlas-muted);
+}
+.slds-input:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+  box-shadow: 0 0 0 1px var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+}
+
+.slds-select_container {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+.slds-select {
+  width: 100%;
+  box-sizing: border-box;
+  height: 40px;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0 36px 0 var(--slds-g-spacing-3, 12px);
+  font-size: var(--slds-g-font-scale-base, 13px);
+  font-family: var(--atlas-font);
+  color: var(--atlas-ink);
+  background-color: var(--slds-g-color-surface-container-1, #ffffff);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23706e6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #c9c7c5);
+  border-radius: var(--slds-g-radius-border-2, 0.25rem);
+  cursor: pointer;
+}
+.slds-select:focus {
+  outline: var(--slds-g-sizing-border-2, 2px) solid var(--slds-g-color-border-accent-1, #066afe);
+  outline-offset: var(--slds-g-sizing-1, 0.125rem);
+  border-color: var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+  box-shadow: 0 0 0 1px var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+}
+
+/* ── Add button (SLDS outline-brand) ──────────────────────────── */
+.pa-form__add {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0 var(--slds-g-spacing-4, 1rem);
+  font-family: var(--atlas-font);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-accent-1, rgba(6, 106, 254, 0.4));
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.pa-form__add:hover {
+  background: var(--slds-g-color-brand-base-95, var(--atlas-brand-light, #edf4ff));
+}
+.pa-form__add:focus-visible {
+  outline: 2px solid var(--slds-g-color-accent-1, var(--atlas-brand, #066afe));
+  outline-offset: 2px;
+}
+.pa-form__add-icon {
+  display: inline-flex;
+}
+.pa-form__add-icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+@media (max-width: 720px) {
+  .pa-form__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* SLDS 2 input control height (select) */
+.slds-select { height: var(--slds-g-sizing-9, 2rem); }

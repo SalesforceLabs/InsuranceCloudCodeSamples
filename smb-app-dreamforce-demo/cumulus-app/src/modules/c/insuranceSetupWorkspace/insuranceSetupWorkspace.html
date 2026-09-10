@@ -1,0 +1,590 @@
+<template>
+  <div class="isw">
+    <!-- ════════════════════════════════════════════════════════════
+         4-COLUMN SHELL - Sidebar | Pipeline | Detail (spans 2 cols)
+         ────────────────────────────────────────────────────────────
+         Column 1     : Left sidebar (top-level categories).
+         Column 2     : Pipeline of step cards (vertical flow builder).
+         Columns 3-4  : Detail pane (mounted child LWC OR empty state).
+         The pipeline stays visible at all times so picking a card
+         lights up its config in the right pane - like a node editor.
+         ════════════════════════════════════════════════════════════ -->
+
+    <header class="isw-header">
+      <h1 class="isw-header__title">Setup</h1>
+      <p class="isw-header__sub">
+        Pick a category, build the pipeline, then configure the active step.
+      </p>
+    </header>
+
+    <div class="isw-shell">
+      <!-- ─────────── COL 1 - Sidebar (Categories) ─────────── -->
+      <aside class="isw-side" aria-label="Setup categories">
+        <ul class="isw-side__list" role="list">
+          <template for:each={sidebarItems} for:item="s">
+            <li
+              key={s.id}
+              class={s.cls}
+              data-id={s.id}
+              role="button"
+              tabindex={s.tabIndex}
+              aria-pressed={s.ariaPressed}
+              aria-disabled={s.ariaDisabled}
+              onclick={handleSidebarClick}
+              onkeydown={handleSidebarKeydown}
+            >
+              <span class="isw-side__icon" aria-hidden="true">
+                <template lwc:if={s.isIconRfq}>
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path fill="currentColor" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm0 7V3.5L19.5 9H14zM8 12h8v2H8zm0 4h8v2H8z"/></svg>
+                </template>
+                <template lwc:if={s.isIconCompare}>
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path fill="currentColor" d="M10 3v18H8V3h2zm6 0v18h-2V3h2zM5 6h2v12H5V6zm12 0h2v12h-2V6z"/></svg>
+                </template>
+                <template lwc:if={s.isIconPlug}>
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path fill="currentColor" d="M16 8V4h-2v4h-4V4H8v4a3 3 0 00-1 2.2V12a4 4 0 003 3.9V20h4v-4.1a4 4 0 003-3.9v-1.8A3 3 0 0016 8z"/></svg>
+                </template>
+              </span>
+              <div class="isw-side__body">
+                <span class="isw-side__label">{s.label}</span>
+                <template lwc:if={s.description}>
+                  <span class="isw-side__desc">{s.description}</span>
+                </template>
+              </div>
+            </li>
+          </template>
+        </ul>
+      </aside>
+
+      <!-- ─────────── Landing View - full-width within the right grid cell ──
+           Shown when activeStepId is the templates / comp_templates marker
+           (i.e. before the broker picks a template or hits "+ New").
+           Header copy is category-specific; the template list components
+           render the tile grid + their own "+ New" CTA. -->
+      <template lwc:if={isLandingMode}>
+        <section class="isw-landing" aria-label="Templates dashboard">
+          <header class="isw-landing__head">
+            <h2 class="isw-landing__title">{landingTitle}</h2>
+            <p class="isw-landing__sub">{landingSub}</p>
+          </header>
+          <template lwc:if={isCompRfqTemplateListMount}>
+            <c-rfq-template-list
+              ontemplatepick={handleRfqTemplatePick}
+              ontemplatenew={handleRfqTemplateNew}
+            ></c-rfq-template-list>
+          </template>
+          <template lwc:if={isCompComparisonTemplateList}>
+            <c-comparison-template-list
+              ontemplatepick={handleComparisonTemplatePick}
+              ontemplatenew={handleComparisonTemplateNew}
+            ></c-comparison-template-list>
+          </template>
+        </section>
+      </template>
+
+      <!-- ─────────── Builder View - pipeline + detail 2-col card ─────────
+           Shown when a template is being edited (activeStepId is past the
+           Landing marker). Includes the "Back to Templates" breadcrumb at
+           the top so the broker can return to the Landing dashboard. -->
+      <template lwc:if={isBuilderMode}>
+      <div class="isw-builder">
+
+      <!-- ─────────── COLS 2-4 - Combined Pipeline + Detail pane ───────────
+           Single bordered card with an internal vertical divider:
+           pipeline on the left 1/3, detail/config on the right 2/3. -->
+      <div class="isw-combined">
+      <section class="isw-canvas-pipeline" aria-label="Pipeline">
+        <ol class="isw-pipeline" role="list">
+          <template for:each={pipelineNodes} for:item="n">
+            <li key={n.key} class="isw-pipeline__node">
+              <template lwc:if={n.isCard}>
+                <div
+                  class={n.card.cls}
+                  data-section-id={n.card.sectionId}
+                  data-sub-step-id={n.card.subStepId}
+                  role="button"
+                  tabindex={n.card.tabIndex}
+                  aria-pressed={n.card.ariaPressed}
+                  onclick={handleWidgetStepClick}
+                  onkeydown={handleWidgetStepKeydown}
+                >
+                  <div class="isw-pipeline__card-body">
+                    <h3 class="isw-widget__title">
+                      <span>{n.card.title}</span>
+                      <template lwc:if={n.card.isOptional}>
+                        <span class="isw-step-tag isw-step-tag_optional">Optional</span>
+                      </template>
+                    </h3>
+                    <p class="isw-widget__desc">{n.card.description}</p>
+                  </div>
+
+                  <!-- Kebab menu (Edit / Move up / Move down /
+                       Delete). Renders on every card; individual
+                       actions self-disable when they don't apply
+                       (built-in substeps can't be moved or deleted,
+                       locked cards can't be edited). Anchor click is
+                       stopped so a click in the menu's empty space
+                       doesn't also activate the parent card. -->
+                  <div class="isw-widget__menu-anchor" onclick={handleStepMenuAnchorClick}>
+                    <button
+                      type="button"
+                      class={n.card.menuBtnClass}
+                      data-key={n.card.key}
+                      aria-label={n.card.menuAriaLabel}
+                      aria-haspopup="menu"
+                      aria-expanded={n.card.isMenuOpen}
+                      title="More actions"
+                      onclick={handleToggleStepMenu}
+                    >
+                      <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                        <path d="M20 44c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6zm0-18c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6-6-2.7-6-6z"/>
+                      </svg>
+                    </button>
+
+                    <template lwc:if={n.card.isMenuOpen}>
+                      <ul class="isw-widget__menu" role="menu" aria-label="Step actions">
+                        <li role="none">
+                          <button
+                            type="button"
+                            role="menuitem"
+                            class="isw-widget__menu-item"
+                            data-key={n.card.key}
+                            data-section-id={n.card.sectionId}
+                            data-sub-step-id={n.card.subStepId}
+                            disabled={n.card.editDisabled}
+                            onclick={handleEditStep}
+                          >
+                            <svg class="isw-widget__menu-icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                              <path d="M9.5 33.4l8.9 8.9c.4.4 1 .4 1.4 0L42 20c.4-.4.4-1 0-1.4l-8.8-8.8c-.4-.4-1-.4-1.4 0L9.5 32.1c-.4.4-.4 1 0 1.3zM36.1 5.7c-.4.4-.4 1 0 1.4l8.8 8.8c.4.4 1 .4 1.4 0l2.5-2.5c1.6-1.5 1.6-3.9 0-5.5l-4.7-4.7c-1.6-1.6-4.1-1.6-5.7 0l-2.3 2.5zM2.1 48.2c-.2 1 .7 1.9 1.7 1.7l10.9-2.6c.4-.1.7-.3.9-.5l.2-.2c.2-.2.3-.9-.1-1.3l-9-9c-.4-.4-1.1-.3-1.3-.1l-.2.2c-.3.3-.4.6-.5.9L2.1 48.2z"/>
+                            </svg>
+                            Edit
+                          </button>
+                        </li>
+                        <template lwc:if={n.card.showMoveUp}>
+                          <li role="none">
+                            <button
+                              type="button"
+                              role="menuitem"
+                              class="isw-widget__menu-item"
+                              data-key={n.card.key}
+                              onclick={handleMoveStepUp}
+                            >
+                              <svg class="isw-widget__menu-icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M43.7 30.7L27.5 14.5c-.8-.8-2.2-.8-3 0L8.3 30.7c-.8.8-.8 2.2 0 3l2.1 2.1c.8.8 2.2.8 3 0L26 23.2l12.6 12.6c.8.8 2.2.8 3 0l2.1-2.1c.8-.8.8-2.1 0-3z"/>
+                              </svg>
+                              Move up
+                            </button>
+                          </li>
+                        </template>
+                        <template lwc:if={n.card.showMoveDown}>
+                          <li role="none">
+                            <button
+                              type="button"
+                              role="menuitem"
+                              class="isw-widget__menu-item"
+                              data-key={n.card.key}
+                              onclick={handleMoveStepDown}
+                            >
+                              <svg class="isw-widget__menu-icon" viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8.3 21.3l16.2 16.2c.8.8 2.2.8 3 0l16.2-16.2c.8-.8.8-2.2 0-3l-2.1-2.1c-.8-.8-2.2-.8-3 0L26 28.8 13.4 16.2c-.8-.8-2.2-.8-3 0l-2.1 2.1c-.8.8-.8 2.2 0 3z"/>
+                              </svg>
+                              Move down
+                            </button>
+                          </li>
+                        </template>
+                        <li role="none" class="isw-widget__menu-sep" aria-hidden="true"></li>
+                        <li role="none">
+                          <button
+                            type="button"
+                            role="menuitem"
+                            class="isw-widget__menu-item isw-widget__menu-item_destructive"
+                            data-key={n.card.key}
+                            disabled={n.card.deleteDisabled}
+                            onclick={handleDeleteStep}
+                          >
+                            <svg class="isw-widget__menu-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                              <path fill="currentColor" d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                            Delete
+                          </button>
+                        </li>
+                      </ul>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+              <template lwc:if={n.isConnector}>
+                <!-- Plain connector - no [+] button. The pipeline
+                     still reads as a continuous flow but the broker
+                     can't inject a widget here. -->
+                <div class="isw-pipeline__gap" aria-hidden="true">
+                  <span class="isw-pipeline__connector"></span>
+                </div>
+              </template>
+
+              <template lwc:if={n.isInsert}>
+                <!-- Insert-node - [+] is permanently visible because
+                     this gap sits at an allowed injection point
+                     (`ALLOWED_INSERTION_TARGETS`). -->
+                <div
+                  class="isw-pipeline__insert isw-pipeline__insert_pinned"
+                  data-insert-index={n.insertIndex}
+                >
+                  <span class="isw-pipeline__connector" aria-hidden="true"></span>
+                  <button
+                    type="button"
+                    class="isw-pipeline__add-btn"
+                    data-insert-index={n.insertIndex}
+                    aria-label="Insert step here"
+                    title="Insert step here"
+                    onclick={handleAddWidgetClick}
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M19 11h-6V5a1 1 0 00-2 0v6H5a1 1 0 000 2h6v6a1 1 0 002 0v-6h6a1 1 0 000-2z"/></svg>
+                  </button>
+                </div>
+              </template>
+            </li>
+          </template>
+        </ol>
+
+        <!-- Outside-click dismiss for the per-card kebab menu.
+             Single scrim serves whichever card has its menu open. -->
+        <template lwc:if={hasOpenStepMenu}>
+          <div class="isw-widget__menu-scrim" onclick={handleCloseStepMenu}></div>
+        </template>
+      </section>
+
+      <!-- Vertical divider between pipeline and detail. -->
+      <div class="isw-combined__divider" aria-hidden="true"></div>
+
+      <section class="isw-canvas-detail" aria-label="Step configuration">
+        <template lwc:if={isStepSelected}>
+          <!-- Crumb shows the active step title only. Clear-selection
+               [x] removed - brokers navigate between steps by
+               clicking other pipeline cards on the left, which
+               already provides the "leave this step" affordance.
+               Suppressed for the two Comparison Template stages
+               that render their own title row + live-preview
+               toggle inline (see showStepCrumb / paired
+               quoteCompareSetup.showPanelTitle). -->
+          <template lwc:if={showStepCrumb}>
+            <header class="isw-canvas__crumb">
+              <h2 class="isw-canvas__crumb-current">{activeStepTitle}</h2>
+            </header>
+          </template>
+
+          <div class="isw-canvas__detail">
+            <template lwc:if={isCompRfqPlaybookMount}>
+              <div class="isw-canvas__mount">
+                <c-rfq-playbook-setup
+                  lob={playbookLob}
+                  coverage={playbookCoverage}
+                  embedded
+                  stage-id={effectiveStageId}
+                  hide-picker={hidePlaybookPicker}
+                  seeded-lob={seededRfqLob}
+                  seeded-loc={seededRfqLoc}
+                  onconfigurationsave={handleConfigurationSave}
+                  onassignmentschange={handlePlaybookAssignmentsChange}
+                ></c-rfq-playbook-setup>
+              </div>
+            </template>
+
+            <template lwc:if={isCompRfqTemplateListMount}>
+              <div class="isw-canvas__mount">
+                <c-rfq-template-list
+                  ontemplatepick={handleRfqTemplatePick}
+                  ontemplatenew={handleRfqTemplateNew}
+                ></c-rfq-template-list>
+              </div>
+            </template>
+
+            <template lwc:if={isCompPublishMount}>
+              <div class="isw-canvas__mount">
+                <c-rfq-publish-template
+                  root-product={selectedRootProduct}
+                  editing-template-id={editingRfqTemplateId}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-rfq-publish-template>
+              </div>
+            </template>
+
+            <template lwc:if={isCompReviewHandoff}>
+              <!-- Broker Review & Handoff - admin-persona surface
+                   for integrations + the runtime preview the broker
+                   will see before binding. Mounts via substep-level
+                   `component` override on CONFIGURE_SUBSTEPS[review]. -->
+              <div class="isw-canvas__mount">
+                <c-review-handoff-setup
+                  selected-root-product={selectedRootProduct}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-review-handoff-setup>
+              </div>
+            </template>
+
+            <template lwc:if={isCompCoverageLimits}>
+              <!-- Coverage Limits (PL Auto) - dedicated tabbed +
+                   nested attribute picker. Mounts via substep-level
+                   `component` override on the Personal Lines
+                   CONFIGURE_SUBSTEPS[coverages] entry. -->
+              <div class="isw-canvas__mount">
+                <c-coverage-limits-setup
+                  selected-root-product={selectedRootProduct}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-coverage-limits-setup>
+              </div>
+            </template>
+
+            <template lwc:if={isCompCoverageBenefit}>
+              <div class="isw-canvas__mount isw-canvas__mount_stack">
+                <c-eb-coverage-setup
+                  selected-root-ids={activeRootProductAsList}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-eb-coverage-setup>
+                <c-eb-benefit-setup
+                  selected-root-ids={activeRootProductAsList}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-eb-benefit-setup>
+              </div>
+            </template>
+
+            <template lwc:if={isCompComparisonTemplateList}>
+              <div class="isw-canvas__mount">
+                <c-comparison-template-list
+                  ontemplatepick={handleComparisonTemplatePick}
+                  ontemplatenew={handleComparisonTemplateNew}
+                ></c-comparison-template-list>
+              </div>
+            </template>
+
+            <template lwc:if={isCompQuoteCompare}>
+              <div class="isw-canvas__mount">
+                <c-quote-compare-setup
+                  lwc:ref="compareWizard"
+                  embedded
+                  active-wizard-step={effectiveComparisonWizardStep}
+                  template-id-prop={editingComparisonTemplateId}
+                  seeded-lob={seededCompareLob}
+                  seeded-loc={seededCompareLoc}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-quote-compare-setup>
+              </div>
+            </template>
+
+            <template lwc:if={isCompEbIntake}>
+              <div class="isw-canvas__mount">
+                <c-eb-intake-setup
+                  root-product={selectedRootProduct}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-eb-intake-setup>
+              </div>
+            </template>
+
+            <template lwc:if={isCompEbComparison}>
+              <div class="isw-canvas__mount">
+                <c-eb-comparison-setup
+                  root-product={selectedRootProduct}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-eb-comparison-setup>
+              </div>
+            </template>
+
+            <template lwc:if={isCompEbIntegration}>
+              <div class="isw-canvas__mount">
+                <c-eb-integration-hub
+                  root-product={selectedRootProduct}
+                  onconfigurationsave={handleConfigurationSave}
+                ></c-eb-integration-hub>
+              </div>
+            </template>
+
+            <template lwc:if={isCompComingSoon}>
+              <c-empty-state
+                illustration-name="maintenance:planned"
+                title={activeTitle}
+                size="medium"
+              >
+                Coming soon. {activeDescription}
+              </c-empty-state>
+            </template>
+
+            <template lwc:if={isCustomInjectedStep}>
+              <c-empty-state
+                illustration-name="success:new"
+                title={activeStepTitle}
+                size="medium"
+              >
+                User-added step. {customStepDescription}
+              </c-empty-state>
+            </template>
+          </div>
+
+          <!-- ── Action row (Cancel / Previous / Next) ─────────
+               Sits at the bottom of the detail pane so the
+               navigation controls stay contextually attached to
+               the active step's config. `margin-top: auto`
+               pushes it to the pane's bottom even when the
+               config content is short. -->
+          <footer
+            class="isw-canvas__actions"
+            role="group"
+            aria-label="Step actions"
+          >
+            <button
+              type="button"
+              class="isw-canvas__actions-btn isw-canvas__actions-btn_subtle"
+              onclick={handleFooterCancel}
+            >Cancel</button>
+            <div class="isw-canvas__actions-spacer"></div>
+            <button
+              type="button"
+              class="isw-canvas__actions-btn isw-canvas__actions-btn_subtle"
+              onclick={handleFooterPrevious}
+              disabled={isFooterPreviousDisabled}
+            >Previous</button>
+            <button
+              type="button"
+              class="isw-canvas__actions-btn isw-canvas__actions-btn_primary"
+              onclick={handleFooterNext}
+              disabled={isFooterNextDisabled}
+            >{footerNextLabel}</button>
+          </footer>
+        </template>
+
+        <!-- Empty state - no step picked. Keeps the right pane
+             present so the layout doesn't shift when a card is
+             clicked. Uses the shared SLDS 2 Empty State so the
+             illustration is the official Cosmos "success:new". -->
+        <template lwc:if={showPickStepEmpty}>
+          <div class="isw-canvas__empty-pane">
+            <c-empty-state
+              illustration-name="success:new"
+              title="Pick a step"
+              size="medium"
+            >
+              Click any step in the pipeline to configure it here.
+              Use the + button between cards to inject a new step at
+              that position.
+            </c-empty-state>
+          </div>
+        </template>
+
+        <!-- Forced demo empty/error state, driven by
+             `?forceEmpty=isw@<code>`. Renders in place of the canvas
+             so the shell demonstrates the SLDS 2 Cosmos surface. -->
+        <template lwc:if={hasForcedState}>
+          <div class="isw-canvas__empty-pane">
+            <c-empty-state
+              illustration-name={forcedStateName}
+              title={forcedStateTitle}
+              size="medium"
+            >
+              {forcedStateDescription}
+              <template lwc:if={hasForcedStateCta}>
+                <button
+                  slot="cta"
+                  type="button"
+                  class="slds-button slds-button_brand"
+                >{forcedStateCtaLabel}</button>
+              </template>
+            </c-empty-state>
+          </div>
+        </template>
+      </section>
+      </div>
+      </div>
+      </template>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         Add-Widget Picker
+         ════════════════════════════════════════════════════════════ -->
+    <template lwc:if={addPickerOpen}>
+      <div
+        class="isw-picker"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="isw-picker-title"
+        onclick={handlePickerBackdrop}
+      >
+        <div
+          class="isw-picker__container"
+          onclick={handlePickerStop}
+        >
+          <header class="isw-picker__head">
+            <h2 id="isw-picker-title" class="isw-picker__title">
+              Add a step to the pipeline
+            </h2>
+            <button
+              type="button"
+              class="isw-picker__close"
+              aria-label="Close"
+              onclick={handlePickerClose}
+            >
+              <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+            </button>
+          </header>
+
+          <ul class="isw-picker__list" role="list">
+            <template for:each={pickerTypes} for:item="t">
+              <li
+                key={t.kind}
+                class="isw-picker__item"
+                role="button"
+                tabindex="0"
+                data-kind={t.kind}
+                onclick={handlePickerSelect}
+                onkeydown={handlePickerKeydown}
+              >
+                <span class="isw-widget__icon-wrap" aria-hidden="true">
+                  <template lwc:if={t.isIconCatalog}>
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path fill="currentColor" d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                  </template>
+                  <template lwc:if={t.isIconToggle}>
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path fill="currentColor" d="M19.43 12.98a7.86 7.86 0 000-1.96l2.11-1.65a.5.5 0 00.12-.64l-2-3.46a.5.5 0 00-.61-.22l-2.49 1a7.7 7.7 0 00-1.7-.98l-.38-2.65A.5.5 0 0014 2h-4a.5.5 0 00-.49.42L9.13 5.07a7.7 7.7 0 00-1.7.98l-2.49-1a.5.5 0 00-.61.22l-2 3.46a.5.5 0 00.12.64L4.57 11.02a7.86 7.86 0 000 1.96L2.46 14.63a.5.5 0 00-.12.64l2 3.46a.5.5 0 00.61.22l2.49-1c.52.4 1.09.73 1.7.98l.38 2.65a.5.5 0 00.49.42h4a.5.5 0 00.49-.42l.38-2.65c.61-.25 1.18-.58 1.7-.98l2.49 1a.5.5 0 00.61-.22l2-3.46a.5.5 0 00-.12-.64l-2.11-1.65zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg>
+                  </template>
+                  <template lwc:if={t.isIconCompare}>
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path fill="currentColor" d="M10 3v18H8V3h2zm6 0v18h-2V3h2zM5 6h2v12H5V6zm12 0h2v12h-2V6z"/></svg>
+                  </template>
+                  <template lwc:if={t.isIconPlug}>
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path fill="currentColor" d="M16 8V4h-2v4h-4V4H8v4a3 3 0 00-1 2.2V12a4 4 0 003 3.9V20h4v-4.1a4 4 0 003-3.9v-1.8A3 3 0 0016 8z"/></svg>
+                  </template>
+                  <template lwc:if={t.isIconDoc}>
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path fill="currentColor" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm0 7V3.5L19.5 9H14zM8 12h8v2H8zm0 4h8v2H8z"/></svg>
+                  </template>
+                </span>
+                <div class="isw-picker__item-body">
+                  <h3 class="isw-picker__item-title">{t.title}</h3>
+                  <p class="isw-picker__item-desc">{t.description}</p>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </template>
+
+    <!-- Pre-builder LOB/LOC capture modal. Opens from the "+ New
+         Template" CTA on either dashboard; on Continue, the
+         workspace switches to builder mode with the picks seeded
+         into the right child (RFQ playbook / Comparison setup). -->
+    <c-template-init-modal
+      open={templateInitModalOpen}
+      kind={templateInitModalKind}
+      oncontinue={handleTemplateInitContinue}
+      oncancel={handleTemplateInitCancel}
+    ></c-template-init-modal>
+
+    <!-- Edit Widget modal. Opened from the pipeline card kebab's
+         Edit action. `context` carries the current card's
+         resolved payload (metadata + kind-specific config); on
+         save the workspace stores the returned patch in
+         `stepOverrides` and merges it into the pipeline. -->
+    <c-step-edit-modal
+      open={editModalOpen}
+      context={editModalContext}
+      onsave={handleEditModalSave}
+      oncancel={handleEditModalCancel}
+    ></c-step-edit-modal>
+  </div>
+</template>

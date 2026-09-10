@@ -1,0 +1,82 @@
+<template>
+  <div class="eb-rp">
+    <!-- ── Record header ─────────────────────────────────────────── -->
+    <header class="eb-rp__header">
+      <div class="eb-rp__header-top">
+        <div class="eb-rp__header-main">
+          <span class="eb-rp__obj-icon" aria-hidden="true">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path
+                fill="#fff"
+                d="M6 2h8l4 4v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm7 1.5V7h3.5L13 3.5zM8 11h8v1.5H8V11zm0 3.5h8V16H8v-1.5zM8 18h5v1.5H8V18z"
+              />
+            </svg>
+          </span>
+          <div class="eb-rp__header-text">
+            <p class="eb-rp__eyebrow">Insurance Policy</p>
+            <h1 class="eb-rp__title">{policyName}</h1>
+          </div>
+        </div>
+
+        <!-- Action buttons (upfront, like a standard record page) -->
+        <div class="eb-rp__actions" role="group" aria-label="Policy actions">
+          <button class="eb-rp__btn" type="button">Follow</button>
+          <button class="eb-rp__btn" type="button">Edit</button>
+          <button class="eb-rp__btn eb-rp__btn_brand" type="button" onclick={handleRenewPolicy}>
+            Renew Policy
+          </button>
+          <button class="eb-rp__btn eb-rp__btn_caret" type="button" aria-label="More actions">
+            <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M47.6 17.8L27.1 38.5c-.6.6-1.6.6-2.2 0L4.4 17.8c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0l16.1 16.3c.6.6 1.6.6 2.2 0l16.1-16.2c.6-.6 1.6-.6 2.2 0l2.2 2.2c.5.6.5 1.5 0 2.1z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <dl class="eb-rp__highlights">
+        <div class="eb-rp__highlight">
+          <dt>Policy Number</dt>
+          <dd>{policyNumber}</dd>
+        </div>
+        <div class="eb-rp__highlight">
+          <dt>Line of Business</dt>
+          <dd>{lob}</dd>
+        </div>
+        <div class="eb-rp__highlight">
+          <dt>Status</dt>
+          <dd>
+            <span class="eb-rp__status">Active</span>
+          </dd>
+        </div>
+      </dl>
+    </header>
+
+    <!-- ── Tab strip ─────────────────────────────────────────────── -->
+    <div class="eb-rp__tabs" role="tablist" aria-label="Insurance Policy">
+      <template for:each={tabs} for:item="t">
+        <button
+          key={t.id}
+          class={t.tabClass}
+          type="button"
+          role="tab"
+          aria-selected={t.ariaSelected}
+          data-id={t.id}
+          onclick={handleTabClick}
+        >
+          {t.label}
+        </button>
+      </template>
+    </div>
+
+    <!-- ── Tab body ──────────────────────────────────────────────── -->
+    <div class="eb-rp__body">
+      <template lwc:if={isPlanTab}>
+        <c-eb-policy-plan-tab></c-eb-policy-plan-tab>
+      </template>
+      <template lwc:if={isDetailsTab}>
+        <p class="eb-rp__placeholder">Policy detail fields would appear here.</p>
+      </template>
+      <template lwc:if={isRelatedTab}>
+        <p class="eb-rp__placeholder">Related lists would appear here.</p>
+      </template>
+    </div>
+  </div>
+</template>

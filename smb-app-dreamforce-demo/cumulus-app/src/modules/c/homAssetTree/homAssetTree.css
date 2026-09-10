@@ -1,0 +1,399 @@
+/* ════════════════════════════════════════════════════════════════════
+   c-hom-asset-tree - Homeowners Schedule of Property.
+   Each dwelling is a parent row; scheduled personal property items nest
+   beneath it. Styling hooks follow SLDS 2 (surface containers, density-
+   aware spacing, border radii) so a future SLDS swap is a one-liner.
+   ════════════════════════════════════════════════════════════════════ */
+
+.hom-asset-tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* SLDS's screen-reader-only helper isn't inherited into LWC shadow
+   roots, so redeclare it here. Otherwise the <span class="slds-
+   assistive-text"> inside each icon-only button renders as visible
+   text next to the ⋮ glyph ("⋮ Dwelling actions"). */
+.slds-assistive-text {
+  position: absolute;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  width: var(--slds-g-sizing-border-1, 1px);
+  height: var(--slds-g-sizing-border-1, 1px);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.hom-asset-tree__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+}
+
+/* ── Parent dwelling node ─────────────────────────────────── */
+.hom-asset-tree__node {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-4, 1rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-2, 0.5rem);
+  transition: box-shadow 160ms ease;
+}
+
+.hom-asset-tree__node:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.hom-asset-tree__dwl {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.hom-asset-tree__chevron-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.hom-asset-tree__chevron-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.hom-asset-tree__chevron {
+  width: 12px;
+  height: 12px;
+  transition: transform 160ms ease;
+}
+.hom-asset-tree__chevron.is-open {
+  transform: rotate(90deg);
+}
+
+.hom-asset-tree__dwl-icon {
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.hom-asset-tree__dwl-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.hom-asset-tree__dwl-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hom-asset-tree__dwl-body_clickable {
+  cursor: pointer;
+}
+.hom-asset-tree__dwl-body_clickable:hover .hom-asset-tree__dwl-title {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.hom-asset-tree__dwl-titlerow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.hom-asset-tree__dwl-title {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: 1.25;
+}
+
+.hom-asset-tree__dwl-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+.hom-asset-tree__item-count {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  padding: 2px 10px;
+  border-radius: var(--slds-g-radius-border-pill, 9999px);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  white-space: nowrap;
+}
+
+.hom-asset-tree__status {
+  font-size: var(--slds-g-font-scale-neg-2, 0.625rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  text-transform: uppercase;
+}
+.hom-asset-tree__status.is-draft {
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-warning-1, #8c4b02);
+}
+
+/* View eye icon */
+.hom-asset-tree__view-btn {
+  background: transparent;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+.hom-asset-tree__view-btn:hover {
+  color: var(--slds-g-color-accent-2, #0250d9);
+}
+.hom-asset-tree__view-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.hom-asset-tree__view-btn_sm svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── Overflow menu ─────────────────────────────────────────── */
+.hom-asset-tree__dwl-menu {
+  position: relative;
+}
+
+.hom-asset-tree__menu-btn {
+  background: transparent;
+  border: var(--slds-g-sizing-border-1, 1px) solid transparent;
+  padding: 4px 6px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  cursor: pointer;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+.hom-asset-tree__menu-btn:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.hom-asset-tree__menu-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.hom-asset-tree__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 200px;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem) 0;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  z-index: 20;
+}
+
+.hom-asset-tree__menu-item {
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.hom-asset-tree__menu-item:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+/* ── Scheduled items body ─────────────────────────────────── */
+.hom-asset-tree__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+.hom-asset-tree__items {
+  /* One shared nesting step - the same hook the Policy UI tree and the
+     bundle tables indent by. Nesting reads from the indent alone; the
+     tree draws no connector rails. */
+  --hom-tree-step: var(--slds-g-spacing-6, 2rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding-left: var(--hom-tree-step);
+}
+
+.hom-asset-tree__items_empty {
+  padding-top: var(--slds-g-spacing-var-2, 0.5rem);
+}
+
+.hom-asset-tree__item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  background: var(--slds-g-color-surface-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  padding: var(--slds-g-spacing-var-2, 0.5rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  position: relative;
+}
+
+.hom-asset-tree__item-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-warning-container-1, #f9e3b6);
+  color: var(--slds-g-color-warning-1, #8c4b02);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.hom-asset-tree__item-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.hom-asset-tree__item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hom-asset-tree__item-namerow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.hom-asset-tree__item-name {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+
+.hom-asset-tree__item-meta {
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/* Scheduled-item row actions now live in an overflow menu (same
+   pattern as dwelling / homeowner rows) so all row-action affordances
+   in the tree read as one system. The overflow trigger reuses
+   .hom-asset-tree__menu-btn + .hom-asset-tree__menu styles above. */
+.hom-asset-tree__item-menu {
+  position: relative;
+}
+
+.hom-asset-tree__empty-body {
+  margin: 0;
+  padding: var(--slds-g-spacing-var-3, 0.75rem)
+    var(--slds-g-spacing-var-4, 1rem);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+}
+
+/* ── Empty tree (no dwellings / no homeowners) ─────────────────
+   Thin wrapper around <c-empty-state> - c-empty-state carries the
+   full SLDS 2 Empty State anatomy (illustration + title +
+   description + optional CTA) and its own padding, so the wrapper
+   is purely a positioning host. Previously this wrapper was a flex
+   column with align-items: center + its own dashed/grey chrome and
+   its own <svg>/<p> sizing, which (a) duplicated c-empty-state's
+   styling and (b) collapsed the c-empty-state host to its min-
+   content width - the description then wrapped one word per line.
+   See sibling fix in paAssetTree.css (2026-08-12). */
+.hom-asset-tree__empty {
+  display: block;
+  padding: 0;
+}
+.hom-asset-tree__empty c-empty-state {
+  display: block;
+  width: 100%;
+}
+
+/* Slim empty state (used inside the Homeowners section when the
+   Dwellings list is populated but Homeowners aren't yet). Sizing
+   is now driven by c-empty-state's size="x-small" prop, so this
+   modifier just mirrors the base wrapper's block layout. */
+.hom-asset-tree__empty_slim {
+  display: block;
+  padding: 0;
+}
+.hom-asset-tree__empty_slim c-empty-state {
+  display: block;
+  width: 100%;
+}
+
+/* ── Sibling section (Homeowners) ─────────────────────────────── */
+.hom-asset-tree__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+  margin-top: var(--slds-g-spacing-var-5, 1.5rem);
+  padding-top: var(--slds-g-spacing-var-4, 1rem);
+  border-top: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+}
+
+.hom-asset-tree__section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.hom-asset-tree__section-title {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  letter-spacing: -0.01em;
+}
+
+/* Homeowner avatar - initials on an accent square, mirrors the
+   dwelling icon square shape but with a Named Insured color cue. */
+.hom-asset-tree__owner-avatar {
+  width: var(--slds-g-sizing-9, 32px);
+  height: var(--slds-g-sizing-9, 32px);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-palette-indigo-40, #3a49da);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  font-weight: var(--slds-g-font-weight-7, 700);
+}
+.hom-asset-tree__owner-initials {
+  letter-spacing: 0.05em;
+}

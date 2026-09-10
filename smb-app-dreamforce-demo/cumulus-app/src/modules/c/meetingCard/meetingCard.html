@@ -1,0 +1,19 @@
+<template>
+  <article class="card" tabindex="0">
+    <div class="head">
+      <span class={statusClass}>{meeting.prepStatus}</span>
+      <span class="time">{meeting.time}</span>
+    </div>
+
+    <h3 class="title">{meeting.title}</h3>
+    <div class="account">{meeting.account}</div>
+
+    <div class="foot">
+      <span class="type">
+        <span class="type-icon">{typeIcon}</span>
+        {meeting.type}
+      </span>
+      <button class="action" onclick={handleOpen} type="button">Open Prep →</button>
+    </div>
+  </article>
+</template>

@@ -1,0 +1,70 @@
+<template>
+  <template lwc:if={visible}>
+    <!-- Modal-style backdrop. Blankets the app while the toast is
+         up so the journey-end affordance is the only thing the
+         broker can act on. Clicking dismisses. -->
+    <div
+      class="slds-backdrop slds-backdrop_open"
+      onclick={handleDismiss}
+    ></div>
+
+    <!-- SLDS 2 notify container - anchored top-center per the
+         Toast blueprint. The container is pointer-events:none so
+         only the toast itself is clickable. -->
+    <div class="slds-notify_container">
+      <div
+        class={toastClass}
+        role="status"
+        aria-live="polite"
+      >
+        <span class="slds-assistive-text">{kindLabel}</span>
+        <span class="slds-icon_container toast__icon" aria-hidden="true">
+          <template lwc:if={isSuccess}>
+            <svg
+              class="slds-icon slds-icon_small"
+              viewBox="0 0 52 52"
+              fill="currentColor"
+              focusable="false"
+            ><path d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/></svg>
+          </template>
+          <template lwc:elseif={isError}>
+            <svg
+              class="slds-icon slds-icon_small"
+              viewBox="0 0 52 52"
+              fill="currentColor"
+              focusable="false"
+            ><path d="M26 2C12.7 2 2 12.7 2 26s10.7 24 24 24 24-10.7 24-24S39.3 2 26 2zm0 12.1c1.7 0 3 1.3 3 3s-1.3 3-3 3-3-1.3-3-3 1.3-3 3-3zm5 21c0 .5-.4.9-1 .9h-8c-.5 0-1-.3-1-.9v-2c0-.5.4-1.1 1-1.1.5 0 1-.3 1-.9v-4c0-.5-.4-1.1-1-1.1-.5 0-1-.3-1-.9v-2c0-.5.4-1.1 1-1.1h6c.5 0 1 .5 1 1.1v8c0 .5.4.9 1 .9.5 0 1 .5 1 1.1v2z"/></svg>
+          </template>
+          <template lwc:else>
+            <svg
+              class="slds-icon slds-icon_small"
+              viewBox="0 0 52 52"
+              fill="currentColor"
+              focusable="false"
+            ><path d="M26 2C12.9 2 2 12.9 2 26s10.9 24 24 24 24-10.9 24-24S39.1 2 26 2zm-2 12c0-.6.4-1 1-1h2c.6 0 1 .4 1 1v2c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1v-2zm5 24c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1v-2c0-.6.4-1 1-1 .6 0 1-.4 1-1v-6c0-.6-.4-1-1-1-.6 0-1-.4-1-1v-2c0-.6.4-1 1-1h5c.6 0 1 .4 1 1v10c0 .6.4 1 1 1 .6 0 1 .4 1 1v2z"/></svg>
+          </template>
+        </span>
+        <div class="slds-notify__content">
+          <h2 class="slds-text-heading_small toast__message">{message}</h2>
+        </div>
+        <div class="slds-notify__close">
+          <button
+            class="slds-button slds-button_icon slds-button_icon-inverse toast__close"
+            type="button"
+            title="Close"
+            onclick={handleDismiss}
+          >
+            <svg
+              class="slds-button__icon"
+              viewBox="0 0 52 52"
+              fill="currentColor"
+              focusable="false"
+              aria-hidden="true"
+            ><path d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/></svg>
+            <span class="slds-assistive-text">Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+</template>

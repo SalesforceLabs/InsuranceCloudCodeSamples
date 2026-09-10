@@ -1,0 +1,281 @@
+/* c-rfq-template-list - Templates dashboard for the RFQ Setup
+   workspace. Visual language mirrors c-quote-compare-setup's tile
+   grid (qcs-template) so brokers see a consistent dashboard pattern
+   across the two setups. Namespaced `rtl-` to avoid global bleed. */
+
+:host {
+  display: block;
+}
+.rtl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-var-5, 1.5rem);
+  position: relative;
+}
+
+/* Toolbar + tiles share a 3-column track so Filter/Sort sit on
+   the last-column edge. Landing card stays full width; Add New
+   stays outside this cluster. */
+.rtl__cluster {
+  display: flex;
+  flex-direction: column;
+  width: calc(3 * 22rem + 2 * var(--slds-g-spacing-var-4, 1rem));
+  max-width: 100%;
+  gap: var(--slds-g-spacing-var-3, 0.75rem);
+}
+
+/* ── Tile grid: 3 columns, N rows ─────────────────────────── */
+.rtl__tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, 22rem);
+  gap: var(--slds-g-spacing-var-4, 1rem);
+  align-items: stretch;
+  /* Equalise every row to the tallest tile, so a title that wraps to
+     two lines can't leave its row taller than the rows above it. */
+  grid-auto-rows: 1fr;
+}
+
+/* SLDS 2 Nested Card. Padding lives on the head/body sections so the
+   card itself stays flush at the border. */
+.rtl-template {
+  position: relative;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  /* SLDS 2 Nested-Card radius - 12px per the Cards spec. */
+  border-radius: var(--slds-g-radius-border-3, 0.75rem);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 120ms ease, transform 120ms ease;
+  /* No overflow clipping: the kebab action menu is absolutely
+     positioned below the header and must escape the card bounds.
+     is-menu-open bumps z-index so the menu stacks above sibling
+     tiles without needing overflow: visible on the grid. */
+}
+.rtl-template:hover {
+  box-shadow:
+    0 0 0 1px var(--slds-g-color-border-1, #c9c9c9),
+    0 4px 10px rgba(3, 35, 77, 0.06);
+  transform: translateY(-1px);
+}
+.rtl-template.is-inactive {
+  opacity: 0.78;
+}
+.rtl-template.is-menu-open {
+  /* Lift above the click-outside scrim so menu items remain
+     interactive. Mirrors qcs-template.is-menu-open. */
+  z-index: 5;
+}
+
+/* Header - icon + title + kebab. Horizontal padding is shared
+   with the body so the icon's left edge aligns with the LOB · LOC
+   line below it. */
+.rtl-template__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-var-5, 1.5rem)
+    var(--slds-g-spacing-var-5, 1.5rem) var(--slds-g-spacing-3, 0.75rem);
+}
+/* Left icon - 32px rounded square (sizing-9 + radius-border-1).
+   Brand-blue distinguishes RFQ templates from Comparison templates
+   (which use indigo). Bumped from 24->32 so the glyph reads at
+   the same visual weight as the title. */
+.rtl-template__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  flex-shrink: 0;
+}
+.rtl-template__icon svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+/* Title - font-scale-2 / weight-6 (semibold) / on-surface-3 navy.
+   Sized to balance the 32px icon and the badges below; semibold
+   gives the title authority without going to display weight. */
+.rtl-template__name {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Body - LOB · LOC as text, then version / live date. */
+.rtl-template__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: 0 var(--slds-g-spacing-var-5, 1.5rem)
+    var(--slds-g-spacing-var-5, 1.5rem);
+  flex: 1 1 auto;
+}
+.rtl-template__scope,
+.rtl-template__meta-line {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  line-height: var(--slds-g-font-lineheight-3, 1.375);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Kebab + menu anchored to the tile. */
+.rtl-menu-anchor {
+  position: relative;
+}
+.rtl-template__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--slds-g-sizing-9, 2rem);
+  height: var(--slds-g-sizing-9, 2rem);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+  cursor: pointer;
+}
+.rtl-template__more svg {
+  width: var(--slds-g-sizing-5, 1rem);
+  height: var(--slds-g-sizing-5, 1rem);
+}
+.rtl-template__more:hover,
+.rtl-template__more.is-open {
+  background: var(--slds-g-color-surface-container-3, #e5e5e5);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+}
+.rtl-menu {
+  position: absolute;
+  top: calc(100% + var(--slds-g-spacing-1, 0.25rem));
+  right: 0;
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-1, 0.25rem);
+  min-width: 12rem;
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  box-shadow: 0 6px 18px rgba(3, 35, 77, 0.12);
+  z-index: 10;
+}
+.rtl-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  width: 100%;
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-3, 0.75rem);
+  background: transparent;
+  border: none;
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  font-size: var(--slds-g-font-scale-neg-1, 0.75rem);
+  text-align: left;
+  cursor: pointer;
+}
+.rtl-menu__item:hover,
+.rtl-menu__item:focus-visible {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  outline: none;
+}
+.rtl-menu__item_destructive {
+  color: var(--slds-g-color-error-1, #b60554);
+}
+.rtl-menu__item_destructive:hover,
+.rtl-menu__item_destructive:focus-visible {
+  background: var(--slds-g-color-error-container-1, #fddde3);
+  color: var(--slds-g-color-on-error-2, #8a033e);
+}
+.rtl-menu__icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: 0 0 auto;
+}
+.rtl-menu__sep {
+  display: block;
+  height: var(--slds-g-sizing-border-1, 1px);
+  margin: var(--slds-g-spacing-1, 0.25rem) 0;
+  background: var(--slds-g-color-border-1, #c9c9c9);
+}
+.rtl-menu-scrim {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 4;
+}
+
+/* Empty state sits flush on the canvas - no dashed panel or
+   grey fill. c-empty-state supplies its own padding. */
+.rtl__empty {
+  display: block;
+}
+.rtl__empty c-empty-state {
+  display: block;
+  width: 100%;
+}
+
+/* ── CTA row ──────────────────────────────────────────────── */
+.rtl__cta-row {
+  display: flex;
+}
+/* SLDS 2 primary button - pill radius, 32px min-height, 0.5/1rem
+   padding. Mirrors `.isw-canvas__actions-btn_primary` so every
+   primary CTA in the workspace reads as the same primitive. */
+.rtl__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-var-4, 1rem);
+  min-height: var(--slds-g-sizing-9, 2rem);
+  background: var(--slds-g-color-accent-container-1, #066afe);
+  color: var(--slds-g-color-on-accent-1, #ffffff);
+  border: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-accent-1, #066afe);
+  border-radius: var(--slds-g-radius-border-pill, 15rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  cursor: pointer;
+}
+.rtl__cta:hover {
+  background: var(--slds-g-color-accent-container-2, #0250d9);
+  border-color: var(--slds-g-color-border-accent-2, #0250d9);
+}
+.rtl__cta:focus-visible {
+  outline: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-1, #066afe);
+  outline-offset: var(--slds-g-spacing-1, 0.25rem);
+}
+/* Neutral / outline-brand for filter empty-state Clear - secondary
+   to Add New (brand pill). SLDS 2 slds-button_neutral. */
+.rtl__cta_neutral {
+  background: var(--slds-g-color-surface-container-1, #ffffff);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}
+.rtl__cta_neutral:hover {
+  background: var(--slds-g-color-surface-container-2, #f3f3f3);
+  color: var(--slds-g-color-on-surface-3, #03234d);
+  border-color: var(--slds-g-color-border-2, #5c5c5c);
+}

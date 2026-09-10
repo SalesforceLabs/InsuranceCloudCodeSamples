@@ -1,0 +1,791 @@
+<template>
+  <div class={canvasClass}>
+    <!-- Polite live region: announces dashboard ↔ detail view
+         transitions to assistive tech users without disrupting the
+         visual flow. Updated by handleKpiOpen / handleBackToDashboard. -->
+    <div class="slds-assistive-text" role="status" aria-live="polite" aria-atomic="true">
+      {statusAnnouncement}
+    </div>
+    <template lwc:if={hasData}>
+      <!-- ── Dashboard view ─────────────────────────────────────── -->
+      <template lwc:if={isDashboardView}>
+      <!-- Toolbar: title + LOB filter. The reading time is not repeated
+           here: every KPI card already carries its own as-of or YTD
+           stamp, and the drill-down restates it, so a dashboard-level
+           copy was a third statement of the same date. -->
+      <header class="c360-toolbar">
+        <div class="c360-toolbar__titles">
+          <h2 class="c360-toolbar__title">Client 360</h2>
+        </div>
+        <div class="c360-toolbar__filters">
+          <template lwc:if={standalone}>
+            <c-picklist
+              class="c360-toolbar__filter"
+              options={accountOptions}
+              value={selectedAccountId}
+              placeholder="Select an account"
+              accessible-label="Account filter"
+              onchange={handleAccountChange}
+            ></c-picklist>
+          </template>
+          <c-picklist
+            class="c360-toolbar__filter"
+            options={lobOptions}
+            value={lobFilter}
+            placeholder="All Lines of Business"
+            accessible-label="Line of Business filter"
+            onchange={handleLobChange}
+          ></c-picklist>
+        </div>
+      </header>
+
+      <!-- ── Tier 1: KPI banner (metric snapshot cards) ─────────────
+           Each card follows the Figma "metric snapshot" structure:
+             title row (name + time/filters + chevron menu button)
+             details (value + period-over-period change)
+             expected-range mini chart (line+dot+range / composition
+               bar / paid-vs-outstanding bar - chosen per metric)
+             summary line
+             pill action buttons (View + secondary)
+           The card itself is an <article>; drill-in is wired on the
+           chevron + both action buttons (no whole-card click target,
+           which would conflict with the inner buttons). -->
+      <section class="c360-tiles" aria-label="Key metrics and premium summary">
+        <template for:each={kpiTiles} for:item="kpi">
+          <article
+            key={kpi.id}
+            class="c360-widget c360-kpi"
+            aria-labelledby={kpi.id}
+          >
+            <!-- Title block: name + time/filters meta + menu chevron -->
+            <header class="c360-kpi__title-block">
+              <h3 class="c360-kpi__name" id={kpi.id}>{kpi.name}</h3>
+              <p class="c360-kpi__meta">
+                <span class="c360-kpi__time">{kpi.timeLabel}</span>
+                <span class="c360-kpi__meta-sep" aria-hidden="true">·</span>
+                <span class="c360-kpi__filters">{kpi.filtersLabel}</span>
+              </p>
+              <button
+                type="button"
+                class="c360-kpi__menu-btn"
+                data-metric={kpi.id}
+                aria-label={kpi.openLabel}
+                onclick={handleKpiOpen}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </header>
+
+            <!-- Details: value + PoP change -->
+            <div class="c360-kpi__details">
+              <div class="c360-kpi__top">
+                <span class="c360-kpi__value">{kpi.value}</span>
+                <template lwc:if={kpi.unit}>
+                  <span class="c360-kpi__unit">{kpi.unit}</span>
+                </template>
+              </div>
+              <template lwc:if={kpi.pop}>
+                <p class="c360-kpi__pop">
+                  <span class={kpi.pop.cls}>{kpi.pop.pct}</span>
+                  <span class="c360-kpi__pop-period">{kpi.pop.period}</span>
+                  <span class="slds-assistive-text">{kpi.pop.srText}</span>
+                </p>
+              </template>
+              <template lwc:else>
+                <p class="c360-kpi__pop c360-kpi__pop_empty">
+                  <span class="c360-kpi__pop-period">No prior-period comparison</span>
+                </p>
+              </template>
+            </div>
+
+            <!-- Mini-chart: line / composition / pay-bar per metric -->
+            <div
+              class="c360-kpi__chart"
+              role="img"
+              aria-label={kpi.chart.a11y}
+            >
+              <template lwc:if={kpi.chart.isLine}>
+                <!-- Y-axis labels (top + bottom) -->
+                <div class="c360-kpi__yaxis" aria-hidden="true">
+                  <span class="c360-kpi__yaxis-label">{kpi.chart.yTopLabel}</span>
+                  <span class="c360-kpi__yaxis-label">{kpi.chart.yBotLabel}</span>
+                </div>
+                <div class="c360-kpi__plot">
+                  <div class="c360-kpi__plot-box">
+                  <svg
+                    class="c360-kpi__svg"
+                    viewBox="0 0 280 88"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <!-- Range band: highlights the current-period segment -->
+                    <rect
+                      class="c360-kpi__range"
+                      x={kpi.chart.rangeBand.x}
+                      y={kpi.chart.rangeBand.y}
+                      width={kpi.chart.rangeBand.width}
+                      height={kpi.chart.rangeBand.height}
+                    ></rect>
+                    <!-- Frame: 3 borders (left/right/bottom) like the Figma -->
+                    <line class="c360-kpi__frame" x1={kpi.chart.plotLeft} y1={kpi.chart.plotTop} x2={kpi.chart.plotLeft} y2={kpi.chart.plotBottom}></line>
+                    <line class="c360-kpi__frame" x1={kpi.chart.plotRight} y1={kpi.chart.plotTop} x2={kpi.chart.plotRight} y2={kpi.chart.plotBottom}></line>
+                    <line class="c360-kpi__frame" x1={kpi.chart.plotLeft} y1={kpi.chart.plotBottom} x2={kpi.chart.plotRight} y2={kpi.chart.plotBottom}></line>
+                    <!-- Trend line. The band, frame and line are all
+                         fine stretched; the dot and value label are not,
+                         so they sit outside the SVG below. -->
+                    <polyline
+                      class="c360-kpi__line"
+                      points={kpi.chart.polyline}
+                      fill="none"
+                    ></polyline>
+                  </svg>
+                  <span
+                    class="c360-kpi__dot"
+                    style={kpi.chart.lastDot.style}
+                    aria-hidden="true"
+                  ></span>
+                  <span
+                    class="c360-kpi__dot-label"
+                    style={kpi.chart.lastLabel.style}
+                  >{kpi.chart.lastLabel.text}</span>
+                  </div>
+                  <div class="c360-kpi__xaxis" aria-hidden="true">
+                    <span class="c360-kpi__xaxis-label">{kpi.chart.xLeftLabel}</span>
+                    <span class="c360-kpi__xaxis-label">{kpi.chart.xRightLabel}</span>
+                  </div>
+                </div>
+              </template>
+
+              <template lwc:elseif={kpi.chart.isComposition}>
+                <div class="c360-kpi__comp">
+                  <p class="c360-kpi__comp-title">{kpi.chart.title}</p>
+                  <ul class="c360-kpi__comp-list">
+                    <template for:each={kpi.chart.segments} for:item="seg">
+                      <li key={seg.id} class="c360-kpi__comp-row">
+                        <span class="c360-kpi__comp-label">{seg.label}</span>
+                        <span class="c360-kpi__comp-track" aria-hidden="true">
+                          <span class="c360-kpi__comp-fill" style={seg.barStyle}></span>
+                        </span>
+                        <span class="c360-kpi__comp-count">{seg.count}</span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </template>
+
+              <template lwc:elseif={kpi.chart.isPayBar}>
+                <div class="c360-kpi__pay">
+                  <div class="c360-kpi__pay-track" aria-hidden="true">
+                    <span class="c360-kpi__pay-fill c360-kpi__pay-fill_paid" style={kpi.chart.paidStyle}></span>
+                    <span class="c360-kpi__pay-fill c360-kpi__pay-fill_outstanding" style={kpi.chart.outstandingStyle}></span>
+                  </div>
+                  <ul class="c360-kpi__pay-legend">
+                    <li class="c360-kpi__pay-legend-row">
+                      <span class="c360-kpi__pay-swatch c360-kpi__pay-swatch_paid" aria-hidden="true"></span>
+                      <span class="c360-kpi__pay-legend-label">{kpi.chart.paidLabel}</span>
+                      <span class="c360-kpi__pay-legend-pct">{kpi.chart.paidPctLabel}</span>
+                    </li>
+                    <li class="c360-kpi__pay-legend-row">
+                      <span class="c360-kpi__pay-swatch c360-kpi__pay-swatch_outstanding" aria-hidden="true"></span>
+                      <span class="c360-kpi__pay-legend-label">{kpi.chart.outstandingLabel}</span>
+                      <span class="c360-kpi__pay-legend-pct">{kpi.chart.outstandingPctLabel}</span>
+                    </li>
+                  </ul>
+                </div>
+              </template>
+
+              <template lwc:else>
+                <p class="c360-kpi__chart-empty">No trend data available.</p>
+              </template>
+            </div>
+
+            <!-- Summary insight line -->
+            <p class="c360-kpi__summary">{kpi.summary}</p>
+
+            <!-- Actions: View (primary drill) + secondary -->
+            <div class="c360-kpi__actions">
+              <button
+                type="button"
+                class="c360-kpi__action c360-kpi__action_primary"
+                data-metric={kpi.id}
+                onclick={handleKpiOpen}
+              >View</button>
+              <button
+                type="button"
+                class="c360-kpi__action"
+                data-metric={kpi.id}
+                onclick={handleKpiOpen}
+              >{kpi.secondaryAction}</button>
+            </div>
+          </article>
+        </template>
+
+        <!-- Claims Summary and the Billing plus Premium History pair each
+             take a full row, under the four KPI cards. Claims used to be a
+             2-column span sharing a row with Outstanding Balance, which
+             made that small card stretch to the height of a seven-column
+             table; a full row gives the table its width and leaves the KPI
+             cards to size each other. Claims stays above the chart pair. -->
+        <div class="c360-widget c360-tiles__full">
+          <header class="c360-widget__head">
+            <h3 class="c360-widget__title">Claims Summary</h3>
+            <span class="c360-widget__meta">{claimsCount} claims · {claimsTotalPaid} paid</span>
+          </header>
+          <template lwc:if={hasClaims}>
+            <table class="c360-table">
+              <thead>
+                <tr>
+                  <th scope="col">Claim</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Severity</th>
+                  <th scope="col" class="c360-table__num">Estimated</th>
+                  <th scope="col" class="c360-table__num">Actual</th>
+                  <th scope="col">Loss Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={claims} for:item="c">
+                  <tr key={c.id}>
+                    <td class="c360-table__strong">{c.name}</td>
+                    <td>{c.type}</td>
+                    <td><span class={c.statusClass}>{c.status}</span></td>
+                    <td class="c360-table__muted">{c.severity}</td>
+                    <td class="c360-table__num">{c.estimatedDisplay}</td>
+                    <td class="c360-table__num">{c.actualDisplay}</td>
+                    <td class="c360-table__muted">{c.lossDisplay}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:selfassigned"
+              size="x-small"
+            >No claims on file.</c-empty-state>
+          </template>
+        </div>
+
+        <div class="c360-widget c360-tiles__full">
+          <div class="c360-pair">
+            <section class="c360-pair__pane">
+              <h3 class="c360-widget__title">Billing Summary</h3>
+              <ul class="c360-billing">
+                <template for:each={billingSummary} for:item="m">
+                  <li key={m.id} class="c360-billing__row">
+                    <span class="c360-billing__label">{m.label}</span>
+                    <span class="c360-billing__value">{m.value}</span>
+                  </li>
+                </template>
+              </ul>
+            </section>
+
+            <section class="c360-pair__pane">
+              <h3 class="c360-widget__title">Premium History (YoY)</h3>
+              <template lwc:if={premiumChart.hasData}>
+                <svg
+                  class="c360-chart"
+                  viewBox="0 0 840 252"
+                  role="img"
+                  aria-label="Premium by calendar year, bar chart"
+                  focusable="false">
+                  <!-- grid lines -->
+                  <template for:each={premiumChart.gridLines} for:item="g">
+                    <line
+                      key={g.key}
+                      class="c360-chart__grid"
+                      x1={g.x1}
+                      y1={g.y}
+                      x2={g.x2}
+                      y2={g.y}
+                    />
+                  </template>
+                  <!-- baseline -->
+                  <line
+                    class="c360-chart__axis"
+                    x1={premiumChart.plotLeft}
+                    y1={premiumChart.baseline}
+                    x2={premiumChart.plotWidth}
+                    y2={premiumChart.baseline}
+                  />
+                  <!-- bars + labels -->
+                  <template for:each={premiumChart.bars} for:item="bar">
+                    <g key={bar.key} class="c360-chart__group" tabindex="0" aria-label={bar.a11y}>
+                      <rect
+                        class="c360-chart__bar"
+                        x={bar.x}
+                        y={bar.y}
+                        width={bar.width}
+                        height={bar.height}
+                        rx="2"
+                      ></rect>
+                      <text class="c360-chart__amount" x={bar.labelX} y={bar.amountY} text-anchor="middle">{bar.amount}</text>
+                      <text class="c360-chart__year" x={bar.labelX} y={bar.yearY} text-anchor="middle">{bar.year}</text>
+                    </g>
+                  </template>
+                </svg>
+              </template>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Tier 3: Active Policies ────────────────────────────── -->
+      <section class="c360-widget">
+        <h3 class="c360-widget__title">Active Policies</h3>
+        <template lwc:if={hasPolicies}>
+          <table class="c360-table">
+            <thead>
+              <tr>
+                <th scope="col">Policy Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Line of Business</th>
+                <th scope="col">Effective</th>
+                <th scope="col">Expiration</th>
+                <th scope="col" class="c360-table__num">Premium</th>
+                <th scope="col">Status</th>
+                <th scope="col">Carrier</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={activePolicies} for:item="p">
+                <tr key={p.id}>
+                  <td class="c360-table__strong">{p.name}</td>
+                  <td>{p.type}</td>
+                  <td class="c360-table__muted">{p.lob}</td>
+                  <td class="c360-table__muted">{p.effectiveDisplay}</td>
+                  <td class="c360-table__muted">{p.expirationDisplay}</td>
+                  <td class="c360-table__num">{p.premiumDisplay}</td>
+                  <td><span class={p.statusClass}>{p.status}</span></td>
+                  <td class="c360-table__muted">{p.carrier}</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+        <template lwc:else>
+          <c-empty-state
+            illustration-name="noresults:filter"
+            size="x-small"
+          >No active policies for the selected line of business.</c-empty-state>
+        </template>
+      </section>
+
+      <!-- ── Tier 4: Upcoming Renewals + Open Cases ─────────────── -->
+      <section class="c360-grid c360-grid_full">
+        <div class="c360-widget">
+          <h3 class="c360-widget__title">Upcoming Renewals (Next 120 Days)</h3>
+          <template lwc:if={hasRenewals}>
+            <table class="c360-table">
+              <thead>
+                <tr>
+                  <th scope="col">Policy Name</th>
+                  <th scope="col">Renewal Date</th>
+                  <th scope="col" class="c360-table__num">Premium</th>
+                  <th scope="col">Line of Business</th>
+                  <th scope="col">Producer</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={upcomingRenewals} for:item="r">
+                  <tr key={r.id} class={r.rowClass}>
+                    <td class="c360-table__strong">{r.name}</td>
+                    <td>{r.expirationDisplay}</td>
+                    <td class="c360-table__num">{r.premiumDisplay}</td>
+                    <td class="c360-table__muted">{r.lob}</td>
+                    <td class="c360-table__muted">{r.producer}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:selfassigned"
+              size="x-small"
+            >No renewals in the next 120 days.</c-empty-state>
+          </template>
+        </div>
+
+        <div class="c360-widget">
+          <h3 class="c360-widget__title">Open Cases &amp; Service Requests</h3>
+          <template lwc:if={hasCases}>
+            <table class="c360-table">
+              <thead>
+                <tr>
+                  <th scope="col">Case</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Priority</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Created</th>
+                  <th scope="col">Owner</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={openCases} for:item="c">
+                  <tr key={c.id}>
+                    <td class="c360-table__strong">{c.number}</td>
+                    <td>{c.subject}</td>
+                    <td><span class={c.priorityClass}>{c.priority}</span></td>
+                    <td class="c360-table__muted">{c.status}</td>
+                    <td class="c360-table__muted">{c.createdDisplay}</td>
+                    <td class="c360-table__muted">{c.owner}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:selfassigned"
+              size="x-small"
+            >No open cases.</c-empty-state>
+          </template>
+        </div>
+      </section>
+
+      <!-- ── Tier 5: Open Tasks ─────────────────────────────────── -->
+      <section class="c360-grid c360-grid_full">
+        <div class="c360-widget">
+          <h3 class="c360-widget__title">Open Tasks</h3>
+          <template lwc:if={hasTasks}>
+            <table class="c360-table">
+              <thead>
+                <tr>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Due Date</th>
+                  <th scope="col">Priority</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Assigned To</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={tasks} for:item="t">
+                  <tr key={t.id}>
+                    <td class="c360-table__strong">{t.subject}</td>
+                    <td>{t.dueDisplay}</td>
+                    <td><span class={t.priorityClass}>{t.priority}</span></td>
+                    <td class="c360-table__muted">{t.status}</td>
+                    <td class="c360-table__muted">{t.assignedTo}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </template>
+          <template lwc:else>
+            <c-empty-state
+              illustration-name="success:selfassigned"
+              size="x-small"
+            >No open tasks.</c-empty-state>
+          </template>
+        </div>
+      </section>
+      </template>
+
+      <!-- ── Metric detail view ──────────────────────────────────
+           Mirrors the TabNext-on-Local detail page (header → filter
+           sidebar → value card with deltas → trend → breakdown with
+           dimension tabs → records table). Lives inside the same
+           component so it works in both embedded and standalone modes
+           without touching the host record-page tab system. -->
+      <template lwc:if={isDetailView}>
+        <template lwc:if={metricDetail}>
+        <section class="c360-detail">
+          <header class="c360-detail__header">
+            <div class="c360-detail__title-block">
+              <button
+                type="button"
+                class="c360-detail__back"
+                onclick={handleBackToDashboard}
+                aria-label="Back to dashboard"
+              >
+                <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+                  <path d="M8 2L4 6l4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>Back</span>
+              </button>
+              <h2 class="c360-detail__title">{metricDetail.title}</h2>
+              <span class="c360-detail__asof">{metricDetail.asOf}</span>
+            </div>
+            <div class="c360-detail__actions">
+              <button type="button" class="c360-detail__action">Follow</button>
+              <button type="button" class="c360-detail__action">Share</button>
+            </div>
+          </header>
+
+          <div class="c360-detail__body">
+            <aside class="c360-detail__sidebar">
+              <div class="c360-detail__sidebar-section">
+                <h3 class="c360-detail__sidebar-title">Metric Context</h3>
+                <p class="c360-detail__sidebar-desc">
+                  Use filters to focus on the most relevant data. Filters
+                  apply to the breakdown and detail records below.
+                </p>
+                <div class="c360-detail__filter-group">
+                  <span class="c360-detail__filter-label">Line of Business</span>
+                  <c-picklist
+                    options={detailLobOptions}
+                    value={detailLobValue}
+                    placeholder="All Lines of Business"
+                    accessible-label="Line of Business filter"
+                    onchange={handleDetailLobChange}
+                  ></c-picklist>
+                </div>
+                <div class="c360-detail__filter-actions">
+                  <button type="button" class="c360-detail__btn c360-detail__btn_ghost" onclick={handleDetailCancel}>Cancel</button>
+                  <button type="button" class="c360-detail__btn c360-detail__btn_brand" onclick={handleDetailApply}>Apply</button>
+                </div>
+              </div>
+            </aside>
+
+            <div class="c360-detail__main">
+              <!-- Time range control row (decorative; reference parity) -->
+              <div class="c360-detail__controls">
+                <span class="c360-detail__controls-label">Time Range:</span>
+                <span class="c360-detail__controls-value">Quarter to Date</span>
+              </div>
+
+              <!-- Value card with deltas -->
+              <div class="c360-widget c360-detail__value-card">
+                <div class="c360-detail__value-row">
+                  <div class="c360-detail__value-left">
+                    <span class="c360-detail__value-main">{metricDetail.value}</span>
+                    <template lwc:if={metricDetail.unit}>
+                      <span class="c360-detail__value-unit">{metricDetail.unit}</span>
+                    </template>
+                    <span class="c360-detail__value-badge">{metricDetail.valueBadge}</span>
+                  </div>
+                  <div class="c360-detail__value-right">
+                    <template for:each={metricDetail.deltas} for:item="d">
+                      <div key={d.id} class="c360-detail__delta">
+                        <template lwc:if={d.chip}>
+                          <span class={d.chip.cls}>
+                            <svg class="c360-trend__icon" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+                              <path d={d.chip.icon} fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round" />
+                            </svg>
+                            <span class="c360-trend__text">{d.chip.text}</span>
+                            <span class="slds-assistive-text">{d.chip.srText}</span>
+                          </span>
+                        </template>
+                        <template lwc:else>
+                          <span class="c360-detail__delta-empty" aria-hidden="true">-</span>
+                          <span class="slds-assistive-text">No change data available</span>
+                        </template>
+                        <span class="c360-detail__delta-label">{d.label}</span>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Trend chart (reuses the existing premium chart SVG geometry) -->
+              <div class="c360-widget c360-detail__trend">
+                <h3 class="c360-widget__title">Trend</h3>
+                <template lwc:if={metricDetail.trend.hasData}>
+                  <svg
+                    class="c360-chart"
+                    viewBox="0 0 600 220"
+                    role="img"
+                    aria-label={metricDetail.trend.ariaLabel}
+                   focusable="false">
+                    <template for:each={metricDetail.trend.chart.gridLines} for:item="g">
+                      <line key={g.key} class="c360-chart__grid" x1={g.x1} y1={g.y} x2={g.x2} y2={g.y}></line>
+                    </template>
+                    <line
+                      class="c360-chart__axis"
+                      x1={metricDetail.trend.chart.plotLeft}
+                      y1={metricDetail.trend.chart.baseline}
+                      x2={metricDetail.trend.chart.plotWidth}
+                      y2={metricDetail.trend.chart.baseline}
+                    ></line>
+                    <template for:each={metricDetail.trend.chart.bars} for:item="bar">
+                      <g key={bar.key} class="c360-chart__group" tabindex="0" aria-label={bar.a11y}>
+                        <rect class="c360-chart__bar" x={bar.x} y={bar.y} width={bar.width} height={bar.height} rx="2"></rect>
+                        <text class="c360-chart__amount" x={bar.labelX} y={bar.amountY} text-anchor="middle">{bar.amount}</text>
+                        <text class="c360-chart__year" x={bar.labelX} y={bar.yearY} text-anchor="middle">{bar.year}</text>
+                      </g>
+                    </template>
+                  </svg>
+                  <p class="c360-detail__insight">{metricDetail.trend.insight}</p>
+                </template>
+                <template lwc:else>
+                  <p class="c360-empty">{metricDetail.trend.note}</p>
+                </template>
+              </div>
+
+              <!-- Breakdown card - graph-table column chart.
+                   Y-axis title (rotated) + 5 numeric tick labels on
+                   the left, plot SVG (gridlines + columns + value
+                   labels) in the middle, X-axis tick labels + axis
+                   title underneath. The dimension tab group above the
+                   chart swaps the rows feeding it. -->
+              <div class="c360-widget c360-detail__breakdown">
+                <header class="c360-widget__head">
+                  <h3 class="c360-widget__title">{metricDetail.breakdown.chartTitle}</h3>
+                </header>
+                <template lwc:if={metricDetail.breakdown.hasTabs}>
+                  <!-- Toggle-button group (not ARIA tabs) - see
+                       _buildBreakdown for the rationale. aria-pressed
+                       carries the active dimension state. -->
+                  <div class="c360-bd__tabs" role="group" aria-label="Breakdown dimension">
+                    <template for:each={metricDetail.breakdown.tabs} for:item="t">
+                      <button
+                        key={t.id}
+                        type="button"
+                        class={t.cls}
+                        aria-pressed={t.ariaPressed}
+                        data-dim={t.id}
+                        onclick={handleDetailDimensionChange}
+                      >{t.label}</button>
+                    </template>
+                  </div>
+                </template>
+                <template lwc:if={metricDetail.breakdown.chart.hasData}>
+                  <div
+                    class="c360-gt"
+                    role="img"
+                    aria-label={metricDetail.breakdown.chart.a11y}
+                  >
+                    <span class="c360-gt__y-title">{metricDetail.breakdown.chart.yAxisTitle}</span>
+                    <div class="c360-gt__y-axis" aria-hidden="true">
+                      <template for:each={metricDetail.breakdown.chart.yTicks} for:item="t">
+                        <span key={t.id} class="c360-gt__y-tick">{t.label}</span>
+                      </template>
+                    </div>
+                    <div class="c360-gt__main">
+                      <svg
+                        class="c360-gt__svg"
+                        viewBox="0 0 480 200"
+                        preserveAspectRatio="none"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <template for:each={metricDetail.breakdown.chart.gridlines} for:item="g">
+                          <line
+                            key={g.id}
+                            class="c360-gt__grid"
+                            x1={g.x1}
+                            y1={g.y}
+                            x2={g.x2}
+                            y2={g.y}
+                          ></line>
+                        </template>
+                        <template for:each={metricDetail.breakdown.chart.bars} for:item="bar">
+                          <g key={bar.id} class="c360-gt__col">
+                            <rect
+                              class="c360-gt__bar"
+                              x={bar.x}
+                              y={bar.y}
+                              width={bar.w}
+                              height={bar.h}
+                              rx="2"
+                            ></rect>
+                            <text
+                              class="c360-gt__bar-value"
+                              x={bar.labelX}
+                              y={bar.labelY}
+                              text-anchor="middle"
+                            >{bar.value}</text>
+                          </g>
+                        </template>
+                      </svg>
+                      <ul class="c360-gt__x-axis" aria-hidden="true">
+                        <template for:each={metricDetail.breakdown.chart.bars} for:item="bar">
+                          <li key={bar.id} class="c360-gt__x-tick" title={bar.label}>{bar.label}</li>
+                        </template>
+                      </ul>
+                      <span class="c360-gt__x-title">{metricDetail.breakdown.chart.xAxisTitle}</span>
+                    </div>
+                  </div>
+                </template>
+                <template lwc:else>
+                  <p class="c360-empty">{metricDetail.breakdown.note}</p>
+                </template>
+              </div>
+
+              <!-- Records table -->
+              <div class="c360-widget c360-detail__records">
+                <h3 class="c360-widget__title">{metricDetail.recordsTitle}</h3>
+                <template lwc:if={metricDetail.records.hasData}>
+                  <template lwc:if={isMetricPolicies}>
+                    <table class="c360-table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Policy Name</th>
+                          <th scope="col">Type</th>
+                          <th scope="col">Line of Business</th>
+                          <th scope="col">Effective</th>
+                          <th scope="col">Expiration</th>
+                          <th scope="col" class="c360-table__num">Premium</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Carrier</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <template for:each={metricDetail.records.rows} for:item="p">
+                          <tr key={p.id}>
+                            <td class="c360-table__strong">{p.name}</td>
+                            <td>{p.type}</td>
+                            <td class="c360-table__muted">{p.lob}</td>
+                            <td class="c360-table__muted">{p.effectiveDisplay}</td>
+                            <td class="c360-table__muted">{p.expirationDisplay}</td>
+                            <td class="c360-table__num">{p.premiumDisplay}</td>
+                            <td><span class={p.statusClass}>{p.status}</span></td>
+                            <td class="c360-table__muted">{p.carrier}</td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </template>
+                  <template lwc:else>
+                    <table class="c360-table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Metric</th>
+                          <th scope="col" class="c360-table__num">Value</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <template for:each={metricDetail.records.rows} for:item="r">
+                          <tr key={r.id}>
+                            <td class="c360-table__strong">{r.label}</td>
+                            <td class="c360-table__num">{r.valueDisplay}</td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </template>
+                </template>
+                <template lwc:else>
+                  <c-empty-state
+                    illustration-name="success:new"
+                    size="x-small"
+                  >
+                    {metricDetail.recordsEmpty}
+                  </c-empty-state>
+                </template>
+              </div>
+            </div>
+          </div>
+        </section>
+        </template>
+      </template>
+    </template>
+
+    <template lwc:else>
+      <c-empty-state
+        illustration-name="success:new"
+        title="No Client 360 data yet"
+        size="medium"
+      >
+        We couldn’t find any policy, billing, or engagement records
+        for this account yet. Data appears here once the customer’s
+        first policy is booked.
+      </c-empty-state>
+    </template>
+  </div>
+</template>

@@ -1,0 +1,502 @@
+<template>
+  <section class="sb-root">
+    <!-- ══ BOARD VIEW - Ready for Submission RFQs awaiting route ══ -->
+    <template lwc:if={isBoardView}>
+      <header class="sb-head">
+        <h2 class="sb-head__title">Submission Board</h2>
+        <p class="sb-head__sub">
+          Route Ready for Submission RFQs for {accountName} to
+          carriers. Rows leave this board once Route to Carriers
+          completes.
+        </p>
+      </header>
+
+      <template lwc:if={hasBundleableRfqs}>
+        <!-- ══ Unified board table ══════════════════════════════
+             ONE table for the whole Submission Board. Bundles are
+             expandable parent rows with their sibling LOCs
+             rendered as indented child rows directly underneath.
+             Standalone RFQs appear as flat rows in the same
+             table. No LOB sub-tables, no ⋮ actions column - the
+             board is a clean, single-container list. -->
+        <table class="sb-table sb-table_unified" aria-label="Submission Board">
+          <thead>
+            <tr>
+              <th class="sb-table__check" aria-label="Bundle"></th>
+              <th>RFQ</th>
+              <th>Line of Business</th>
+              <th>Line of Coverage</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template for:each={unifiedRows} for:item="r">
+              <template lwc:if={r.isBundleParent}>
+                <!-- SLDS tree-grid parent row: checkbox first, then
+                     the SLDS 2 chevron (chevronright utility icon,
+                     rotated 90° via aria-expanded state), then the
+                     bundle name + meta. Ticking the checkbox toggles
+                     every child rfqId into selectedRfqIds so Route
+                     to Carriers routes the whole bundle. -->
+                <tr key={r.key} class={r.bundleParentCls}>
+                  <td class="sb-table__check">
+                    <input
+                      type="checkbox"
+                      data-bundle-id={r.bundleId}
+                      checked={r.isFullyChecked}
+                      onchange={handleBundleToggle}
+                      aria-label="Include every LOC in this bundle"
+                    />
+                  </td>
+                  <td class="sb-cell-name sb-cell-name_bundle">
+                    <div class="sb-bundle-row">
+                      <button
+                        type="button"
+                        class="slds-button slds-button_icon slds-button_icon-x-small sb-caret-btn"
+                        data-bundle-id={r.bundleId}
+                        onclick={handleBundleExpandToggle}
+                        aria-expanded={r.expandAria}
+                        aria-label={r.expandLabel}
+                        title={r.expandLabel}
+                      >
+                        <svg
+                          class="slds-button__icon sb-caret-btn__icon"
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                          focusable="false"
+                        ><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                        <span class="slds-assistive-text">{r.expandLabel}</span>
+                      </button>
+                      <div class="sb-bundle-text">
+                        <span class="sb-bundle-name">{r.bundleName}</span>
+                        <span class="sb-bundle-meta">{r.childSummary}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <!-- Bundle parents carry no line of their own; the
+                       specific lines sit on the child rows, and the
+                       meta beside the bundle name already lists them. -->
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </template>
+              <template lwc:elseif={r.isBundleChild}>
+                <tr key={r.key} class={r.rowCls} title={r.disabledHint}>
+                  <td class="sb-table__check">
+                    <template lwc:if={r.showCheckbox}>
+                      <input
+                        type="checkbox"
+                        data-id={r.id}
+                        checked={r.isSelected}
+                        disabled={r.checkboxDisabled}
+                        onchange={handleRfqToggle}
+                        aria-label="Include this LOC in the routed bundle"
+                      />
+                    </template>
+                  </td>
+                  <td class="sb-cell-name sb-cell-name_child">
+                    <span class="sb-rfq-name">{r.name}</span>
+                    <span class="sb-rfq-id">{r.id}</span>
+                  </td>
+                  <td>{r.lobLabel}</td>
+                  <td>{r.locLabel}</td>
+                  <td>
+                    <span class={r.statusCls}>{r.statusLabel}</span>
+                  </td>
+                </tr>
+              </template>
+              <template lwc:else>
+                <tr key={r.key} class={r.rowCls} title={r.disabledHint}>
+                  <td class="sb-table__check">
+                    <template lwc:if={r.showCheckbox}>
+                      <input
+                        type="checkbox"
+                        data-id={r.id}
+                        checked={r.isSelected}
+                        disabled={r.checkboxDisabled}
+                        onchange={handleRfqToggle}
+                        aria-label="Bundle this RFQ"
+                      />
+                    </template>
+                  </td>
+                  <td class="sb-cell-name">
+                    <span class="sb-rfq-name">{r.name}</span>
+                    <span class="sb-rfq-id">{r.id}</span>
+                  </td>
+                  <td>{r.lobLabel}</td>
+                  <td>{r.locLabel}</td>
+                  <td>
+                    <span class={r.statusCls}>{r.statusLabel}</span>
+                  </td>
+                </tr>
+              </template>
+            </template>
+          </tbody>
+        </table>
+      </template>
+
+      <template lwc:else>
+        <div class="sb-empty">
+          <c-empty-state
+            illustration-name="success:new"
+            title="No RFQs ready to bundle yet"
+            size="medium"
+          >
+            Save a Line of Coverage RFQ from the wizard to see it
+            here. You’ll be able to bundle multiple LOCs into one
+            carrier package.
+          </c-empty-state>
+        </div>
+      </template>
+
+      <footer class="sb-foot">
+        <div class="sb-foot__actions">
+          <button
+            class="sb-btn sb-btn_brand"
+            type="button"
+            onclick={handleOpenCarrierModal}
+            disabled={noSelectedRfqs}
+          >{bundleCtaLabel}</button>
+        </div>
+      </footer>
+    </template>
+
+    <!-- ══ ROUTED CONFIRMATION VIEW ══════════════════════════════ -->
+    <template lwc:if={isRoutedView}>
+      <!-- Live region: when this template flips in (broker just hit
+           Route to Carriers), screen readers announce the bundle-name
+           + subtitle so a non-sighted broker gets the same "we did it"
+           confirmation that the checkmark + eyebrow give sighted users.
+           polite = wait for current SR utterance to finish, don't
+           interrupt. Kept on the outer section so the whole title +
+           subtitle + timestamp read as one confirmation. -->
+      <section
+        class="sb-routed"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="sb-routed__check" aria-hidden="true">
+          <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M19.1 42.5L2.6 25.9c-.6-.6-.6-1.6 0-2.2l2.2-2.2c.6-.6 1.6-.6 2.2 0L19.4 34c.4.4 1.1.4 1.5 0L45.2 9.5c.6-.6 1.6-.6 2.2 0l2.2 2.2c.6.6.6 1.6 0 2.2L21.3 42.5c-.6.7-1.6.7-2.2 0z"/>
+          </svg>
+        </div>
+        <div class="sb-routed__eyebrow">BUNDLE ROUTED · MULTI-LOC</div>
+        <h2 class="sb-routed__title">{bundleTitle}</h2>
+        <p class="sb-routed__sub">{bundleSubtitle}</p>
+        <span class="sb-routed__when">{bundleRoutedAtDisplay}</span>
+
+        <div class="sb-routed__grid">
+          <article class="sb-routed__panel" aria-label="RFQs in this bundle">
+            <header class="sb-routed__panel-head">
+              <h3 class="sb-routed__panel-title">RFQs in this bundle</h3>
+              <span class="sb-routed__panel-count">{bundleRfqCount}</span>
+            </header>
+            <ul class="sb-routed__list" role="list">
+              <template for:each={bundleRfqRows} for:item="r">
+                <li key={r.id} class="sb-routed__list-item">
+                  <span class="sb-rfq-id">{r.id}</span>
+                  <div class="sb-routed__list-text">
+                    <span class="sb-routed__list-primary">{r.name}</span>
+                    <span class="sb-routed__list-sub">{r.lob}</span>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </article>
+
+          <article class="sb-routed__panel" aria-label="Carriers notified">
+            <header class="sb-routed__panel-head">
+              <h3 class="sb-routed__panel-title">Carriers notified</h3>
+              <span class="sb-routed__panel-count">{bundleCarrierCount}</span>
+            </header>
+            <ul class="sb-routed__carriers" role="list">
+              <template for:each={bundleCarrierCards} for:item="c">
+                <li key={c.id} class="sb-routed__carrier">
+                  <span class="sb-routed__carrier-order">{c.order}</span>
+                  <span
+                    class="sb-routed__carrier-logo"
+                    style={c.logoStyle}
+                  >{c.initial}</span>
+                  <div class="sb-routed__carrier-text">
+                    <span class="sb-routed__carrier-name">{c.name}</span>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </article>
+        </div>
+
+        <div class="sb-routed__meta">
+          <span class="sb-routed__meta-row">
+            <strong>Bundle ID</strong> {bundleId}
+          </span>
+          <span class="sb-routed__meta-row">
+            <strong>Line of Business</strong> {bundleLob}
+          </span>
+          <span class="sb-routed__meta-row">
+            <strong>Account</strong> {accountName}
+          </span>
+        </div>
+
+        <div class="sb-routed__cta-row">
+          <button
+            type="button"
+            class="sb-btn sb-btn_brand"
+            onclick={handleBackToBoard}
+          >Back to Submission Board</button>
+        </div>
+      </section>
+    </template>
+
+    <!-- ══ CARRIER APPETITE MATRIX MODAL ══════════════════════════ -->
+    <template lwc:if={carrierModalOpen}>
+      <section
+        class="slds-modal slds-fade-in-open slds-modal_large sb-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sb-carrier-heading"
+        onclick={handleModalBackdrop}
+      >
+        <div class="slds-modal__container sb-modal__container" onclick={handleModalStop}>
+          <header class="slds-modal__header">
+            <button
+              type="button"
+              class="slds-button slds-button_icon slds-modal__close"
+              aria-label="Close"
+              title="Close"
+              onclick={handleCloseCarrierModal}
+            >
+              <svg viewBox="0 0 52 52" focusable="false" aria-hidden="true">
+                <path fill="currentColor" d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/>
+              </svg>
+            </button>
+            <h1 id="sb-carrier-heading" class="slds-modal__title">
+              Route to Carriers
+            </h1>
+          </header>
+
+          <div class="slds-modal__content sb-modal__content">
+            <div class="sb-select-bar">
+              <label class="sb-select-bar__toggle">
+                <input
+                  type="checkbox"
+                  data-select-all-carriers
+                  checked={allCarriersSelected}
+                  onchange={handleSelectAllCarriers}
+                />
+                <span>Select all carriers</span>
+              </label>
+              <span class="sb-select-bar__count">
+                {carrierSelectionSummary}
+              </span>
+            </div>
+
+            <ul class="sb-cards" aria-label="Carriers that write these lines">
+              <!-- The card is a convenience hit target, but the
+                   checkbox is the real control - it carries the
+                   keyboard + screen-reader semantics, so the card
+                   deliberately has no role="button" (that would nest
+                   one interactive control inside another). -->
+              <template for:each={carrierCards} for:item="c">
+                <li
+                  key={c.id}
+                  class={c.cardCls}
+                  data-id={c.id}
+                  onclick={handleCarrierToggle}
+                >
+                  <div class="sb-card__pick">
+                    <input
+                      type="checkbox"
+                      id={c.checkboxId}
+                      data-id={c.id}
+                      checked={c.isSelected}
+                      disabled={c.isNoCover}
+                      aria-label={c.selectLabel}
+                      onchange={handleCarrierCheckbox}
+                      onclick={handleCarrierPickClick}
+                    />
+                  </div>
+
+                  <div class="sb-card__body">
+                    <div class="sb-card__main">
+                      <div class="sb-card__head">
+                        <span class="sb-card__logo" style={c.logoStyle}>
+                          {c.initial}
+                        </span>
+                        <h2 class="sb-card__name">{c.name}</h2>
+                        <template lwc:if={c.hasTags}>
+                          <span class="sb-card__tags">
+                            <template lwc:if={c.isIncumbent}>
+                              <span class="sb-card__tag">Current carrier</span>
+                            </template>
+                          </span>
+                        </template>
+                      </div>
+
+                      <template lwc:if={c.showLinePills}>
+                        <ul class="sb-card__lines">
+                          <template for:each={c.coveredLines} for:item="ln">
+                            <li key={ln.key} class="sb-card__line">{ln.label}</li>
+                          </template>
+                        </ul>
+                      </template>
+                    </div>
+
+                    <dl class="sb-card__stats">
+                      <div class="sb-card__stat">
+                        <dt class="sb-card__stat-term">
+                          QuoteBind success rate (%)
+                        </dt>
+                        <dd class="sb-card__stat-value">
+                          {c.bindRateLabel}
+                        </dd>
+                      </div>
+                      <template lwc:if={c.showCoverage}>
+                        <div class="sb-card__stat">
+                          <dt class="sb-card__stat-term">Lines covered</dt>
+                          <dd class={c.coverageTone}>{c.coverageLabel}</dd>
+                        </div>
+                      </template>
+                    </dl>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <footer class="slds-modal__footer sb-modal__footer">
+            <button
+              type="button"
+              class="sb-btn sb-btn_neutral"
+              onclick={handleCloseCarrierModal}
+            >Cancel</button>
+            <button
+              type="button"
+              class="sb-btn sb-btn_brand"
+              onclick={handleConfirmRoute}
+              disabled={cannotConfirmRoute}
+            >Submit</button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- ══ QUINSTREET RATING MODAL ═══════════════════════════════
+         Opened by the "Route to Carriers" footer CTA and layered
+         over the board rather than replacing it. The list, prices,
+         and copy match the QuinStreet Auto RC1/RC2 Rating reference
+         GIF the design team maintains for this integration flow.
+         Radio-select a quote and hit Next; the host flips each
+         routed RFQ to "Sent to Carrier" and toasts a confirmation.
+         Cancel / Escape / backdrop dismiss the board unchanged. -->
+    <template lwc:if={ratingModalOpen}>
+      <section
+        class="slds-modal slds-fade-in-open slds-modal_medium sb-rating-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sb-rating-heading"
+        onclick={handleRatingBackdrop}
+      >
+        <div
+          class="slds-modal__container sb-rating-modal__container"
+          tabindex="-1"
+        >
+          <header class="slds-modal__header sb-rating-modal__header">
+            <button
+              type="button"
+              class="slds-button slds-button_icon slds-modal__close"
+              aria-label="Close"
+              title="Close"
+              onclick={handleRatingCancel}
+            >
+              <svg viewBox="0 0 52 52" focusable="false" aria-hidden="true">
+                <path fill="currentColor" d="M31 25.4l13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4z"/>
+              </svg>
+            </button>
+            <h1 id="sb-rating-heading" class="slds-modal__title">
+              {ratingScreenTitle}
+            </h1>
+          </header>
+
+          <div class="slds-modal__content sb-rating-modal__content">
+            <ul
+              class="sb-rating__list"
+              role="radiogroup"
+              aria-label="Carrier quotes"
+            >
+              <template for:each={ratingQuoteRows} for:item="q">
+                <li key={q.id} class={q.rowCls}>
+                  <label class="sb-rating__row-inner">
+                    <input
+                      type="radio"
+                      name="sb-rating-quote"
+                      class="sb-rating__radio"
+                      data-id={q.id}
+                      checked={q.isSelected}
+                      onchange={handleQuoteSelect}
+                      aria-label={q.name}
+                    />
+                    <div class="sb-rating__body">
+                      <span class="sb-rating__name">{q.name}</span>
+                      <span class="sb-rating__price">{q.premium}</span>
+                      <template lwc:if={q.showPaymentPlan}>
+                        <span class="sb-rating__plan">{q.paymentPlan}</span>
+                      </template>
+                      <button
+                        type="button"
+                        class="sb-btn sb-btn_link sb-rating__details"
+                        data-id={q.id}
+                        aria-expanded={q.detailsAria}
+                        aria-controls={q.detailsId}
+                        onclick={handleShowQuoteDetails}
+                      >{q.detailsLabel}</button>
+                    </div>
+                  </label>
+
+                  <template lwc:if={q.detailsExpanded}>
+                    <div id={q.detailsId} class="sb-rating__panel">
+                      <template lwc:if={q.showDetailRows}>
+                        <dl class="sb-rating__panel-list">
+                          <template for:each={q.detailRows} for:item="d">
+                            <div key={d.key} class="sb-rating__panel-item">
+                              <dt class="sb-rating__panel-term">{d.label}</dt>
+                              <dd class="sb-rating__panel-value">{d.value}</dd>
+                            </div>
+                          </template>
+                        </dl>
+                      </template>
+                      <template lwc:if={q.showNoQuoteNote}>
+                        <p class="sb-rating__panel-empty">
+                          No premium returned - this carrier declined the
+                          risk for the routed coverage.
+                        </p>
+                      </template>
+                    </div>
+                  </template>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <footer class="slds-modal__footer sb-rating-modal__footer">
+            <button
+              type="button"
+              class="sb-btn sb-btn_neutral"
+              onclick={handleRatingCancel}
+            >Cancel</button>
+            <button
+              type="button"
+              class="sb-btn sb-btn_brand"
+              onclick={handleRatingNext}
+              disabled={nextDisabled}
+            >Next</button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+  </section>
+</template>

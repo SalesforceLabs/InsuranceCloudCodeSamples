@@ -1,0 +1,133 @@
+.path {
+  background: var(--atlas-surface);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--atlas-border);
+  border-radius: var(--atlas-radius-lg);
+  box-shadow: var(--atlas-shadow-card);
+  padding: 18px var(--slds-g-spacing-4, 16px) var(--slds-g-spacing-2, 8px);
+  position: sticky;
+  top: var(--slds-g-spacing-12, 80px);
+}
+
+.path-head {
+  font-size: 11px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  letter-spacing: 0.14em;
+  color: var(--atlas-muted);
+  text-transform: none;
+  padding: 0 6px var(--slds-g-spacing-3, 12px);
+  border-bottom: 1px solid var(--atlas-divider);
+}
+
+.path-steps {
+  list-style: none;
+  margin: 0;
+  padding: var(--slds-g-spacing-2, 8px) 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  position: relative;
+  display: block;
+  padding: var(--slds-g-spacing-3, 12px) 6px;
+}
+
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 36px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--atlas-divider);
+  z-index: 0;
+}
+
+.step.is-done::before { background: var(--atlas-brand); }
+
+/* SLDS interactive step - the whole row is a button. Completed steps are
+   navigable; current + upcoming steps render the same but are disabled. */
+.step-trigger {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  border-radius: var(--slds-g-radius-border-2, 8px);
+  cursor: default;
+}
+
+.step.is-clickable .step-trigger {
+  cursor: pointer;
+}
+.step.is-clickable .step-trigger:hover .step-label {
+  color: var(--atlas-brand);
+  text-decoration: underline;
+}
+.step.is-clickable .step-trigger:hover .bullet {
+  box-shadow: 0 0 0 4px var(--atlas-brand-light);
+}
+.step-trigger:focus-visible {
+  outline: 2px solid var(--atlas-brand);
+  outline-offset: 2px;
+}
+
+.bullet {
+  position: relative;
+  z-index: 1;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid var(--atlas-divider);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--slds-g-font-scale-neg-1, 12px);
+  font-weight: var(--slds-g-font-weight-7, 700);
+  color: var(--atlas-muted);
+}
+
+.step.is-current .bullet {
+  background: var(--atlas-brand);
+  border-color: var(--atlas-brand);
+  color: #fff;
+  box-shadow: 0 0 0 4px var(--atlas-brand-light);
+}
+
+.step.is-done .bullet {
+  background: var(--atlas-brand);
+  border-color: var(--atlas-brand);
+  color: #fff;
+}
+
+.bullet svg { width: var(--slds-g-sizing-4, 0.75rem); height: var(--slds-g-sizing-4, 0.75rem); }
+
+.step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 2px;
+}
+
+.step-label {
+  font-size: 13.5px;
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--atlas-muted);
+}
+
+.step.is-current .step-label { color: var(--atlas-ink); }
+.step.is-done .step-label { color: var(--atlas-ink-2); }
+
+.step-meta {
+  font-size: 11.5px;
+  color: var(--atlas-muted);
+}

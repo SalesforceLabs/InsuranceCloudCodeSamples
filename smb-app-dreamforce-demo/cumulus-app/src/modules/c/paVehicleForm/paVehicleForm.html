@@ -1,0 +1,173 @@
+<template>
+  <div class="pa-form">
+    <header class="pa-form__head">
+      <h2 class="pa-form__title">Your Vehicle</h2>
+      <p class="pa-form__subtitle">Add your vehicles &amp; details here</p>
+    </header>
+
+    <template for:each={vehicleCards} for:item="veh">
+      <article class="pa-form__card" key={veh.id}>
+        <header class="pa-form__card-head">
+          <span class="pa-form__card-icon" aria-hidden="true">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path
+                fill="currentColor"
+                d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81L6.85 7zM19 17H5v-5h14v5zM7.5 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm9 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"
+              />
+            </svg>
+          </span>
+          <h3 class="pa-form__card-title">Vehicle {veh.index} Details</h3>
+        </header>
+
+        <div class="pa-form__grid">
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for={veh.ids.carName}>
+              Car Name <abbr class="slds-required" title="required">*</abbr>
+            </label>
+            <div class="slds-form-element__control">
+              <input
+                class="slds-input"
+                id={veh.ids.carName}
+                type="text"
+                placeholder="Enter Value"
+                value={veh.carName}
+                data-id={veh.id}
+                data-key="carName"
+                oninput={handleFieldChange}
+              />
+            </div>
+          </div>
+
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for={veh.ids.carMileage}>
+              Car Mileage <abbr class="slds-required" title="required">*</abbr>
+            </label>
+            <div class="slds-form-element__control">
+              <input
+                class="slds-input"
+                id={veh.ids.carMileage}
+                type="text"
+                placeholder="Enter Value"
+                value={veh.carMileage}
+                data-id={veh.id}
+                data-key="carMileage"
+                oninput={handleFieldChange}
+              />
+            </div>
+          </div>
+
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for={veh.ids.carModel}>
+              Car Model <abbr class="slds-required" title="required">*</abbr>
+            </label>
+            <div class="slds-form-element__control">
+              <c-date-input
+                input-id={veh.ids.carModel}
+                value={veh.carModel}
+                data-id={veh.id}
+                data-key="carModel"
+                placeholder="MM/DD/YYYY"
+                accessible-label="Car Model"
+                onchange={handlePicklistChange}
+              ></c-date-input>
+            </div>
+          </div>
+
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for={veh.ids.carMake}>
+              Car Make
+            </label>
+            <div class="slds-form-element__control">
+              <input
+                class="slds-input"
+                id={veh.ids.carMake}
+                type="text"
+                placeholder="Enter Value"
+                value={veh.carMake}
+                data-id={veh.id}
+                data-key="carMake"
+                oninput={handleFieldChange}
+              />
+            </div>
+          </div>
+
+          <div class="slds-form-element">
+            <label class="slds-form-element__label" for={veh.ids.vin}>
+              VIN Number <abbr class="slds-required" title="required">*</abbr>
+            </label>
+            <div class="slds-form-element__control">
+              <input
+                class="slds-input"
+                id={veh.ids.vin}
+                type="text"
+                placeholder="Enter Value"
+                value={veh.vin}
+                data-id={veh.id}
+                data-key="vin"
+                oninput={handleFieldChange}
+              />
+            </div>
+          </div>
+
+          <div class="slds-form-element">
+            <label class="slds-form-element__label">
+              Registration State <abbr class="slds-required" title="required">*</abbr>
+            </label>
+            <div class="slds-form-element__control">
+              <c-picklist
+                options={veh.stateOptions}
+                value={veh.registrationState}
+                placeholder="Select An Option"
+                accessible-label="Registration State"
+                data-id={veh.id}
+                data-key="registrationState"
+                onchange={handlePicklistChange}
+              ></c-picklist>
+            </div>
+          </div>
+
+          <div class="slds-form-element">
+            <label class="slds-form-element__label">
+              Condition <abbr class="slds-required" title="required">*</abbr>
+            </label>
+            <div class="slds-form-element__control">
+              <c-picklist
+                options={veh.conditionOptions}
+                value={veh.condition}
+                placeholder="Select An Option"
+                accessible-label="Condition"
+                data-id={veh.id}
+                data-key="condition"
+                onchange={handlePicklistChange}
+              ></c-picklist>
+            </div>
+          </div>
+
+          <div class="slds-form-element">
+            <label class="slds-form-element__label">
+              Value <abbr class="slds-required" title="required">*</abbr>
+            </label>
+            <div class="slds-form-element__control">
+              <c-picklist
+                options={veh.valueOptions}
+                value={veh.value}
+                placeholder="Select An Option"
+                accessible-label="Value"
+                data-id={veh.id}
+                data-key="value"
+                onchange={handlePicklistChange}
+              ></c-picklist>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <button class="pa-form__add" type="button" onclick={handleAdd}>
+      <span class="pa-form__add-icon" aria-hidden="true">
+        <svg viewBox="0 0 52 52" fill="currentColor" aria-hidden="true" focusable="false"><path  d="M30 29h16.5c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5H30c-.6 0-1-.4-1-1V5.5c0-.8-.7-1.5-1.5-1.5h-3c-.8 0-1.5.7-1.5 1.5V22c0 .6-.4 1-1 1H5.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5H22c.6 0 1 .4 1 1v16.5c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V30c0-.6.4-1 1-1z"/></svg>
+      </span>
+      Add Vehicle
+    </button>
+  </div>
+</template>

@@ -1,0 +1,180 @@
+<template>
+  <div class="compare">
+    <header class="compare-head">
+      <div>
+        <div class="eyebrow">QUOTE COMPARISON · {applicationName}</div>
+        <h2 class="title">Market Responses</h2>
+      </div>
+    </header>
+
+    <!-- ── View tabs: Agentforce Recommended | All Markets ───────── -->
+    <div class="qc-tabs" role="tablist" aria-label="Quote views">
+      <template for:each={tabs} for:item="t">
+        <button
+          key={t.id}
+          class={t.className}
+          data-id={t.id}
+          role="tab"
+          aria-selected={t.ariaSelected}
+          type="button"
+          onclick={handleTab}
+        >
+          <template lwc:if={t.isRecommended}>
+            <span class="qc-tab-spark" aria-hidden="true">
+              <svg aria-hidden="true" viewBox="0 0 13 13" focusable="false"><path fill="currentColor" d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738ZM12.865 10.8392L12.0796 10.4465C11.8421 10.3308 11.6532 10.1372 11.5344 9.90313L11.1404 9.12035C11.0864 9.00737 10.9245 9.00737 10.8678 9.12035L10.4738 9.90313C10.3577 10.1398 10.1634 10.3281 9.92858 10.4465L9.1432 10.8392C9.02985 10.893 9.02985 11.0544 9.1432 11.1109L9.92858 11.5037C10.1661 11.6193 10.355 11.813 10.4738 12.047L10.8678 12.8298C10.9218 12.9428 11.0837 12.9428 11.1404 12.8298L11.5344 12.047C11.6505 11.8103 11.8448 11.622 12.0796 11.5037L12.865 11.1109C12.9783 11.0571 12.9783 10.8957 12.865 10.8392ZM12.865 1.80363L12.0796 1.41089C11.8421 1.29522 11.6532 1.10154 11.5344 0.867516L11.1404 0.0847341C11.0864 -0.0282447 10.9245 -0.0282447 10.8678 0.0847341L10.4738 0.867516C10.3577 1.10423 10.1634 1.29253 9.92858 1.41089L9.1432 1.80363C9.02985 1.85742 9.02985 2.01882 9.1432 2.07531L9.92858 2.46805C10.1661 2.58372 10.355 2.7774 10.4738 3.01142L10.8678 3.7942C10.9218 3.90718 11.0837 3.90718 11.1404 3.7942L11.5344 3.01142C11.6505 2.77471 11.8448 2.58641 12.0796 2.46805L12.865 2.07531C12.9783 2.02151 12.9783 1.86011 12.865 1.80363Z"/></svg>
+            </span>
+          </template>
+          {t.label}<span class="qc-tab-count">{t.count}</span>
+        </button>
+      </template>
+    </div>
+
+    <template lwc:if={loading}>
+      <div class="loading">
+        <span class="spinner"></span>
+        <span>Comparing carriers via Connect API…</span>
+      </div>
+    </template>
+
+    <template lwc:else>
+      <!-- ── Recommended view: Agentforce insight banner ─────────── -->
+      <template lwc:if={isRecommendedView}>
+        <div class="slds-scoped-notification slds-media slds-media_center slds-theme_info qc-banner" role="status">
+          <div class="slds-media__figure">
+            <span class="qc-banner-spark" aria-hidden="true">
+              <svg aria-hidden="true" viewBox="0 0 13 13" focusable="false"><path fill="currentColor" d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738ZM12.865 10.8392L12.0796 10.4465C11.8421 10.3308 11.6532 10.1372 11.5344 9.90313L11.1404 9.12035C11.0864 9.00737 10.9245 9.00737 10.8678 9.12035L10.4738 9.90313C10.3577 10.1398 10.1634 10.3281 9.92858 10.4465L9.1432 10.8392C9.02985 10.893 9.02985 11.0544 9.1432 11.1109L9.92858 11.5037C10.1661 11.6193 10.355 11.813 10.4738 12.047L10.8678 12.8298C10.9218 12.9428 11.0837 12.9428 11.1404 12.8298L11.5344 12.047C11.6505 11.8103 11.8448 11.622 12.0796 11.5037L12.865 11.1109C12.9783 11.0571 12.9783 10.8957 12.865 10.8392ZM12.865 1.80363L12.0796 1.41089C11.8421 1.29522 11.6532 1.10154 11.5344 0.867516L11.1404 0.0847341C11.0864 -0.0282447 10.9245 -0.0282447 10.8678 0.0847341L10.4738 0.867516C10.3577 1.10423 10.1634 1.29253 9.92858 1.41089L9.1432 1.80363C9.02985 1.85742 9.02985 2.01882 9.1432 2.07531L9.92858 2.46805C10.1661 2.58372 10.355 2.7774 10.4738 3.01142L10.8678 3.7942C10.9218 3.90718 11.0837 3.90718 11.1404 3.7942L11.5344 3.01142C11.6505 2.77471 11.8448 2.58641 12.0796 2.46805L12.865 2.07531C12.9783 2.02151 12.9783 1.86011 12.865 1.80363Z"/></svg>
+            </span>
+          </div>
+          <div class="slds-media__body qc-banner-body">{recommendedBannerText}</div>
+        </div>
+      </template>
+
+      <!-- ── All Markets view: manual-compare toolbar ────────────── -->
+      <template lwc:if={isAllView}>
+        <div class="qc-allmarkets-bar">
+          <template lwc:if={isManualCompareMode}>
+            <span class="qc-allmarkets-hint">Select markets to compare side by side.</span>
+            <div class="qc-allmarkets-actions">
+              <button class="ghost" type="button" onclick={handleCancelManual}>Cancel</button>
+              <button
+                class="brand solid"
+                type="button"
+                disabled={compareSelectedDisabled}
+                onclick={handleCompareSelected}
+              >
+                {compareSelectedLabel}
+              </button>
+            </div>
+          </template>
+          <template lwc:else>
+            <span class="qc-allmarkets-hint">{quotes.length} markets responded.</span>
+            <button class="ghost" type="button" onclick={handleCompareManually}>
+              <span class="ghost-icon" aria-hidden="true">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M3 5h8v2H3V5zm0 6h8v2H3v-2zm0 6h8v2H3v-2zM15 5h6v14h-6V5zm2 2v10h2V7h-2z"/></svg>
+              </span>
+              Compare Manually
+            </button>
+          </template>
+        </div>
+      </template>
+
+      <div class="cards">
+        <template for:each={cardData} for:item="q">
+          <article key={q.id} class={q.cardClass} data-id={q.id} tabindex="0">
+            <template lwc:if={q.showCheckbox}>
+              <button
+                class="qc-check"
+                type="button"
+                role="checkbox"
+                aria-checked={q.isChecked}
+                data-id={q.id}
+                onclick={handleToggleCheck}
+                aria-label="Select to compare"
+              >
+                <span class="qc-check-box" aria-hidden="true">
+                  <template lwc:if={q.isChecked}>
+                    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12l5 5L20 7"/></svg>
+                  </template>
+                </span>
+              </button>
+            </template>
+
+            <template lwc:if={q.bestValue}>
+              <div class="best-pill" title={q.aiRecommendation.reason}>
+                <span class="spark"><svg class="spark-svg" viewBox="0 0 13 13" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8.86791 6.77738L7.03536 7.68928C6.48478 7.96366 6.03946 8.40751 5.76418 8.95626L4.84925 10.7827C4.7197 11.0437 4.34456 11.0437 4.21501 10.7827L3.30008 8.95626C3.02479 8.40751 2.57947 7.96366 2.0289 7.68928L0.196345 6.77738C-0.0654483 6.64826 -0.0654483 6.27436 0.196345 6.14524L2.0289 5.23334C2.57947 4.95896 3.02479 4.51512 3.30008 3.96636L4.21501 2.13987C4.34456 1.87894 4.7197 1.87894 4.84925 2.13987L5.76418 3.96636C6.03946 4.51512 6.48478 4.95896 7.03536 5.23334L8.86791 6.14524C9.12971 6.27436 9.12971 6.64826 8.86791 6.77738ZM12.865 10.8392L12.0796 10.4465C11.8421 10.3308 11.6532 10.1372 11.5344 9.90313L11.1404 9.12035C11.0864 9.00737 10.9245 9.00737 10.8678 9.12035L10.4738 9.90313C10.3577 10.1398 10.1634 10.3281 9.92858 10.4465L9.1432 10.8392C9.02985 10.893 9.02985 11.0544 9.1432 11.1109L9.92858 11.5037C10.1661 11.6193 10.355 11.813 10.4738 12.047L10.8678 12.8298C10.9218 12.9428 11.0837 12.9428 11.1404 12.8298L11.5344 12.047C11.6505 11.8103 11.8448 11.622 12.0796 11.5037L12.865 11.1109C12.9783 11.0571 12.9783 10.8957 12.865 10.8392ZM12.865 1.80363L12.0796 1.41089C11.8421 1.29522 11.6532 1.10154 11.5344 0.867516L11.1404 0.0847341C11.0864 -0.0282447 10.9245 -0.0282447 10.8678 0.0847341L10.4738 0.867516C10.3577 1.10423 10.1634 1.29253 9.92858 1.41089L9.1432 1.80363C9.02985 1.85742 9.02985 2.01882 9.1432 2.07531L9.92858 2.46805C10.1661 2.58372 10.355 2.7774 10.4738 3.01142L10.8678 3.7942C10.9218 3.90718 11.0837 3.90718 11.1404 3.7942L11.5344 3.01142C11.6505 2.77471 11.8448 2.58641 12.0796 2.46805L12.865 2.07531C12.9783 2.02151 12.9783 1.86011 12.865 1.80363Z"/></svg></span>
+                Best Value
+              </div>
+            </template>
+
+            <header class="card-h">
+              <div class="logo" style={q.logoStyle}>{q.logoInitial}</div>
+              <div class="meta">
+                <div class="carrier">{q.carrierName}</div>
+                <div class="planname">{q.planName}</div>
+                <div class="ambest">AM Best · {q.amBest}</div>
+              </div>
+            </header>
+
+            <div class="premium">
+              <span class="amount">{q.formattedPremium}</span>
+              <span class="per">/ annual</span>
+            </div>
+
+            <template lwc:if={isEbFlow}>
+              <dl class="rows">
+                <div class="row"><dt>Plan Type</dt><dd>{q.plan}</dd></div>
+                <div class="row"><dt>Deductible</dt><dd>{q.deductible}</dd></div>
+                <div class="row"><dt>Co-pay (PCP / Specialist)</dt><dd>{q.copay}</dd></div>
+                <div class="row"><dt>Out-of-Pocket Max</dt><dd>{q.oopMax}</dd></div>
+                <div class="row"><dt>Network</dt><dd>{q.network}</dd></div>
+                <div class="row"><dt>Valid Until</dt><dd>{q.validUntilLabel}</dd></div>
+              </dl>
+            </template>
+            <template lwc:else>
+              <dl class="rows">
+                <div class="row"><dt>Bodily Injury Limit</dt><dd>{q.bodilyInjury}</dd></div>
+                <div class="row"><dt>Property Damage Limit</dt><dd>{q.propertyDamage}</dd></div>
+                <div class="row"><dt>Comprehensive Deductible</dt><dd>{q.compDeductible}</dd></div>
+                <div class="row"><dt>Collision Deductible</dt><dd>{q.collisionDeductible}</dd></div>
+                <div class="row"><dt>UM / UIM</dt><dd>{q.umUim}</dd></div>
+                <div class="row"><dt>Valid Until</dt><dd>{q.validUntilLabel}</dd></div>
+              </dl>
+            </template>
+
+            <template lwc:if={q.bestValue}>
+              <c-agentic-card
+                title="Agentforce Recommendation"
+                timestamp={q.recoTimestamp}
+                sources-count="3"
+                variant="nested"
+              >
+                <p class="ai-callout-body">{q.aiRecommendation.reason}</p>
+              </c-agentic-card>
+            </template>
+
+            <footer class="card-f">
+              <template lwc:if={isRecommendedView}>
+                <button
+                  class="qc-btn-neutral"
+                  type="button"
+                  data-id={q.id}
+                  onclick={handleViewDetails}
+                >
+                  View Details
+                </button>
+              </template>
+              <button
+                class="qc-btn-brand"
+                type="button"
+                data-id={q.id}
+                onclick={handleSelect}
+              >
+                Select
+              </button>
+            </footer>
+          </article>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>

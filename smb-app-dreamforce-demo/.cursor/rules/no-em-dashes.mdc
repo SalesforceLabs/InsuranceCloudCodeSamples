@@ -1,0 +1,48 @@
+---
+description: Punctuation - no em dashes anywhere in the app. Use "-" (hyphen) or ";" (semicolon) instead.
+alwaysApply: true
+---
+
+# No Em Dashes
+
+Do not use em dashes (`—`, Unicode U+2014) or their HTML entity (`&mdash;`) in this codebase. This applies to:
+
+- User-facing copy (labels, titles, subtitles, descriptions, empty states, toasts, banners, tooltips)
+- Code comments and JSDoc
+- Markdown / documentation inside the repo
+- Rule files under `.cursor/rules/`
+
+## What to use instead
+
+- `-` (hyphen-minus, U+002D) - preferred as an inline separator between two related clauses. Surround with spaces when it separates ideas: `Cancel routing - the RFQ stays on the board.`
+- `;` (semicolon) - use when the two clauses could each stand alone as sentences and share a close relationship: `The RFQ is submitted; carriers respond within 24 hours.`
+- A period + new sentence is always a valid fallback if neither of the above reads naturally.
+
+## Do
+
+```html
+<p>Select the metrics the comparison matrix exposes - use the eye icon to preview.</p>
+```
+
+```javascript
+// Bundle parent row reads like any standard board row - no surface wash.
+```
+
+## Do not
+
+```html
+<!-- Wrong: em dash character -->
+<p>Select the metrics — use the eye icon to preview.</p>
+
+<!-- Wrong: HTML entity form -->
+<p>Select the metrics &mdash; use the eye icon to preview.</p>
+```
+
+## Enforcement
+
+If a Figma or design reference contains an em dash, still substitute in code. Consistency with this rule wins over 1:1 fidelity to the design copy for punctuation only.
+
+## Notes
+
+- En dash (`–`, U+2013) is also discouraged for the same reason; use `-` for ranges as well (`8 - 12 columns`) unless a numeric range is inside a data cell where a compact glyph is required, in which case prefer `-` too.
+- Word "deadline" and similar compounds that contain the letters "dash" are unrelated to this rule.

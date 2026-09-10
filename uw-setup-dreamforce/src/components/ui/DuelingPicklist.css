@@ -1,0 +1,94 @@
+/* SLDS Dueling Picklist — two listboxes with arrow buttons between. */
+
+.slds2-dueling {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: var(--slds-g-spacing-2);
+  align-items: stretch;
+  min-height: 280px;
+}
+
+.slds2-dueling__col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.slds2-dueling__label {
+  font-size: var(--slds-g-font-scale-neg-1);
+  font-weight: var(--slds-g-font-weight-6);
+  color: var(--slds-g-color-on-surface-2);
+}
+.slds2-dueling__list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  flex: 1;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  overflow-y: auto;
+  min-height: 200px;
+}
+.slds2-dueling__list:focus-within {
+  border-color: var(--slds-g-color-accent-1);
+  box-shadow: 0 0 0 1px var(--slds-g-color-accent-1);
+}
+.slds2-dueling__item {
+  padding: 6px 10px;
+  font-size: var(--slds-g-font-scale-base);
+  color: var(--slds-g-color-on-surface-2);
+  border-radius: var(--slds-g-radius-border-1);
+  cursor: pointer;
+  user-select: none;
+}
+.slds2-dueling__item:hover {
+  background: var(--slds-g-color-surface-container-2);
+}
+.slds2-dueling__item--selected {
+  background: var(--slds-g-color-brand-base-95);
+  color: var(--slds-g-color-on-surface-3);
+  font-weight: var(--slds-g-font-weight-6);
+}
+.slds2-dueling__item:focus-visible {
+  outline: none;
+  background: var(--slds-g-color-brand-base-95);
+}
+.slds2-dueling__empty {
+  padding: 12px 10px;
+  font-size: var(--slds-g-font-scale-neg-1);
+  color: var(--slds-g-color-on-surface-1);
+  font-style: italic;
+}
+
+/* Vertical action stack between (or after) lists. */
+.slds2-dueling__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: center;
+}
+.slds2-dueling__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+  border-radius: var(--slds-g-radius-border-2);
+  color: var(--slds-g-color-on-surface-2);
+  cursor: pointer;
+  transition: background-color 100ms ease, color 100ms ease,
+    border-color 100ms ease;
+}
+.slds2-dueling__btn:hover:not(:disabled) {
+  background: var(--slds-g-color-accent-1);
+  border-color: var(--slds-g-color-accent-1);
+  color: var(--slds-g-color-on-accent-1, white);
+}
+.slds2-dueling__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

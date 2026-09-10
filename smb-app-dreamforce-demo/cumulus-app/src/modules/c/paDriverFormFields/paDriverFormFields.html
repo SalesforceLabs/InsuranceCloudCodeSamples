@@ -1,0 +1,162 @@
+<template>
+  <div class="pdff">
+    <!-- Household-driver lookup - search existing drivers on file for
+         this account to auto-populate the form below. Hidden when no
+         records are available. -->
+    <template lwc:if={showLookup}>
+      <div class="pdm-lookup">
+        <span class="pdm-lookup__label">Search existing household drivers</span>
+        <div class="pdm-lookup__trigger-wrap">
+          <button
+            class={lookupTriggerClass}
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded={searchOpen}
+            onclick={handleSearchToggle}
+          >
+            <svg class="pdm-lookup__trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+            <span class="pdm-lookup__trigger-label">{lookupTriggerLabel}</span>
+          </button>
+          <template lwc:if={hasLookupSelection}>
+            <button
+              type="button"
+              class="pdm-lookup__clear"
+              aria-label="Clear selection"
+              onclick={handleClearLookup}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path d="M18.3 5.71L12 12.01l6.3 6.29-1.42 1.42L10.59 13.43 4.29 19.72 2.88 18.3l6.3-6.29-6.3-6.29L4.29 4.3l6.3 6.29 6.3-6.29z"/>
+              </svg>
+            </button>
+          </template>
+        </div>
+
+        <template lwc:if={searchOpen}>
+          <div class="pdm-lookup__scrim" onclick={handleSearchScrim}></div>
+          <div class="pdm-lookup__panel" role="dialog" aria-label="Driver lookup">
+            <div class="pdm-lookup__input-wrap">
+              <svg class="pdm-lookup__input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+              </svg>
+              <input
+                class="pdm-lookup__input"
+                type="search"
+                placeholder="Search by name, license #, or state..."
+                value={searchQuery}
+                oninput={handleSearchInput}
+                onkeydown={handleSearchKey}
+                aria-label="Search existing household drivers"
+              />
+            </div>
+            <template lwc:if={hasLookupResults}>
+              <ul class="pdm-lookup__results" role="listbox">
+                <template for:each={lookupResults} for:item="r">
+                  <li
+                    key={r.id}
+                    class={r.cls}
+                    role="option"
+                    aria-selected={r.ariaSelected}
+                    data-id={r.id}
+                    tabindex="0"
+                    onclick={handleLookupSelection}
+                    onkeydown={handleSearchKey}
+                  >
+                    <span class="pdm-lookup__result-name">{r.displayName}</span>
+                    <span class="pdm-lookup__result-meta">{r.subline}</span>
+                  </li>
+                </template>
+              </ul>
+            </template>
+            <template lwc:else>
+              <p class="pdm-lookup__empty" role="status">{lookupEmptyCopy}</p>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <p class="required-legend">
+      <abbr class="slds-required" title="required">*</abbr> = Required
+    </p>
+
+    <div class="pa-drv-modal__grid">
+      <div class={firstNameClass}>
+        <label class="slds-form-element__label" for="pa-drv-first">
+          First Name <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="pa-drv-first"
+          class="slds-input"
+          type="text"
+          placeholder="Enter first name"
+          data-field="firstName"
+          value={firstName}
+          oninput={handleInput}
+        />
+        <template lwc:if={firstNameError}>
+          <span class="pa-drv-modal__error">Enter a first name.</span>
+        </template>
+      </div>
+
+      <div class={lastNameClass}>
+        <label class="slds-form-element__label" for="pa-drv-last">
+          Last Name <abbr class="slds-required" title="required">*</abbr>
+        </label>
+        <input
+          id="pa-drv-last"
+          class="slds-input"
+          type="text"
+          placeholder="Enter last name"
+          data-field="lastName"
+          value={lastName}
+          oninput={handleInput}
+        />
+        <template lwc:if={lastNameError}>
+          <span class="pa-drv-modal__error">Enter a last name.</span>
+        </template>
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="pa-drv-state">License State</label>
+        <input
+          id="pa-drv-state"
+          class="slds-input"
+          type="text"
+          maxlength="2"
+          placeholder="Type state"
+          data-field="licenseState"
+          value={licenseState}
+          oninput={handleInput}
+        />
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="pa-drv-number">License Number</label>
+        <input
+          id="pa-drv-number"
+          class="slds-input pa-drv-modal__mono"
+          type="text"
+          placeholder="Enter license number"
+          data-field="licenseNumber"
+          value={licenseNumber}
+          oninput={handleInput}
+        />
+      </div>
+
+      <div class="slds-form-element">
+        <label class="slds-form-element__label" for="pa-drv-dob">Date of Birth</label>
+        <c-date-input
+          input-id="pa-drv-dob"
+          data-field="dob"
+          value={dob}
+          accessible-label="Date of Birth"
+          onchange={handleInput}
+        ></c-date-input>
+      </div>
+    </div>
+  </div>
+</template>
