@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fquotes\u002F[id]","\u002Fsubmission-lines\u002F[id]","\u002Fsubmissions\u002F[id]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

@@ -74,7 +74,7 @@ const PAGES_OUT_DIR = 'docs';
 export default defineConfig(({ command }) => ({
   // GitHub Enterprise Pages serves this project under a subpath; assets must
   // resolve against it. Dev server stays at root so local routing is unchanged.
-  base: command === 'build' ? '/pages/nakul-saxena/UW-Setup-V2/' : '/',
+  base: command === 'build' ? '/pages/nakul-saxena/UW-Setup-Dreamforce/' : '/',
   plugins: [react(), configApiPlugin(), pagesSpaFallback(PAGES_OUT_DIR)],
   resolve: {
     alias: { '@': resolve(__dirname, 'src') },
