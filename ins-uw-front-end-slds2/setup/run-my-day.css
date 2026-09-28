@@ -1,0 +1,837 @@
+/* ═════════════════════════════════════════════════════════════
+   RUN MY DAY — PLAYBOOK CONFIGURATION
+   ═════════════════════════════════════════════════════════════ */
+
+/* List page */
+.rmd-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.rmd-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid var(--sf-border);
+  border-radius: 6px 6px 0 0;
+  padding: 16px 20px;
+}
+
+.rmd-page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #080707;
+  margin: 0 0 4px 0;
+}
+
+.rmd-page-sub {
+  font-size: 13px;
+  color: #706E6B;
+  margin: 0;
+}
+
+.rmd-table-wrap {
+  background: #fff;
+  border: 1px solid var(--sf-border);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+
+.rmd-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: #706E6B;
+}
+
+.rmd-empty-icon {
+  margin: 0 auto 16px;
+  opacity: 0.4;
+}
+
+.rmd-empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #080707;
+}
+
+.rmd-empty-sub {
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* ────────────────────────────────────────────────────────────
+   PLAYBOOK WIZARD MODAL
+   ──────────────────────────────────────────────────────────── */
+.rmd-wizard-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rmd-wizard-overlay.hidden {
+  display: none;
+}
+
+.rmd-wizard {
+  background: #fff;
+  border-radius: 12px;
+  width: 90vw;
+  height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+}
+
+.rmd-wizard-header {
+  position: relative;
+  padding: 18px 24px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rmd-wizard-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #080707;
+  margin: 0;
+}
+
+.rmd-wizard-close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #c9c9c9;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #706E6B;
+  font-size: 16px;
+}
+
+.rmd-wizard-close:hover {
+  background: #f3f3f3;
+}
+
+.rmd-wizard-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Step indicator (left rail) — 10% */
+.rmd-wizard-steps {
+  width: 10%;
+  min-width: 140px;
+  flex-shrink: 0;
+  padding: 32px 16px 32px 28px;
+  border-right: 1px solid #f0f0f0;
+}
+
+.rmd-step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  position: relative;
+}
+
+.rmd-step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 30px;
+  width: 1px;
+  height: 22px;
+  background: #c9c9c9;
+}
+
+.rmd-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid #c9c9c9;
+  background: #fff;
+  color: #706E6B;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rmd-step-item.active .rmd-step-num {
+  background: #001e5b;
+  color: #fff;
+  border-color: #001e5b;
+}
+
+.rmd-step-item.done .rmd-step-num {
+  background: #2E844A;
+  color: #fff;
+  border-color: #2E844A;
+}
+
+.rmd-step-label {
+  font-size: 14px;
+  color: #444;
+}
+
+.rmd-step-item.active .rmd-step-label {
+  color: #080707;
+  font-weight: 600;
+}
+
+/* Wizard content area */
+.rmd-wizard-content {
+  flex: 1;
+  padding: 28px 36px;
+  overflow-y: auto;
+}
+
+.rmd-wizard-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  border-top: 1px solid #e5e5e5;
+  background: #fafafa;
+}
+
+.rmd-btn-back, .rmd-btn-next {
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rmd-btn-back {
+  background: #fff;
+  border: 1px solid #0176D3;
+  color: #0176D3;
+}
+
+.rmd-btn-back:hover {
+  background: #f3f8ff;
+}
+
+.rmd-btn-next {
+  background: #fff;
+  border: 1px solid #0176D3;
+  color: #0176D3;
+}
+
+.rmd-btn-next:hover {
+  background: #f3f8ff;
+}
+
+.rmd-btn-back:disabled, .rmd-btn-next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ────────────────────────────────────────────────────────────
+   STEP 1 — DEFINE
+   ──────────────────────────────────────────────────────────── */
+.rmd-step1-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #080707;
+  margin: 0 0 18px 0;
+}
+
+.rmd-form-field {
+  margin-bottom: 14px;
+}
+
+.rmd-form-label {
+  display: block;
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.rmd-form-label .req {
+  color: #c23934;
+}
+
+.rmd-form-input,
+.rmd-form-textarea,
+.rmd-form-select {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  background: #fff;
+  font-family: inherit;
+}
+
+.rmd-form-input:focus,
+.rmd-form-textarea:focus,
+.rmd-form-select:focus {
+  outline: none;
+  border-color: #0176D3;
+  box-shadow: 0 0 3px #0176D3;
+}
+
+.rmd-form-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.rmd-char-count {
+  font-size: 11px;
+  color: #706E6B;
+  margin-top: 2px;
+}
+
+.rmd-config-columns {
+  margin-top: 24px;
+}
+
+.rmd-config-columns-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #080707;
+  margin: 0 0 4px 0;
+}
+
+.rmd-config-columns-sub {
+  font-size: 12px;
+  color: #706E6B;
+  margin: 0 0 12px 0;
+}
+
+.rmd-config-columns-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 18px 20px;
+  background: #fff;
+}
+
+.rmd-config-column-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 8px 0;
+}
+
+.rmd-config-column-row:not(:last-child) {
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.rmd-config-column-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f3f3f3;
+  color: #444;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rmd-config-column-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0176D3;
+  margin-bottom: 2px;
+}
+
+.rmd-config-column-desc {
+  font-size: 12px;
+  color: #706E6B;
+}
+
+/* ────────────────────────────────────────────────────────────
+   STEP 2 — WYSIWYG CONFIGURE
+   ──────────────────────────────────────────────────────────── */
+.rmd-config-layout {
+  display: flex;
+  gap: 18px;
+  height: 100%;
+  align-items: flex-start;
+}
+
+/* Left preview (Groups + Insights + Actions inner columns) — 60% of body */
+.rmd-preview {
+  background: #f7f7f7;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  gap: 10px;
+  flex: 2;
+  min-height: 420px;
+}
+
+.rmd-preview-col {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rmd-preview-col-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #080707;
+  margin: 0 0 4px 0;
+}
+
+.rmd-preview-item {
+  background: #f3f3f3;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #444;
+  transition: border-color 0.1s;
+}
+
+.rmd-preview-item:hover {
+  border-color: #c9c9c9;
+}
+
+.rmd-preview-item.selected {
+  border: 2px solid #0176D3;
+  background: #f3f8ff;
+  padding: 9px;
+}
+
+.rmd-preview-item-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: #444;
+}
+
+.rmd-preview-item-bar {
+  height: 6px;
+  background: #b8d4f5;
+  border-radius: 3px;
+  flex: 1;
+}
+
+/* Insight tile (with name + dot + skeleton bars) */
+.rmd-preview-insight {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 10px 12px;
+}
+
+.rmd-preview-insight-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rmd-preview-insight-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #080707;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rmd-preview-insight-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #c9c9c9;
+  flex-shrink: 0;
+}
+
+.rmd-preview-insight-bar {
+  height: 5px;
+  background: #d6e2f2;
+  border-radius: 3px;
+}
+
+.rmd-preview-insight-bar:nth-child(3) {
+  width: 80%;
+}
+
+.rmd-preview-add {
+  background: transparent;
+  border: none;
+  color: #0176D3;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  padding: 8px 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rmd-preview-add:hover {
+  text-decoration: underline;
+}
+
+.rmd-preview-skel {
+  background: #f3f3f3;
+  border-radius: 4px;
+  padding: 12px 10px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.rmd-preview-skel-bar {
+  height: 6px;
+  background: #c9d8ed;
+  border-radius: 3px;
+}
+
+/* Right configuration panel — 30% of body (1:2 with preview) */
+.rmd-config-panel {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 18px 20px;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.rmd-config-panel-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #080707;
+  margin: 0 0 14px 0;
+}
+
+.rmd-config-divider {
+  font-size: 12px;
+  color: #706E6B;
+  margin: 8px 0 4px 0;
+}
+
+.rmd-config-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #706E6B;
+  padding: 40px 20px;
+}
+
+.rmd-config-empty-icon {
+  width: 32px;
+  height: 32px;
+  color: #001e5b;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.rmd-config-empty-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #080707;
+  margin-bottom: 4px;
+}
+
+.rmd-config-empty-sub {
+  font-size: 12px;
+  color: #706E6B;
+}
+
+.rmd-btn-remove {
+  width: 100%;
+  background: #fff;
+  color: #c23934;
+  border: 1px solid #c23934;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.rmd-btn-remove:hover {
+  background: #fdecea;
+}
+
+.rmd-config-next {
+  margin-top: 14px;
+  text-align: right;
+  font-size: 13px;
+  color: #444;
+}
+
+.rmd-config-next a {
+  color: #0176D3;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.rmd-config-next a:hover {
+  text-decoration: underline;
+}
+
+.rmd-form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Snooze / Dismiss card */
+.rmd-snooze-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.rmd-snooze-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.rmd-snooze-row:not(:last-child) {
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.rmd-snooze-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #080707;
+}
+
+.rmd-snooze-sub {
+  font-size: 12px;
+  color: #706E6B;
+}
+
+/* Toggle switch */
+.rmd-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rmd-toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: #c9c9c9;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.rmd-toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.15s;
+}
+
+.rmd-toggle.on .rmd-toggle-switch {
+  background: #0176D3;
+}
+
+.rmd-toggle.on .rmd-toggle-switch::after {
+  left: 18px;
+}
+
+.rmd-toggle-state {
+  font-size: 12px;
+  color: #706E6B;
+  min-width: 50px;
+  text-align: right;
+}
+
+.rmd-action-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  background: #fafafa;
+}
+
+.rmd-add-action-btn {
+  width: 100%;
+  background: #fff;
+  color: #0176D3;
+  border: 1px solid #c9c9c9;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.rmd-add-action-btn:hover {
+  background: #f3f8ff;
+  border-color: #0176D3;
+}
+
+/* Actions tile (skeleton bars only, single tile, fully clickable) */
+.rmd-actions-tile {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 14px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.rmd-actions-tile:hover {
+  border-color: #c9c9c9;
+}
+
+.rmd-actions-tile.selected {
+  border: 2px solid #0176D3;
+  padding: 13px 11px;
+}
+
+.rmd-actions-message {
+  font-size: 13px;
+  color: #444;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.rmd-link-btn {
+  background: #fff;
+  color: #0176D3;
+  border: 1px solid #0176D3;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rmd-link-btn:hover {
+  background: #f3f8ff;
+}
+
+/* Step 3 — Activate */
+.rmd-activation-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #d4f5e0;
+  border: 1px solid #a8e1bc;
+  color: #1d5a2f;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+
+.rmd-activation-banner-icon {
+  width: 18px;
+  height: 18px;
+  color: #2E844A;
+  flex-shrink: 0;
+}
+
+.rmd-activation-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #080707;
+  margin: 0 0 6px 0;
+}
+
+.rmd-activation-sub {
+  font-size: 13px;
+  color: #444;
+  margin: 0 0 24px 0;
+}
+
+.rmd-activation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.rmd-activation-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #080707;
+  margin-bottom: 2px;
+}
+
+.rmd-activation-hint {
+  font-size: 12px;
+  color: #706E6B;
+}
+
+/* Primary Save button on Step 3 */
+.rmd-btn-next.rmd-btn-primary {
+  background: #0176D3;
+  color: #fff;
+  border-color: #0176D3;
+}
+
+.rmd-btn-next.rmd-btn-primary:hover {
+  background: #014486;
+  border-color: #014486;
+}

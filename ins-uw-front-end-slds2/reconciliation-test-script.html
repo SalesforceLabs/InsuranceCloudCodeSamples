@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Data Reconciliation — Unmoderated Test Script</title>
+<style>
+  :root {
+    --navy: #001e5b;
+    --blue: #0176D3;
+    --ink: #2e2e2e;
+    --muted: #5c5c5c;
+    --line: #e5e5e5;
+    --page: #f3f3f3;
+    --amber-fg: #B85C00;
+    --amber-bg: #fef5e8;
+    --amber-line: #f5c6a5;
+    --green-fg: #2E844A;
+    --green-bg: #e7f5ec;
+    --red: #ea001e;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--page);
+    line-height: 1.55;
+    font-size: 15px;
+  }
+
+  /* ---- Header ---- */
+  header.hero {
+    background: var(--navy);
+    color: white;
+    padding: 40px 48px 32px;
+    position: relative;
+  }
+  header.hero .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #9db4e6;
+    margin: 0 0 8px;
+  }
+  header.hero h1 {
+    margin: 0 0 10px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  header.hero p {
+    margin: 0;
+    max-width: 780px;
+    color: #d3ddf3;
+    font-size: 15px;
+  }
+  header.hero .meta {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    font-size: 13px;
+    color: #c3d0ec;
+  }
+  header.hero .meta b { color: #fff; font-weight: 600; }
+  .print-btn {
+    position: absolute;
+    top: 40px;
+    right: 48px;
+    background: #fff;
+    color: var(--navy);
+    border: none;
+    border-radius: 6px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .print-btn:hover { background: #eef4ff; }
+
+  /* ---- Layout ---- */
+  .wrap {
+    display: flex;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 32px;
+    padding: 32px 24px 64px;
+  }
+  nav.toc {
+    position: sticky;
+    top: 24px;
+    flex: 0 0 240px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 8px;
+    font-size: 13px;
+  }
+  nav.toc h2 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin: 4px 12px 10px;
+  }
+  nav.toc a {
+    display: block;
+    padding: 7px 12px;
+    color: var(--navy);
+    text-decoration: none;
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+  }
+  nav.toc a:hover { background: #f3f7fb; border-left-color: var(--blue); }
+
+  main { flex: 1; min-width: 0; }
+
+  section {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  section > h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  section > .lede {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  h3 { color: var(--navy); font-size: 16px; margin: 22px 0 8px; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  strong { color: var(--ink); }
+  code {
+    background: #f3f3f3;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 13px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  /* ---- Task card ---- */
+  .task {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .task .task-head {
+    background: #f8faff;
+    border-bottom: 1px solid var(--line);
+    padding: 14px 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .task .task-num {
+    flex: 0 0 auto;
+    background: var(--blue);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 3px 11px;
+  }
+  .task .task-title { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .task .task-body { padding: 18px 20px; }
+  .prompt {
+    background: #fff;
+    border-left: 3px solid var(--blue);
+    padding: 10px 14px;
+    margin: 0 0 14px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .prompt .label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--blue);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .hint {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    margin: 0 0 12px;
+  }
+  .qlabel {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+    font-weight: 700;
+    margin: 4px 0 6px;
+  }
+  .rating {
+    display: inline-block;
+    background: var(--green-bg);
+    color: var(--green-fg);
+    border-radius: 4px;
+    padding: 1px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+
+  .note {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-line);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--amber-fg);
+    margin: 0 0 16px;
+  }
+  .note b { color: var(--amber-fg); }
+
+  .callout {
+    background: #eef4ff;
+    border: 1px solid #cfe0fb;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+    font-size: 14px;
+  }
+  .callout .label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--blue);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 0 40px; }
+
+  /* ---- View tabs (Test Script / AI Import) ---- */
+  .viewtabs {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--line);
+    background: var(--page);
+  }
+  .viewtab {
+    appearance: none;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    padding: 16px 18px 13px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .viewtab:hover { color: var(--navy); }
+  .viewtab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+  .ai-wrap { max-width: 1000px; margin: 0 auto; padding: 32px 24px 64px; }
+  .ai-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .ai-head h2 { margin: 0 0 4px; font-size: 22px; color: var(--navy); font-weight: 700; }
+  .ai-head p { margin: 0; color: var(--muted); font-size: 14px; max-width: 640px; }
+  .copy-btn {
+    flex: 0 0 auto;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .copy-btn:hover { background: #005fb2; }
+  .copy-btn.copied { background: var(--green-fg); }
+  #ai-text {
+    width: 100%;
+    height: 62vh;
+    min-height: 420px;
+    resize: vertical;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 22px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: #fff;
+    white-space: pre;
+    overflow: auto;
+  }
+
+  @media print {
+    nav.toc, .print-btn, .viewtabs, #view-ai { display: none; }
+    body { background: #fff; }
+    section, .task { border-color: #ccc; break-inside: avoid; }
+    .wrap { display: block; padding: 0; }
+    header.hero { padding: 24px 32px; }
+  }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">Unmoderated Usability Test · usertesting.com</p>
+    <h1>Data Reconciliation Test Script</h1>
+    <p>
+      A focused, task-based script for validating the manual data-reconciliation experience in the
+      Agentic Insurance Underwriting Workbench — selecting sources for conflicting values, mapping
+      attributes, overriding and manually entering values, and resolving duplicate submission lines.
+    </p>
+    <div class="meta">
+      <span><b>Study type:</b> Unmoderated usability test</span>
+      <span><b>Duration:</b> ~15–20 min</span>
+      <span><b>Working record:</b> Location 1 – Chicago Warehouse</span>
+      <span><b>Line of Business:</b> Commercial Property</span>
+    </div>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+  </header>
+
+  <div class="viewtabs">
+    <button id="tab-script" class="viewtab active" onclick="showView('script')">Test Script</button>
+    <button id="tab-ai" class="viewtab" onclick="showView('ai')">AI Import (usertesting.com)</button>
+  </div>
+
+  <div id="view-script">
+  <div class="wrap">
+    <nav class="toc">
+      <h2>Contents</h2>
+      <a href="#setup">Researcher setup</a>
+      <a href="#intro">Participant intro</a>
+      <a href="#t0">Task 0 · Orientation</a>
+      <a href="#t1">Task 1 · Explore a submission line</a>
+      <a href="#t2">Task 2 · Open the discrepancy viewer</a>
+      <a href="#t3">Task 3 · Select a source</a>
+      <a href="#t4">Task 4 · Map an attribute</a>
+      <a href="#t5">Task 5 · Override a value</a>
+      <a href="#t6">Task 6 · Manual value</a>
+      <a href="#t7">Task 7 · Save &amp; review changes</a>
+      <a href="#t8">Task 8 · Resolve duplicate</a>
+      <a href="#wrap">Wrap-up</a>
+    </nav>
+
+    <main>
+      <!-- ───────────── Researcher setup ───────────── -->
+      <section id="setup">
+        <h2>Researcher setup</h2>
+        <p class="lede">Do not show this section to the participant.</p>
+        <ul>
+          <li><b>Start URL / start point:</b> the <b>Commercial Property</b> submission line page for the
+            NexGen Biologics submission, at enrichment <b>Step 1</b>. Confirm the left tree shows
+            <b>Location 1 – Chicago Warehouse</b> and that the <b>Resolve Attribute Mapping</b> and
+            <b>Resolve Duplicate Submission Lines</b> cards are visible at the top.</li>
+          <li><b>Reset between sessions:</b> clear the site's local and session storage — reconciliation
+            state (selected sources, overrides, manual values, resolved duplicates) persists in the browser.</li>
+          <li><b>Task success:</b> completion of the action + a self-reported ease rating (1–5, where
+            5 = very easy) per task.</li>
+          <li><b>Think-aloud:</b> remind participants at the start and once mid-session if they go quiet.</li>
+        </ul>
+        <div class="note">
+          <b>Note on the duplicate task.</b> The flagged duplicate in Commercial Property is the
+          <b>San Jose</b> location pair (Location 3A / 3B), not Chicago Warehouse — Chicago has attribute
+          conflicts but no duplicate. Tasks 1–7 use Chicago Warehouse; Task 8 uses whichever group the
+          Resolve Duplicates carousel surfaces. This is intentional and does not need to be explained to
+          the participant.
+        </div>
+      </section>
+
+      <!-- ───────────── Intro ───────────── -->
+      <section id="intro">
+        <h2>Introduction (read to / shown to the participant)</h2>
+        <div class="callout">
+          <span class="label">Scenario</span>
+          Thanks for helping us test an underwriting workbench prototype. You're an <b>underwriter</b>
+          reviewing a new commercial property submission. The system has already pulled data from the
+          broker's documents and email — but some values <b>conflict across sources</b>, some data hasn't
+          been matched to a field yet, and some records <b>look like duplicates</b>. Your job is to clean
+          this up so the submission is ready to quote.
+          <br /><br />
+          Please <b>think aloud</b> the whole time — tell us what you see, what you expect to happen, and
+          anything that's confusing. There are no wrong answers; we're testing the product, not you.
+        </div>
+      </section>
+
+      <!-- ───────────── Task 0 ───────────── -->
+      <section id="t0">
+        <h2>Tasks</h2>
+        <p class="lede">Present one task at a time. Each includes a prompt, an optional hint (for the
+          researcher only — reveal only if the participant is fully stuck), and follow-up questions.</p>
+
+        <div class="task">
+          <div class="task-head"><span class="task-num">Task 0</span><span class="task-title">Orientation &amp; first impressions</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              Before clicking anything, take a moment to study this screen. Walking through it out loud,
+              point to each area you notice and tell us what you think it is and what it's there to help
+              you do. Then describe, in your own words, what you believe this whole screen is for and what
+              it's asking you to accomplish.
+            </div>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>What do you think a "submission line" represents? What kinds of things do you expect to
+                find in that left-hand list?</li>
+              <li>What do you think the two cards at the top — "Resolve Attribute Mapping" and "Resolve
+                Duplicate Submission Lines" — are for?</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ───────────── Task 1 ───────────── -->
+        <div id="t1" class="task">
+          <div class="task-head"><span class="task-num">Task 1</span><span class="task-title">Explore a submission line</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              Open <b>Location 1 – Chicago Warehouse</b> from the list on the left. Take your time looking
+              at what opens up, and <b>click through each of the tabs</b> in the detail view — talk us
+              through what each one shows: what information is there, how it's organized, and anything that
+              stands out or seems to need your attention. Don't change anything yet — just describe what
+              you see on each tab and what you think you could do here.
+            </div>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>What is this view telling you about the Chicago Warehouse record?</li>
+              <li>Where do the values shown here appear to come from, and does anything look inconsistent
+                or unresolved?</li>
+              <li>Which of the things you see would you want to act on first, and why?</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ───────────── Task 2 ───────────── -->
+        <div id="t2" class="task">
+          <div class="task-head"><span class="task-num">Task 2</span><span class="task-title">Open the discrepancy viewer</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              Click <b>Resolve</b> to open the viewer. Once it's open, <b>click around inside it</b> — the
+              documents, the sources, the values — and talk us through what you're looking at: what does
+              this viewer show you, and how would you use it? Don't commit to anything yet — just explore
+              and describe.
+            </div>
+            <p class="hint">Path (researcher only): the Resolve Attribute Mapping card → Resolve, or the
+              "Resolve" link on the detail panel's discrepancy banner. This opens the Select Source / View
+              Sources viewer with the document canvas on the left and the source/value list on the right.</p>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>What is this viewer showing you? What are the different areas for?</li>
+              <li>How do the documents on one side relate to the values on the other?</li>
+              <li>What would you expect to do next in here? <span class="rating">Rate 1–5</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ───────────── Task 3 ───────────── -->
+        <div id="t3" class="task">
+          <div class="task-head"><span class="task-num">Task 3</span><span class="task-title">Resolve the ZIP Code conflict</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              The <b>ZIP Code</b> for Chicago Warehouse was found on more than one document, and the values
+              don't match. Review the sources, decide which one you'd trust as the correct ZIP, and select
+              it.
+            </div>
+            <p class="hint">Path (researcher only): Resolve Attribute Mapping → the ZIP Code row → Select
+              Source; or click the Source cell on the ZIP Code attribute to open the Select Source viewer.
+              The email source shows 60612 while the other documents show 60607 — pick a source using the
+              radio buttons.</p>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>How did you decide which source to trust?</li>
+              <li>Was it clear that multiple documents disagreed on this value? <span class="rating">Rate 1–5</span></li>
+              <li>How easy was it to choose a source? <span class="rating">Rate 1–5</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ───────────── Task 4 ───────────── -->
+        <div id="t4" class="task">
+          <div class="task-head"><span class="task-num">Task 4</span><span class="task-title">Map an attribute to Country</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              Some extracted data hasn't been matched to a standard field yet — it's sitting as
+              "unmapped." Still on Chicago Warehouse, map <b>the relevant attributes</b> to the
+              <b>Country</b> field, then <b>resolve the discrepancy</b> so it no longer shows as unresolved.
+            </div>
+            <p class="hint">Path (researcher only): View Sources → Unmapped tab → the Country row(s) → Map;
+              or the "Associate Attribute" / "Map Attributes" control on the Country canonical-term row.
+              Map every Country extraction, then use "Mark as Resolved" (or select the preferred source)
+              so the Country discrepancy clears.</p>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>Did you understand the difference between a "mapped" and an "unmapped" attribute?</li>
+              <li>How confident are you that you mapped it to the right field? <span class="rating">Rate 1–5</span></li>
+              <li>How easy was this task? <span class="rating">Rate 1–5</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ───────────── Task 5 ───────────── -->
+        <div id="t5" class="task">
+          <div class="task-head"><span class="task-num">Task 5</span><span class="task-title">Override a value</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              Suppose the mapped <b>State</b> value is <em>close but not quite right</em>. <b>Override</b>
+              it with your corrected value, then <b>resolve the discrepancy</b> so it no longer shows as
+              unresolved.
+            </div>
+            <p class="hint">Path (researcher only): the State attribute row has an inline Override Value
+              cell — hover reveals a pencil; type a value and commit. An override clears the low-confidence
+              flag; use "Mark as Resolved" if the discrepancy is still listed.</p>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>What did you expect "Override" to do, compared with picking a different source?</li>
+              <li>Was the difference between overriding and choosing a source clear? <span class="rating">Rate 1–5</span></li>
+              <li>How easy was this task? <span class="rating">Rate 1–5</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ───────────── Task 6 ───────────── -->
+        <div id="t6" class="task">
+          <div class="task-head"><span class="task-num">Task 6</span><span class="task-title">Enter a manual value for Fire Alarm</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              Now imagine that <b>none</b> of the extracted sources for <b>Fire Alarm</b> are usable, and you
+              need to type the value in yourself. Enter a <b>manual value</b> for the Fire Alarm attribute
+              on Chicago Warehouse.
+            </div>
+            <p class="hint">Path (researcher only): the Fire Alarm canonical-term row offers a
+              "[Map attributes]" / manual-value affordance; after entering a value the source reads
+              "Manually edited" / "Manual".</p>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>Did the system make it clear that this value came from you, not from a document?</li>
+              <li>What do you understand to be the difference between entering a manual value and overriding a value? <span class="rating">Open answer</span></li>
+              <li>How easy was this task? <span class="rating">Rate 1–5</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ───────────── Task 7 ───────────── -->
+        <div id="t7" class="task">
+          <div class="task-head"><span class="task-num">Task 7</span><span class="task-title">Save &amp; review your changes</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              You've made a number of changes to this record. <b>Save your changes</b>, then look back over
+              the grid and <b>find the attributes you changed</b> — <b>ZIP Code</b>, <b>Country</b>,
+              <b>State</b>, and <b>Fire Alarm</b>.
+            </div>
+            <p class="hint">Path (researcher only): use the Save button in the pinned footer, then scan the
+              attribute grid. Expect the participant to call out ZIP Code (source selected), Country
+              (mapped + resolved), State (overridden), and Fire Alarm (manual value).</p>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>How easy was it to see which values you had changed and how? <span class="rating">Rate 1–5</span></li>
+              <li>Looking at the grid now, is it clear where each value came from — a document, an override, or a manual entry?</li>
+              <li>Was anything about saving or confirming your changes unclear? <span class="rating">Rate 1–5</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ───────────── Task 8 ───────────── -->
+        <div id="t8" class="task">
+          <div class="task-head"><span class="task-num">Task 8</span><span class="task-title">Resolve a duplicate submission line</span></div>
+          <div class="task-body">
+            <div class="prompt">
+              <span class="label">Say to participant</span>
+              The system flagged some submission lines that may be <b>duplicates of each other</b>. Click
+              <b>Resolve</b> on the <b>Resolve Duplicate Submission Lines</b> card, review the flagged
+              records for <b>Location 3A – San Jose Manufacturing Campus</b> side by side, and decide
+              whether to <b>merge</b> them into one or keep them separate. Complete your decision.
+            </div>
+            <p class="hint">Path (researcher only): Resolve Duplicate Submission Lines card → Resolve →
+              compare the side-by-side cards for the San Jose Manufacturing Campus pair (Location 3A / 3B)
+              → Select to Merge + Merge Selected, or Do Not Merge.</p>
+            <div class="qlabel">Follow-up questions</div>
+            <ul>
+              <li>What information did you use to decide whether these were the same record?</li>
+              <li>How confident did you feel in your merge decision? <span class="rating">Rate 1–5</span></li>
+              <li>Was anything about comparing the two records confusing?</li>
+              <li>How easy was this task? <span class="rating">Rate 1–5</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── Wrap-up ───────────── -->
+      <section id="wrap">
+        <h2>Wrap-up questions</h2>
+        <p class="lede">Ask after all tasks are complete.</p>
+        <ul>
+          <li>Overall, how confident would you feel that this submission is "clean" and ready to quote
+            after doing this? <span class="rating">Rate 1–5</span></li>
+          <li>What was the <b>most confusing</b> moment in the whole flow?</li>
+          <li>What was the <b>most helpful</b> thing the system did for you?</li>
+          <li>If you could change one thing about this reconciliation process, what would it be?</li>
+          <li>Overall, how easy or hard was the reconciliation process as a whole? <span class="rating">Rate 1–5</span></li>
+        </ul>
+      </section>
+
+      <footer>Agentic Insurance Underwriting Workbench — internal usability testing artifact. Not wired into app navigation.</footer>
+    </main>
+  </div>
+  </div><!-- /#view-script -->
+
+  <div id="view-ai" style="display:none">
+    <div class="ai-wrap">
+      <div class="ai-head">
+        <div>
+          <h2>AI Import — plain-text test plan</h2>
+          <p>Copy everything below and paste it into usertesting.com's AI test builder. It contains the
+            study setup, participant intro, every task instruction, and the follow-up / rating questions —
+            with researcher-only hints removed.</p>
+        </div>
+        <button id="copy-btn" class="copy-btn" onclick="copyAiText()">Copy to clipboard</button>
+      </div>
+      <textarea id="ai-text" readonly spellcheck="false">STUDY: Data Reconciliation — Unmoderated Usability Test
+Product: Agentic Insurance Underwriting Workbench
+Estimated duration: 15–20 minutes
+Working record: Location 1 – Chicago Warehouse (Commercial Property)
+
+INTRODUCTION (show to the participant before the tasks):
+Thanks for helping us test an underwriting workbench prototype. You're an underwriter reviewing a new commercial property submission. The system has already pulled data from the broker's documents and email — but some values conflict across sources, some data hasn't been matched to a field yet, and some records look like duplicates. Your job is to clean this up so the submission is ready to quote. Please think aloud the whole time — tell us what you see, what you expect to happen, and anything that's confusing. There are no wrong answers; we're testing the product, not you.
+
+====================================================================
+
+TASK 0 — Orientation & first impressions
+Instruction: Before clicking anything, take a moment to study this screen. Walking through it out loud, point to each area you notice and tell us what you think it is and what it's there to help you do. Then describe, in your own words, what you believe this whole screen is for and what it's asking you to accomplish.
+Follow-up questions:
+1. What do you think a "submission line" represents? What kinds of things do you expect to find in that left-hand list?
+2. What do you think the two cards at the top — "Resolve Attribute Mapping" and "Resolve Duplicate Submission Lines" — are for?
+
+--------------------------------------------------------------------
+
+TASK 1 — Explore a submission line
+Instruction: Open Location 1 – Chicago Warehouse from the list on the left. Take your time looking at what opens up, and click through each of the tabs in the detail view — talk us through what each one shows: what information is there, how it's organized, and anything that stands out or seems to need your attention. Don't change anything yet — just describe what you see on each tab and what you think you could do here.
+Follow-up questions:
+1. What is this view telling you about the Chicago Warehouse record?
+2. Where do the values shown here appear to come from, and does anything look inconsistent or unresolved?
+3. Which of the things you see would you want to act on first, and why?
+
+--------------------------------------------------------------------
+
+TASK 2 — Open the discrepancy viewer
+Instruction: Click Resolve to open the viewer. Once it's open, click around inside it — the documents, the sources, the values — and talk us through what you're looking at: what does this viewer show you, and how would you use it? Don't commit to anything yet — just explore and describe.
+Follow-up questions:
+1. What is this viewer showing you? What are the different areas for?
+2. How do the documents on one side relate to the values on the other?
+3. What would you expect to do next in here? (Rate ease 1–5)
+
+--------------------------------------------------------------------
+
+TASK 3 — Resolve the ZIP Code conflict
+Instruction: The ZIP Code for Chicago Warehouse was found on more than one document, and the values don't match. Review the sources, decide which one you'd trust as the correct ZIP, and select it.
+Follow-up questions:
+1. How did you decide which source to trust?
+2. Was it clear that multiple documents disagreed on this value? (Rate 1–5)
+3. How easy was it to choose a source? (Rate 1–5)
+
+--------------------------------------------------------------------
+
+TASK 4 — Map an attribute to Country
+Instruction: Some extracted data hasn't been matched to a standard field yet — it's sitting as "unmapped." Still on Chicago Warehouse, map the relevant attributes to the Country field, then resolve the discrepancy so it no longer shows as unresolved.
+Follow-up questions:
+1. Did you understand the difference between a "mapped" and an "unmapped" attribute?
+2. How confident are you that you mapped it to the right field? (Rate 1–5)
+3. How easy was this task? (Rate 1–5)
+
+--------------------------------------------------------------------
+
+TASK 5 — Override a value
+Instruction: Suppose the mapped State value is close but not quite right. Override it with your corrected value, then resolve the discrepancy so it no longer shows as unresolved.
+Follow-up questions:
+1. What did you expect "Override" to do, compared with picking a different source?
+2. Was the difference between overriding and choosing a source clear? (Rate 1–5)
+3. How easy was this task? (Rate 1–5)
+
+--------------------------------------------------------------------
+
+TASK 6 — Enter a manual value for Fire Alarm
+Instruction: Now imagine that none of the extracted sources for Fire Alarm are usable, and you need to type the value in yourself. Enter a manual value for the Fire Alarm attribute on Chicago Warehouse.
+Follow-up questions:
+1. Did the system make it clear that this value came from you, not from a document?
+2. What do you understand to be the difference between entering a manual value and overriding a value? (Open answer)
+3. How easy was this task? (Rate 1–5)
+
+--------------------------------------------------------------------
+
+TASK 7 — Save & review your changes
+Instruction: You've made a number of changes to this record. Save your changes, then look back over the grid and find the attributes you changed — ZIP Code, Country, State, and Fire Alarm.
+Follow-up questions:
+1. How easy was it to see which values you had changed and how? (Rate 1–5)
+2. Looking at the grid now, is it clear where each value came from — a document, an override, or a manual entry?
+3. Was anything about saving or confirming your changes unclear? (Rate 1–5)
+
+--------------------------------------------------------------------
+
+TASK 8 — Resolve a duplicate submission line
+Instruction: The system flagged some submission lines that may be duplicates of each other. Click Resolve on the Resolve Duplicate Submission Lines card, review the flagged records for Location 3A – San Jose Manufacturing Campus side by side, and decide whether to merge them into one or keep them separate. Complete your decision.
+Follow-up questions:
+1. What information did you use to decide whether these were the same record?
+2. How confident did you feel in your merge decision? (Rate 1–5)
+3. Was anything about comparing the two records confusing?
+4. How easy was this task? (Rate 1–5)
+
+====================================================================
+
+WRAP-UP QUESTIONS (ask after all tasks are complete):
+1. Overall, how confident would you feel that this submission is "clean" and ready to quote after doing this? (Rate 1–5)
+2. What was the most confusing moment in the whole flow?
+3. What was the most helpful thing the system did for you?
+4. If you could change one thing about this reconciliation process, what would it be?
+5. Overall, how easy or hard was the reconciliation process as a whole? (Rate 1–5)
+</textarea>
+    </div>
+  </div><!-- /#view-ai -->
+
+  <script>
+    function showView(view) {
+      var isAi = view === 'ai';
+      document.getElementById('view-script').style.display = isAi ? 'none' : '';
+      document.getElementById('view-ai').style.display = isAi ? '' : 'none';
+      document.getElementById('tab-script').classList.toggle('active', !isAi);
+      document.getElementById('tab-ai').classList.toggle('active', isAi);
+      window.scrollTo(0, 0);
+    }
+    function copyAiText() {
+      var ta = document.getElementById('ai-text');
+      var btn = document.getElementById('copy-btn');
+      var done = function () {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = 'Copy to clipboard'; btn.classList.remove('copied'); }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ta.value).then(done, function () { ta.select(); document.execCommand('copy'); done(); });
+      } else {
+        ta.select();
+        document.execCommand('copy');
+        done();
+      }
+    }
+  </script>
+</body>
+</html>
