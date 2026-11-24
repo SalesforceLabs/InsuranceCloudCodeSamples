@@ -73,7 +73,7 @@ THe CML Migration Tool is a command-line + UI utility that enables:
 
 The documentation covers:
 
-- How CML works
+- How CML works – see [What is Constraint Modeling Language (CML)?](https://developer.salesforce.com/docs/revenue/revenue-management/guide/cml-what-is-constraint-modeling-language.html)
 - Sample Product Hierarchy Visualization
 - Setup instructions
 - Best practices for CML
