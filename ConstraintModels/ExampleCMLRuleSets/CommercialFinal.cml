@@ -287,7 +287,7 @@ type Building : CommercialBuildingClass {
         equipValueSum = sum(Equipment_Value);
     }
 
-	@(closeRelation=truee)
+	@(closeRelation=true)
     relation burglarycoverage : BurglaryCoverage[0..1];
 
 	@(closeRelation=true)
