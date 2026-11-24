@@ -1,6 +1,6 @@
 ## Constraints and Use Cases in English
 
-This section describes in plain English the business rules that are implemented in the CML (Constraint Modeling Language) code files. These constraints correspond to the rule sets found in the accompanying CML files (AutoSilverFinal.cml, MedicalFinal.cml, and CommercialFinal.cml).
+This section describes in plain English the business rules that are implemented in the [CML (Constraint Modeling Language)](https://developer.salesforce.com/docs/revenue/revenue-management/guide/cml-what-is-constraint-modeling-language.html) code files. These constraints correspond to the rule sets found in the accompanying CML files (AutoSilverFinal.cml, MedicalFinal.cml, and CommercialFinal.cml).
 
 ### Auto Silver Sample Constraints
 
