@@ -1,6 +1,91 @@
+/* =====================================================
+* Gold Standard CML Constraint Model for Commercial Property Insurance Product
+* =====================================================
+A product configuration constraints CML file for Commercial Property Insurance Product
+covering use cases of:
+- Base constraint (set attribute value)
+- Multi-instance constraint
+- Require coverage constraint
+- Exclude coverage constraint
+- Cardinality constraint
+- Parent cardinality constraint
+- Cross Product constraint
+- Grandchild products constraint
+- Siblings products constraint
+- Hide attribute / hide attribute value rules
+
+Product hierarchy:
+The Commercial Property Insurance root product includes General Liability Coverage at the bundle level, and child products to define multiple commercial locations (domestic and international). Each location contains buildings (Warehouse and Building) with their own coverages (Burglary and Vandalism), and each building can have equipment (Equipment and Electrical Equipment) with Equipment Coverage.
+
+Commercial Property Insurance (Root Product)
+├── GENERAL LIABILITY COVERAGE
+│
+└── COMMERCIAL LOCATION CLASS (Classification)
+    ├── LOCATION
+    │   └── COMMERCIAL BUILDING CLASS (Classification)
+    │       ├── WAREHOUSE
+    │       │   ├── BURGLARY COVERAGE
+    │       │   ├── VANDALISM COVERAGE
+    │       │   │
+    │       │   └── COMMERCIAL EQUIPMENT CLASS (Classification)
+    │       │       ├── EQUIPMENT
+    │       │       │   └── EQUIPMENT COVERAGE
+    │       │       │
+    │       │       └── ELECTRICAL EQUIPMENT
+    │       │           └── EQUIPMENT COVERAGE
+    │       │
+    │       └── BUILDING
+    │           ├── BURGLARY COVERAGE
+    │           ├── VANDALISM COVERAGE
+    │           │
+    │           └── COMMERCIAL EQUIPMENT CLASS (Classification)
+    │               ├── EQUIPMENT
+    │               │   └── EQUIPMENT COVERAGE
+    │               │
+    │               └── ELECTRICAL EQUIPMENT
+    │                   └── EQUIPMENT COVERAGE
+    │
+    └── INTERNATIONAL LOCATION
+        └── COMMERCIAL BUILDING CLASS (Classification)
+            ├── WAREHOUSE
+            │   ├── BURGLARY COVERAGE
+            │   ├── VANDALISM COVERAGE
+            │   │
+            │   └── COMMERCIAL EQUIPMENT CLASS (Classification)
+            │       ├── EQUIPMENT
+            │       │   └── EQUIPMENT COVERAGE
+            │       │
+            │       └── ELECTRICAL EQUIPMENT
+            │           └── EQUIPMENT COVERAGE
+            │
+            └── BUILDING
+                ├── BURGLARY COVERAGE
+                ├── VANDALISM COVERAGE
+                │
+                └── COMMERCIAL EQUIPMENT CLASS (Classification)
+                    ├── EQUIPMENT
+                    │   └── EQUIPMENT COVERAGE
+                    │
+                    └── ELECTRICAL EQUIPMENT
+                        └── EQUIPMENT COVERAGE
+*/
+
+/*
+Get Quote/Sales Transaction Level Attribute from Context Definition, such as User Profile, Quote Start Date, etc.
+*/
 @(contextPath = "SalesTransaction.UserProfile", attributeSource = "ST")
 extern string UserProfile;
 
+/*
+Root Product Bundle: Commercial Property Insurance
+@closeRelation = true: tell the constraint engine not to add any new instances in the relation, but the ones added by users or require rules are allowed.
+@propagateUp = true: tell the constraint engine only propagate from child to parent for aggregation function such as sum, max, count, etc.
+@configurable = false: prevent the engine from modifying/assigning the value of an attribute.
+@defaultValue: the initial value of the attribute when the product is added.
+
+Multi-instance use case: using aggregate functions for attributes from child relations (see "relation commerciallocationclass : CommercialLocationClass").
+Aggregates are rolled up level by level: Equipment -> Building -> Location -> Root.
+*/
 type CommercialPropertyInsurance {
     @(defaultValue = "ABCD1234")
     string SIC_Code;
@@ -10,6 +95,15 @@ type CommercialPropertyInsurance {
 
     string Cause_Of_Loss = ["Broad", "Special", "Basic"];
 
+    /*
+    Aggregate attributes across all Location instances (up to 10):
+        - locationCaStateCount / locationTxStateCount: number of locations in CA / TX
+        - commLocBuildAge6Count: number of locations having at least one building with age 6
+        - commLocBuildEquipGoodCount: number of locations having at least one building with equipment in "Good" condition
+        - locationMaxBuildingCovLimit: highest Commercial Building Burglary Coverage Limit across locations
+        - locationMaxWarehouseCovLimit: highest Warehouse Burglary Coverage Limit across locations
+        - locationSumBuildingEquipVal: total equipment value of commercial buildings across locations
+    */
     @(closeRelation=true, propagateUp=true)
     relation commerciallocationclass : CommercialLocationClass[0..10] {
         locationCaStateCount = count(State == "CA");
@@ -22,29 +116,68 @@ type CommercialPropertyInsurance {
         locationMaxBuildingCovLimit = max(Location.commercialBuildingCovLimit);
         @(defaultValue = 0)
         locationMaxWarehouseCovLimit = max(Location.warehouseBuildingCovLimit);
-        @(defaultValue = 0)
         locationSumBuildingEquipVal = sum(Location.buildingSumEquipValue);
     }
 
-    rule(Agreed_Value > 10000, "hide", "attribute", "SIC_Code");  
+    /*
+    Constraint 5: If Agreed Value of Commercial Property Root > 10000, hide SIC code attribute.
 
+    Base constraint (hide attribute rule)
+    */
+    rule(Agreed_Value > 10000, "hide", "attribute", "SIC_Code");
+
+    @(closeRelation=true)
     relation generalliabilitycoverage : GeneralLiabilityCoverage[0..1];
+
+    /*
+    Root level variables that read the aggregated values from the Location relation,
+    so they can be used in root level constraints and by descendants via parent().
+    */
     int childCommBuildCovLimit = commerciallocationclass.locationMaxBuildingCovLimit;
     int childWarehouseBuildCovLimit = commerciallocationclass.locationMaxWarehouseCovLimit;
     int childLocBuildAge6Count = commerciallocationclass.commLocBuildAge6Count;
     int childLocBuildEquipGoodCount = commerciallocationclass.commLocBuildEquipGoodCount;
     int childCommercialEquipmentValueSum = commerciallocationclass.locationSumBuildingEquipVal;
-	
-    
-    
-    require(childLocBuildAge6Count > 0 && childLocBuildEquipGoodCount > 0, generalliabilitycoverage[GeneralLiabilityCoverage], "General Liability coverage is required when Building age is 6 and Equipment condition is Good");
-    int generalLiabilityLimit = generalliabilitycoverage[GeneralLiabilityCoverage].General_Liability_Limit;
-    
-    require(commerciallocationclass.locationMaxWarehouseCovLimit == 50000 && commerciallocationclass.locationMaxBuildingCovLimit == 50000, generalliabilitycoverage[GeneralLiabilityCoverage] {General_Liability_Limit = 50000});
 
-    
+    /*
+    Constraint 6 (root level action): Add General Liability Coverage at root level with $50,000 limit
+    if at least one building age is 6 and at least one equipment condition is Good.
+    (see also Constraint 6 under type Building and type Equipment)
+
+    Multi-instance constraint
+    Require coverage constraint
+    Cross Product constraint
+    Grandchild products constraint
+    */
+    require(childLocBuildAge6Count > 0 && childLocBuildEquipGoodCount > 0, generalliabilitycoverage[GeneralLiabilityCoverage] {General_Liability_Limit = 50000}, "General Liability coverage is required when Building age is 6 and Equipment condition is Good");
+
+    /*
+    Constraint 1 (condition): IF
+        - Commercial General Liability Coverage is selected
+        - all Location States are not equal to TX (Texas)
+        - all Commercial Building Burglary Coverage Limit is less than $50,000
+        - all Warehouse Building Burglary Coverage Limit is less than $20,000
+        - sum of Equipment Value of Commercial Building is greater than $100,000
+    THEN
+        - set Commercial General Liability Coverage Limit to $50,000
+
+    Multi-instance constraint
+    Cardinality constraint
+    Cross Product constraint
+    Grandchild products constraint
+    */
+    boolean glLimitCondition = commerciallocationclass.locationTxStateCount == 0 && (childWarehouseBuildCovLimit < 20000 && childCommBuildCovLimit < 50000) && childCommercialEquipmentValueSum > 100000 && generalliabilitycoverage[GeneralLiabilityCoverage] == 1;
+
+    /*
+    Root level General Liability Limit, read by descendants (Location, Building, Equipment) via parent().
+    */
+    int generalLiabilityLimit = [1000, 2000, 5000, 10000, 25000, 50000];
 }
 
+/*
+Product: General Liability Coverage
+@domainComputation = false: the engine will not compute/reduce the domain (possible values) of the attribute, which improves performance.
+*/
 type GeneralLiabilityCoverage {
     @(domainComputation = "false", defaultValue = "100")
     int General_Liability_Deductible = [0, 50, 100, 200, 500];
@@ -53,6 +186,9 @@ type GeneralLiabilityCoverage {
     int General_Liability_Limit = [1000, 2000, 5000, 10000, 25000, 50000];
 }
 
+/*
+Product Classification: Commercial Location
+*/
 type CommercialLocationClass {
     @(defaultValue = "San Francisco")
     string City;
@@ -61,7 +197,19 @@ type CommercialLocationClass {
     string State;
 }
 
+/*
+Product Bundle: Location
+Multi-instance use case: aggregates attributes from Building / Warehouse instances (up to 10) and exposes them to the root.
+*/
 type Location : CommercialLocationClass {
+    /*
+    Aggregate attributes across all Building / Warehouse instances:
+        - buildingAge6Count: number of buildings with Building Age = 6
+        - locBuildEquipGoodCount: number of buildings having at least one equipment in "Good" condition
+        - maxBuildCovLimit: highest Commercial Building Burglary Coverage Limit
+        - maxWarehouseCovLimit: highest Warehouse Burglary Coverage Limit
+        - sumBuildingEquipVal: total equipment value of all buildings
+    */
     @(closeRelation=true, propagateUp=true)
     relation commercialbuildingclass : CommercialBuildingClass[0..10] {
         @(defaultValue = 0)
@@ -76,20 +224,40 @@ type Location : CommercialLocationClass {
         sumBuildingEquipVal = sum(Building.buildingEquipValSum);
     }
 
+    /*
+    parent(): read an attribute from the parent (root) product, passed down to Building and Equipment.
+    */
     int genLimit = parent(generalLiabilityLimit);
 
     string locationProdState = State;
 
-    int locBuildAge6Count = commercialbuildingclass.buildingAge6Count;
-    int locBuildEquipGoodCountInt = commercialbuildingclass.locBuildEquipGoodCount;
-    int commercialBuildingCovLimit = commercialbuildingclass.maxBuildCovLimit;
-    int warehouseBuildingCovLimit = commercialbuildingclass.maxWarehouseCovLimit;
-	int buildingSumEquipValue =commercialbuildingclass.sumBuildingEquipVal;
+    /*
+    Guarded aggregates: only read the aggregated value when at least one child instance exists (cardinality check), otherwise 0.
+    These are rolled up to the root by the commerciallocationclass relation.
+    */
+    int locBuildAge6Count = (commercialbuildingclass[CommercialBuildingClass] > 0) ? commercialbuildingclass.buildingAge6Count : 0;
+    int locBuildEquipGoodCountInt = (commercialbuildingclass[CommercialBuildingClass] > 0) ? commercialbuildingclass.locBuildEquipGoodCount : 0;
+    int commercialBuildingCovLimit = (commercialbuildingclass[Building] > 0) ? commercialbuildingclass.maxBuildCovLimit : 0;
+    int warehouseBuildingCovLimit = (commercialbuildingclass[Warehouse] > 0) ? commercialbuildingclass.maxWarehouseCovLimit : 0;
 
+    /*
+    Constraint 4: Set attribute value rule
+        - City is Boston -> State needs to be MA
+        - City is San Francisco -> State needs to be CA
+
+    Base constraint
+    */
     constraint(City == "Boston" -> State == "MA", "State must be MA if City is set to Boston");
     constraint(City == "San Francisco" -> State == "CA", "State must be CA if City is set to San Francisco");
 }
 
+/*
+Product Classification: Commercial Building
+Best Practices for variable initialization:
+    - for int variables, if using picklist possible, using picklist. If not possible, please add domain (possible values).
+    - for picklist variables, set default value if possible.
+    - for variables that are not supposed to be modified by the constraint engine, add configurable = false annotation.
+*/
 type CommercialBuildingClass {
     @(defaultValue = "5")
     int Building_Age = [0..100];
@@ -101,7 +269,16 @@ type CommercialBuildingClass {
     string Sprinklers = ["Yes", "No"];
 }
 
+/*
+Product Bundle: Building (Commercial Building)
+*/
 type Building : CommercialBuildingClass {
+    /*
+    Aggregate attributes across all Equipment instances (up to 20):
+        - equipMakeLawnMowerCount / equipMakeFridgeCount: number of equipments by make
+        - equipGoodConditionCount: number of equipments in "Good" condition
+        - equipValueSum: total equipment value
+    */
     @(closeRelation = true, propagateUp=true)
     relation commercialequipmentclass : CommercialEquipmentClass[0..20] {
         equipMakeLawnMowerCount = count(Equipment_Make == "Lawnmower");
@@ -110,22 +287,46 @@ type Building : CommercialBuildingClass {
         equipValueSum = sum(Equipment_Value);
     }
 
-	@(closeRelation=true, propagateUp=true)
+	@(closeRelation=truee)
     relation burglarycoverage : BurglaryCoverage[0..1];
 
-	@(closeRelation=true, propagateUp=true)
+	@(closeRelation=true)
     relation vandalismcoverage : VandalismCoverage[0..1];
+
+    /*
+    parent(): read attributes from the parent Location (and root, via Location.genLimit).
+    */
+    string parentLocationProdState = parent(locationProdState);
     string parentLocationState = parent(State);
     int genLiabilityLimit = parent(genLimit);
-    
-    int commercialBurglaryCovLimit = burglarycoverage.Burglary_Limit;
-	int buildingEquipValSum = commercialequipmentclass.equipValueSum;
-    int buildEquipGoodConditionCount = commercialequipmentclass.equipGoodConditionCount;
 
+    /*
+    Guarded values: only read child values when the child coverage / equipment exists (cardinality check), otherwise 0.
+    */
+    int commercialBurglaryCovLimit = (burglarycoverage[BurglaryCoverage] > 0) ? burglarycoverage.Burglary_Limit : 0;
+	int buildingEquipValSum = (commercialequipmentclass[Equipment] > 0) ? commercialequipmentclass.equipValueSum : 0;
+    int buildEquipGoodConditionCount = (commercialequipmentclass[Equipment] > 0) ? commercialequipmentclass.equipGoodConditionCount : 0;
+
+    /*
+    Constraint 6: IF
+        - Equipment is selected and at least 1 Equipment.Equipment_Condition = Good
+        - Building is selected and Building_Age = 6
+    THEN
+        - Hide CommercialBuilding.Sprinklers attribute
+        - Hide attribute value "New" for Equipment.Equipment_Condition (see under type Equipment)
+        - Add General Liability Coverage at root level (see under type CommercialPropertyInsurance)
+
+    Multi-instance constraint
+    Cardinality constraint
+    Cross Product constraint
+    */
     boolean equipmentGoodBuildingAgeCondition = buildEquipGoodConditionCount > 0 && Building_Age == 6;
     rule(buildEquipGoodConditionCount > 0 && Building_Age == 6, "hide", "attribute", "Sprinklers");
 }
 
+/*
+Product Bundle: Warehouse (Warehouse Building)
+*/
 type Warehouse : CommercialBuildingClass {
     @(closeRelation = true, propagateUp=true)
     relation warehousecommercialequipmentclass : CommercialEquipmentClass[0..20];
@@ -133,14 +334,24 @@ type Warehouse : CommercialBuildingClass {
     @(closeRelation=true, propagateUp=true)
     relation warehouseburglarycoverage : BurglaryCoverage[0..1];
 
-    @(closeRelation=true)
+    /*
+    @sequence = 3: Indicates the sequence in which the variables are configured. The constraint engine assigns the values based on the sequence, with the lowest in the
+    sequence assigned first. (only effective within a type)
+    */
+    @(closeRelation=true,sequence = 3)
     relation warehousevandalismcoverage : VandalismCoverage[0..1];
 
+    /*
+    Warehouse Burglary Coverage Limit, rolled up to Location (maxWarehouseCovLimit) and root (childWarehouseBuildCovLimit) for Constraint 1.
+    */
     int warehouseBurglaryCovLimit = warehouseburglarycoverage.Burglary_Limit;
 }
 
+/*
+Product Classification: Commercial Equipment
+*/
 type CommercialEquipmentClass {
-    @(defaultValue = "Good")
+    @(defaultValue = "Good", sequence=1)
     string Equipment_Condition = ["Good", "Very Good", "New"];
 
     @(defaultValue = "5")
@@ -156,6 +367,9 @@ type CommercialEquipmentClass {
     int Equipment_Value = [0..500000];
 }
 
+/*
+Product: Burglary Coverage
+*/
 type BurglaryCoverage {
     @(domainComputation = "false", defaultValue = "10000")
     int Burglary_Limit = [1000, 2000, 5000, 10000, 25000, 50000];
@@ -164,6 +378,9 @@ type BurglaryCoverage {
     int Burglary_Deductible = [0, 50, 100, 200, 500];
 }
 
+/*
+Product: Vandalism Coverage
+*/
 type VandalismCoverage {
     @(domainComputation = "false", defaultValue = "10000")
     int Vandalism_Limit = [1000, 2000, 5000, 10000, 25000, 50000];
@@ -172,7 +389,14 @@ type VandalismCoverage {
     int Vandalism_Deductible = [0, 50, 100, 200, 500];
 }
 
+/*
+Product Bundle: Equipment (General Equipment)
+*/
 type Equipment : CommercialEquipmentClass {
+    /*
+    parent(): read attributes from ancestors.
+    parent() resolves the attribute name up the hierarchy (Building -> Location -> Root).
+    */
     string parentLocationStateEquip = parent(State);
     int rootCovLimit = parent(generalLiabilityLimit);
     int parentCommBuildCovLimit = parent(commercialBurglaryCovLimit);
@@ -181,16 +405,54 @@ type Equipment : CommercialEquipmentClass {
 
     relation equipmentcoverage : EquipmentCoverage[0..1];
 
+    /*
+    Constraint 6 (Equipment level action): Hide attribute value "New" for Equipment_Condition
+    when Equipment_Condition is Good and parent Building Age is 6.
+
+    Hide attribute value rule
+    Parent products constraint
+    */
     rule(Equipment_Condition == "Good" && parentBuildingAge == 6, "hide", "attribute", "Equipment_Condition", "value", "New");
-	
+
+    /*
+    Constraint 2: IF
+        - Commercial General Liability Coverage Limit is less than $2,000,000
+        - Location State is not equal to NY (New York)
+        - Building Burglary Coverage Limit is less than $50,000
+        - General Equipment Value is greater than $100,000
+    THEN
+        - add General Equipment Coverage to General Equipment bundle
+        - set General Equipment Coverage Limit to $50,000
+
+    Require coverage constraint
+    Cardinality constraint
+    Cross Product constraint
+    Grandchild products constraint
+    */
     require(parentLocationStateEquip != "NY" && parentCommBuildCovLimit < 50000 && Equipment_Value > 100000 && rootCovLimit < 2000000
 , equipmentcoverage[EquipmentCoverage], "Add EquipmentCoverage when location is not NY, commercial building cov limit is lt 50000, equipment value > 100,000");
-	
+
     constraint(parentLocationStateEquip != "NY" && parentCommBuildCovLimit < 50000 && Equipment_Value > 100000 && rootCovLimit < 2000000 && equipmentcoverage[EquipmentCoverage] > 0 -> equipmentcoverage[EquipmentCoverage].Equipment_Limit == 50000);
 
+    /*
+    Constraint 3: IF
+        - Equipment is selected and Equipment is in "Good" Condition
+        - UserProfile is System Administrator
+        - Building is selected and Building Age is 6
+        - Location State is NY (mutually exclusive to Constraint 2)
+    THEN
+        - Exclude EquipmentCoverage
+
+    Exclude coverage constraint
+    Cross Product constraint
+    Grandchild products constraint
+    */
     exclude(UserProfile == "System Administrator" && parentLocationStateEquip == "NY" && Equipment_Condition == "Good"  && parentBuildingAge == 6, equipmentcoverage[EquipmentCoverage], "Please remove the Equipment Coverage due to Equipment Condition = Good and Building Age = 6 when profile is community user");
 }
 
+/*
+Product: Equipment Coverage
+*/
 type EquipmentCoverage {
     @(domainComputation = "false", defaultValue = "10000")
     int Equipment_Limit = [1000, 2000, 5000, 10000, 25000, 50000];
@@ -198,5 +460,3 @@ type EquipmentCoverage {
     @(domainComputation = "false", defaultValue = "100")
     int Equipment_Deductible = [0, 50, 100, 200, 500];
 }
- 
- 
